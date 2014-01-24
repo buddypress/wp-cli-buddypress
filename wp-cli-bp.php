@@ -4,21 +4,14 @@
 if ( !defined( 'WP_CLI' ) ) return;
 
 /**
- * 'bp' command
+ * BuddyPress commands
  *
- * We fake multi-tiered commands by using the first arg as a router. Eg
- *
- *   wp bp group create
- *
- * calls the 'group' method here, and routs it to the BPCLI_Group class for
- * processing
+ * @since 1.0
  *
  * The business logic for these subcommands is located in the /components/
  * files, to keep file size manageable (and to consolidate certain validation
  * tasks). The current class contains only the subcommand definitions and
  * their documentation (to comply with wp-cli's auto-documenter).
- *
- * @since 1.0
  */
 class BPCLI_BP_Command extends WP_CLI_Command {
 
@@ -105,11 +98,12 @@ class BPCLI_BP_Command extends WP_CLI_Command {
 	 *        wp bp group_create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
 	 *
 	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator-id=<creator-id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
+	 *
+	 * @since 1.0
 	 */
 	public function group_create( $args, $assoc_args ) {
 		$c = $this->init_component( 'group' );
 		$c->run( __FUNCTION__, $args, $assoc_args );
-
 	}
 
 	/**
@@ -132,6 +126,8 @@ class BPCLI_BP_Command extends WP_CLI_Command {
 	 *        wp bp group_add_member --group-id=foo --user-id=admin role=mod
 	 *
 	 * @synopsis --group-id=<group> --user-id=<user> [--role=<role>]
+	 *
+	 * @since 1.0
 	 */
 	public function group_add_member( $args, $assoc_args ) {
 		$c = $this->init_component( 'group' );
