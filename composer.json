@@ -1,0 +1,25 @@
+{
+	"name": "boonebgorges/wp-cli-buddypress",
+	"type": "command",
+	"description": "WP-CLI commands for BuddyPress",
+	"keywords": ["wp-cli", "buddypress", "wordpress", "bp"],
+	"homepage": "https://github.com/boonebgorges/wp-cli-buddypress",
+	"require": {
+		"php": ">=5.3"
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Boone B Gorges",
+			"email": "boone@gorg.es",
+			"homepage": "http://boone.gorg.es/"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/boonebgorges/wp-cli-buddypress/issues",
+		"source": "https://github.com/boonebgorges/wp-cli-buddypress"
+	},
+	"autoload": {
+		"files": [ "wp-cli-bp.php" ]
+	}
+}
