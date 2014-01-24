@@ -18,12 +18,55 @@ if ( !defined( 'WP_CLI' ) ) return;
  * tasks). The current class contains only the subcommand definitions and
  * their documentation (to comply with wp-cli's auto-documenter).
  *
- * @package bp-cli
  * @since 1.0
  */
 class BPCLI_BP_Command extends WP_CLI_Command {
 
 	protected $component = array();
+
+	/** Core *************************************************************/
+
+	/**
+	 * Activate a component.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <component>
+	 * : Name of the component to activate.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *	wp bp activate groups
+	 *
+	 * @synopsis <component>
+	 *
+	 * @since 1.1
+	 */
+	public function activate( $args, $assoc_args ) {
+		$c = $this->init_component( 'core' );
+		$c->run( __FUNCTION__, $args, $assoc_args );
+	}
+
+	/**
+	 * Deactivate a component.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <component>
+	 * : Name of the component to deactivate.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *	wp bp deactivate groups
+	 *
+	 * @synopsis <component>
+	 *
+	 * @since 1.1
+	 */
+	public function deactivate( $args, $assoc_args ) {
+		$c = $this->init_component( 'core' );
+		$c->run( __FUNCTION__, $args, $assoc_args );
+	}
 
 	/** Groups ***********************************************************/
 
