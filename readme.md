@@ -21,7 +21,7 @@ Because I haven't built it yet. I'm filling in commands as I need them, which me
 ## Setup
 
 * Install [wp-cli](https://wp-cli.org)
-* Install wp-cli-buddypress. I hope to add the package as an official Community Package soon (for installation via Composer), but for now you can install manually. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages#installing-a-package-without-composer for more details.
+* Install wp-cli-buddypress. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information on installing via Composer or manually.
 
 ## Changelog
 
