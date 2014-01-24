@@ -2,6 +2,8 @@
 
 WP-CLI commands for use with BuddyPress. Currently supported commands:
 
+* `bp activate` -- Activate a component.
+* `bp deactivate` -- Deactivate a component.
 * `bp group_create` -- Create new BuddyPress groups.
 * `bp group_add_member` -- Add a member to a BuddyPress group.
 * `bp member_generate` -- Create lots of site members, with the proper BP metadata.
