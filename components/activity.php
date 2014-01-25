@@ -327,7 +327,30 @@ print_r( $r );
 
 				break;
 
+			case 'new_avatar' :
+			case 'new_member' :
+			case 'updated_profile' :
 
+				if ( empty( $r['user-id'] ) ) {
+					$r['user-id'] = $this->get_random_user_id();
+				}
+
+				$userlink = bp_core_get_userlink( $r['user-id'] );
+
+				// new_avatar
+				if ( 'new_avatar' === $r['type'] ) {
+					$r['action'] = sprintf( __( '%s changed their profile picture', 'buddypress' ), $userlink );
+
+				// new_member
+				} else if ( 'new_member' === $r['type'] ) {
+					$r['action'] = sprintf( __( '%s became a registered member', 'buddypress' ), $userlink );
+
+				// updated_profile
+				} else {
+					$r['action'] = sprintf( __( '%s updated their profile', 'buddypress' ), $userlink );
+				}
+
+				break;
 		}
 
 		return $r;
