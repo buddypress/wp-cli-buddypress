@@ -140,11 +140,74 @@ class BPCLI_BP_Command extends WP_CLI_Command {
 	 * Generate members. See documentation for `wp_user_generate`.
 	 *
 	 * This is a kludge workaround for setting last activity. Should fix.
+	 *
+	 * @since 1.0
 	 */
 	public function member_generate( $args, $assoc_args ) {
 		$c = $this->init_component( 'member' );
 		$c->run( __FUNCTION__, $args, $assoc_args );
 	}
+
+	/** Activity *********************************************************/
+
+	/**
+	 * Create an activity item.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--component=<component>]
+	 * : The component for the activity item (groups, activity, etc). If
+	 * none is provided, a component will be randomly selected from the
+	 * active components.
+	 *
+	 * [--type=<type>]
+	 * : Activity type (activity_update, group_created, etc). If none is
+	 * provided, a type will be randomly chose from those natively
+	 * associated with your <component>.
+	 *
+	 * [--action=<action>]
+	 * : Action text (eg "Joe created a new group Foo"). If none is
+	 * provided, one will be generated automatically based on other params.
+	 *
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be
+	 * generated.
+	 *
+	 * [--primary-link=<primary-link>]
+	 * : URL of the item, as used in RSS feeds. If none is provided, a URL
+	 * will be generated based on passed parameters.
+	 *
+	 * [--user-id=<user-id>]
+	 * : ID of the user associated with the new item. If none is provided,
+	 * a user will be randomly selected.
+	 *
+	 * [--item-id=<item-id>]
+	 * : ID of the associated item. If none is provided, one will be
+	 * generated automatically, if your activity type requires it.
+	 *
+	 * [--secondary-item-id=<secondary-item-id>]
+	 * : ID of the secondary associated item. If none is provided, one will
+	 * be generated automatically, if your activity type requires it.
+	 *
+	 * [--date-recorded=<date-recorded>]
+	 * : GMT timestamp, in Y-m-d h:i:s format. Defaults to current time.
+	 *
+	 * [--hide-sitewide=<hide-sitewide>]
+	 * : Whether to hide in sitewide streams. Default: 0.
+	 *
+	 * [--is-spam=<is-spam>]
+	 * : Whether the item should be marked as spam. Default: 0.
+	 *
+	 * @synopsis [--component=<component>] [--type=<type>] [--action=<action>] [--content=<content>] [--primary-link=<primary-link>] [--user-id=<user-id>] [--item-id=<item-id>] [--secondary-item-id=<secondary-item-id>] [--date-recorded=<date-recorded>] [--hide-sitewide=<hide-sitewide>] [--is-spam=<is-spam>]
+	 *
+	 * @since 1.1
+	 */
+	public function activity_create( $args, $assoc_args ) {
+		$c = $this->init_component( 'activity' );
+		$c->run( __FUNCTION__, $args, $assoc_args );
+	}
+
+	/** Utility **********************************************************/
 
 	/**
 	 * Initialize the component library.
