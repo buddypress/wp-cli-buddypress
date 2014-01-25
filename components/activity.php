@@ -280,6 +280,36 @@ print_r( $r );
 				$r['action'] = sprintf( __( '%1$s and %2$s are now friends', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ), bp_core_get_userlink( $r['item-id'] ) );
 
 				break;
+
+			case 'created_group' :
+				if ( empty( $r['item-id'] ) ) {
+					$r['item-id'] = $this->get_random_group_id();
+				}
+
+				$group = groups_get_group( array( 'group_id' => $r['item-id'] ) );
+
+				// @todo what if it's not a group? ugh
+				if ( empty( $r['user-id'] ) ) {
+					$r['user-id'] = $group->creator_id;
+				}
+
+				$group_permalink = bp_get_group_permalink( $group );
+
+				if ( empty( $r['action'] ) ) {
+					$r['action'] = sprintf( __( '%1$s created the group %2$s', 'buddypress'), bp_core_get_userlink( $r['user-id'] ), '<a href="' . $group_permalink . '">' . esc_attr( $group->name ) . '</a>' );
+				}
+
+				if ( empty( $r['primary-link'] ) ) {
+					$r['primary-link'] = $group_permalink;
+				}
+
+				break;
+
+			case 'joined_group' :
+
+				break;
+
+
 		}
 
 		return $r;

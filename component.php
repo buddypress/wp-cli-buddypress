@@ -21,4 +21,16 @@ class BPCLI_Component {
 		global $wpdb;
 		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" );
 	}
+
+	/**
+	 * Get a random group id.
+	 *
+	 * @since 1.1
+	 *
+	 * @return int
+	 */
+	protected function get_random_group_id() {
+		global $wpdb, $bp;
+		return $wpdb->get_var( "SELECT id FROM {$bp->groups->table_name} ORDER BY RAND() LIMIT 1" );
+	}
 }
