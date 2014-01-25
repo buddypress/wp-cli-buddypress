@@ -359,10 +359,12 @@ print_r( $r );
 	/**
 	 * Generate random text
 	 *
+	 * @todo
+	 *
 	 * @since 1.1
 	 */
 	protected function generate_random_text() {
-		return 'foo';
+		return 'Here is some random text';
 	}
 
 	public function check_requirements() {
