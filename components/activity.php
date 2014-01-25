@@ -134,7 +134,21 @@ print_r( $r );
 
 		switch ( $r['type'] ) {
 			case 'activity_update' :
+				if ( empty( $r['user-id'] ) ) {
+					$r['user-id'] = $this->get_random_user_id();
+				}
+
+				$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
+				$r['content'] = $this->generate_random_text();
+				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
+
+				break;
+
 			case 'activity_comment' :
+				if ( empty( $r['user-id'] ) ) {
+					$r['user-id'] = $this->get_random_user_id();
+				}
+
 				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" );
 
 				if ( 'activity_comment' == $parent_item->type ) {
@@ -143,6 +157,10 @@ print_r( $r );
 				} else {
 					$r['item-id'] = $parent_item->id;
 				}
+
+				$r['action'] = sprintf( __( '%s posted a new activity comment', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
+				$r['content'] = $this->generate_random_text();
+				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
 
 				break;
 
