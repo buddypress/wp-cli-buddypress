@@ -307,6 +307,24 @@ print_r( $r );
 
 			case 'joined_group' :
 
+				if ( empty( $r['item-id'] ) ) {
+					$r['item-id'] = $this->get_random_group_id();
+				}
+
+				$group = groups_get_group( array( 'group_id' => $r['item-id'] ) );
+
+				if ( empty( $r['user-id'] ) ) {
+					$r['user-id'] = $this->get_random_user_id();
+				}
+
+				if ( empty( $r['action'] ) ) {
+					$r['action'] = sprintf( __( '%1$s joined the group %2$s', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group ) . '">' . esc_attr( $group->name ) . '</a>' );
+				}
+
+				if ( empty( $r['primary-link'] ) ) {
+					$r['primary-link'] = bp_get_group_permalink( $group );
+				}
+
 				break;
 
 
