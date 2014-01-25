@@ -110,7 +110,7 @@ print_r( $r );
 				'new_blog_comment',
 			),
 			'friends' => array(
-				'friendship_accepted',
+				'friendship_created',
 			),
 			'groups' => array(
 				'joined_group',
@@ -268,20 +268,21 @@ print_r( $r );
 
 				break;
 
+			case 'friendship_created' :
+				if ( empty( $r['user-id'] ) ) {
+					$r['user-id'] = $this->get_random_user_id();
+				}
+
+				if ( empty( $r['item-id'] ) ) {
+					$r['item-id'] = $this->get_random_user_id();
+				}
+
+				$r['action'] = sprintf( __( '%1$s and %2$s are now friends', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ), bp_core_get_userlink( $r['item-id'] ) );
+
+				break;
 		}
 
 		return $r;
-	}
-
-	/**
-	 * Generate an action string from values
-	 *
-	 * @since 1.1
-	 *
-	 * @return string
-	 */
-	protected function generate_action( $r ) {
-
 	}
 
 	/**
