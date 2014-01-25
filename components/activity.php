@@ -20,6 +20,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			'date-recorded' => bp_core_current_time(),
 			'hide-sitewide' => 0,
 			'is-spam' => 0,
+			'silent' => false,
 		);
 
 		$r = wp_parse_args( $assoc_args, $defaults );
@@ -38,9 +39,6 @@ class BPCLI_Activity extends BPCLI_Component {
 			$r = $this->generate_item_details( $r );
 		}
 
-print_r( $r );
-
-
 		$id = bp_activity_add( array(
 			'action' => $r['action'],
 			'content' => $r['content'],
@@ -55,11 +53,48 @@ print_r( $r );
 			'is_spam' => (bool) $r['is-spam'],
 		) );
 
+		if ( $r['silent'] ) {
+			return;
+		}
+
 		if ( $id ) {
 			WP_CLI::success( sprintf( 'Successfully created new activity item (id #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Could not create activity item.' );
 		}
+	}
+
+	/**
+	 * Generate activity items.
+	 *
+	 * @since 1.1
+	 */
+	public function activity_generate( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'count' => 100,
+			'skip-activity-comments' => 1,
+		) );
+
+		$component = $this->get_random_component();
+		$type = $this->get_random_type_from_component( $component );
+
+		if ( (bool) $r['skip-activity-comments'] && 'activity_comment' === $type ) {
+			$type = 'activity_update';
+		}
+
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating activity items', $r['count'] );
+
+		for ( $i = 0; $i < $r['count']; $i++ ) {
+			$this->activity_create( array(), array(
+				'component' => $component,
+				'type' => $type,
+				'silent' => true,
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
 	}
 
 	/**

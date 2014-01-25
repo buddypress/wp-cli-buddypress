@@ -207,6 +207,25 @@ class BPCLI_BP_Command extends WP_CLI_Command {
 		$c->run( __FUNCTION__, $args, $assoc_args );
 	}
 
+	/**
+	 * Generate random activity items.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many activity items to generate. Default: 100
+	 *
+	 * [--skip-activity-comments=<skip-activity-comments>
+	 * : Whether to skip activity comments. Recording activity_comment
+	 * items requires a resource-intensive tree rebuild. Default: 1
+	 *
+	 * @synopsis [--count=<number>] [--skip-activity-comments=<skip-activity-comments>]
+	 */
+	public function activity_generate( $args, $assoc_args ) {
+		$c = $this->init_component( 'activity' );
+		$c->run( __FUNCTION__, $args, $assoc_args );
+	}
+
 	/** Utility **********************************************************/
 
 	/**
