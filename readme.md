@@ -27,6 +27,10 @@ Because I haven't built it yet. I'm filling in commands as I need them, which me
 
 ## Changelog
 
+### 1.1.1
+
+* Ensure that components have their install routine run after activation
+
 ### 1.1
 
 * New commands: activate, deactivate, activity_create, activity_generate
