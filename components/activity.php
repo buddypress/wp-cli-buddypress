@@ -1,13 +1,63 @@
 <?php
 
+/**
+ * Manage BuddyPress activity items.
+ */
 class BPCLI_Activity extends BPCLI_Component {
 
 	/**
 	 * Create an activity item.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--component=<component>]
+	 * : The component for the activity item (groups, activity, etc). If
+	 * none is provided, a component will be randomly selected from the
+	 * active components.
+	 *
+	 * [--type=<type>]
+	 * : Activity type (activity_update, group_created, etc). If none is
+	 * provided, a type will be randomly chose from those natively
+	 * associated with your <component>.
+	 *
+	 * [--action=<action>]
+	 * : Action text (eg "Joe created a new group Foo"). If none is
+	 * provided, one will be generated automatically based on other params.
+	 *
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be
+	 * generated.
+	 *
+	 * [--primary-link=<primary-link>]
+	 * : URL of the item, as used in RSS feeds. If none is provided, a URL
+	 * will be generated based on passed parameters.
+	 *
+	 * [--user-id=<user-id>]
+	 * : ID of the user associated with the new item. If none is provided,
+	 * a user will be randomly selected.
+	 *
+	 * [--item-id=<item-id>]
+	 * : ID of the associated item. If none is provided, one will be
+	 * generated automatically, if your activity type requires it.
+	 *
+	 * [--secondary-item-id=<secondary-item-id>]
+	 * : ID of the secondary associated item. If none is provided, one will
+	 * be generated automatically, if your activity type requires it.
+	 *
+	 * [--date-recorded=<date-recorded>]
+	 * : GMT timestamp, in Y-m-d h:i:s format. Defaults to current time.
+	 *
+	 * [--hide-sitewide=<hide-sitewide>]
+	 * : Whether to hide in sitewide streams. Default: 0.
+	 *
+	 * [--is-spam=<is-spam>]
+	 * : Whether the item should be marked as spam. Default: 0.
+	 *
+	 * @synopsis [--component=<component>] [--type=<type>] [--action=<action>] [--content=<content>] [--primary-link=<primary-link>] [--user-id=<user-id>] [--item-id=<item-id>] [--secondary-item-id=<secondary-item-id>] [--date-recorded=<date-recorded>] [--hide-sitewide=<hide-sitewide>] [--is-spam=<is-spam>]
+	 *
+	 * @since 1.1
 	 */
-	public function activity_create( $args, $assoc_args ) {
-		$this->check_requirements();
-
+	public function create( $args, $assoc_args ) {
 		$defaults = array(
 			'component' => '',
 			'type' => '',
@@ -65,11 +115,20 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
-	 * Generate activity items.
+	 * Generate random activity items.
 	 *
-	 * @since 1.1
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many activity items to generate. Default: 100
+	 *
+	 * [--skip-activity-comments=<skip-activity-comments>
+	 * : Whether to skip activity comments. Recording activity_comment
+	 * items requires a resource-intensive tree rebuild. Default: 1
+	 *
+	 * @synopsis [--count=<number>] [--skip-activity-comments=<skip-activity-comments>]
 	 */
-	public function activity_generate( $args, $assoc_args ) {
+	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'count' => 100,
 			'skip-activity-comments' => 1,
@@ -85,7 +144,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating activity items', $r['count'] );
 
 		for ( $i = 0; $i < $r['count']; $i++ ) {
-			$this->activity_create( array(), array(
+			$this->create( array(), array(
 				'component' => $component,
 				'type' => $type,
 				'silent' => true,
@@ -401,10 +460,12 @@ class BPCLI_Activity extends BPCLI_Component {
 	protected function generate_random_text() {
 		return 'Here is some random text';
 	}
+}
 
-	public function check_requirements() {
+WP_CLI::add_command( 'bp activity', 'BPCLI_Activity', array(
+	'before_invoke' => function() {
 		if ( ! bp_is_active( 'activity' ) ) {
 			WP_CLI::error( 'The Activity component is not active.' );
 		}
-	}
-}
+} ) );
+
