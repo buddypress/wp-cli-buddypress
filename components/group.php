@@ -121,16 +121,7 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or id.' );
 		}
 
-		// Convert --user_id to user ID
-		// @todo this'll be screwed up if user has a numeric user_login
-		// @todo Have to use user-id because WP_CLI hijocks --user
-		if ( ! is_numeric( $r['user-id'] ) ) {
-			$user_id = (int) username_exists( $r['user-id'] );
-		} else {
-			$user_id = $r['user-id'];
-			$user_obj = new WP_User( $user_id );
-			$user_id = $user_obj->ID;
-		}
+		$user_id = $this->get_user_id_from_identifier( $r['user-id'] );
 
 		if ( empty( $user_id ) ) {
 			WP_CLI::error( 'No user found by that username or id' );

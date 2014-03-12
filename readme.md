@@ -32,7 +32,7 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
 ### 1.2.0
 * Use wp-cli's new fourth-level commands
-* New commands: xprofile create_group
+* New commands: xprofile create_group, xprofile create_field, xprofile set_data
 
 ### 1.1.1
 
