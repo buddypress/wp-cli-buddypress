@@ -9,6 +9,7 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp group create` -- Create new BuddyPress groups.
 * `bp group add_member` -- Add a member to a BuddyPress group.
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
+* `bp xprofile create_group` -- Create an XProfile field group.
 
 ## Why doesn't this do _x_?
 
@@ -31,6 +32,7 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
 ### 1.2.0
 * Use wp-cli's new fourth-level commands
+* New commands: xprofile create_group
 
 ### 1.1.1
 
