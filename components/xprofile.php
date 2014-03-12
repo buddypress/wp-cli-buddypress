@@ -144,7 +144,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		if ( ! is_numeric( $r['field_id'] ) ) {
 			$field_id = xprofile_get_field_id_from_name( $r['field_id'] );
 		} else {
-			$field_id = intval( $field_id );
+			$field_id = intval( $r['field_id'] );
 		}
 
 		$field = new BP_XProfile_Field( $field_id );
