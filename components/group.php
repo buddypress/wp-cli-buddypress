@@ -1,9 +1,49 @@
 <?php
 
+/**
+ * Manage BuddyPress groups.
+ */
 class BPCLI_Group extends BPCLI_Component {
-	public function group_create( $args, $assoc_args ) {
-		$this->check_requirements();
 
+	/**
+	 * Create a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --name=<name>
+	 * : Name of the group.
+	 *
+	 * [--slug=<slug>]
+	 * : URL-safe slug for the group. If not provided, one will be generated automatically.
+	 *
+	 * [--description=<description>]
+	 * : Group description. Default: 'Description for group "[name]"'
+	 *
+	 * [--creator-id=<creator-id>]
+	 * : ID of the group creator. Default: 1.
+	 *
+	 * [--slug=<slug>]
+	 * : URL-safe slug for the group.
+	 *
+	 * [--status=<status>]
+	 * : Group status (public, private, hidden). Default: public.
+	 *
+	 * [--enable-forum=<enable-forum>]
+	 * : Whether to enable legacy bbPress forums. Default: 0.
+	 *
+	 * [--date-created=<date-created>]
+	 * : MySQL-formatted date. Default: current date.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *        wp bp group create --name="Totally Cool Group"
+	 *        wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
+	 *
+	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator-id=<creator-id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
+	 *
+	 * @since 1.0
+	 */
+	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'name' => '',
 			'slug' => '',
@@ -40,9 +80,27 @@ class BPCLI_Group extends BPCLI_Component {
 	/**
 	 * Add a member to a group.
 	 *
-	 * @synopsis --group=<group> --user=<user>
+	 * ## OPTIONS
+	 *
+	 * --group-id=<group>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--role=<role>]
+	 * : Group role for the new member (member, mod, admin). Default: member.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *        wp bp group add_member --group-id=3 --user-id=10
+	 *        wp bp group add_member --group-id=foo --user-id=admin role=mod
+	 *
+	 * @synopsis --group-id=<group> --user-id=<user> [--role=<role>]
+	 *
+	 * @since 1.0
 	 */
-	public function group_add_member( $args, $assoc_args ) {
+	public function add_member( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'group-id' => null,
 			'user-id' => null,
@@ -104,10 +162,12 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'Could not add user to group.' );
 		}
 	}
-
-	public function check_requirements() {
-		if ( ! bp_is_active( 'groups' ) ) {
-			WP_CLI::error( 'The Groups component is not active.' );
-		}
-	}
 }
+
+WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
+	'before_invoke' => function() {
+		if ( ! bp_is_active( 'group' ) ) {
+			WP_CLI::error( 'The Group component is not active.' );
+		}
+} ) );
+

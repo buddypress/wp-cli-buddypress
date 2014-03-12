@@ -1,8 +1,23 @@
 <?php
 
+/**
+ * Manage BuddyPress components.
+ */
 class BPCLI_Core extends BPCLI_Component {
+
 	/**
 	 * Activate a component.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <component>
+	 * : Name of the component to activate.
+	 *
+	 * ## EXAMPLES
+	 *
+	 * 	wp bp core activate groups
+	 *
+	 * @synopsis <component>
 	 *
 	 * @since 1.1
 	 */
@@ -33,6 +48,17 @@ class BPCLI_Core extends BPCLI_Component {
 	/**
 	 * Deactivate a component.
 	 *
+	 * ## OPTIONS
+	 *
+	 * <component>
+	 * : Name of the component to deactivate.
+	 *
+	 * ## EXAMPLES
+	 *
+	 * 	wp bp core deactivate groups
+	 *
+	 * @synopsis <component>
+	 *
 	 * @since 1.1
 	 */
 	public function deactivate( $args, $assoc_args ) {
@@ -54,3 +80,6 @@ class BPCLI_Core extends BPCLI_Component {
 		WP_CLI::success( sprintf( 'The %s component has been deactivated.', ucfirst( $c ) ) );
 	}
 }
+
+WP_CLI::add_command( 'bp core', 'BPCLI_Core' );
+
