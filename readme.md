@@ -2,13 +2,13 @@
 
 WP-CLI commands for use with BuddyPress. Currently supported commands:
 
-* `bp activate` -- Activate a component.
-* `bp activity_create` -- Create a single activity item.
-* `bp activity_generate` -- Generate a large number of random activity items.
-* `bp deactivate` -- Deactivate a component.
-* `bp group_create` -- Create new BuddyPress groups.
-* `bp group_add_member` -- Add a member to a BuddyPress group.
-* `bp member_generate` -- Create lots of site members, with the proper BP metadata.
+* `bp core activate` -- Activate a component.
+* `bp core deactivate` -- Deactivate a component.
+* `bp activity create` -- Create a single activity item.
+* `bp activity generate` -- Generate a large number of random activity items.
+* `bp group create` -- Create new BuddyPress groups.
+* `bp group add_member` -- Add a member to a BuddyPress group.
+* `bp member generate` -- Create lots of site members, with the proper BP metadata.
 
 ## Why doesn't this do _x_?
 
@@ -18,7 +18,9 @@ Because I haven't built it yet. I'm filling in commands as I need them, which me
 
 * PHP >=5.3
 * Composer
-* wp-cli
+* wp-cli >=0.15.0
+
+If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
 ## Setup
 
@@ -26,6 +28,9 @@ Because I haven't built it yet. I'm filling in commands as I need them, which me
 * Install wp-cli-buddypress. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information on installing via Composer or manually.
 
 ## Changelog
+
+### 1.2.0
+* Use wp-cli's new fourth-level commands
 
 ### 1.1.1
 
