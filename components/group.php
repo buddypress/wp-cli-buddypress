@@ -153,6 +153,79 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'Could not add user to group.' );
 		}
 	}
+
+	/**
+	 * Get a list of members for a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --group-id=<group>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *        wp bp group get_members --group-id=3
+	 *
+	 * @synopsis --group-id=<group>
+	 *
+	 * @since 1.3.0
+	 */
+	public function get_members( $args, $assoc_args ) {
+
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id' => null,
+		) );
+
+		// Convert --group_id to group ID
+		// @todo this'll be screwed up if the group has a numeric slug
+		if ( ! is_numeric( $r['group-id'] ) ) {
+			$group_id = groups_get_id( $r['group-id'] );
+		} else {
+			$group_id = $r['group-id'];
+		}
+
+		// Check that group exists
+		$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+		if ( empty( $group_obj->id ) ) {
+			WP_CLI::error( 'No group found by that slug or id.' );
+		}
+
+		//Get our members
+		$members = groups_get_group_members( array(
+			'group_id' => $group_id
+		) );
+
+		if ( $members['count'] ) {
+			$found = sprintf(
+				'Found %d members in group #%d',
+				$members['count'],
+				$group_id
+			);
+			WP_CLI::success( $found );
+
+			$member_list = '';
+
+			//Loop our found members into a single string value.
+			$counter = 1;
+			foreach ( $members['members'] as $member ) {
+				$member_list .= $member->user_login;
+				if ( $counter < $members['count'] ) {
+					$member_list .= ", ";
+				}
+				$counter++;
+			}
+
+			$users = sprintf(
+				'Current members for group #%d: %s',
+				$group_id,
+				$member_list
+			);
+
+			WP_CLI::success( $users );
+		} else {
+			WP_CLI::error( 'Could not find any users in the group.' );
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
