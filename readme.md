@@ -30,7 +30,12 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
 ## Changelog
 
+### 1.3.0
+
+* New commands: `bp group get_members`
+
 ### 1.2.0
+
 * Use wp-cli's new fourth-level commands
 * New commands: xprofile create_group, xprofile create_field, xprofile set_data
 
