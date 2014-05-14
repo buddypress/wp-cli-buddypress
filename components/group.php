@@ -190,9 +190,9 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or id.' );
 		}
 
-		//Get our members
+		// Get our members
 		$members = groups_get_group_members( array(
-			'group_id' => $group_id
+			'group_id' => $group_id,
 		) );
 
 		if ( $members['count'] ) {
@@ -205,7 +205,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 			$member_list = '';
 
-			//Loop our found members into a single string value.
+			// Loop our found members into a single string value.
 			$counter = 1;
 			foreach ( $members['members'] as $member ) {
 				$member_list .= $member->user_login;
