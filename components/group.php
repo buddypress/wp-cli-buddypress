@@ -203,17 +203,7 @@ class BPCLI_Group extends BPCLI_Component {
 			);
 			WP_CLI::success( $found );
 
-			$member_list = '';
-
-			// Loop our found members into a single string value.
-			$counter = 1;
-			foreach ( $members['members'] as $member ) {
-				$member_list .= $member->user_login;
-				if ( $counter < $members['count'] ) {
-					$member_list .= ", ";
-				}
-				$counter++;
-			}
+			$member_list = implode( ', ', wp_list_pluck( $members['members'], 'user_login' ) );
 
 			$users = sprintf(
 				'Current members for group #%d: %s',
