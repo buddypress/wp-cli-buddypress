@@ -157,8 +157,8 @@ class BPCLI_Group extends BPCLI_Component {
 
 WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
 	'before_invoke' => function() {
-		if ( ! bp_is_active( 'group' ) ) {
-			WP_CLI::error( 'The Group component is not active.' );
+		if ( ! bp_is_active( 'groups' ) ) {
+			WP_CLI::error( 'The Groups component is not active.' );
 		}
 } ) );
 
