@@ -216,6 +216,67 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'Could not find any users in the group.' );
 		}
 	}
+	/**
+	 * Change a group description.  
+	 *
+	 * ## OPTIONS
+	 *
+	 * --group-id=<group>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 * 
+	 * --description=<description>
+	 * : The new group description. 
+	 *
+	 * ## EXAMPLES
+	 *
+	 *        wp bp group update_description --group-id=3 --description="A very fine group indeed." 
+	 *
+	 * @synopsis --group-id=<group> --description=<description>
+	 *
+	 * @since 1.3.0
+	 */
+	public function update_description( $args, $assoc_args ) { 
+
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id' => null,
+			'description' => null,
+		) );
+
+		// Convert --group-id to group ID
+		// @todo this'll be screwed up if the group has a numeric slug
+		if ( ! is_numeric( $r['group-id'] ) ) {
+			$group_id = groups_get_id( $r['group-id'] );
+		} else {
+			$group_id = $r['group-id'];
+		}
+
+		// Check that group exists
+		$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+		if ( empty( $group_obj->id ) ) {
+			WP_CLI::error( 'No group found by that slug or id.' );
+		}
+
+		// Check that user provided --description="something" 
+		if ( empty( $r['description'] ) ) { 
+			WP_CLI::error( 'You must give a group new group description.' );
+		} 	
+		
+		// Convert --group-description to $group_desc
+		$group_desc = $r['description']; 
+
+		$name = $group_obj->name; 
+		$description = $group_obj->description; 
+		WP_CLI::success( 'Group name: '.$name ); 
+		WP_CLI::success( 'Description: '.$description ); 
+		
+		if ( groups_edit_base_group_details ( $group_id, $name, $group_desc ) ) { 
+			$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+			$newdescription = $group_obj->description; 
+			WP_CLI::success ( 'Successfully changed group details. New description: '.$newdescription ); 
+		} else { 
+			WP_CLI::error( 'Something went wrong trying to change the group description.' ); 
+		} 
+	} 
 }
 
 WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
