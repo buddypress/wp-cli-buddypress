@@ -246,19 +246,8 @@ class BPCLI_Activity extends BPCLI_Component {
 				// i.e. give them links to their groups. 
 				if ( $r['component'] == 'groups' ) { 
 
-					if ( empty ( $r['item-id'] ) ) { 
-						WP_CLI::error( 'No group found by that id.' );
-					} 
-
-<<<<<<< HEAD
-					$group_id = $r['item-id']; 
-
-					// get the group
-					$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
-=======
 					// get the group
 					$group_obj = groups_get_group( array( 'group_id' => $r['item-id'] ) );
->>>>>>> mla
 
 					// make sure such a group exists
 					if ( empty( $group_obj->id ) ) {
