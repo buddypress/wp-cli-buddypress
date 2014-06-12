@@ -233,7 +233,9 @@ class BPCLI_Activity extends BPCLI_Component {
 				}
 
 				$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
-				$r['content'] = $this->generate_random_text();
+				if ( empty( $r['content'] ) ) {
+					$r['content'] = $this->generate_random_text();
+				} 
 				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
 
 				break;
