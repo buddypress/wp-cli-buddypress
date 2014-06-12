@@ -232,10 +232,32 @@ class BPCLI_Activity extends BPCLI_Component {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
-				$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
+				// Make group updates look more like actual group updates. 
+				// i.e. give them links to their groups. 
+				if ( $r['component'] == 'groups' ) { 
+
+					if ( empty ( $r['item-id'] ) ) { 
+						WP_CLI::error( 'No group found by that id.' );
+					} 
+
+					$group_id = $r['item-id']; 
+
+					// get the group
+					$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+
+					// make sure such a group exists
+					if ( empty( $group_obj->id ) ) {
+						WP_CLI::error( 'No group found by that slug or id.' );
+					}
+
+					// stolen from groups_join_group
+					$r['action']  = sprintf( __( '%1$s posted an update in the group %2$s', 'buddypress'), bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj->id ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
+				} 
+
 				if ( empty( $r['content'] ) ) {
 					$r['content'] = $this->generate_random_text();
 				} 
+
 				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
 
 				break;
