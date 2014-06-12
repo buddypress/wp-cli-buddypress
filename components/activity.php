@@ -84,6 +84,16 @@ class BPCLI_Activity extends BPCLI_Component {
 			$r['type'] = $this->get_random_type_from_component( $r['component'] );
 		}
 
+		if ( $r['component'] == 'groups' ) { 
+			// Item ID for groups is a group ID. 
+			// Therefore, handle group slugs, too. 
+			// Convert --item-id to group ID. 
+			// @todo this'll be screwed up if the group has a numeric slug
+			if ( $r['item-id'] && ! is_numeric( $r['item-id'] ) ) {
+				$r['item-id'] = groups_get_id( $r['item-id'] );
+			} 
+		} 
+					
 		// If some data is not set, we have to generate it
 		if ( empty( $r['item_id'] ) || empty( $r['secondary_item_id'] ) ) {
 			$r = $this->generate_item_details( $r );
@@ -232,10 +242,32 @@ class BPCLI_Activity extends BPCLI_Component {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
-				$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
+				// Make group updates look more like actual group updates. 
+				// i.e. give them links to their groups. 
+				if ( $r['component'] == 'groups' ) { 
+
+					if ( empty ( $r['item-id'] ) ) { 
+						WP_CLI::error( 'No group found by that id.' );
+					} 
+
+					// get the group
+					$group_obj = groups_get_group( array( 'group_id' => $r['item-id'] ) );
+
+					// make sure such a group exists
+					if ( empty( $group_obj->id ) ) {
+						WP_CLI::error( 'No group found by that slug or id.' );
+					}
+
+					// stolen from groups_join_group
+					$r['action']  = sprintf( __( '%1$s posted an update in the group %2$s', 'buddypress'), bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
+				} else { 
+					// old way, for some other kind of update
+					$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
+				} 
 				if ( empty( $r['content'] ) ) {
 					$r['content'] = $this->generate_random_text();
 				} 
+
 				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
 
 				break;
