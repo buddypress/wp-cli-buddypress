@@ -4,6 +4,8 @@
  * Manage BuddyPress groups.
  */
 class BPCLI_Group extends BPCLI_Component {
+	protected $obj_id_key = 'group_id';
+	protected $obj_type = 'group';
 
 	/**
 	 * Create a group.
@@ -75,6 +77,45 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'Could not create group.' );
 		}
 
+	}
+
+	/**
+	 * Update a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <group-id>
+	 * : Identifier for the group. Can be a numeric ID or the group slug.
+	 *
+	 * --<field>=<value>
+	 * : One or more fields to update. See groups_create_group()
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
+	 */
+	public function update( $args, $assoc_args ) {
+		$clean_group_ids = array();
+
+		foreach ( $args as $group_id ) {
+			// Convert --group_id to group ID
+			// @todo this'll be screwed up if the group has a numeric slug
+			if ( ! is_numeric( $group_id ) ) {
+				$group_id = groups_get_id( $group_id );
+			}
+
+			// Check that group exists
+			$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+			if ( empty( $group_obj->id ) ) {
+				WP_CLI::error( 'No group found by that slug or ID.' );
+			}
+
+			$clean_group_ids[] = $group_id;
+		}
+
+		parent::_update( $clean_group_ids, $assoc_args, function( $params ) {
+			return groups_create_group( $params );
+		} );
 	}
 
 	/**

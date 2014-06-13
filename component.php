@@ -5,7 +5,7 @@
  *
  * @since 1.0
  */
-class BPCLI_Component {
+class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 
 	/**
 	 * Get a random user id.
