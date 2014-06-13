@@ -6,8 +6,9 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp core deactivate` -- Deactivate a component.
 * `bp activity create` -- Create a single activity item.
 * `bp activity generate` -- Generate a large number of random activity items.
-* `bp group create` -- Create new BuddyPress groups.
 * `bp group add_member` -- Add a member to a BuddyPress group.
+* `bp group create` -- Create new BuddyPress groups.
+* `bp group update` -- Update an existing BuddyPress group.
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
 * `bp xprofile create_group` -- Create an XProfile field group.
 
@@ -32,7 +33,7 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
 ### 1.3.0
 
-* New commands: `bp group get_members`
+* New commands: `bp group get_members`, `bp group update`
 
 ### 1.2.0
 
