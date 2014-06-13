@@ -34,6 +34,8 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 ### 1.3.0
 
 * New commands: `bp group get_members`, `bp group update`
+* Ability to pass 'content' when using `bp activity generate`
+* When using `bp activity generate` with type=activity_update and component=groups, format the activity action properly
 
 ### 1.2.0
 
