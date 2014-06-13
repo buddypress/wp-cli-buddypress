@@ -159,29 +159,24 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --group-id=<group>
+	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *        wp bp group get_members --group-id=3
+	 *        wp bp group get_members 3
 	 *
-	 * @synopsis --group-id=<group>
+	 * @synopsis <group-id>
 	 *
 	 * @since 1.3.0
 	 */
 	public function get_members( $args, $assoc_args ) {
-
-		$r = wp_parse_args( $assoc_args, array(
-			'group-id' => null,
-		) );
+		$group_id = isset( $args[0] ) ? $args[0] : '';
 
 		// Convert --group_id to group ID
 		// @todo this'll be screwed up if the group has a numeric slug
-		if ( ! is_numeric( $r['group-id'] ) ) {
-			$group_id = groups_get_id( $r['group-id'] );
-		} else {
-			$group_id = $r['group-id'];
+		if ( ! is_numeric( $group_id ) ) {
+			$group_id = groups_get_id( $group_id );
 		}
 
 		// Check that group exists
