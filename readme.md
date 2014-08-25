@@ -19,7 +19,6 @@ Because I haven't built it yet. I'm filling in commands as I need them, which me
 ## System Requirements
 
 * PHP >=5.3
-* Composer
 * wp-cli >=0.15.0
 
 If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
@@ -27,7 +26,8 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 ## Setup
 
 * Install [wp-cli](https://wp-cli.org)
-* Install wp-cli-buddypress. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information on installing via Composer or manually.
+* Install wp-cli-buddypress. Manuall installation is recommended, though Composer installation should work too. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information. 
+* Inside of a WP installation, type `wp bp`. You should see a list of available commands.
 
 ## Changelog
 
