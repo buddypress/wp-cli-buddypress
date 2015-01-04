@@ -162,9 +162,9 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or id.' );
 		}
 
-		$user_id = $this->get_user_id_from_identifier( $r['user-id'] );
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
 
-		if ( empty( $user_id ) ) {
+		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or id' );
 		}
 
@@ -173,18 +173,18 @@ class BPCLI_Group extends BPCLI_Component {
 			$r['role'] = 'member';
 		}
 
-		$joined = groups_join_group( $group_id, $user_id );
+		$joined = groups_join_group( $group_id, $user->ID );
 
 		if ( $joined ) {
 			if ( 'member' !== $r['role'] ) {
-				$the_member = new BP_Groups_Member( $user_id, $group_id );
-				$member->promote( $r['role'] );
+				$the_member = new BP_Groups_Member( $user->ID, $group_id );
+				$the_member->promote( $r['role'] );
 			}
 
 			$success = sprintf(
 				'Added user #%d (%s) to group #%d (%s) as %s',
-				$user_id,
-				$user_obj->user_login,
+				$user->ID,
+				$user->user_login,
 				$group_id,
 				$group_obj->name,
 				$r['role']

@@ -132,9 +132,9 @@ class BPCLI_XProfile extends BPCLI_Component {
 			'is_required' => false,
 		) );
 
-		$user_id = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $r['user_id'] );
 
-		if ( ! $user_id ) {
+		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or id' );
 			return;
 		}
@@ -154,12 +154,11 @@ class BPCLI_XProfile extends BPCLI_Component {
 			return;
 		}
 
-		$updated = xprofile_set_field_data( $field->id, $user_id, $r['value'], $r['is_required'] );
+		$updated = xprofile_set_field_data( $field->id, $user->ID, $r['value'], $r['is_required'] );
 
 		if ( ! $updated ) {
 			WP_CLI::error( 'Could not set profile data.' );
 		} else {
-			$user = new WP_User( $user_id );
 			$success = sprintf(
 				'Updated field "%s" (id %d) with value "%s" for user %s (id %d)',
 				$field->name,

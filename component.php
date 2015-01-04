@@ -34,23 +34,21 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	/**
 	 * Verify a user ID by the passed identifier.
 	 *
-	 * Accepts a user_login or an ID.
-	 *
 	 * @since 1.2.0
 	 *
-	 * @return int
+	 * @param mixed User ID, email or login
+	 * @return WP_User|false
 	 */
 	protected function get_user_id_from_identifier( $i ) {
-		// @todo this'll be screwed up if user has a numeric user_login
-		if ( ! is_numeric( $i ) ) {
-			$user_id = (int) username_exists( $i );
+		if ( is_numeric( $i ) ) {
+			$user = get_user_by( 'id', $i );
+		} else if ( is_email( $i ) ) {
+			$user = get_user_by( 'email', $i );
 		} else {
-			$user_id = $i;
-			$user_obj = new WP_User( $user_id );
-			$user_id = $user_obj->ID;
+			$user = get_user_by( 'login', $i );
 		}
 
-		return intval( $i );
+		return $user;
 	}
 
 }
