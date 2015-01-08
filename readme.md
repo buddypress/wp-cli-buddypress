@@ -31,6 +31,10 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
 ## Changelog
 
+### 1.3.1
+
+* Improved logic for user-id parsing
+
 ### 1.3.0
 
 * New commands: `bp group get_members`, `bp group update`
