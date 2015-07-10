@@ -180,7 +180,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			$field_id = intval( $field_id );
 		}
 
-		parent::_delete( array( $field_id ), $assoc_args, function ( $field_id ) {
+		parent::_delete( array( $field_id ), $assoc_args, function ( $field_id ) use ( $r ) {
 			$field = new BP_XProfile_Field( $field_id );
 			$name = $field->name;
 			$id = $field->id;
