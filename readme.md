@@ -11,6 +11,10 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp group update` -- Update an existing BuddyPress group.
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
 * `bp xprofile create_group` -- Create an XProfile field group.
+* `bp xprofile list_fields` -- List XProfile fields.
+* `bp xprofile create_field` -- Create an XProfile field.
+* `bp xprofile delete_field` -- Create an XProfile field.
+* `bp xprofile set_data` -- Set XProfile data for a specific user/field combination.
 
 ## Why doesn't this do _x_?
 
@@ -26,10 +30,13 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 ## Setup
 
 * Install [wp-cli](https://wp-cli.org)
-* Install wp-cli-buddypress. Manuall installation is recommended, though Composer installation should work too. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information. 
+* Install wp-cli-buddypress. Manuall installation is recommended, though Composer installation should work too. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information.
 * Inside of a WP installation, type `wp bp`. You should see a list of available commands.
 
 ## Changelog
+
+### 1.4.0
+* New commands: `bp xprofile list_fields`, `bp xprofile delete_field`
 
 ### 1.3.1
 

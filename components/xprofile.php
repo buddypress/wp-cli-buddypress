@@ -6,6 +6,15 @@
  * @since 1.2.0
  */
 class BPCLI_XProfile extends BPCLI_Component {
+	protected $obj_fields = array(
+		'id',
+		'name',
+		'description',
+		'type',
+		'group_id',
+		'is_required',
+	);
+
 	/**
 	 * Create an xprofile group.
 	 *
@@ -42,6 +51,45 @@ class BPCLI_XProfile extends BPCLI_Component {
 			);
 			WP_CLI::success( $success );
 		}
+	}
+
+	/**
+	 * Get a list of xprofile fields.
+	 *
+	 * ## OPTIONS
+	 *
+	 * ## EXAMPLES
+	 *
+	 *        wp bp group get_members 3
+	 *
+	 * @since 1.4.0
+	 *
+	 * @todo Should probably be broken into separate methods for groups etc.
+	 *
+	 * @subcommand list_fields
+	 */
+	public function list_fields_( $_, $assoc_args ) {
+		$defaults = array(
+			'fields' => 'id,name',
+		);
+		$args = array_merge( $defaults, $assoc_args );
+
+		$formatter = $this->get_formatter( $args );
+
+		$args['fetch_fields'] = true;
+		$groups = bp_xprofile_get_groups( $args );
+
+		// Reformat so that field_group_id is a property of fields.
+		$fields = array();
+		foreach ( $groups as $group ) {
+			foreach ( $group->fields as $field ) {
+				$fields[ $field->id ] = $field;
+			}
+		}
+
+		ksort( $fields );
+
+		$formatter->display_items( $fields );
 	}
 
 	/**
@@ -103,6 +151,52 @@ class BPCLI_XProfile extends BPCLI_Component {
 			);
 			WP_CLI::success( $success );
 		}
+	}
+
+	/**
+	 * Delete an xprofile field.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <field-id>
+	 * : Field ID. Accepts either the name of the field or a numeric ID.
+	 *
+	 * [--delete_data=<delete-data>]
+	 * : Whether to delete user data for the field as well.
+	 *
+	 * @since 1.4.0
+	 */
+	public function delete_field( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'delete_data' => false,
+		) );
+
+		// Validate field
+		// We need this info anyway for the success message
+		$field_id = $args[0];
+		if ( ! is_numeric( $field_id ) ) {
+			$field_id = xprofile_get_field_id_from_name( $field_id );
+		} else {
+			$field_id = intval( $field_id );
+		}
+
+		parent::_delete( array( $field_id ), $assoc_args, function ( $field_id ) {
+			$field = new BP_XProfile_Field( $field_id );
+			$name = $field->name;
+			$id = $field->id;
+			$deleted = $field->delete( $r['delete_data'] );
+
+			if ( $deleted ) {
+				$success = sprintf(
+					'Deleted XProfile field "%s" (id %d)',
+					$name,
+					$id
+				);
+				return array( 'success', $success );
+			} else {
+				return array( 'error', "Failed deleting field $field_id." );
+			}
+		} );
 	}
 
 	/**
