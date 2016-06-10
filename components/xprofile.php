@@ -248,7 +248,11 @@ class BPCLI_XProfile extends BPCLI_Component {
 			return;
 		}
 
-		$updated = xprofile_set_field_data( $field->id, $user->ID, $r['value'], $r['is_required'] );
+		if ( 'checkbox' === $field->type ) {
+			$r['value'] = explode( ',', $r['value'] );
+		}
+
+		$updated = xprofile_set_field_data( $field->id, $user_id, $r['value'], $r['is_required'] );
 
 		if ( ! $updated ) {
 			WP_CLI::error( 'Could not set profile data.' );
