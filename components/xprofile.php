@@ -154,6 +154,10 @@ class BPCLI_XProfile extends BPCLI_Component {
 			return;
 		}
 
+		if ( 'checkbox' === $field->type ) {
+			$r['value'] = explode( ',', $r['value'] );
+		}
+
 		$updated = xprofile_set_field_data( $field->id, $user_id, $r['value'], $r['is_required'] );
 
 		if ( ! $updated ) {
