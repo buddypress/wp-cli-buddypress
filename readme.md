@@ -36,7 +36,9 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 ## Changelog
 
 ### 1.4.0
+
 * New commands: `bp xprofile list_fields`, `bp xprofile delete_field`
+* Added the ability to pass multiple comma-separated values when updating xprofile fields
 
 ### 1.3.1
 
