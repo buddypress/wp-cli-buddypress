@@ -38,7 +38,7 @@ class BPCLI_Core extends BPCLI_Component {
 		bp_update_option( 'bp-active-components', $acs );
 
 		// Run the setup, in case tables have to be created
-		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-schema.php' );
+		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-admin-schema.php' );
 		bp_core_install( $acs );
 		bp_core_add_page_mappings( $acs );
 
