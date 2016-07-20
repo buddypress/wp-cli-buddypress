@@ -39,7 +39,7 @@ class BPCLI_Core extends BPCLI_Component {
 
 		// Adds compatability with versions before 2.3, when the bp-core-schema.php 
 		// was renamed into bp-core-admin-schema.php
-		$admin = ( bp_get_major_wp_version() >= 2.3 ) ? 'admin-' : '';
+		$admin = ( bp_get_version() >= 2.3 ) ? 'admin-' : '';
 
 		// Run the setup, in case tables have to be created
 		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-' . $admin . 'schema.php' );
