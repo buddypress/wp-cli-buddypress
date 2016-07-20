@@ -37,8 +37,12 @@ class BPCLI_Core extends BPCLI_Component {
 		// Save in the db
 		bp_update_option( 'bp-active-components', $acs );
 
+		// Adds compatability with versions before 2.3, when the bp-core-schema.php 
+		// was renamed into bp-core-admin-schema.php
+		$admin = ( bp_get_version() >= 2.3 ) ? 'admin-' : '';
+
 		// Run the setup, in case tables have to be created
-		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-schema.php' );
+		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-' . $admin . 'schema.php' );
 		bp_core_install( $acs );
 		bp_core_add_page_mappings( $acs );
 
