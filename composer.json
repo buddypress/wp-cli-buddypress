@@ -1,6 +1,6 @@
 {
 	"name": "boonebgorges/wp-cli-buddypress",
-	"type": "command",
+	"type": "wp-cli-package",
 	"description": "WP-CLI commands for BuddyPress",
 	"keywords": ["wp-cli", "buddypress", "wordpress", "bp"],
 	"homepage": "https://github.com/boonebgorges/wp-cli-buddypress",
