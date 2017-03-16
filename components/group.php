@@ -80,6 +80,84 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
+	 * Generate groups.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many group to generate. Default: 10
+	 *
+	 * [--status=<status>]
+	 * : The status of the generated groups. Specify public, private, hidden, or mixed. Default: public
+	 *
+	 * [--format=<format>]
+	 * : Accepted values: progress, ids. Default: ids.
+	 *
+	 * [--creator-id=<creator-id>]
+	 * : ID of the group creator. Default: 1.
+	 *
+	 * [--enable-forum=<enable-forum>]
+	 * : Whether to enable legacy bbPress forums. Default: 0.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Generate 5 groups of various statuses.
+	 *     $ wp bp group generate --format=ids --count=5 --status=mixed
+	 *     Success: Added group.
+	 *
+	 * @synopsis [--format=<format>] [--count=<count>] [--status=<status>] [--creator-id=<creator-id>] [--enable-forum=<enable-forum>]
+	 */
+	public function generate( $args, $assoc_args ) {
+		global $wpdb;
+		$bp = buddypress();
+
+		$assoc_args = wp_parse_args( $assoc_args, array(
+			'count' => 10,
+			'status' => 'public',
+			'creator_id' => 1,
+			'enable_forum' => 0,
+		) );
+
+		$status = $assoc_args['status'];
+		$good_statuses = array( 'public', 'private', 'hidden' );
+		if ( ! in_array( $status, $good_statuses ) && 'mixed' != $status ) {
+			$status = 'public';
+		}
+
+		$format = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'progress' );
+		$notify = false;
+		if ( 'progress' === $format ) {
+			$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
+		}
+
+		// Find the next group ID so our group names refer to the db ID.
+		$next_id = $wpdb->get_var( "SELECT Auto_increment FROM information_schema.tables WHERE table_name=\"{$bp->groups->table_name}\" AND table_schema=\"{$wpdb->dbname}\"" );
+		$limit = $assoc_args['count'] + $next_id;
+
+		for ( $i = $next_id; $i < $limit; $i++ ) {
+			if ( 'mixed' == $status ) {
+				$group_status = $good_statuses[array_rand( $good_statuses )];
+			} else {
+				$group_status = $status;
+			}
+
+			$group_args = array(
+				'name'         => "Group $i",
+				'status'       => $group_status,
+				'creator_id'   => $assoc_args['creator_id'],
+				'enable_forum' => $assoc_args['enable_forum'],
+			);
+			self::create( '', $group_args );
+			if ( 'progress' === $format ) {
+				$notify->tick();
+			}
+		}
+		if ( 'progress' === $format ) {
+			$notify->finish();
+		}
+	}
+
+	/**
 	 * Update a group.
 	 *
 	 * ## OPTIONS
