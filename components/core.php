@@ -37,9 +37,14 @@ class BPCLI_Core extends BPCLI_Component {
 		// Save in the db
 		bp_update_option( 'bp-active-components', $acs );
 
-		// Adds compatability with versions before 2.3, when the bp-core-schema.php 
+		// Adds compatability with versions before 2.3, when the bp-core-schema.php
 		// was renamed into bp-core-admin-schema.php
 		$admin = ( bp_get_version() >= 2.3 ) ? 'admin-' : '';
+
+		// Ensure that dbDelta() is defined.
+		if ( ! function_exists( 'dbDelta' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		}
 
 		// Run the setup, in case tables have to be created
 		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-' . $admin . 'schema.php' );
