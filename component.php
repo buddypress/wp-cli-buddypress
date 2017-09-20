@@ -36,13 +36,13 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param mixed User ID, email or login
+	 * @param mixed $i User ID, email or login.
 	 * @return WP_User|false
 	 */
 	protected function get_user_id_from_identifier( $i ) {
 		if ( is_numeric( $i ) ) {
 			$user = get_user_by( 'id', $i );
-		} else if ( is_email( $i ) ) {
+		} elseif ( is_email( $i ) ) {
 			$user = get_user_by( 'email', $i );
 		} else {
 			$user = get_user_by( 'login', $i );
@@ -50,5 +50,4 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 
 		return $user;
 	}
-
 }

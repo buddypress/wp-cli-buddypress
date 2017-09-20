@@ -59,23 +59,23 @@ class BPCLI_Activity extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$defaults = array(
-			'component' => '',
-			'type' => '',
-			'action' => '',
-			'content' => '',
-			'primary-link' => '',
-			'user-id' => '',
-			'item-id' => '',
+			'component'         => '',
+			'type'              => '',
+			'action'            => '',
+			'content'           => '',
+			'primary-link'      => '',
+			'user-id'           => '',
+			'item-id'           => '',
 			'secondary-item-id' => '',
-			'date-recorded' => bp_core_current_time(),
-			'hide-sitewide' => 0,
-			'is-spam' => 0,
-			'silent' => false,
+			'date-recorded'     => bp_core_current_time(),
+			'hide-sitewide'     => 0,
+			'is-spam'           => 0,
+			'silent'            => false,
 		);
 
 		$r = wp_parse_args( $assoc_args, $defaults );
 
-		// Fill in any missing information
+		// Fill in any missing information.
 		if ( empty( $r['component'] ) ) {
 			$r['component'] = $this->get_random_component();
 		}
@@ -84,33 +84,33 @@ class BPCLI_Activity extends BPCLI_Component {
 			$r['type'] = $this->get_random_type_from_component( $r['component'] );
 		}
 
-		if ( $r['component'] == 'groups' ) { 
-			// Item ID for groups is a group ID. 
-			// Therefore, handle group slugs, too. 
-			// Convert --item-id to group ID. 
-			// @todo this'll be screwed up if the group has a numeric slug
+		if ( 'groups' === $r['component'] ) {
+			// Item ID for groups is a group ID.
+			// Therefore, handle group slugs, too.
+			// Convert --item-id to group ID.
+			// @todo this'll be screwed up if the group has a numeric slug.
 			if ( $r['item-id'] && ! is_numeric( $r['item-id'] ) ) {
 				$r['item-id'] = groups_get_id( $r['item-id'] );
-			} 
-		} 
-					
-		// If some data is not set, we have to generate it
+			}
+		}
+
+		// If some data is not set, we have to generate it.
 		if ( empty( $r['item_id'] ) || empty( $r['secondary_item_id'] ) ) {
 			$r = $this->generate_item_details( $r );
 		}
 
 		$id = bp_activity_add( array(
-			'action' => $r['action'],
-			'content' => $r['content'],
-			'component' => $r['component'],
-			'type' => $r['type'],
-			'primary_link' => $r['primary-link'],
-			'user_id' => $r['user-id'],
-			'item_id' => $r['item-id'],
+			'action'            => $r['action'],
+			'content'           => $r['content'],
+			'component'         => $r['component'],
+			'type'              => $r['type'],
+			'primary_link'      => $r['primary-link'],
+			'user_id'           => $r['user-id'],
+			'item_id'           => $r['item-id'],
 			'secondary_item_id' => $r['secondary-item-id'],
-			'date_recorded' => $r['date-recorded'],
-			'hide_sitewide' => (bool) $r['hide-sitewide'],
-			'is_spam' => (bool) $r['is-spam'],
+			'date_recorded'     => $r['date-recorded'],
+			'hide_sitewide'     => (bool) $r['hide-sitewide'],
+			'is_spam'           => (bool) $r['is-spam'],
 		) );
 
 		if ( $r['silent'] ) {
@@ -176,7 +176,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	protected function get_random_component() {
 		$c = buddypress()->active_components;
 
-		// Core components that accept activity items
+		// Core components that accept activity items.
 		$ca = $this->get_components_and_actions();
 
 		return array_rand( array_flip( array_intersect( array_keys( $c ), array_keys( $ca ) ) ) );
@@ -237,49 +237,51 @@ class BPCLI_Activity extends BPCLI_Component {
 		global $wpdb, $bp;
 
 		switch ( $r['type'] ) {
-			case 'activity_update' :
+			case 'activity_update':
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
-				// Make group updates look more like actual group updates. 
-				// i.e. give them links to their groups. 
-				if ( $r['component'] == 'groups' ) { 
+				// Make group updates look more like actual group updates.
+				// i.e. give them links to their groups.
+				if ( 'groups' === $r['component'] ) {
 
-					if ( empty ( $r['item-id'] ) ) { 
+					if ( empty( $r['item-id'] ) ) {
 						WP_CLI::error( 'No group found by that id.' );
-					} 
+					}
 
-					// get the group
-					$group_obj = groups_get_group( array( 'group_id' => $r['item-id'] ) );
+					// get the group.
+					$group_obj = groups_get_group( array(
+						'group_id' => $r['item-id'],
+					) );
 
-					// make sure such a group exists
+					// make sure such a group exists.
 					if ( empty( $group_obj->id ) ) {
 						WP_CLI::error( 'No group found by that slug or id.' );
 					}
 
-					// stolen from groups_join_group
+					// stolen from groups_join_group.
 					$r['action']  = sprintf( __( '%1$s posted an update in the group %2$s', 'buddypress'), bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
-				} else { 
-					// old way, for some other kind of update
+				} else {
+					// old way, for some other kind of update.
 					$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
-				} 
+				}
 				if ( empty( $r['content'] ) ) {
 					$r['content'] = $this->generate_random_text();
-				} 
+				}
 
 				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
 
 				break;
 
-			case 'activity_comment' :
+			case 'activity_comment':
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
 				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" );
 
-				if ( 'activity_comment' == $parent_item->type ) {
+				if ( 'activity_comment' === $parent_item->type ) {
 					$r['item-id'] = $parent_item->id;
 					$r['secondary-item-id'] = $parent_item->secondary_item_id;
 				} else {
@@ -292,9 +294,9 @@ class BPCLI_Activity extends BPCLI_Component {
 
 				break;
 
-			case 'new_blog' :
-			case 'new_blog_post' :
-			case 'new_blog_comment' :
+			case 'new_blog':
+			case 'new_blog_post':
+			case 'new_blog_comment':
 				if ( ! bp_is_active( 'blogs' ) ) {
 					return $r;
 				}
@@ -305,7 +307,7 @@ class BPCLI_Activity extends BPCLI_Component {
 					$r['item-id'] = 1;
 				}
 
-				// Need blog content for posts/comments
+				// Need blog content for posts/comments.
 				if ( 'new_blog_post' === $r['type'] || 'new_blog_comment' === $r['type'] ) {
 
 					if ( is_multisite() ) {
@@ -324,7 +326,7 @@ class BPCLI_Activity extends BPCLI_Component {
 					}
 				}
 
-				// new_blog
+				// new_blog.
 				if ( 'new_blog' === $r['type'] ) {
 					if ( '' === $r['user-id'] ) {
 						$r['user-id'] = $this->get_random_user_id();
@@ -338,8 +340,8 @@ class BPCLI_Activity extends BPCLI_Component {
 						$r['primary-link'] = get_home_url( $r['item-id'] );
 					}
 
-				// new_blog_post
-				} else if ( 'new_blog_post' === $r['type'] ) {
+				// new_blog_post.
+				} elseif ( 'new_blog_post' === $r['type'] ) {
 					if ( '' === $r['user-id'] ) {
 						$r['user-id'] = $post->post_author;
 					}
@@ -360,9 +362,9 @@ class BPCLI_Activity extends BPCLI_Component {
 						$r['secondary-item-id'] = $post->ID;
 					}
 
-				// new_blog_comment
+				// new_blog_comment.
 				} else {
-					// groan - have to fake this
+					// groan - have to fake this.
 					if ( '' === $r['user-id'] ) {
 						$user = get_user_by( 'email', $comment->comment_author_email );
 						if ( empty( $user ) ) {
@@ -396,7 +398,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 				break;
 
-			case 'friendship_created' :
+			case 'friendship_created':
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $this->get_random_user_id();
 				}
@@ -409,12 +411,14 @@ class BPCLI_Activity extends BPCLI_Component {
 
 				break;
 
-			case 'created_group' :
+			case 'created_group':
 				if ( empty( $r['item-id'] ) ) {
 					$r['item-id'] = $this->get_random_group_id();
 				}
 
-				$group = groups_get_group( array( 'group_id' => $r['item-id'] ) );
+				$group = groups_get_group( array(
+					'group_id' => $r['item-id'],
+				) );
 
 				// @todo what if it's not a group? ugh
 				if ( empty( $r['user-id'] ) ) {
@@ -433,13 +437,14 @@ class BPCLI_Activity extends BPCLI_Component {
 
 				break;
 
-			case 'joined_group' :
-
+			case 'joined_group':
 				if ( empty( $r['item-id'] ) ) {
 					$r['item-id'] = $this->get_random_group_id();
 				}
 
-				$group = groups_get_group( array( 'group_id' => $r['item-id'] ) );
+				$group = groups_get_group( array(
+					'group_id' => $r['item-id'],
+				) );
 
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $this->get_random_user_id();
@@ -455,25 +460,24 @@ class BPCLI_Activity extends BPCLI_Component {
 
 				break;
 
-			case 'new_avatar' :
-			case 'new_member' :
-			case 'updated_profile' :
-
+			case 'new_avatar':
+			case 'new_member':
+			case 'updated_profile':
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
 				$userlink = bp_core_get_userlink( $r['user-id'] );
 
-				// new_avatar
+				// new_avatar.
 				if ( 'new_avatar' === $r['type'] ) {
 					$r['action'] = sprintf( __( '%s changed their profile picture', 'buddypress' ), $userlink );
 
-				// new_member
-				} else if ( 'new_member' === $r['type'] ) {
+				// new_member.
+				} elseif ( 'new_member' === $r['type'] ) {
 					$r['action'] = sprintf( __( '%s became a registered member', 'buddypress' ), $userlink );
 
-				// updated_profile
+				// updated_profile.
 				} else {
 					$r['action'] = sprintf( __( '%s updated their profile', 'buddypress' ), $userlink );
 				}
@@ -501,5 +505,5 @@ WP_CLI::add_command( 'bp activity', 'BPCLI_Activity', array(
 		if ( ! bp_is_active( 'activity' ) ) {
 			WP_CLI::error( 'The Activity component is not active.' );
 		}
-} ) );
-
+	},
+) );

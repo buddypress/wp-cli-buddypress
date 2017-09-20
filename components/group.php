@@ -60,7 +60,7 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'You must provide a --name parameter when creating a group.' );
 		}
 
-		// Auto-generate some stuff
+		// Auto-generate some stuff.
 		if ( ! $r['slug'] ) {
 			$r['slug'] = groups_check_slug( sanitize_title( $r['name'] ) );
 		}
@@ -69,9 +69,12 @@ class BPCLI_Group extends BPCLI_Component {
 			$r['description'] = sprintf( 'Description for group "%s"', $r['name'] );
 		}
 
-		if ( $id = groups_create_group( $r ) ) {
+		$id = groups_create_group( $r );
+		if ( $id ) {
 			groups_update_groupmeta( $id, 'total_member_count', 1 );
-			$group = groups_get_group( array( 'group_id' => $id ) );
+			$group = groups_get_group( array(
+				'group_id' => $id,
+			) );
 			WP_CLI::success( "Group $id created: " . bp_get_group_permalink( $group ) );
 		} else {
 			WP_CLI::error( 'Could not create group.' );
@@ -99,13 +102,15 @@ class BPCLI_Group extends BPCLI_Component {
 
 		foreach ( $args as $group_id ) {
 			// Convert --group_id to group ID
-			// @todo this'll be screwed up if the group has a numeric slug
+			// @todo this'll be screwed up if the group has a numeric slug.
 			if ( ! is_numeric( $group_id ) ) {
 				$group_id = groups_get_id( $group_id );
 			}
 
-			// Check that group exists
-			$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+			// Check that group exists.
+			$group_obj = groups_get_group( array(
+				'group_id' => $group_id,
+			) );
 			if ( empty( $group_obj->id ) ) {
 				WP_CLI::error( 'No group found by that slug or ID.' );
 			}
@@ -149,15 +154,17 @@ class BPCLI_Group extends BPCLI_Component {
 		) );
 
 		// Convert --group_id to group ID
-		// @todo this'll be screwed up if the group has a numeric slug
+		// @todo this'll be screwed up if the group has a numeric slug.
 		if ( ! is_numeric( $r['group-id'] ) ) {
 			$group_id = groups_get_id( $r['group-id'] );
 		} else {
 			$group_id = $r['group-id'];
 		}
 
-		// Check that group exists
-		$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+		// Check that group exists.
+		$group_obj = groups_get_group( array(
+			'group_id' => $group_id,
+		) );
 		if ( empty( $group_obj->id ) ) {
 			WP_CLI::error( 'No group found by that slug or id.' );
 		}
@@ -168,8 +175,8 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or id' );
 		}
 
-		// Sanitize role
-		if ( ! in_array( $r['role'], array( 'member', 'mod', 'admin' ) ) ) {
+		// Sanitize role.
+		if ( ! in_array( $r['role'], array( 'member', 'mod', 'admin' ), true ) ) {
 			$r['role'] = 'member';
 		}
 
@@ -215,18 +222,20 @@ class BPCLI_Group extends BPCLI_Component {
 		$group_id = isset( $args[0] ) ? $args[0] : '';
 
 		// Convert --group_id to group ID
-		// @todo this'll be screwed up if the group has a numeric slug
+		// @todo this'll be screwed up if the group has a numeric slug.
 		if ( ! is_numeric( $group_id ) ) {
 			$group_id = groups_get_id( $group_id );
 		}
 
-		// Check that group exists
-		$group_obj = groups_get_group( array( 'group_id' => $group_id ) );
+		// Check that group exists.
+		$group_obj = groups_get_group( array(
+			'group_id' => $group_id,
+		) );
 		if ( empty( $group_obj->id ) ) {
 			WP_CLI::error( 'No group found by that slug or id.' );
 		}
 
-		// Get our members
+		// Get our members.
 		$members = groups_get_group_members( array(
 			'group_id' => $group_id,
 		) );
@@ -259,5 +268,6 @@ WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
 		if ( ! bp_is_active( 'groups' ) ) {
 			WP_CLI::error( 'The Groups component is not active.' );
 		}
-} ) );
+	},
+) );
 
