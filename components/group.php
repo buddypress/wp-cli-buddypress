@@ -21,7 +21,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--description=<description>]
 	 * : Group description. Default: 'Description for group "[name]"'
 	 *
-	 * [--creator-id=<creator-id>]
+	 * [--creator_id=<creator_id>]
 	 * : ID of the group creator. Default: 1.
 	 *
 	 * [--slug=<slug>]
@@ -39,9 +39,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *        wp bp group create --name="Totally Cool Group"
-	 *        wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
+	 *        wp bp group create --name="Sports" --description="People who love sports" --creator_id=54 --status=private
 	 *
-	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator-id=<creator-id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
+	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator_id=<creator_id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
 	 *
 	 * @since 1.0
 	 */

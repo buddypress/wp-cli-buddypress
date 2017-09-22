@@ -78,6 +78,11 @@ class BPCLI_Core extends BPCLI_Component {
 			return;
 		}
 
+		if ( array_key_exists( $c, bp_core_get_components( 'required' ) ) ) {
+			WP_CLI::warning( sprintf( 'You cannot deactivate a required component.' ) );
+			return;
+		}
+
 		$acs =& buddypress()->active_components;
 
 		// Set for the rest of the page load.
