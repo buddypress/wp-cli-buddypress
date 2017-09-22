@@ -1,7 +1,7 @@
 <?php
 
 if ( ! class_exists( 'User_Command' ) ) {
-	require_once( WP_CLI_ROOT . "/php/commands/user.php" );
+	require_once( WP_CLI_ROOT . '/php/commands/user.php' );
 }
 
 /**
@@ -21,6 +21,11 @@ class BPCLI_Member extends BPCLI_Component {
 		User_Command::generate( $args, $assoc_args );
 	}
 
+	/**
+	 * Update the last user activity with a radom date.
+	 *
+	 * @since 1.0
+	 */
 	public static function update_user_last_activity_random( $user_id ) {
 		$time = rand( 0, time() );
 		$time = date( 'Y-m-d H:i:s', $time );
@@ -29,4 +34,3 @@ class BPCLI_Member extends BPCLI_Component {
 }
 
 WP_CLI::add_command( 'bp member', 'BPCLI_Member' );
-

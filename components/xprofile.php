@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Manage xprofile data.
  *
@@ -133,7 +132,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * @since 1.2.0
 	 */
 	public function create_field( $args, $assoc_args ) {
-		// Rest of arguments are passed through
+		// Rest of arguments are passed through.
 		$r = wp_parse_args( $assoc_args, array(
 			'type'  => 'textbox',
 		) );
@@ -172,7 +171,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		) );
 
 		// Validate field
-		// We need this info anyway for the success message
+		// We need this info anyway for the success message.
 		$field_id = $args[0];
 		if ( ! is_numeric( $field_id ) ) {
 			$field_id = xprofile_get_field_id_from_name( $field_id );
@@ -234,7 +233,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		}
 
 		// Validate field
-		// We need this info anyway for the success message
+		// We need this info anyway for the success message.
 		if ( ! is_numeric( $r['field_id'] ) ) {
 			$field_id = xprofile_get_field_id_from_name( $r['field_id'] );
 		} else {
@@ -276,5 +275,5 @@ WP_CLI::add_command( 'bp xprofile', 'BPCLI_XProfile', array(
 		if ( ! bp_is_active( 'xprofile' ) ) {
 			WP_CLI::error( 'The XProfile component is not active.' );
 		}
-} ) );
-
+	},
+) );
