@@ -1,9 +1,9 @@
 {
-	"name": "boonebgorges/wp-cli-buddypress",
+	"name": "buddypress/wp-cli-buddypress",
 	"type": "wp-cli-package",
 	"description": "WP-CLI commands for BuddyPress",
 	"keywords": ["wp-cli", "buddypress", "wordpress", "bp"],
-	"homepage": "https://github.com/boonebgorges/wp-cli-buddypress",
+	"homepage": "https://github.com/buddypress/wp-cli-buddypress",
 	"require": {
 		"php": ">=5.3"
 	},
@@ -16,8 +16,8 @@
 		}
 	],
 	"support": {
-		"issues": "https://github.com/boonebgorges/wp-cli-buddypress/issues",
-		"source": "https://github.com/boonebgorges/wp-cli-buddypress"
+		"issues": "https://github.com/buddypress/wp-cli-buddypress/issues",
+		"source": "https://github.com/buddypress/wp-cli-buddypress"
 	},
 	"autoload": {
 		"files": [ "wp-cli-bp.php" ]
