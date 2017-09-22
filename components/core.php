@@ -47,7 +47,7 @@ class BPCLI_Core extends BPCLI_Component {
 		}
 
 		// Run the setup, in case tables have to be created.
-		require_once( BP_PLUGIN_DIR . '/bp-core/admin/bp-core-' . $admin . 'schema.php' );
+		require_once( BP_PLUGIN_DIR . 'bp-core/admin/bp-core-' . $admin . 'schema.php' );
 		bp_core_install( $acs );
 		bp_core_add_page_mappings( $acs );
 
