@@ -47,11 +47,11 @@ class BPCLI_Group extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'name' => '',
-			'slug' => '',
-			'description' => '',
-			'creator_id' => 1,
-			'status' => 'public',
+			'name'         => '',
+			'slug'         => '',
+			'description'  => '',
+			'creator_id'   => 1,
+			'status'       => 'public',
 			'enable_forum' => 0,
 			'date_created' => bp_core_current_time(),
 		) );
@@ -80,6 +80,36 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'Could not create group.' );
 		}
 
+	}
+
+	/**
+	 * Generate random groups.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many groups to generate. Default: 100
+	 *
+	 * @synopsis [--count=<number>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function generate( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'count' => 100,
+		) );
+
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $r['count'] );
+
+		for ( $i = 0; $i < $r['count']; $i++ ) {
+			$this->create( array(), array(
+				'name' => 'Test Group - ' . $i,
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
 	}
 
 	/**
