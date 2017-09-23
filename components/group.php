@@ -194,6 +194,54 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
+	 * Get a list of groups.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --<field>=<value>
+	 * : One or more fields to fetch. See groups_get_groups()
+	 *
+	 * * [--field=<field>]
+	 * : Prints the value of a single field for each group.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific object fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp group list --format=ids
+	 *
+	 * @since 1.3.0
+	 */
+	public function list( $args, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
+		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+
+		if ( 'ids' === $formatter->format ) {
+			$query_args['fields']      = 'ids';
+			$query_args['show_hidden'] = true;
+			$query_args['per_page']    = null; // Return all results.
+
+			$groups                    = groups_get_groups( $query_args );
+			$groups                    = $groups['groups'];
+			echo implode( ' ', $groups );
+		} elseif ( 'count' === $formatter->format ) {
+			$query_args['fields'] = 'ids';
+			$groups  = groups_get_groups( $query_args );
+			$groups  = $groups['groups'];
+			$formatter->display_items( $groups );
+		} else {
+			$groups  = groups_get_groups( $query_args );
+			$groups  = $groups['groups'];
+
+			$formatter->display_items( $groups );
+		}
+	}
+
+	/**
 	 * Add a member to a group.
 	 *
 	 * ## OPTIONS
