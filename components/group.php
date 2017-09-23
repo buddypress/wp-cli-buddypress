@@ -79,7 +79,6 @@ class BPCLI_Group extends BPCLI_Component {
 		} else {
 			WP_CLI::error( 'Could not create group.' );
 		}
-
 	}
 
 	/**
@@ -89,6 +88,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * [--count=<number>]
 	 * : How many groups to generate. Default: 100
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  wp bp group generate --count=50
 	 *
 	 * @synopsis [--count=<number>]
 	 *
