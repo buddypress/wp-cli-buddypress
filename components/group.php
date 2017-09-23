@@ -125,21 +125,17 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  wp bp group delete --group-id=500
+	 *  wp bp group delete 500
 	 *
-	 * @synopsis [--group-id=<id>]
+	 * @synopsis <group-id>
 	 *
 	 * @since 1.3.0
 	 */
 	public function delete( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'group-id' => null,
-		) );
+		$group_id = isset( $args[0] ) ? $args[0] : '';
 
-		if ( ! is_numeric( $r['group-id'] ) ) {
-			$group_id = groups_get_id( $r['group-id'] );
-		} else {
-			$group_id = $r['group-id'];
+		if ( ! is_numeric( $group_id ) ) {
+			$group_id = groups_get_id( $group_id );
 		}
 
 		// Check that group exists.
