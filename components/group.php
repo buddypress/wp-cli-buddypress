@@ -218,7 +218,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 */
 	public function list( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
-		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+		$query_args = self::process_csv_arguments_to_arrays( $assoc_args );
 
 		if ( 'ids' === $formatter->format ) {
 			$query_args['fields']      = 'ids';
@@ -227,7 +227,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 			$groups                    = groups_get_groups( $query_args );
 			$groups                    = $groups['groups'];
-			echo implode( ' ', $groups );
+			echo implode( ' ', $groups ); // XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
 			$query_args['fields'] = 'ids';
 			$groups  = groups_get_groups( $query_args );
@@ -267,8 +267,8 @@ class BPCLI_Group extends BPCLI_Component {
 	public function add_member( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'group-id' => null,
-			'user-id' => null,
-			'role' => 'member',
+			'user-id'  => null,
+			'role'     => 'member',
 		) );
 
 		// Convert --group_id to group ID
