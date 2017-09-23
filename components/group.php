@@ -116,7 +116,7 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete a group
+	 * Delete a group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -147,7 +147,10 @@ class BPCLI_Group extends BPCLI_Component {
 			'group_id' => $group_id,
 		) );
 		if ( ! empty( $group_obj->id ) ) {
-			WP_CLI::success( 'Group deleted.' );
+			// Delete group. True if deleted.
+			if ( groups_delete_group( $group_id ) ) {
+				WP_CLI::success( 'Group deleted.' );
+			}
 		} else {
 			WP_CLI::error( 'Could not delete the group.' );
 		}
