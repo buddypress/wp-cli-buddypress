@@ -8,7 +8,9 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp activity generate` -- Generate a large number of random activity items.
 * `bp group add_member` -- Add a member to a BuddyPress group.
 * `bp group create` -- Create new BuddyPress groups.
+* `bp group generate` -- Generate a large number of random groups.
 * `bp group update` -- Update an existing BuddyPress group.
+* `bp group delete` -- Delete an existing BuddyPress group.
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
 * `bp xprofile create_group` -- Create an XProfile field group.
 * `bp xprofile list_fields` -- List XProfile fields.
