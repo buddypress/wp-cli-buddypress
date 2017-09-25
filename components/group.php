@@ -142,11 +142,13 @@ class BPCLI_Group extends BPCLI_Component {
 		$group_obj = groups_get_group( array(
 			'group_id' => $group_id,
 		) );
-		if ( ! empty( $group_obj->id ) ) {
-			// Delete group. True if deleted.
-			if ( groups_delete_group( $group_id ) ) {
-				WP_CLI::success( 'Group deleted.' );
-			}
+		if ( empty( $group_obj->id ) ) {
+			WP_CLI::error( 'Group does not exit.' );
+		}
+
+		// Delete group. True if deleted.
+		if ( groups_delete_group( $group_id ) ) {
+			WP_CLI::success( 'Group deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete the group.' );
 		}
