@@ -120,8 +120,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--group-id=<id>]
-	 * : Group ID.
+	 * <group-id>
+	 * : Identifier for the group. Can be a numeric ID or the group slug.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -143,7 +143,7 @@ class BPCLI_Group extends BPCLI_Component {
 			'group_id' => $group_id,
 		) );
 		if ( empty( $group_obj->id ) ) {
-			WP_CLI::error( 'Group does not exit.' );
+			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
 		// Delete group. True if deleted.
