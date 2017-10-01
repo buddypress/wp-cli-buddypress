@@ -326,6 +326,57 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Post an activity update.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be generated.
+	 *
+	 * [--user-id=<user-id>]
+	 * : ID of the user. If none is provided, a user will be randomly selected.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity post_update --content="Content to update" --user_id=50
+	 *    wp bp activity post_update --user_id=140
+	 *
+	 * @synopsis [--content=<content>] [--user_id=<user_id>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function post_update( $args, $assoc_args ) {
+		$defaults = array(
+			'content' => '',
+			'user_id' => '',
+		);
+
+		$r = wp_parse_args( $assoc_args, $defaults );
+
+		// If no content, let's add some.
+		if ( empty( $r['content'] ) ) {
+			$r['content'] = $this->generate_random_text();
+		}
+
+		// IF no user, let's add one.
+		if ( empty( $r['user_id'] ) ) {
+			$r['user_id'] = $this->get_random_user_id();
+		}
+
+		// Post the activity update.
+		$post = bp_activity_post_update( array(
+			'content'   => $r['content'],
+			'user_id'   => (int) $r['user_id'],
+		) );
+
+		if ( is_numeric( $activity_id ) ) {
+			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $id ) );
+		} else {
+			WP_CLI::error( 'Could not post the activity update.' );
+		}
+	}
+
+	/**
 	 * Pull up a random active component for use in activity items.
 	 *
 	 * @since 1.1
