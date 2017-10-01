@@ -193,8 +193,12 @@ class BPCLI_Activity extends BPCLI_Component {
 			$activity_id = intval( $activity_id );
 		}
 
+		$activity = bp_activity_delete( array(
+			'id' => $activity_id,
+		) );
+
 		// Delete activity. True if deleted.
-		if ( bp_activity_delete( $activity_id ) ) {
+		if ( $activity ) {
 			WP_CLI::success( 'Activity deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete the activity.' );
