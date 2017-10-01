@@ -404,7 +404,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		if ( is_string( $permalink ) ) {
 			WP_CLI::success( sprintf( 'Activity Permalink: %s', $permalink ) );
 		} else {
-			WP_CLI::error( 'No permalnk found.' );
+			WP_CLI::error( 'No permalink found by that ID.' );
 		}
 	}
 
