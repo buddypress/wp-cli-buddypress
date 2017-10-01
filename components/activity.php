@@ -377,6 +377,38 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Get the permalink for a single activity item.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <activity-id>
+	 * : Identifier for the activity.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp activity permalink 500
+	 *
+	 * @synopsis <activity-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function permalink( $args, $assoc_args ) {
+		$activity_id = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $activity_id ) ) {
+			$activity_id = intval( $activity_id );
+		}
+
+		$permalink = bp_activity_get_permalink( $activity_id );
+
+		if ( is_string( $permalink ) ) {
+			WP_CLI::success( sprintf( 'Activity Permalink: %s', $permalink ) );
+		} else {
+			WP_CLI::error( 'No permalnk found.' );
+		}
+	}
+
+	/**
 	 * Pull up a random active component for use in activity items.
 	 *
 	 * @since 1.1
