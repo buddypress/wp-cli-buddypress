@@ -729,17 +729,6 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		return $r;
 	}
-
-	/**
-	 * Generate random text
-	 *
-	 * @todo
-	 *
-	 * @since 1.1
-	 */
-	protected function generate_random_text() {
-		return 'Here is some random text';
-	}
 }
 
 WP_CLI::add_command( 'bp activity', 'BPCLI_Activity', array(

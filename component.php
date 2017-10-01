@@ -50,4 +50,13 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 
 		return $user;
 	}
+
+	/**
+	 * Generate random text
+	 *
+	 * @since 1.1
+	 */
+	protected function generate_random_text() {
+		return 'Here is some random text';
+	}
 }
