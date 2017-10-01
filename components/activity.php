@@ -137,7 +137,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp activities list --format=ids
+	 *   wp bp activity list --format=ids
 	 *
 	 * @since 1.3.0
 	 */
@@ -282,6 +282,46 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::success( 'Activity marked as spam.' );
 		} else {
 			WP_CLI::error( 'Could not spam the activity.' );
+		}
+	}
+
+	/**
+	 * Ham an activity.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <activity-id>
+	 * : Identifier for the activity.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity ham 500
+	 *
+	 * @synopsis <activity-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function ham( $args, $assoc_args ) {
+		$activity_id = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $activity_id ) ) {
+			$activity_id = intval( $activity_id );
+		}
+
+		// Load up the activity item.
+		$activity = new BP_Activity_Activity( $activity_id );
+
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
+		}
+
+		// Mark as spam.
+		bp_activity_mark_as_ham( $activity );
+
+		if ( $activity->save() ) {
+			WP_CLI::success( 'Activity marked as ham.' );
+		} else {
+			WP_CLI::error( 'Could not ham the activity.' );
 		}
 	}
 
