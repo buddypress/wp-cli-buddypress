@@ -206,6 +206,46 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Spam an activity.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <activity-id>
+	 * : Identifier for the activity.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity spam 500
+	 *
+	 * @synopsis <activity-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function spam( $args, $assoc_args ) {
+		$activity_id = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $activity_id ) ) {
+			$activity_id = intval( $activity_id );
+		}
+
+		// Load up the activity item.
+		$activity = new BP_Activity_Activity( $activity_id );
+
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
+		}
+
+		// Mark as spam.
+		bp_activity_mark_as_spam( $activity );
+
+		if ( $activity->save() ) {
+			WP_CLI::success( 'Activity marked as spam.' );
+		} else {
+			WP_CLI::error( 'Could not spam the activity.' );
+		}
+	}
+
+	/**
 	 * Pull up a random active component for use in activity items.
 	 *
 	 * @since 1.1
