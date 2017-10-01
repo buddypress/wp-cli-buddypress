@@ -136,6 +136,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : Whether to skip activity comments. Recording activity_comment
 	 * items requires a resource-intensive tree rebuild. Default: 1
 	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity generate --count=50
+	 *
 	 * @synopsis [--count=<number>] [--skip-activity-comments=<skip-activity-comments>]
 	 */
 	public function generate( $args, $assoc_args ) {
@@ -156,14 +160,45 @@ class BPCLI_Activity extends BPCLI_Component {
 		for ( $i = 0; $i < $r['count']; $i++ ) {
 			$this->create( array(), array(
 				'component' => $component,
-				'type' => $type,
-				'silent' => true,
+				'type'      => $type,
+				'silent'    => true,
 			) );
 
 			$notify->tick();
 		}
 
 		$notify->finish();
+	}
+
+	/**
+	 * Delete an activity.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <activity-id>
+	 * : Identifier for the activity.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity delete 500
+	 *
+	 * @synopsis <activity-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function delete( $args, $assoc_args ) {
+		$activity_id = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $activity_id ) ) {
+			$activity_id = intval( $activity_id );
+		}
+
+		// Delete activity. True if deleted.
+		if ( bp_activity_delete( $activity_id ) ) {
+			WP_CLI::success( 'Activity deleted.' );
+		} else {
+			WP_CLI::error( 'Could not delete the activity.' );
+		}
 	}
 
 	/**
