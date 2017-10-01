@@ -125,6 +125,46 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Get a list of activities.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --<field>=<value>
+	 * : One or more parameters to pass. See bp_activity_get()
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp activities list --format=ids
+	 *
+	 * @since 1.3.0
+	 */
+	public function list( $args, $assoc_args ) {
+		$r = wp_parse_args( $args, array(
+			'count_total' => false,
+		) );
+
+		$args      = array_merge( $r, $assoc_args );
+		$formatter = $this->get_formatter( $args );
+
+		if ( 'ids' === $formatter->format ) {
+			$args['fields']      = 'ids';
+			$args['show_hidden'] = true;
+			$args['per_page']    = null; // Return all results.
+
+			// Get activities.
+			$activities = bp_activity_get( $args );
+			echo implode( ' ', $activities['activities'] ); // XSS ok.
+		} else {
+			$activities = bp_activity_get( $args );
+
+			$formatter->display_items( $activities['activities'] );
+		}
+	}
+
+	/**
 	 * Generate random activity items.
 	 *
 	 * ## OPTIONS
