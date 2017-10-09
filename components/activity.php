@@ -281,7 +281,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		if ( $activity->save() ) {
 			WP_CLI::success( 'Activity marked as spam.' );
 		} else {
-			WP_CLI::error( 'Could not spam the activity.' );
+			WP_CLI::error( 'Could not mark the activity as spam.' );
 		}
 	}
 
@@ -315,13 +315,13 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
-		// Mark as spam.
+		// Mark as ham.
 		bp_activity_mark_as_ham( $activity );
 
 		if ( $activity->save() ) {
 			WP_CLI::success( 'Activity marked as ham.' );
 		} else {
-			WP_CLI::error( 'Could not ham the activity.' );
+			WP_CLI::error( 'Could not mark the activity as ham.' );
 		}
 	}
 
@@ -338,10 +338,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp activity post_update --content="Content to update" --user_id=50
-	 *    wp bp activity post_update --user_id=140
+	 *    wp bp activity post_update --content="Content to update" --user-id=50
+	 *    wp bp activity post_update --user-id=140
 	 *
-	 * @synopsis [--content=<content>] [--user_id=<user_id>]
+	 * @synopsis [--content=<content>] [--user-id=<user-id>]
 	 *
 	 * @since 1.3.0
 	 */
@@ -364,15 +364,84 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		// Post the activity update.
-		$post = bp_activity_post_update( array(
-			'content'   => $r['content'],
-			'user_id'   => (int) $r['user_id'],
+		$activity_id = bp_activity_post_update( array(
+			'content' => $r['content'],
+			'user_id' => (int) $r['user_id'],
 		) );
 
+		// Activity ID returned on success update.
 		if ( is_numeric( $activity_id ) ) {
 			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Could not post the activity update.' );
+		}
+	}
+
+	/**
+	 * Add an activity comment.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be generated.
+	 *
+	 * [--user-id=<user-id>]
+	 * : ID of the user. If none is provided, a user will be randomly selected.
+	 *
+	 * [--activity-id=<activity-id>]
+	 * : ID of the activity to add the comment.
+	 *
+	 * [--skip-notification=<skip-notification>]
+	 * : Whether to skip notification. Default: false
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity comment --content="New activity comment." --user-id=50 --activity-id=500
+	 *    wp bp activity comment --user-id=140  --activity-id=800
+	 *    wp bp activity comment --user-id=140  --activity-id=750 --skip-notification=1
+	 *
+	 * @synopsis [--content=<content>] [--user-id=<user-id>] [--activity-id=<activity-id>] [--skip-notification=<skip-notification>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function comment( $args, $assoc_args ) {
+		$defaults = array(
+			'content'           => '',
+			'user_id'           => '',
+			'activity_id'       => '',
+			'skip_notification' => false,
+		);
+
+		$r = wp_parse_args( $assoc_args, $defaults );
+
+		// If no content, let's add some.
+		if ( empty( $r['content'] ) ) {
+			$r['content'] = $this->generate_random_text();
+		}
+
+		// IF no user, let's add one.
+		if ( empty( $r['user_id'] ) ) {
+			$r['user_id'] = $this->get_random_user_id();
+		}
+
+		// Bail if there is not activity id.
+		if ( empty( $r['activity_id'] ) ) {
+			WP_CLI::error( 'No activity ID found.' );
+		}
+
+		// Add activity comment.
+		$comment_id = bp_activity_new_comment( array(
+			'content'           => $r['content'],
+			'user_id'           => (int) $r['user_id'],
+			'activity_id'       => (int) $r['activity_id'],
+			'skip_notification' => $r['skip_notification'],
+		) );
+
+		// Activity Comment ID returned on success.
+		if ( is_numeric( $comment_id ) ) {
+			WP_CLI::success( sprintf( 'Successfully added a new activity comment (id #%d)', $id ) );
+		} else {
+			WP_CLI::error( 'Could not post a new activity comment.' );
 		}
 	}
 
