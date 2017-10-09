@@ -446,6 +446,56 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Delete an activity comment.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--activity-id=<activity-id>]
+	 * : ID of the activity to delete the comment.
+	 *
+	 * [--comment-id=<comment-id>]
+	 * : ID of the comment to delete.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity delete_comment --activity-id=100 --comment-id=500
+	 *
+	 * @synopsis [--activity-id=<activity-id>] [--comment-id=<comment-id>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function delete_comment( $args, $assoc_args ) {
+		$defaults = array(
+			'activity_id'  => '',
+			'comment_id'   => '',
+		);
+
+		$r = wp_parse_args( $assoc_args, $defaults );
+
+		// Bail if there is not activity id.
+		if ( empty( $r['activity_id'] ) ) {
+			WP_CLI::error( 'No activity ID found.' );
+		}
+
+		// Bail if there is not comment id.
+		if ( empty( $r['comment_id'] ) ) {
+			WP_CLI::error( 'No comment ID found.' );
+		}
+
+		$deleted = bp_activity_delete_comment( array(
+			'activity_id' => (int) $r['activity_id'],
+			'comment_id'  => (int) $r['comment_id'],
+		) );
+
+		// Delete Comment. True if deleted.
+		if ( $deleted ) {
+			WP_CLI::success( 'Activity comment deleted.' );
+		} else {
+			WP_CLI::error( 'Could not delete the activity comment.' );
+		}
+	}
+
+	/**
 	 * Get the permalink for a single activity item.
 	 *
 	 * ## OPTIONS
