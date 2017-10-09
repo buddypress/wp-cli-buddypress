@@ -1,0 +1,1 @@
+Feature: Manage BuddyPress Activities
