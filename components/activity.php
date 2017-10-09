@@ -371,7 +371,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		// Activity ID returned on success update.
 		if ( is_numeric( $activity_id ) ) {
-			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $activity_id ) );
 		} else {
 			WP_CLI::error( 'Could not post the activity update.' );
 		}
@@ -439,7 +439,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		// Activity Comment ID returned on success.
 		if ( is_numeric( $comment_id ) ) {
-			WP_CLI::success( sprintf( 'Successfully added a new activity comment (id #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully added a new activity comment (id #%d)', $comment_id ) );
 		} else {
 			WP_CLI::error( 'Could not post a new activity comment.' );
 		}
