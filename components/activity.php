@@ -230,7 +230,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = intval( $activity_id );
+			$activity_id = absint( $activity_id );
 		}
 
 		$activity = bp_activity_delete( array(
@@ -265,7 +265,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = intval( $activity_id );
+			$activity_id = absint( $activity_id );
 		}
 
 		// Load up the activity item.
@@ -305,7 +305,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = intval( $activity_id );
+			$activity_id = absint( $activity_id );
 		}
 
 		// Load up the activity item.
@@ -396,7 +396,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = intval( $activity_id );
+			$activity_id = absint( $activity_id );
 		}
 
 		$permalink = bp_activity_get_permalink( $activity_id );
