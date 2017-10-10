@@ -255,6 +255,54 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Fetch specific activity.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <activity-id>
+	 * : Identifier for the activity.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity get 500
+	 *    wp bp activity get 500 --format json
+	 *
+	 * @synopsis <activity-id> [--format=<format>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function get( $args, $assoc_args ) {
+		$activity_id = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'This is not a valid activity ID.' );
+		}
+
+		$activity = bp_activity_get_specific( array(
+			'activity_ids' => $activity_id,
+		) );
+
+		$activity = $activity['activities'];
+		$formatter = $this->get_formatter( $assoc_args );
+
+		if ( $activity ) {
+			$formatter->display_items( $activity );
+		} else {
+			WP_CLI::error( 'Could not find the activity.' );
+		}
+	}
+
+	/**
 	 * Delete an activity.
 	 *
 	 * ## OPTIONS
