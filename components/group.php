@@ -38,8 +38,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *        wp bp group create --name="Totally Cool Group"
-	 *        wp bp group create --name="Sports" --description="People who love sports" --creator_id=54 --status=private
+	 *    wp bp group create --name="Totally Cool Group"
+	 *    wp bp group create --name="Sports" --description="People who love sports" --creator_id=54 --status=private
 	 *
 	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator_id=<creator_id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
 	 *
@@ -125,7 +125,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  wp bp group delete 500
+	 *   wp bp group delete 500
 	 *
 	 * @synopsis <group-id>
 	 *
@@ -167,7 +167,11 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
+	 *   wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
+	 *
+	 * @synopsis <group-id> [--field=<value>]
+	 *
+	 * @since 1.0
 	 */
 	public function update( $args, $assoc_args ) {
 		$clean_group_ids = array();
@@ -210,6 +214,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 *   wp bp group list --format=ids
 	 *
+	 * @synopsis [--field=<value>] [--format=<format>]
+	 *
 	 * @since 1.3.0
 	 */
 	public function list_( $args, $assoc_args ) {
@@ -230,9 +236,7 @@ class BPCLI_Group extends BPCLI_Component {
 			echo implode( ' ', $groups ); // XSS ok.
 		} else {
 			$groups  = groups_get_groups( $args );
-			$groups  = $groups['groups'];
-
-			$formatter->display_items( $groups );
+			$formatter->display_items( $groups['groups'] );
 		}
 	}
 
@@ -252,8 +256,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *        wp bp group add_member --group-id=3 --user-id=10
-	 *        wp bp group add_member --group-id=foo --user-id=admin role=mod
+	 *    wp bp group add_member --group-id=3 --user-id=10
+	 *    wp bp group add_member --group-id=foo --user-id=admin role=mod
 	 *
 	 * @synopsis --group-id=<group> --user-id=<user> [--role=<role>]
 	 *
