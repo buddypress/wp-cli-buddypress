@@ -275,7 +275,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *    wp bp activity get 500
-	 *    wp bp activity get 500 --format json
+	 *    wp bp activity get 500 --format=json
 	 *
 	 * @synopsis <activity-id> [--format=<format>]
 	 *
