@@ -4,8 +4,20 @@
  * Manage BuddyPress groups.
  */
 class BPCLI_Group extends BPCLI_Component {
+
+	/**
+	 * Group ID Object Key
+	 *
+	 * @var string
+	 */
 	protected $obj_id_key = 'group_id';
-	protected $obj_type = 'group';
+
+	/**
+	 * Group Object Type
+	 *
+	 * @var string
+	 */
+	protected $obj_type   = 'group';
 
 	/**
 	 * Create a group.
@@ -21,7 +33,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--description=<description>]
 	 * : Group description. Default: 'Description for group "[name]"'
 	 *
-	 * [--creator_id=<creator_id>]
+	 * [--creator-id=<creator-id>]
 	 * : ID of the group creator. Default: 1.
 	 *
 	 * [--slug=<slug>]
@@ -39,9 +51,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *    wp bp group create --name="Totally Cool Group"
-	 *    wp bp group create --name="Sports" --description="People who love sports" --creator_id=54 --status=private
+	 *    wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
 	 *
-	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator_id=<creator_id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
+	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator-id=<creator-id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
 	 *
 	 * @since 1.0
 	 */
@@ -56,16 +68,16 @@ class BPCLI_Group extends BPCLI_Component {
 			'date_created' => bp_core_current_time(),
 		) );
 
-		if ( ! $r['name'] ) {
+		if ( empty( $r['name'] ) ) {
 			WP_CLI::error( 'You must provide a --name parameter when creating a group.' );
 		}
 
 		// Auto-generate some stuff.
-		if ( ! $r['slug'] ) {
+		if ( empty( $r['slug'] ) ) {
 			$r['slug'] = groups_check_slug( sanitize_title( $r['name'] ) );
 		}
 
-		if ( ! $r['description'] ) {
+		if ( empty( $r['description'] ) ) {
 			$r['description'] = sprintf( 'Description for group "%s"', $r['name'] );
 		}
 
@@ -75,7 +87,8 @@ class BPCLI_Group extends BPCLI_Component {
 			$group = groups_get_group( array(
 				'group_id' => $id,
 			) );
-			WP_CLI::success( "Group $id created: " . bp_get_group_permalink( $group ) );
+			$permalink = bp_get_group_permalink( $group );
+			WP_CLI::success( sprintf( 'Group %d created: %s', $id, $permalink ) );
 		} else {
 			WP_CLI::error( 'Could not create group.' );
 		}
@@ -106,7 +119,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 		for ( $i = 0; $i < $r['count']; $i++ ) {
 			$this->create( array(), array(
-				'name' => 'Test Group - ' . $i,
+				'name' => sprintf( 'Test Group - #%d', $i ),
 			) );
 
 			$notify->tick();
@@ -132,13 +145,13 @@ class BPCLI_Group extends BPCLI_Component {
 	 * @since 1.3.0
 	 */
 	public function delete( $args, $assoc_args ) {
-		$group_id = isset( $args[0] ) ? $args[0] : '';
+		$group_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $group_id ) ) {
 			$group_id = groups_get_id( $group_id );
 		}
 
-		// Check that group exists.
+		// Check if group exists.
 		$group_obj = groups_get_group( array(
 			'group_id' => $group_id,
 		) );
@@ -209,33 +222,50 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *   wp bp group list --format=ids
+	 *   wp bp group list --format=count
+	 *   wp bp group list --per_page=5
 	 *
 	 * @synopsis [--field=<value>] [--format=<format>]
 	 *
 	 * @since 1.3.0
 	 */
 	public function list_( $args, $assoc_args ) {
-		$r = wp_parse_args( $args, array(
-			'type' => 'active',
-		) );
 
-		$args      = array_merge( $r, $assoc_args );
-		$formatter = $this->get_formatter( $args );
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$defaults = array(
+			'type'        => 'active',
+			'per_page'    => -1,
+			'show_hidden' => true,
+		);
+		$query_args = array_merge( $defaults, $assoc_args );
+		$query_args = self::process_csv_arguments_to_arrays( $query_args );
 
 		if ( 'ids' === $formatter->format ) {
-			$args['fields']      = 'ids';
-			$args['show_hidden'] = true;
-			$args['per_page']    = null; // Return all results.
+			$groups = groups_get_groups( $query_args );
+			$ids    = array_search( 'id', $groups['groups'], true );
 
-			$groups  = groups_get_groups( $args );
-			$groups  = $groups['groups'];
-			echo implode( ' ', $groups ); // XSS ok.
+			echo implode( ' ', $ids ); // XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$groups = groups_get_groups( $query_args );
+
+			$formatter->display_items( $groups['total'] );
 		} else {
-			$groups  = groups_get_groups( $args );
+			$groups  = groups_get_groups( $query_args );
 			$formatter->display_items( $groups['groups'] );
 		}
 	}
@@ -259,7 +289,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *    wp bp group add_member --group-id=3 --user-id=10
 	 *    wp bp group add_member --group-id=foo --user-id=admin role=mod
 	 *
-	 * @synopsis --group-id=<group> --user-id=<user> [--role=<role>]
+	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>] [--role=<role>]
 	 *
 	 * @since 1.0
 	 */
@@ -329,14 +359,14 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *        wp bp group get_members 3
+	 *   wp bp group get_members 3
 	 *
 	 * @synopsis <group-id>
 	 *
 	 * @since 1.3.0
 	 */
 	public function get_members( $args, $assoc_args ) {
-		$group_id = isset( $args[0] ) ? $args[0] : '';
+		$group_id = isset( $args[0] ) ? $args[0] : false;
 
 		// Convert --group_id to group ID
 		// @todo this'll be screwed up if the group has a numeric slug.
@@ -349,7 +379,7 @@ class BPCLI_Group extends BPCLI_Component {
 			'group_id' => $group_id,
 		) );
 		if ( empty( $group_obj->id ) ) {
-			WP_CLI::error( 'No group found by that slug or id.' );
+			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
 		// Get our members.
