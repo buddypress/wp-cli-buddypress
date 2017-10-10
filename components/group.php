@@ -302,28 +302,26 @@ class BPCLI_Group extends BPCLI_Component {
 
 		// Convert --group_id to group ID
 		// @todo this'll be screwed up if the group has a numeric slug.
-		if ( ! is_numeric( $r['group-id'] ) ) {
-			$group_id = groups_get_id( $r['group-id'] );
-		} else {
-			$group_id = $r['group-id'];
-		}
+		$group_id = ( ! is_numeric( $r['group-id'] ) )
+			? groups_get_id( $r['group-id'] )
+			: $r['group-id'];
 
 		// Check that group exists.
 		$group_obj = groups_get_group( array(
 			'group_id' => $group_id,
 		) );
 		if ( empty( $group_obj->id ) ) {
-			WP_CLI::error( 'No group found by that slug or id.' );
+			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
 		$user = $this->get_user_id_from_identifier( $r['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or id' );
+			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
 		// Sanitize role.
-		if ( ! in_array( $r['role'], array( 'member', 'mod', 'admin' ), true ) ) {
+		if ( ! in_array( $r['role'], $this->group_roles(), true ) ) {
 			$r['role'] = 'member';
 		}
 
@@ -407,6 +405,81 @@ class BPCLI_Group extends BPCLI_Component {
 		} else {
 			WP_CLI::error( 'Could not find any users in the group.' );
 		}
+	}
+
+	/**
+	 * Promote a member of a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <group-id>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--role=<role>]
+	 * : Group role to promote the member (member, mod, admin).
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp group promote --group-id=3 --user-id=10
+	 *    wp bp group promote --group-id=foo --user-id=admin role=mod
+	 *
+	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>] [--role=<role>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function promote( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id' => '',
+			'user-id'  => '',
+			'role'     => '',
+		) );
+
+		// Convert --group_id to group ID
+		// @todo this'll be screwed up if the group has a numeric slug.
+		$group_id = ( ! is_numeric( $r['group-id'] ) )
+			? groups_get_id( $r['group-id'] )
+			: $r['group-id'];
+
+		// Check that group exists.
+		$group_obj = groups_get_group( array(
+			'group_id' => $group_id,
+		) );
+		if ( empty( $group_obj->id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$role = $r['role'];
+		if ( empty( $role ) && ! in_array( $role, $this->group_roles(), true ) ) {
+			WP_CLI::error( 'You need a role to promote the user.' );
+		}
+
+		$member = new BP_Groups_Member( $user->ID, $group_id );
+
+		if ( $member->promote( $role ) ) {
+			WP_CLI::success( sprintf( 'User promoted to %s', $role ) );
+		} else {
+			WP_CLI::error( 'Could not promote the user.' );
+		}
+	}
+
+	/**
+	 * Group Roles
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return array An array of group roles
+	 */
+	protected function group_roles() {
+		return array( 'member', 'mod', 'admin' );
 	}
 }
 
