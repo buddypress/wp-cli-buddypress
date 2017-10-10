@@ -125,38 +125,82 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of activities.
+	 * Retrieve an activity or a list of activities.
 	 *
 	 * ## OPTIONS
 	 *
 	 * --<field>=<value>
-	 * : One or more parameters to pass. See bp_activity_get()
+	 * : One or more parameters to pass to BP_Activity_Activity::get()
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
 	 *
-	 * ## EXAMPLES
+	 * ## AVAILABLE FIELDS
 	 *
-	 *   wp bp activity list --format=ids
+	 * These fields will be displayed by default for each activity:
+	 *
+	 * * ID
+	 * * user_id
+	 * * component
+	 * * type
+	 * * action
+	 * * content
+	 * * item_id
+	 * * secondary_item_id
+	 * * primary_link
+	 * * date_recorded
+	 * * is_spam
+	 * * user_email
+	 * * user_nicename
+	 * * user_login
+	 * * display_name
+	 * * user_fullname
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp activity list --format=ids
+	 *    wp bp activity list --format=count
+	 *    wp bp activity list --per_page=5
+	 *    wp bp activity list --search_terms="Activity Comment"
+	 *
+	 * @synopsis [--field=<value>] [--format=<format>]
 	 *
 	 * @since 1.3.0
 	 */
-	public function list( $args, $assoc_args ) {
-		$r = wp_parse_args( $args, array(
-			'count_total' => false,
-		) );
+	public function list_( $_, $assoc_args ) {
 
-		$args      = array_merge( $r, $assoc_args );
-		$formatter = $this->get_formatter( $args );
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$defaults = array(
+			'page'        => 1,
+			'per_page'    => -1,
+			'count_total' => false,
+			'show_hidden' => true,
+		);
+		$query_args = array_merge( $defaults, $assoc_args );
+		$query_args = self::process_csv_arguments_to_arrays( $query_args );
 
 		if ( 'ids' === $formatter->format ) {
-			$args['fields']      = 'ids';
-			$args['show_hidden'] = true;
-			$args['per_page']    = null; // Return all results.
+			$query_args['fields'] = 'ids';
+			$activities           = bp_activity_get( $query_args );
 
-			// Get activities.
-			$activities = bp_activity_get( $args );
 			echo implode( ' ', $activities['activities'] ); // XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$query_args['fields']      = 'ids';
+			$query_args['count_total'] = true;
+			$activities                = bp_activity_get( $query_args );
+
+			$formatter->display_items( $activities['activities'] );
 		} else {
 			$activities = bp_activity_get( $args );
 
