@@ -243,7 +243,7 @@ class BPCLI_Group extends BPCLI_Component {
 		$groups     = groups_get_groups( $query_args );
 
 		if ( 'ids' === $formatter->format ) {
-			$ids = array_search( 'id', $groups['groups'], true );
+			$ids = wp_list_pluck( $groups['groups'], 'id' );
 
 			echo implode( ' ', $ids ); // XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
@@ -604,6 +604,66 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::success( sprintf( 'User demoted to user.' ) );
 		} else {
 			WP_CLI::error( 'Could not demote the user.' );
+		}
+	}
+
+	/**
+	 * Get a list of a user's outstanding group invitations.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * --<field>=<value>
+	 * : One or more parameters to pass. See groups_get_invites_for_user()
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp group invites_from_user --user-id=30 --format=ids
+	 *   wp bp group invites_from_user --user-id=30 --limit=100 --exclude=100
+	 *
+	 * @synopsis [--user-id=<user-id>] [--field=<value>] [--format=<format>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function invites_from_user( $args, $assoc_args ) {
+
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$r = wp_parse_args( $assoc_args, array(
+			'user-id' => '',
+			'limit'   => false,
+			'page'    => false,
+			'exclude' => false,
+		) );
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$invites = groups_get_invites_for_user( $user->ID, $r['limit'], $r['page'], $r['exclude'] );
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', wp_list_pluck( $invites, 'group_id' ) ); // XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $invites['total'] );
+		} else {
+			$formatter->display_items( $invites );
 		}
 	}
 
