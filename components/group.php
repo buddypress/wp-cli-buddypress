@@ -427,7 +427,7 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of groups a user is a member.
+	 * Get a list of groups a user is a member of.
 	 *
 	 * @todo Improve output with more information from the groups (name, etc)
 	 *
@@ -453,8 +453,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp group get_member_groups --user-id=30 --format=count
-	 *   wp bp group get_member_groups --user-id=30 --order=DESC
+	 *   wp bp group get_member_groups --user-id=30 --format=ids
+	 *   wp bp group get_member_groups --user-id=60 --format=count
+	 *   wp bp group get_member_groups --user-id=90 --order=DESC
 	 *   wp bp group get_member_groups --user-id=100 --order=DESC --is_mod=1
 	 *
 	 * @synopsis [--user-id=<user-id>] [--field=<value>] [--format=<format>]
@@ -485,11 +486,8 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'This user is not a member of any group.' );
 		}
 
-		// Get all groups ids for this member.
-		$ids = array();
-		foreach ( $groups as $k => $v ) {
-			$ids[] = $v->group_id;
-		}
+		// Pluck groups ids.
+		$ids = wp_list_pluck( $groups, 'id' );
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', $ids ); // XSS ok.
