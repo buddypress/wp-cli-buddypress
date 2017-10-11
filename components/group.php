@@ -273,7 +273,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *   wp bp group add_member --group-id=3 --user-id=10
-	 *   wp bp group add_member --group-id="group-slug" --user-id=20
+	 *   wp bp group add_member --group-id=bar --user-id=20
 	 *   wp bp group add_member --group-id=foo --user-id=admin --role=mod
 	 *
 	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>] [--role=<role>]
@@ -326,6 +326,54 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::success( $success );
 		} else {
 			WP_CLI::error( 'Could not add user to group.' );
+		}
+	}
+
+	/**
+	 * Remove a user from a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --group-id=<group>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp group remove_member --group-id=3 --user-id=10
+	 *   wp bp group remove_member --group-id=foo --user-id=admin
+	 *
+	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function remove_member( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id' => null,
+			'user-id'  => null,
+		) );
+
+		// Group ID.
+		$group_id = $r['group-id'];
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		// True on sucess.
+		if ( groups_leave_group( $group_id, $user->ID ) ) {
+			WP_CLI::success( 'User removed from the group.' );
+		} else {
+			WP_CLI::error( 'Could not removed user from the group.' );
 		}
 	}
 
