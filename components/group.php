@@ -240,18 +240,15 @@ class BPCLI_Group extends BPCLI_Component {
 		) );
 
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+		$groups     = groups_get_groups( $query_args );
 
 		if ( 'ids' === $formatter->format ) {
-			$groups = groups_get_groups( $query_args );
-			$ids    = array_search( 'id', $groups['groups'], true );
+			$ids = array_search( 'id', $groups['groups'], true );
 
 			echo implode( ' ', $ids ); // XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
-			$groups = groups_get_groups( $query_args );
-
 			$formatter->display_items( $groups['total'] );
 		} else {
-			$groups  = groups_get_groups( $query_args );
 			$formatter->display_items( $groups['groups'] );
 		}
 	}
@@ -426,6 +423,80 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::success( $users );
 		} else {
 			WP_CLI::error( 'Could not find any users in the group.' );
+		}
+	}
+
+	/**
+	 * Get a list of groups a user is a member.
+	 *
+	 * @todo Improve output with more information from the groups (name, etc)
+	 *
+	 * ## OPTIONS
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * --<field>=<value>
+	 * : One or more parameters to pass. See bp_get_user_groups()
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp group get_member_groups --user-id=30 --format=count
+	 *   wp bp group get_member_groups --user-id=30 --order=DESC
+	 *   wp bp group get_member_groups --user-id=100 --order=DESC --is_mod=1
+	 *
+	 * @synopsis [--user-id=<user-id>] [--field=<value>] [--format=<format>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function get_member_groups( $args, $assoc_args ) {
+
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$r = wp_parse_args( $assoc_args, array(
+			'user_id'      => null,
+			'is_admin'     => null,
+			'is_mod'       => null,
+		) );
+
+		$r    = self::process_csv_arguments_to_arrays( $r );
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$groups = bp_get_user_groups( $user_id, $r );
+
+		// Bail early for non group members.
+		if ( empty( $groups ) ) {
+			WP_CLI::error( 'This user is not a member of any group.' );
+		}
+
+		// Get all groups ids for this member.
+		$ids = array();
+		foreach ( $groups as $k => $v ) {
+			$ids[] = $v->group_id;
+		}
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', $ids ); // XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( count( $ids ) );
+		} else {
+			$formatter->display_items( $groups );
 		}
 	}
 
