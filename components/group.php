@@ -526,7 +526,7 @@ class BPCLI_Group extends BPCLI_Component {
 			'role'     => '',
 		) );
 
-			// Group ID.
+		// Group ID.
 		$group_id = $r['group-id'];
 
 		// Check that group exists.
@@ -607,7 +607,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--group-id=<group-id>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * [--user-id=<user>]
+	 * [--user-id=<user-id>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
@@ -747,6 +747,76 @@ class BPCLI_Group extends BPCLI_Component {
 			$formatter->display_items( $invites['total'] );
 		} else {
 			$formatter->display_items( $invites );
+		}
+	}
+
+	/**
+	 * Get a list of invitations from a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--group-id=<group-id>]
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * [--user-id=<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--role=<role>]
+	 * : Group member role (member, mod, admin). Default: null.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp group invite_list --user-id=30 --group-id=56 --format=ids
+	 *   wp bp group invite_list --user-id=30 --group-id=100 --role=member
+	 *
+	 * @synopsis [--user-id=<user>] [--group-id=<group-id>] [--role=<role>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function invite_list( $args, $assoc_args ) {
+
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id' => '',
+			'user-id'  => '',
+			'role'     => null,
+		) );
+
+		// Group ID.
+		$group_id = $r['group-id'];
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$list = groups_get_invites_for_group( $user->ID, $group_id, $r['role'] );
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', wp_list_pluck( $list, 'id' ) ); // XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $list['total'] );
+		} else {
+			$formatter->display_items( $list );
 		}
 	}
 
