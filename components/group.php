@@ -603,6 +603,27 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 	}
 
+	/**
+	 * Ban a member from a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <group-id>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp group ban --group-id=3 --user-id=10
+	 *    wp bp group ban --group-id="group-slug" --user-id=20
+	 *    wp bp group ban --group-id=foo --user-id=admin
+	 *
+	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>]
+	 *
+	 * @since 1.3.0
+	 */
 	public function ban( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'group-id' => '',
