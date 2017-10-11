@@ -327,7 +327,7 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Remove a user from a group.
+	 * Remove a member from a group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -367,7 +367,7 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		// True on sucess.
-		if ( groups_leave_group( $group_id, $user->ID ) ) {
+		if ( groups_remove_member( $group_id, $user->ID ) ) {
 			WP_CLI::success( 'User removed from the group.' );
 		} else {
 			WP_CLI::error( 'Could not removed user from the group.' );
