@@ -368,9 +368,9 @@ class BPCLI_Group extends BPCLI_Component {
 
 		// True on sucess.
 		if ( groups_remove_member( $group_id, $user->ID ) ) {
-			WP_CLI::success( 'User removed from the group.' );
+			WP_CLI::success( 'Member removed from the group.' );
 		} else {
-			WP_CLI::error( 'Could not removed user from the group.' );
+			WP_CLI::error( 'Could not remove member from the group.' );
 		}
 	}
 
@@ -433,10 +433,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --user-id=<user>
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
-	 * --<field>=<value>
+	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See bp_get_user_groups()
 	 *
 	 * [--format=<format>]
@@ -458,7 +455,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *   wp bp group get_member_groups --user-id=90 --order=DESC
 	 *   wp bp group get_member_groups --user-id=100 --order=DESC --is_mod=1
 	 *
-	 * @synopsis [--user-id=<user-id>] [--field=<value>] [--format=<format>]
+	 * @synopsis [--field=<value>] [--format=<format>]
 	 *
 	 * @since 1.3.0
 	 */
@@ -503,10 +500,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * [--group-id=<group-id>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--role=<role>]
@@ -560,10 +557,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * [--group-id=<group-id>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
@@ -607,7 +604,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * --group-id=<group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
 	 * --user-id=<user>
@@ -701,9 +698,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --user-id=<user>
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
 	 * --<field>=<value>
 	 * : One or more parameters to pass. See groups_get_invites_for_user()
 	 *
@@ -724,7 +718,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *   wp bp group invites_from_user --user-id=30 --format=ids
 	 *   wp bp group invites_from_user --user-id=30 --limit=100 --exclude=100
 	 *
-	 * @synopsis [--user-id=<user-id>] [--field=<value>] [--format=<format>]
+	 * @synopsis [--field=<value>] [--format=<format>]
 	 *
 	 * @since 1.3.0
 	 */
@@ -753,6 +747,53 @@ class BPCLI_Group extends BPCLI_Component {
 			$formatter->display_items( $invites['total'] );
 		} else {
 			$formatter->display_items( $invites );
+		}
+	}
+
+	/**
+	 * Invite a user to a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --<field>=<value>
+	 * : One or more parameters to pass. See groups_invite_user()
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp group invite --user-id=10 --group-id=40
+	 *    wp bp group invite --user-id=admin --group-id=40
+	 *
+	 * @synopsis [--field=<value>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function invite( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id'      => '',
+			'user-id'       => '',
+			'inviter_id'    => bp_loggedin_user_id(),
+			'date_modified' => bp_core_current_time(),
+			'is_confirmed'  => 0,
+		) );
+
+		// Group ID.
+		$group_id = $r['group-id'];
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		if ( groups_invite_user( $r ) ) {
+			WP_CLI::success( 'User invited to the group.' );
+		} else {
+			WP_CLI::error( 'Could not invite the user.' );
 		}
 	}
 
