@@ -499,7 +499,7 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Promote a member of a group.
+	 * Promote a member to a new status within a group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -548,9 +548,7 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'You need a role to promote the user.' );
 		}
 
-		$member = new BP_Groups_Member( $user->ID, $group_id );
-
-		if ( $member->promote( $role ) ) {
+		if ( groups_promote_member( $user->ID, $group_id, $role ) ) {
 			WP_CLI::success( sprintf( 'User promoted to %s', $role ) );
 		} else {
 			WP_CLI::error( 'Could not promote the user.' );
@@ -558,7 +556,7 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Demote user to member.
+	 * Demote user to the 'member' status.
 	 *
 	 * ## OPTIONS
 	 *
@@ -598,12 +596,37 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$member = new BP_Groups_Member( $user->ID, $group_id );
-
-		if ( $member->demote() ) {
-			WP_CLI::success( sprintf( 'User demoted to user.' ) );
+		if ( groups_demote_member( $user->ID, $group_id ) ) {
+			WP_CLI::success( 'User demoted to the "member" status.' );
 		} else {
 			WP_CLI::error( 'Could not demote the user.' );
+		}
+	}
+
+	public function ban( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id' => '',
+			'user-id'  => '',
+		) );
+
+		// Group ID.
+		$group_id = $r['group-id'];
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		if ( groups_ban_member( $user->ID, $group_id ) ) {
+			WP_CLI::success( 'User banned from the group.' );
+		} else {
+			WP_CLI::error( 'Could not ban the user.' );
 		}
 	}
 
