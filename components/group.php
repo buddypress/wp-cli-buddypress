@@ -604,10 +604,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --group-id=<group-id>
+	 * [--group-id=<group-id>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
@@ -651,10 +651,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * [--group-id=<group-id>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
@@ -698,7 +698,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --<field>=<value>
+	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_invites_for_user()
 	 *
 	 * [--format=<format>]
@@ -755,13 +755,13 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --<field>=<value>
+	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_invite_user()
 	 *
 	 * ## EXAMPLES
 	 *
 	 *    wp bp group invite --user-id=10 --group-id=40
-	 *    wp bp group invite --user-id=admin --group-id=40
+	 *    wp bp group invite --user-id=admin --group-id=40 --inviter_id=804
 	 *
 	 * @synopsis [--field=<value>]
 	 *
@@ -794,6 +794,53 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::success( 'User invited to the group.' );
 		} else {
 			WP_CLI::error( 'Could not invite the user.' );
+		}
+	}
+
+	/**
+	 * Uninvite a user from a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--group-id=<group-id>]
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * [--user-id=<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp group uninvite --group-id=3 --user-id=10
+	 *    wp bp group uninvite --group-id=foo --user-id=admin
+	 *
+	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function uninvite( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id'      => '',
+			'user-id'       => '',
+		) );
+
+		// Group ID.
+		$group_id = $r['group-id'];
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		if ( groups_uninvite_user( $user->ID, $group_id ) ) {
+			WP_CLI::success( 'User uninvited from the group.' );
+		} else {
+			WP_CLI::error( 'Could not uninvite the user.' );
 		}
 	}
 
