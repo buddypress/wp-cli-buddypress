@@ -885,9 +885,56 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		if ( groups_accept_invite( $user->ID, $group_id ) ) {
-			WP_CLI::success( 'User is now a member of the group.' );
+			WP_CLI::success( 'User is now a "member" of the group.' );
 		} else {
-			WP_CLI::error( 'Could not accept user invitation.' );
+			WP_CLI::error( 'Could not accept user invitation to the group.' );
+		}
+	}
+
+	/**
+	 * Reject a group invitation.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--group-id=<group-id>]
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * [--user-id=<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp group reject_invite --group-id=3 --user-id=10
+	 *    wp bp group reject_invite --group-id=foo --user-id=admin
+	 *
+	 * @synopsis [--group-id=<group-id>] [--user-id=<user-id>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function reject_invite( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'group-id'      => '',
+			'user-id'       => '',
+		) );
+
+		// Group ID.
+		$group_id = $r['group-id'];
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		if ( groups_reject_invite( $user->ID, $group_id ) ) {
+			WP_CLI::success( 'User invitation was rejected from the group.' );
+		} else {
+			WP_CLI::error( 'Could not reject user invitation from the group.' );
 		}
 	}
 
