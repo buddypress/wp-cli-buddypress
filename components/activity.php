@@ -656,6 +656,52 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Add an activity item as a favorite for a user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--activity-id=<activity-id>]
+	 * : ID of the activity to add a item to.
+	 *
+	 * [--user-id=<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp activity add_favorite --activity-id=100 --user-id=500
+	 *
+	 * @synopsis [--activity-id=<activity-id>] [--user-id=<user>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function add_favorite( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'activity_id' => '',
+			'user_id'     => '',
+		) );
+
+		// Bail if there is not activity id.
+		if ( empty( $r['activity_id'] ) ) {
+			WP_CLI::error( 'No activity ID found.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$favorite = bp_activity_add_user_favorite( $r['activity_id'], $user->ID );
+
+		// True if added.
+		if ( $favorite ) {
+			WP_CLI::success( 'Activity item added as a favorite for the user.' );
+		} else {
+			WP_CLI::error( 'Could not add the activity item.' );
+		}
+	}
+
+	/**
 	 * Pull up a random active component for use in activity items.
 	 *
 	 * @since 1.1
