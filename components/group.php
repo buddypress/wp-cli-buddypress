@@ -692,31 +692,16 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_invites_for_user()
 	 *
-	 * [--format=<format>]
-	 * : Render output in a particular format.
-	 * ---
-	 * default: table
-	 * options:
-	 *   - table
-	 *   - csv
-	 *   - json
-	 *   - count
-	 *   - yaml
-	 * ---
-	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp group invites_from_user --user-id=30 --format=ids
+	 *   wp bp group invites_from_user --user-id=30
 	 *   wp bp group invites_from_user --user-id=30 --limit=100 --exclude=100
 	 *
-	 * @synopsis [--field=<value>] [--format=<format>]
+	 * @synopsis [--field=<value>]
 	 *
 	 * @since 1.3.0
 	 */
 	public function invites_from_user( $args, $assoc_args ) {
-
-		$formatter = $this->get_formatter( $assoc_args );
-
 		$r = wp_parse_args( $assoc_args, array(
 			'user-id' => '',
 			'limit'   => false,
@@ -732,12 +717,22 @@ class BPCLI_Group extends BPCLI_Component {
 
 		$invites = groups_get_invites_for_user( $user->ID, $r['limit'], $r['page'], $r['exclude'] );
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $invites, 'group_id' ) ); // WPCS: XSS ok.
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $invites['total'] );
+		if ( $invites ) {
+			$found = sprintf(
+				'Found %d group invitations from member #%d',
+				$invites['total'],
+				$user->ID
+			);
+			WP_CLI::success( $found );
+
+			$success = sprintf(
+				'Group invitations from member #%d: %s',
+				$user->ID,
+				implode( ', ', wp_list_pluck( $invites, 'group_id' ) )
+			);
+			WP_CLI::success( $success );
 		} else {
-			$formatter->display_items( $invites );
+			WP_CLI::error( 'Could not find any group invitation for this member.' );
 		}
 	}
 
@@ -755,21 +750,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--role=<role>]
 	 * : Group member role (member, mod, admin). Default: null.
 	 *
-	 * [--format=<format>]
-	 * : Render output in a particular format.
-	 * ---
-	 * default: table
-	 * options:
-	 *   - table
-	 *   - csv
-	 *   - json
-	 *   - count
-	 *   - yaml
-	 * ---
-	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp group invite_list --user-id=30 --group-id=56 --format=ids
+	 *   wp bp group invite_list --user-id=30 --group-id=56
 	 *   wp bp group invite_list --user-id=30 --group-id=100 --role=member
 	 *
 	 * @synopsis [--user-id=<user>] [--group-id=<group-id>] [--role=<role>]
@@ -777,9 +760,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 * @since 1.3.0
 	 */
 	public function invite_list( $args, $assoc_args ) {
-
-		$formatter = $this->get_formatter( $assoc_args );
-
 		$r = wp_parse_args( $assoc_args, array(
 			'group-id' => '',
 			'user-id'  => '',
@@ -800,14 +780,24 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$list = groups_get_invites_for_group( $user->ID, $group_id, $r['role'] );
+		$invites = groups_get_invites_for_group( $user->ID, $group_id, $r['role'] );
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $list, 'id' ) ); // WPCS: XSS ok.
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $list['total'] );
+		if ( $invites ) {
+			$found = sprintf(
+				'Found %d invitations from group #%d.',
+				$invites['total'],
+				$group_id
+			);
+			WP_CLI::success( $found );
+
+			$success = sprintf(
+				'Current invitations from group #%d: %s',
+				$group_id,
+				implode( ', ', wp_list_pluck( $invites, 'id' ) )
+			);
+			WP_CLI::success( $success );
 		} else {
-			$formatter->display_items( $list );
+			WP_CLI::error( 'Could not find any invitation for this group.' );
 		}
 	}
 
