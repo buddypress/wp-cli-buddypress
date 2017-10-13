@@ -424,24 +424,36 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of members for a group.
+	 * Get a list of members of a group.
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
-	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass. See groups_get_group_members()
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp group get_members 3
-	 *   wp bp group get_members group-slug
+	 *   wp bp group get_members --group-id=3
+	 *   wp bp group get_members --group-id=slug
 	 *
-	 * @synopsis <group-id>
+	 * @synopsis [--field=<value>]
 	 *
 	 * @since 1.3.0
 	 */
 	public function get_members( $args, $assoc_args ) {
-		$group_id = isset( $args[0] ) ? $args[0] : false;
+		$r = wp_parse_args( $assoc_args, array(
+			'group_id'            => '',
+			'per_page'            => false,
+			'page'                => false,
+			'exclude_admins_mods' => true,
+			'exclude_banned'      => true,
+			'exclude'             => false,
+			'group_role'          => array(),
+			'search_terms'        => false,
+			'type'                => 'last_joined',
+		) );
+
+		$group_id = $r['group_id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
@@ -449,9 +461,7 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		// Get our members.
-		$members = groups_get_group_members( array(
-			'group_id' => $group_id,
-		) );
+		$members = groups_get_group_members( $r );
 
 		if ( $members['count'] ) {
 			$found = sprintf(
@@ -461,14 +471,11 @@ class BPCLI_Group extends BPCLI_Component {
 			);
 			WP_CLI::success( $found );
 
-			$member_list = implode( ', ', wp_list_pluck( $members['members'], 'user_login' ) );
-
 			$users = sprintf(
 				'Current members for group #%d: %s',
 				$group_id,
-				$member_list
+				implode( ', ', wp_list_pluck( $members['members'], 'user_login' ) )
 			);
-
 			WP_CLI::success( $users );
 		} else {
 			WP_CLI::error( 'Could not find any users in the group.' );
