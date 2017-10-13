@@ -216,8 +216,51 @@ class BPCLI_Signup extends BPCLI_Component {
 		WP_CLI::success( 'Email sent successfully.' );
 	}
 
-	public function get() {}
-	public function list_() {}
+	/**
+	 * Get a list of signups.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass. See BP_Signup::get()
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp signup list --format=ids
+	 *   wp bp signup list --number=100 --format=count
+	 *   wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
+	 *
+	 * @synopsis [--field=<value>] [--format=<format>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function list_( $args, $assoc_args ) {
+
+		$formatter  = $this->get_formatter( $assoc_args );
+		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+		$signups    = BP_Signup::get( $query_args );
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $signups['total'] );
+		} else {
+			$formatter->display_items( $signups );
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp signup', 'BPCLI_Signup' );
