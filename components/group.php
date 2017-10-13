@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Manage BuddyPress groups.
  */
@@ -246,6 +245,44 @@ class BPCLI_Group extends BPCLI_Component {
 		parent::_update( $clean_group_ids, $assoc_args, function( $params ) {
 			return groups_create_group( $params );
 		} );
+	}
+
+	/**
+	 * Get the permalink of a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <group-id>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp group permalink 500
+	 *    wp bp group permalink group-slug
+	 *
+	 * @synopsis <group-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function permalink( $args, $assoc_args ) {
+		$group_id = isset( $args[0] ) ? $args[0] : false;
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		// Get the group object.
+		$group = groups_get_group( array(
+			'group_id' => $group_id,
+		) );
+		$permalink = bp_get_group_permalink( $group );
+
+		if ( is_string( $permalink ) ) {
+			WP_CLI::success( sprintf( 'Group Permalink: %s', $permalink ) );
+		} else {
+			WP_CLI::error( 'No permalink found for the group.' );
+		}
 	}
 
 	/**
