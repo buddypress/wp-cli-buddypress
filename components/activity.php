@@ -31,7 +31,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : URL of the item, as used in RSS feeds. If none is provided, a URL
 	 * will be generated based on passed parameters.
 	 *
-	 * [--user-id=<user-id>]
+	 * [--user-id=<user>]
 	 * : ID of the user associated with the new item. If none is provided,
 	 * a user will be randomly selected.
 	 *
@@ -52,7 +52,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--is-spam=<is-spam>]
 	 * : Whether the item should be marked as spam. Default: 0.
 	 *
-	 * @synopsis [--component=<component>] [--type=<type>] [--action=<action>] [--content=<content>] [--primary-link=<primary-link>] [--user-id=<user-id>] [--item-id=<item-id>] [--secondary-item-id=<secondary-item-id>] [--date-recorded=<date-recorded>] [--hide-sitewide=<hide-sitewide>] [--is-spam=<is-spam>]
+	 * [--silent=<silent>]
+	 * : Whether to silent the activity creation. Default: false.
+	 *
+	 * @synopsis [--component=<component>] [--type=<type>] [--action=<action>] [--content=<content>] [--primary-link=<primary-link>] [--user-id=<user>] [--item-id=<item-id>] [--secondary-item-id=<secondary-item-id>] [--date-recorded=<date-recorded>] [--hide-sitewide=<hide-sitewide>] [--is-spam=<is-spam>] [--silent=<silent>]
 	 *
 	 * @since 1.1
 	 */
