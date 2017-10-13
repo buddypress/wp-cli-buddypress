@@ -948,6 +948,41 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
+	 * Generate random group invitations.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many groups invitations to generate. Default: 100
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  wp bp group generate_invites --count=50
+	 *
+	 * @synopsis [--count=<number>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function generate_invites( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'count' => 100,
+		) );
+
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating random group invitations', $r['count'] );
+
+		for ( $i = 0; $i < $r['count']; $i++ ) {
+			$this->invite( array(), array(
+				'user-id'  => $this->get_random_user_id(),
+				'group-id' => $this->get_random_group_id(),
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
+	}
+
+	/**
 	 * Accept a group invitation.
 	 *
 	 * ## OPTIONS
