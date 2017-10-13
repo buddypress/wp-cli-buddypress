@@ -23,7 +23,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--silent=<silent>]
 	 * : Silent the signup creation. Default: false.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com
 	 *
@@ -77,7 +77,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <signup-id>
 	 * : Identifier for the signup.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *  wp bp signup delete 520
 	 *
@@ -109,7 +109,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <activation-key>
 	 * : Identifier for the activation key.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *  wp bp signup activate ee48ec319fef3nn4
 	 *
@@ -141,7 +141,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--count=<number>]
 	 * : How many signups to generate. Default: 100
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *  wp bp signup generate --count=50
 	 *
@@ -168,20 +168,20 @@ class BPCLI_Signup extends BPCLI_Component {
 	}
 
 	/**
-	 * Resend activation email to a newly registered user.
+	 * Resend activation e-mail to a newly registered user.
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--user-id=<user-id>]
-	 * : User id for the email
+	 * : User ID to send the e-mail
 	 *
 	 * [--user-email=<user-email>]
-	 * : User email for the email.
+	 * : E-mail to send the activation.
 	 *
 	 * [--key=<key>]
-	 * : Activation key for the email.
+	 * : Activation key for the e-mail.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *   wp bp signup resend --user-id=20 --user-email=teste@site.com --key=ee48ec319fef3nn4
 	 *
@@ -240,6 +240,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *   wp bp signup list --format=ids
+	 *   wp bp signup list --usersearch=user_login
 	 *   wp bp signup list --number=100 --format=count
 	 *   wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
 	 *
