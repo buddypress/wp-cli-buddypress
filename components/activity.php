@@ -617,6 +617,45 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
+	 * Get a users favorite activity items.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <user-id>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp activity user_favorites 500
+	 *
+	 * @synopsis <user-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function user_favorites( $args, $assoc_args ) {
+		$user_id = isset( $args[0] ) ? $args[0] : false;
+
+		$user = $this->get_user_id_from_identifier( $user_id );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$favorites = bp_activity_get_user_favorites( $user->ID );
+
+		if ( $favorites ) {
+			$success = sprintf(
+				'Favorites for user #%d: %s',
+				$user->ID,
+				implode( ', ', wp_list_pluck( $favorites ) )
+			);
+			WP_CLI::success( $success );
+		} else {
+			WP_CLI::error( 'No favorites found for this user.' );
+		}
+	}
+
+	/**
 	 * Pull up a random active component for use in activity items.
 	 *
 	 * @since 1.1
