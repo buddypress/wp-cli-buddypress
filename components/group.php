@@ -249,6 +249,61 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
+	 * Post an Activity update affiliated with a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be generated.
+	 *
+	 * [--user-id=<user>]
+	 * : ID of the user. If none is provided, a user will be randomly selected.
+	 *
+	 * [--group-id=<group-id>]
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp group post_update --content="Content to update" --user-id=50 --group-id=40
+	 *    wp bp group post_update --user-id=140 --group-id=49
+	 *
+	 * @synopsis [--content=<content>] [--user-id=<user>] [--group-id=<group-id>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function post_update( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'content'  => '',
+			'user_id'  => '',
+			'group_id' => '',
+		) );
+
+		// If no content, let's add some.
+		if ( empty( $r['content'] ) ) {
+			$r['content'] = $this->generate_random_text();
+		}
+
+		// IF no user, let's add one.
+		if ( empty( $r['user_id'] ) ) {
+			$r['user_id'] = $this->get_random_user_id();
+		}
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $r['group-id'] ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		// Post the activity update.
+		$activity_id = groups_post_update( $r );
+
+		if ( is_numeric( $activity_id ) ) {
+			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $activity_id ) );
+		} else {
+			WP_CLI::error( 'Could not post the activity update.' );
+		}
+	}
+
+	/**
 	 * Get a list of groups.
 	 *
 	 * ## OPTIONS
@@ -308,7 +363,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--group-id=<group>]
+	 * [--group-id=<group-id>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
 	 * [--user-id=<user>]
