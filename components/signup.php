@@ -135,10 +135,58 @@ class BPCLI_Signup extends BPCLI_Component {
 		$notify->finish();
 	}
 
+	/**
+	 * Resend activation email to a newly registered user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--user-id=<user-id>]
+	 * : User id for the email
+	 *
+	 * [--user-email=<user-email>]
+	 * : User email for the email.
+	 *
+	 * [--key=<key>]
+	 * : Activation key for the email.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp signup resend --user-id=20 --user-email=teste@site.com --key=ee48ec319fef3nn4
+	 *
+	 * @synopsis [--user-id=<user-id>] [--user-email=<user-email>] [--key=<key>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function resend( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'user_id'        => '',
+			'user_email'     => '',
+			'activation_key' => '',
+		) );
+
+		// Bail if no user id.
+		if ( empty( $r['user_id'] ) ) {
+			WP_CLI::error( 'User ID missing.' );
+		}
+
+		// Bail if no email.
+		if ( empty( $r['user_email'] ) ) {
+			WP_CLI::error( 'User email missing.' );
+		}
+
+		// Bail if no key.
+		if ( empty( $r['activation_key'] ) ) {
+			WP_CLI::error( 'Activation key missing.' );
+		}
+
+		bp_core_signup_send_validation_email( $r['user_id'], $r['user_email'], $r['activation_key'] );
+
+		WP_CLI::success( 'Email sent successfully.' );
+	}
+
 	public function get() {}
 	public function delete() {}
 	public function list_() {}
-	public function resend() {}
 }
 
 WP_CLI::add_command( 'bp signup', 'BPCLI_Signup' );
