@@ -99,7 +99,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		if ( BP_Signup::delete( $signup_id ) ) {
-			WP_CLI::success( 'Signup deleted' );
+			WP_CLI::success( 'Signup deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete signup.' );
 		}
