@@ -129,6 +129,56 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
+	 * Fetch a single group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <group-id>
+	 * : Identifier for the group. Can be a numeric ID or the group slug.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to all fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp bp group get 500
+	 *   wp bp group get group-slug
+	 *
+	 * @synopsis <group-id> [--fields=<fields>] [--format=<format>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function get( $args, $assoc_args ) {
+		$group_id = isset( $args[0] ) ? $args[0] : false;
+
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		$group     = groups_get_group( $group_id );
+		$group_arr = get_object_vars( $group );
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $group_arr );
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( $group_arr );
+	}
+
+	/**
 	 * Delete a group.
 	 *
 	 * ## OPTIONS
@@ -436,7 +486,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *   wp bp group get_member_groups --user-id=30
-	 *   wp bp group get_member_groups --user-id=60
 	 *   wp bp group get_member_groups --user-id=90 --order=DESC
 	 *   wp bp group get_member_groups --user-id=100 --order=DESC --is_mod=1
 	 *
@@ -472,14 +521,11 @@ class BPCLI_Group extends BPCLI_Component {
 			);
 			WP_CLI::success( $found );
 
-			$ids = implode( ', ', wp_list_pluck( $groups, 'group_id' ) );
-
 			$success = sprintf(
 				'Current groups from member #%d: %s',
 				$user->ID,
-				$ids
+				implode( ', ', wp_list_pluck( $groups, 'group_id' ) )
 			);
-
 			WP_CLI::success( $success );
 		} else {
 			WP_CLI::error( 'This user is not a member of any group.' );
@@ -503,7 +549,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *    wp bp group promote --group-id=3 --user-id=10
-	 *    wp bp group promote --group-id="group-slug" --user-id=20
 	 *    wp bp group promote --group-id=foo --user-id=admin --role=mod
 	 *
 	 * @synopsis [--group-id=<group-id>] [--user-id=<user>] [--role=<role>]
