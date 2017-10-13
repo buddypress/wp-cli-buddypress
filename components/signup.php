@@ -101,7 +101,40 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 	}
 
-	public function generate() {}
+	/**
+	 * Generate random signups.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many signups to generate. Default: 100
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  wp bp signup generate --count=50
+	 *
+	 * @synopsis [--count=<number>]
+	 *
+	 * @since 1.3.0
+	 */
+	public function generate( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'count' => 100,
+		) );
+
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $r['count'] );
+
+		for ( $i = 0; $i < $r['count']; $i++ ) {
+			$this->add( array(), array(
+				'silent' => true,
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
+	}
+
 	public function get() {}
 	public function delete() {}
 	public function list_() {}
