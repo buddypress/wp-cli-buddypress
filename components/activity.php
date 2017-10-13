@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Manage BuddyPress activity items.
  */
@@ -58,7 +57,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * @since 1.1
 	 */
 	public function create( $args, $assoc_args ) {
-		$defaults = array(
+		$r = wp_parse_args( $assoc_args, array(
 			'component'         => '',
 			'type'              => '',
 			'action'            => '',
@@ -71,9 +70,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			'hide-sitewide'     => 0,
 			'is-spam'           => 0,
 			'silent'            => false,
-		);
-
-		$r = wp_parse_args( $assoc_args, $defaults );
+		) );
 
 		// Fill in any missing information.
 		if ( empty( $r['component'] ) ) {
@@ -125,11 +122,11 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
-	 * Retrieve an activity or a list of activities.
+	 * Retrieve a list of activities.
 	 *
 	 * ## OPTIONS
 	 *
-	 * --<field>=<value>
+	 * [--<field>=<value>]
 	 * : One or more parameters to pass to BP_Activity_Activity::get()
 	 *
 	 * [--format=<format>]
@@ -181,29 +178,28 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		$formatter = $this->get_formatter( $assoc_args );
 
-		$defaults = array(
+		$r = wp_parse_args( $assoc_args, array(
 			'page'        => 1,
 			'per_page'    => -1,
 			'count_total' => false,
 			'show_hidden' => true,
-		);
-		$query_args = array_merge( $defaults, $assoc_args );
-		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+		) );
+
+		$r = self::process_csv_arguments_to_arrays( $r );
 
 		if ( 'ids' === $formatter->format ) {
-			$query_args['fields'] = 'ids';
-			$activities           = bp_activity_get( $query_args );
+			$r['fields'] = 'ids';
+			$activities  = bp_activity_get( $r );
 
-			echo implode( ' ', $activities['activities'] ); // XSS ok.
+			echo implode( ' ', $activities['activities'] ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
-			$query_args['fields']      = 'ids';
-			$query_args['count_total'] = true;
-			$activities                = bp_activity_get( $query_args );
+			$r['fields']      = 'ids';
+			$r['count_total'] = true;
+			$activities       = bp_activity_get( $r );
 
 			$formatter->display_items( $activities['activities'] );
 		} else {
-			$activities = bp_activity_get( $args );
-
+			$activities = bp_activity_get( $r );
 			$formatter->display_items( $activities['activities'] );
 		}
 	}
@@ -233,7 +229,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		) );
 
 		$component = $this->get_random_component();
-		$type = $this->get_random_type_from_component( $component );
+		$type      = $this->get_random_type_from_component( $component );
 
 		if ( (bool) $r['skip-activity-comments'] && 'activity_comment' === $type ) {
 			$type = 'activity_update';
@@ -262,6 +258,9 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>
 	 * : Identifier for the activity.
 	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to all fields
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 *  ---
@@ -277,7 +276,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *    wp bp activity get 500
 	 *    wp bp activity get 500 --format=json
 	 *
-	 * @synopsis <activity-id> [--format=<format>]
+	 * @synopsis <activity-id> [--fields=<fields>] [--format=<format>]
 	 *
 	 * @since 1.3.0
 	 */
@@ -292,14 +291,15 @@ class BPCLI_Activity extends BPCLI_Component {
 			'activity_ids' => $activity_id,
 		) );
 
-		$activity = $activity['activities'];
-		$formatter = $this->get_formatter( $assoc_args );
+		$activity     = $activity['activities'];
+		$activity_arr = get_object_vars( $activity );
 
-		if ( $activity ) {
-			$formatter->display_items( $activity );
-		} else {
-			WP_CLI::error( 'Could not find the activity.' );
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $activity_arr );
 		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( $activity_arr );
 	}
 
 	/**
@@ -322,7 +322,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = absint( $activity_id );
+			WP_CLI::error( 'This is not a valid activity ID.' );
 		}
 
 		$activity = bp_activity_delete( array(
@@ -357,7 +357,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = absint( $activity_id );
+			WP_CLI::error( 'This is not a valid activity ID.' );
 		}
 
 		// Load up the activity item.
@@ -397,7 +397,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = absint( $activity_id );
+			WP_CLI::error( 'This is not a valid activity ID.' );
 		}
 
 		// Load up the activity item.
@@ -425,7 +425,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--content=<content>]
 	 * : Activity content text. If none is provided, default text will be generated.
 	 *
-	 * [--user-id=<user-id>]
+	 * [--user-id=<user>]
 	 * : ID of the user. If none is provided, a user will be randomly selected.
 	 *
 	 * ## EXAMPLES
@@ -433,17 +433,15 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *    wp bp activity post_update --content="Content to update" --user-id=50
 	 *    wp bp activity post_update --user-id=140
 	 *
-	 * @synopsis [--content=<content>] [--user-id=<user-id>]
+	 * @synopsis [--content=<content>] [--user-id=<user>]
 	 *
 	 * @since 1.3.0
 	 */
 	public function post_update( $args, $assoc_args ) {
-		$defaults = array(
+		$r = wp_parse_args( $assoc_args, array(
 			'content' => '',
 			'user_id' => '',
-		);
-
-		$r = wp_parse_args( $assoc_args, $defaults );
+		) );
 
 		// If no content, let's add some.
 		if ( empty( $r['content'] ) ) {
@@ -456,14 +454,14 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		// Post the activity update.
-		$activity_id = bp_activity_post_update( array(
+		$id = bp_activity_post_update( array(
 			'content' => $r['content'],
 			'user_id' => (int) $r['user_id'],
 		) );
 
 		// Activity ID returned on success update.
-		if ( is_numeric( $activity_id ) ) {
-			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $activity_id ) );
+		if ( is_numeric( $id ) ) {
+			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (id #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Could not post the activity update.' );
 		}
@@ -477,7 +475,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--content=<content>]
 	 * : Activity content text. If none is provided, default text will be generated.
 	 *
-	 * [--user-id=<user-id>]
+	 * [--user-id=<user>]
 	 * : ID of the user. If none is provided, a user will be randomly selected.
 	 *
 	 * [--activity-id=<activity-id>]
@@ -492,19 +490,17 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *    wp bp activity comment --user-id=140  --activity-id=800
 	 *    wp bp activity comment --user-id=140  --activity-id=750 --skip-notification=1
 	 *
-	 * @synopsis [--content=<content>] [--user-id=<user-id>] [--activity-id=<activity-id>] [--skip-notification=<skip-notification>]
+	 * @synopsis [--content=<content>] [--user-id=<user>] [--activity-id=<activity-id>] [--skip-notification=<skip-notification>]
 	 *
 	 * @since 1.3.0
 	 */
 	public function comment( $args, $assoc_args ) {
-		$defaults = array(
+		$r = wp_parse_args( $assoc_args,array(
 			'content'           => '',
 			'user_id'           => '',
 			'activity_id'       => '',
 			'skip_notification' => false,
-		);
-
-		$r = wp_parse_args( $assoc_args, $defaults );
+		) );
 
 		// If no content, let's add some.
 		if ( empty( $r['content'] ) ) {
@@ -522,7 +518,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		// Add activity comment.
-		$comment_id = bp_activity_new_comment( array(
+		$id = bp_activity_new_comment( array(
 			'content'           => $r['content'],
 			'user_id'           => (int) $r['user_id'],
 			'activity_id'       => (int) $r['activity_id'],
@@ -530,8 +526,8 @@ class BPCLI_Activity extends BPCLI_Component {
 		) );
 
 		// Activity Comment ID returned on success.
-		if ( is_numeric( $comment_id ) ) {
-			WP_CLI::success( sprintf( 'Successfully added a new activity comment (id #%d)', $comment_id ) );
+		if ( is_numeric( $id ) ) {
+			WP_CLI::success( sprintf( 'Successfully added a new activity comment (id #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Could not post a new activity comment.' );
 		}
@@ -557,12 +553,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * @since 1.3.0
 	 */
 	public function delete_comment( $args, $assoc_args ) {
-		$defaults = array(
+		$r = wp_parse_args( $assoc_args, array(
 			'activity_id'  => '',
 			'comment_id'   => '',
-		);
-
-		$r = wp_parse_args( $assoc_args, $defaults );
+		) );
 
 		// Bail if there is not activity id.
 		if ( empty( $r['activity_id'] ) ) {
@@ -607,7 +601,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity_id = isset( $args[0] ) ? $args[0] : false;
 
 		if ( ! is_numeric( $activity_id ) ) {
-			$activity_id = absint( $activity_id );
+			WP_CLI::error( 'This is not a valid activity ID.' );
 		}
 
 		$permalink = bp_activity_get_permalink( $activity_id );
@@ -650,6 +644,8 @@ class BPCLI_Activity extends BPCLI_Component {
 
 	/**
 	 * Get a list of activity components and actions
+	 *
+	 * @todo Added filter for plugins
 	 *
 	 * @since 1.1
 	 *
@@ -700,7 +696,7 @@ class BPCLI_Activity extends BPCLI_Component {
 				if ( 'groups' === $r['component'] ) {
 
 					if ( empty( $r['item-id'] ) ) {
-						WP_CLI::error( 'No group found by that id.' );
+						WP_CLI::error( 'No group found by that ID.' );
 					}
 
 					// get the group.
@@ -820,11 +816,9 @@ class BPCLI_Activity extends BPCLI_Component {
 					// groan - have to fake this.
 					if ( '' === $r['user-id'] ) {
 						$user = get_user_by( 'email', $comment->comment_author_email );
-						if ( empty( $user ) ) {
-							$r['user-id'] = $this->get_random_user_id();
-						} else {
-							$r['user-id'] = $user->ID;
-						}
+						$r['user-id'] = ( empty( $user ) )
+							? $this->get_random_user_id()
+							: $user->ID;
 					}
 
 					$post_permalink = get_permalink( $comment->comment_post_ID );
