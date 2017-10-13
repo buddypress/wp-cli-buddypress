@@ -70,6 +70,38 @@ class BPCLI_Signup extends BPCLI_Component {
 	}
 
 	/**
+	 * Delete a signup.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <signup-id>
+	 * : Identifier for the signup.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  wp bp signup delete 520
+	 *
+	 * @synopsis <signup-id>
+	 *
+	 * @since 1.3.0
+	 */
+	public function delete( $args, $assoc_args ) {
+		$signup_id = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $signup_id ) ) {
+			WP_CLI::error( 'Invalid signup ID.' );
+		}
+
+		$retval = BP_Signup::delete( $signup_id );
+
+		if ( $retval ) {
+			WP_CLI::success( 'Signup deleted' );
+		} else {
+			WP_CLI::error( 'Could not delete signup.' );
+		}
+	}
+
+	/**
 	 * Activate a signup.
 	 *
 	 * ## OPTIONS
@@ -185,7 +217,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	}
 
 	public function get() {}
-	public function delete() {}
 	public function list_() {}
 }
 
