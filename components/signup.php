@@ -23,9 +23,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--silent=<silent>]
 	 * : Silent the signup creation. Default: false.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com
+	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
 	 *
 	 * @synopsis [--user-login=<user-login>] [--user-email=<user-email>] [--meta=<meta>] [--silent=<silent>]
 	 *
@@ -50,7 +51,7 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		// Add a random email if none is provided.
 		if ( empty( $r['user_email'] ) ) {
-			$r['user_email'] = is_email( $this->get_random_login() . '@domain.com' );
+			$r['user_email'] = is_email( $this->get_random_login() . '@site.com' );
 		}
 
 		// Sanitize email (random or not).
@@ -63,7 +64,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		if ( $id ) {
-			WP_CLI::success( sprintf( 'Successfully added new user signup (id #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Could not add a user signup.' );
 		}
@@ -86,15 +87,18 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * @since 1.3.0
 	 */
 	public function delete( $args, $assoc_args ) {
-		$signup_id = isset( $args[0] ) ? $args[0] : false;
+		$signup_id = isset( $args[0] ) ? $args[0] : '';
+
+		// Bail early.
+		if ( empty( $signup_id ) ) {
+			WP_CLI::error( 'Please specify a signup ID.' );
+		}
 
 		if ( ! is_numeric( $signup_id ) ) {
 			WP_CLI::error( 'Invalid signup ID.' );
 		}
 
-		$retval = BP_Signup::delete( $signup_id );
-
-		if ( $retval ) {
+		if ( BP_Signup::delete( $signup_id ) ) {
 			WP_CLI::success( 'Signup deleted' );
 		} else {
 			WP_CLI::error( 'Could not delete signup.' );
@@ -118,7 +122,12 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * @since 1.3.0
 	 */
 	public function activate( $args, $assoc_args ) {
-		$key = isset( $args[0] ) ? $args[0] : false;
+		$key = isset( $args[0] ) ? $args[0] : '';
+
+		// Bail early.
+		if ( empty( $key ) ) {
+			WP_CLI::error( 'Please specify an activation key.' );
+		}
 
 		if ( ! is_numeric( $key ) ) {
 			WP_CLI::error( 'Invalid activation key.' );
@@ -198,17 +207,17 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		// Bail if no user id.
 		if ( empty( $r['user_id'] ) ) {
-			WP_CLI::error( 'User ID missing.' );
+			WP_CLI::error( 'Please specify a user ID.' );
 		}
 
 		// Bail if no email.
 		if ( empty( $r['user_email'] ) ) {
-			WP_CLI::error( 'User email missing.' );
+			WP_CLI::error( 'Please specify a user email.' );
 		}
 
 		// Bail if no key.
 		if ( empty( $r['activation_key'] ) ) {
-			WP_CLI::error( 'Activation key missing.' );
+			WP_CLI::error( 'Please specify an activation key.' );
 		}
 
 		bp_core_signup_send_validation_email( $r['user_id'], $r['user_email'], $r['activation_key'] );
@@ -249,10 +258,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * @since 1.3.0
 	 */
 	public function list_( $args, $assoc_args ) {
-
 		$formatter  = $this->get_formatter( $assoc_args );
-		$query_args = self::process_csv_arguments_to_arrays( $query_args );
-		$signups    = BP_Signup::get( $query_args );
+		$signups    = BP_Signup::get( $assoc_args );
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
