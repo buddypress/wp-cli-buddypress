@@ -11,10 +11,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--user_login=<user_login>]
+	 * [--user-login=<user-login>]
 	 * : User login for the signup. If none is provided, a random one will be used.
 	 *
-	 * [--user_email=<user_email>]
+	 * [--user-email=<user-email>]
 	 * : User email for the signup. If none is provided, a random one will be used.
 	 *
 	 * [--meta=<meta>]
@@ -69,9 +69,40 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 	}
 
+	/**
+	 * Activate a signup.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <activation-key>
+	 * : Identifier for the activation key.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  wp bp signup activate ee48ec319fef3nn4
+	 *
+	 * @synopsis <activation-key>
+	 *
+	 * @since 1.3.0
+	 */
+	public function activate( $args, $assoc_args ) {
+		$key = isset( $args[0] ) ? $args[0] : false;
+
+		if ( ! is_numeric( $key ) ) {
+			WP_CLI::error( 'Invalid activation key.' );
+		}
+
+		$id = bp_core_activate_signup( $key );
+
+		if ( $id ) {
+			WP_CLI::success( sprintf( 'Signup activated, new user (id #%d)', $id ) );
+		} else {
+			WP_CLI::error( 'Signup not activated.' );
+		}
+	}
+
 	public function generate() {}
 	public function get() {}
-	public function activate() {}
 	public function delete() {}
 	public function list_() {}
 	public function resend() {}
