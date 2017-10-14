@@ -55,8 +55,7 @@ Feature: Manage BuddyPress signups
       """
 
   Scenario: List available signups
-    Given a WP install
-    And these installed and active plugins: buddypress
+    Given these installed and active plugins: buddypress
 
     When I run `wp bp signup list_ --format=ids`
     Then STDOUT should be:
