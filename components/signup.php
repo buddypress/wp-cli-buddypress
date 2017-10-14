@@ -129,10 +129,6 @@ class BPCLI_Signup extends BPCLI_Component {
 			WP_CLI::error( 'Please specify an activation key.' );
 		}
 
-		if ( ! is_numeric( $key ) ) {
-			WP_CLI::error( 'Invalid activation key.' );
-		}
-
 		$id = bp_core_activate_signup( $key );
 
 		if ( $id ) {
