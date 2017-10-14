@@ -55,6 +55,25 @@ class BPCLI_Tools extends BPCLI_Component {
 			WP_CLI::error( 'There is no repair tool with that name.' );
 		}
 	}
+
+	/**
+	 * Reinstall default emails.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp tools reinstall_emails
+	 *
+	 * @since 1.5.0
+	 */
+	public function reinstall_emails( $args, $assoc_args ) {
+		$result = bp_admin_reinstall_emails();
+
+		if ( 0 === $result[0] ) {
+			WP_CLI::success( $result[1] );
+		} else {
+			WP_CLI::error( sprintf( 'Error: %s', $result[1] ) );
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp tools', 'BPCLI_Tools' );
