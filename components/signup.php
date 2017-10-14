@@ -136,7 +136,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		$id = bp_core_activate_signup( $key );
 
 		if ( $id ) {
-			WP_CLI::success( sprintf( 'Signup activated, new user (id #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Signup not activated.' );
 		}
