@@ -200,27 +200,27 @@ class BPCLI_Signup extends BPCLI_Component {
 	 */
 	public function resend( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'user_id'        => '',
-			'user_email'     => '',
-			'activation_key' => '',
+			'user-id'    => '',
+			'user-email' => '',
+			'key'        => '',
 		) );
 
 		// Bail if no user id.
-		if ( empty( $r['user_id'] ) ) {
+		if ( empty( $r['user-id'] ) ) {
 			WP_CLI::error( 'Please specify a user ID.' );
 		}
 
 		// Bail if no email.
-		if ( empty( $r['user_email'] ) ) {
+		if ( empty( $r['user-email'] ) ) {
 			WP_CLI::error( 'Please specify a user email.' );
 		}
 
 		// Bail if no key.
-		if ( empty( $r['activation_key'] ) ) {
+		if ( empty( $r['key'] ) ) {
 			WP_CLI::error( 'Please specify an activation key.' );
 		}
 
-		bp_core_signup_send_validation_email( $r['user_id'], $r['user_email'], $r['activation_key'] );
+		bp_core_signup_send_validation_email( $r['user-id'], $r['user-email'], $r['key'] );
 
 		WP_CLI::success( 'Email sent successfully.' );
 	}
@@ -257,7 +257,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @since 1.5.0
 	 */
-	public function list_( $args, $assoc_args ) {
+	public function list( $args, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$signups    = BP_Signup::get( $assoc_args );
 

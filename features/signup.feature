@@ -2,6 +2,7 @@ Feature: Manage BuddyPress signups
 
   Scenario: Delete a signup
     Given a WP install
+    And a BuddyPress install
 
     When I run `wp bp signup delete 520`
     Then STDOUT should contain:
@@ -23,12 +24,6 @@ Feature: Manage BuddyPress signups
 
   Scenario: Activate a signup
     Given a WP install
-
-    When I run `wp bp signup activate`
-    Then STDOUT should contain:
-      """
-      Error: Please specify an activation key.
-      """
 
     When I run `wp bp signup activate foo`
     Then STDOUT should contain:
