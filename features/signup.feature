@@ -1,7 +1,7 @@
 Feature: Manage BuddyPress signups
 
   Scenario: Signups delete
-    Given a BuddyPress install
+    Given a WP install
 
     When I try `wp bp signup delete`
     Then STDERR should be:
