@@ -2,7 +2,7 @@
 /**
  * Manage BuddyPress Signups.
  *
- * @since 1.3.0
+ * @since 1.5.0
  */
 class BPCLI_Signup extends BPCLI_Component {
 
@@ -30,7 +30,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @synopsis [--user-login=<user-login>] [--user-email=<user-email>] [--meta=<meta>] [--silent=<silent>]
 	 *
-	 * @since 1.3.0
+	 * @since 1.5.0
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -84,7 +84,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @synopsis <signup-id>
 	 *
-	 * @since 1.3.0
+	 * @since 1.5.0
 	 */
 	public function delete( $args, $assoc_args ) {
 		$signup_id = isset( $args[0] ) ? $args[0] : '';
@@ -119,7 +119,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @synopsis <activation-key>
 	 *
-	 * @since 1.3.0
+	 * @since 1.5.0
 	 */
 	public function activate( $args, $assoc_args ) {
 		$key = isset( $args[0] ) ? $args[0] : '';
@@ -156,7 +156,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @synopsis [--count=<number>]
 	 *
-	 * @since 1.3.0
+	 * @since 1.5.0
 	 */
 	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -196,7 +196,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @synopsis [--user-id=<user-id>] [--user-email=<user-email>] [--key=<key>]
 	 *
-	 * @since 1.3.0
+	 * @since 1.5.0
 	 */
 	public function resend( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -255,7 +255,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @synopsis [--field=<value>] [--format=<format>]
 	 *
-	 * @since 1.3.0
+	 * @since 1.5.0
 	 */
 	public function list_( $args, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
