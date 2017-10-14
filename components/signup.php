@@ -257,7 +257,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @since 1.5.0
 	 */
-	public function list( $args, $assoc_args ) {
+	public function list_( $args, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$signups    = BP_Signup::get( $assoc_args );
 
