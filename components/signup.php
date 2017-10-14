@@ -178,7 +178,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--user-id=<user-id>]
-	 * : User ID to send the e-mail
+	 * : User ID to send the e-mail.
 	 *
 	 * [--user-email=<user-email>]
 	 * : E-mail to send the activation.
@@ -235,11 +235,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - csv
 	 *   - ids
-	 *   - json
 	 *   - count
-	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -253,7 +250,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * @since 1.5.0
 	 */
-	public function list_( $args, $assoc_args ) {
+	public function list_( $_, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$signups    = BP_Signup::get( $assoc_args );
 
