@@ -24,6 +24,7 @@ Feature: Manage BuddyPress signups
 
   Scenario: Activate a signup
     Given a WP install
+    And a BuddyPress install
 
     When I run `wp bp signup activate ee48ec319fef3nn4`
     Then STDOUT should contain:
@@ -33,6 +34,7 @@ Feature: Manage BuddyPress signups
 
   Scenario: Resend activation email
     Given a WP install
+    And a BuddyPress install
 
     When I run `wp bp signup resend --user-id=20 --user-email=teste@site.com --key=ee48ec319fef3nn4`
     Then STDOUT should contain:
@@ -54,6 +56,7 @@ Feature: Manage BuddyPress signups
 
   Scenario: List available signups
     Given a WP install
+    And a BuddyPress install
 
     When I run `wp bp signup list_ --format=ids`
     Then STDOUT should be:
