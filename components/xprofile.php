@@ -286,6 +286,61 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
+	 * Get a profile field.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <field-id>
+	 * : Identifier for the field group.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to all fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp xprofile get_field 500
+	 *    wp bp xprofile get_field 56 --format=json
+	 *
+	 * @synopsis <field-id> [--fields=<fields>] [--format=<format>]
+	 *
+	 * @since 1.5.0
+	 */
+	public function get_field( $args, $assoc_args ) {
+		$field_id = isset( $args[0] ) ? $args[0] : '';
+
+		if ( empty( $field_id ) ) {
+			WP_CLI::error( 'Please specify a field ID.' );
+		}
+
+		if ( ! is_numeric( $field_id ) ) {
+			WP_CLI::error( 'This is not a valid field ID.' );
+		}
+
+		$object = xprofile_get_field( $field_id );
+
+		if ( is_object( $object ) ) {
+			$object_arr = get_object_vars( $object );
+			if ( empty( $assoc_args['fields'] ) ) {
+				$assoc_args['fields'] = array_keys( $object_arr );
+			}
+			$formatter = $this->get_formatter( $assoc_args );
+			$formatter->display_items( $object_arr );
+		} else {
+			WP_CLI::error( 'No field found.' );
+		}
+	}
+
+	/**
 	 * Set profile data for a user.
 	 *
 	 * ## OPTIONS
