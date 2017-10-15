@@ -1,10 +1,16 @@
 <?php
 /**
- * Manage xprofile data.
+ * Manage Xprofile data.
  *
  * @since 1.2.0
  */
 class BPCLI_XProfile extends BPCLI_Component {
+
+	/**
+	 * Xprofile object fields
+	 *
+	 * @var array
+	 */
 	protected $obj_fields = array(
 		'id',
 		'name',
@@ -19,7 +25,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --name=<name>
+	 * [--name=<name>]
 	 * : The name for this field group.
 	 *
 	 * [--description=<description>]
@@ -27,6 +33,12 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted. Default: true.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp xprofile create_group --name="Group Name" --description="Xprofile Group Description"
+	 *
+	 * @synopsis [--name=<name>] [--description=<description>] [--can-delete=<can-delete>]
 	 *
 	 * @since 1.2.0
 	 */
@@ -37,18 +49,22 @@ class BPCLI_XProfile extends BPCLI_Component {
 			'can_delete'  => true,
 		) );
 
+		if ( empty( $r['name'] ) ) {
+			WP_CLI::error( 'Please specify a group name.' );
+		}
+
 		$group = xprofile_insert_field_group( $r );
 
-		if ( ! $group ) {
-			WP_CLI::error( 'Could not create field group.' );
-		} else {
+		if ( $group ) {
 			$group = new BP_XProfile_Group( $group );
 			$success = sprintf(
-				'Created XProfile field group "%s" (id %d)',
+				'Created XProfile field group "%s" (ID %d)',
 				$group->name,
 				$group->id
 			);
 			WP_CLI::success( $success );
+		} else {
+			WP_CLI::error( 'Could not create field group.' );
 		}
 	}
 
@@ -57,26 +73,25 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass. See bp_xprofile_get_groups()
+	 *
 	 * ## EXAMPLES
 	 *
-	 *        wp bp group get_members 3
+	 *    wp bp xprofile list_fields
+	 *
+	 * @synopsis [--field=<value>]
 	 *
 	 * @since 1.4.0
-	 *
-	 * @todo Should probably be broken into separate methods for groups etc.
-	 *
-	 * @subcommand list_fields
 	 */
 	public function list_fields_( $_, $assoc_args ) {
-		$defaults = array(
-			'fields' => 'id,name',
+		$r = array_merge( $assoc_args, array(
+			'fields'       => 'id,name',
+			'fetch_fields' => true,
 		);
-		$args = array_merge( $defaults, $assoc_args );
 
-		$formatter = $this->get_formatter( $args );
-
-		$args['fetch_fields'] = true;
-		$groups = bp_xprofile_get_groups( $args );
+		$formatter = $this->get_formatter( $assoc_args );
+		$groups = bp_xprofile_get_groups( $r );
 
 		// Reformat so that field_group_id is a property of fields.
 		$fields = array();
@@ -96,59 +111,43 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --field_group_id=<field-group-id>
-	 * : ID of the associated field group.
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass. See xprofile_insert_field()
 	 *
-	 * --name=<name>
-	 * : Name of the new field.
+	 * ## EXAMPLE
 	 *
-	 * [--description=<description>]
-	 * : Description of the new field.
+	 *    wp bp xprofile create_field -
 	 *
-	 * [--parent_id=<parent-id>]
-	 * : ID of the parent field. For use when defining options for radio
-	 * buttons, etc.
-	 *
-	 * [--type=<type>]
-	 * : Field type. 'textbox', 'textarea', 'radio', 'checkbox',
-	 * 'selectbox', 'multiselectbox', 'datebox'. Default: 'textbox'.
-	 *
-	 * [--can_delete=<can-delete>]
-	 * : Whether the field can be deleted. Default: true.
-	 *
-	 * [--field_order=<field-order>]
-	 * : The position of the field in the field order.
-	 *
-	 * [--order_by=<order-by>]
-	 * : Order for the field.
-	 *
-	 * [--is_default_option=<is-default-option>]
-	 * : For suboptions of radio buttons, etc. Whether the field is the
-	 * default option. Default: false.
-	 *
-	 * [--option_order=<option-order>]
-	 * : Order for the options.
+	 * @synopsis [--field=<value>]
 	 *
 	 * @since 1.2.0
 	 */
 	public function create_field( $args, $assoc_args ) {
-		// Rest of arguments are passed through.
 		$r = wp_parse_args( $assoc_args, array(
-			'type'  => 'textbox',
+			'type'           => '',
+			'field_group_id' => '',
 		) );
+
+		if ( empty( $r['type'] ) ) {
+			WP_CLI::error( 'Please specify a field type.' );
+		}
+
+		if ( empty( $r['field_group_id'] ) ) {
+			WP_CLI::error( 'Please specify a field group id.' );
+		}
 
 		$field_id = xprofile_insert_field( $r );
 
-		if ( ! $field_id ) {
-			WP_CLI::error( 'Could not create field.' );
-		} else {
+		if ( $field_id ) {
 			$field = new BP_XProfile_Field( $field_id );
 			$success = sprintf(
-				'Created XProfile field "%s" (id %d)',
+				'Created XProfile field "%s" (ID %d)',
 				$field->name,
 				$field->id
 			);
 			WP_CLI::success( $success );
+		} else {
+			WP_CLI::error( 'Could not create field.' );
 		}
 	}
 
@@ -160,8 +159,14 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * <field-id>
 	 * : Field ID. Accepts either the name of the field or a numeric ID.
 	 *
-	 * [--delete_data=<delete-data>]
-	 * : Whether to delete user data for the field as well.
+	 * [--delete-data=<delete-data>]
+	 * : Whether to delete user data for the field as well. Default: false
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp xprofile delete_field 500
+	 *
+	 * @synopsis <field-id> [--delete-data=<delete-data>]
 	 *
 	 * @since 1.4.0
 	 */
@@ -170,30 +175,26 @@ class BPCLI_XProfile extends BPCLI_Component {
 			'delete_data' => false,
 		) );
 
-		// Validate field
-		// We need this info anyway for the success message.
-		$field_id = $args[0];
-		if ( ! is_numeric( $field_id ) ) {
-			$field_id = xprofile_get_field_id_from_name( $field_id );
-		} else {
-			$field_id = intval( $field_id );
+		$field_id = isset( $args[0] ) ? $args[0] : '';
+
+		if ( empty( $field_id ) ) {
+			WP_CLI::error( 'Please specify a field ID.' );
 		}
 
-		parent::_delete( array( $field_id ), $assoc_args, function ( $field_id ) use ( $r ) {
-			$field = new BP_XProfile_Field( $field_id );
-			$name = $field->name;
-			$id = $field->id;
+		$field_id = ( ! is_numeric( $field_id ) ) 
+			? xprofile_get_field_id_from_name( $field_id )
+			: absint( $field_id );
+
+		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
+			$field   = new BP_XProfile_Field( $field_id );
+			$name    = $field->name;
+			$id      = $field->id;
 			$deleted = $field->delete( $r['delete_data'] );
 
 			if ( $deleted ) {
-				$success = sprintf(
-					'Deleted XProfile field "%s" (id %d)',
-					$name,
-					$id
-				);
-				return array( 'success', $success );
+				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d)', $name, $id ) );
 			} else {
-				return array( 'error', "Failed deleting field $field_id." );
+				return array( 'error', sprintf( 'Failed deleting field %d.', $field_id ) );
 			}
 		} );
 	}
@@ -203,17 +204,23 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --user_id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * --field_id=<field-id>
+	 * [--field-id=<field>]
 	 * : Field ID. Accepts either the name of the field or a numeric ID.
 	 *
-	 * --value=<value>
+	 * [--value=<value>]
 	 * : Value to set.
 	 *
-	 * [--is_required=<is-required>]
+	 * [--is-required=<is-required>]
 	 * : Whether a non-empty value is required. Default: false
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp xprofile set_data --user-id=45 --field-id=120 --value=teste
+	 *
+	 * @synopsis [--user-id=<user>] [--field-id=<field>] [--value=<value>] [--is-required=<is-required>]
 	 *
 	 * @since 1.2.0
 	 */
@@ -228,23 +235,27 @@ class BPCLI_XProfile extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $r['user_id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or id' );
-			return;
+			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		// Validate field
-		// We need this info anyway for the success message.
-		if ( ! is_numeric( $r['field_id'] ) ) {
-			$field_id = xprofile_get_field_id_from_name( $r['field_id'] );
-		} else {
-			$field_id = intval( $r['field_id'] );
+		if ( empty( $r['field_id'] ) ) {
+			WP_CLI::error( 'Please specify a field ID.' );
 		}
+
+		if ( empty( $r['value'] ) ) {
+			WP_CLI::error( 'Please specify a value information to set.' );
+		}
+
+		$field_id = $r['field_id'];
+		$field_id = ( ! is_numeric( $field_id ) ) 
+			? xprofile_get_field_id_from_name( $field_id )
+			: absint( $field_id );
+
 
 		$field = new BP_XProfile_Field( $field_id );
 
 		if ( empty( $field->name ) ) {
 			WP_CLI::error( 'No field found by that name' );
-			return;
 		}
 
 		if ( 'checkbox' === $field->type ) {
@@ -253,19 +264,18 @@ class BPCLI_XProfile extends BPCLI_Component {
 
 		$updated = xprofile_set_field_data( $field->id, $user_id, $r['value'], $r['is_required'] );
 
-		if ( ! $updated ) {
-			WP_CLI::error( 'Could not set profile data.' );
-		} else {
+		if ( $updated ) {
 			$success = sprintf(
-				'Updated field "%s" (id %d) with value "%s" for user %s (id %d)',
+				'Updated field "%s" (ID %d) with value "%s" for user %s (ID %d)',
 				$field->name,
 				$field->id,
 				$r['value'],
 				$user->user_nicename,
 				$user->ID
 			);
-
 			WP_CLI::success( $success );
+		} else {
+			WP_CLI::error( 'Could not set profile data.' );	
 		}
 	}
 }
