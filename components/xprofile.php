@@ -74,7 +74,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <field-group-id>
-	 * : Identifier for the activity.
+	 * : Identifier for the field group.
 	 *
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields. Defaults to all fields.
@@ -105,6 +105,10 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'Please specify a field group ID.' );
 		}
 
+		if ( ! is_numeric( $field_group_id ) ) {
+			WP_CLI::error( 'This is not a valid field group ID.' );
+		}
+
 		$object = xprofile_get_field_group( $field_group_id );
 
 		$object_arr = get_object_vars( $object );
@@ -113,6 +117,41 @@ class BPCLI_XProfile extends BPCLI_Component {
 		}
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_items( $object_arr );
+	}
+
+	/**
+	 * Delete a specific profile field group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <field-group-id>
+	 * : Identifier for the field group.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *    wp bp xprofile delete_field_group 500
+	 *
+	 * @synopsis <field-group-id>
+	 *
+	 * @since 1.5.0
+	 */
+	public function delete_field_group( $args, $assoc_args ) {
+		$field_group_id = isset( $args[0] ) ? $args[0] : '';
+
+		if ( empty( $field_group_id ) ) {
+			WP_CLI::error( 'Please specify a field group ID.' );
+		}
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'This is not a valid field group ID.' );
+		}
+
+		// Delete field group. True if deleted.
+		if ( xprofile_delete_field_group( $field_group_id ) ) {
+			WP_CLI::success( 'Field group deleted.' );
+		} else {
+			WP_CLI::error( 'Could not delete the field group.' );
+		}
 	}
 
 	/**
