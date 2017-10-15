@@ -69,6 +69,53 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
+	 * Fetch specific profile field group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <field-group-id>
+	 * : Identifier for the activity.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to all fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp bp xprofile get_field_group 500
+	 *    wp bp xprofile get_field_group 56 --format=json
+	 *
+	 * @synopsis <field-group-id> [--fields=<fields>] [--format=<format>]
+	 *
+	 * @since 1.5.0
+	 */
+	public function get_field_group( $args, $assoc_args ) {
+		$field_group_id = isset( $args[0] ) ? $args[0] : '';
+
+		if ( empty( $field_group_id ) ) {
+			WP_CLI::error( 'Please specify a field group ID.' );
+		}
+
+		$object = xprofile_get_field_group( $field_group_id );
+
+		$object_arr = get_object_vars( $object );
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $object_arr );
+		}
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( $object_arr );
+	}
+
+	/**
 	 * Get a list of xprofile fields.
 	 *
 	 * ## OPTIONS
