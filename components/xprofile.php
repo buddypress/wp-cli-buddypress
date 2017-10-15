@@ -91,14 +91,14 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp xprofile get_field_group 500
-	 *    wp bp xprofile get_field_group 56 --format=json
+	 *    wp bp xprofile get_group 500
+	 *    wp bp xprofile get_group 56 --format=json
 	 *
 	 * @synopsis <field-group-id> [--fields=<fields>] [--format=<format>]
 	 *
 	 * @since 1.5.0
 	 */
-	public function get_field_group( $args, $assoc_args ) {
+	public function get_group( $args, $assoc_args ) {
 		$field_group_id = isset( $args[0] ) ? $args[0] : '';
 
 		if ( empty( $field_group_id ) ) {
@@ -129,13 +129,13 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp xprofile delete_field_group 500
+	 *    wp bp xprofile delete_group 500
 	 *
 	 * @synopsis <field-group-id>
 	 *
 	 * @since 1.5.0
 	 */
-	public function delete_field_group( $args, $assoc_args ) {
+	public function delete_group( $args, $assoc_args ) {
 		$field_group_id = isset( $args[0] ) ? $args[0] : '';
 
 		if ( empty( $field_group_id ) ) {
