@@ -69,7 +69,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Fetch specific profile field group.
+	 * Fetch specific xprofile field group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -85,7 +85,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - csv
 	 *   - json
 	 * ---
 	 *
@@ -120,7 +119,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete a specific profile field group.
+	 * Delete a specific xprofile field group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -142,7 +141,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'Please specify a field group ID.' );
 		}
 
-		if ( ! is_numeric( $activity_id ) ) {
+		if ( ! is_numeric( $field_group_id ) ) {
 			WP_CLI::error( 'This is not a valid field group ID.' );
 		}
 
@@ -162,7 +161,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See bp_xprofile_get_groups()
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *    wp bp xprofile list_fields
 	 *
@@ -202,7 +201,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp xprofile create_field -
+	 *    wp bp xprofile create_field --type=checkbox --field-group-id=508
 	 *
 	 * @synopsis [--field=<value>]
 	 *
@@ -243,7 +242,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <field-id>
-	 * : Field ID. Accepts either the name of the field or a numeric ID.
+	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
 	 *
 	 * [--delete-data=<delete-data>]
 	 * : Whether to delete user data for the field as well. Default: false
@@ -286,12 +285,12 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a profile field.
+	 * Get a xprofile field.
 	 *
 	 * ## OPTIONS
 	 *
 	 * <field-id>
-	 * : Identifier for the field group.
+	 * : Identifier for the field.
 	 *
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields. Defaults to all fields.
@@ -302,7 +301,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - csv
 	 *   - json
 	 * ---
 	 *
@@ -349,7 +347,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--field-id=<field>]
-	 * : Field ID. Accepts either the name of the field or a numeric ID.
+	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
 	 *
 	 * [--value=<value>]
 	 * : Value to set.
