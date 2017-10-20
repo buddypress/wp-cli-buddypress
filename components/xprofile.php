@@ -228,15 +228,18 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete an xprofile field.
+	 * Delete an XProfile field.
 	 *
 	 * ## OPTIONS
 	 *
 	 * <field-id>
 	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
 	 *
-	 * [--delete-data=<delete-data>]
-	 * : Whether to delete user data for the field as well. Default: false
+	 * [--delete-data]
+	 * : Delete user data for the field as well.
+	 * ---
+	 * default: false
+	 * ---
 	 *
 	 * ## EXAMPLE
 	 *
@@ -245,15 +248,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * @since 1.4.0
 	 */
 	public function delete_field( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'delete_data' => false,
-		) );
-
-		$field_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $field_id ) ) {
-			WP_CLI::error( 'Please specify a field ID.' );
-		}
+		$field_id = $args[0];
 
 		$field_id = ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
