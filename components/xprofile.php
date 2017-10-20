@@ -173,7 +173,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		$r = array_merge( $assoc_args, array(
 			'fields'       => 'id,name',
 			'fetch_fields' => true,
-		);
+		) );
 
 		$formatter = $this->get_formatter( $assoc_args );
 		$groups = bp_xprofile_get_groups( $r );
