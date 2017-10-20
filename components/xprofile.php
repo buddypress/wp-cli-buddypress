@@ -266,7 +266,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'Please specify a field ID.' );
 		}
 
-		$field_id = ( ! is_numeric( $field_id ) ) 
+		$field_id = ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
 			: absint( $field_id );
 
@@ -386,7 +386,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		}
 
 		$field_id = $r['field_id'];
-		$field_id = ( ! is_numeric( $field_id ) ) 
+		$field_id = ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
 			: absint( $field_id );
 
@@ -414,7 +414,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			);
 			WP_CLI::success( $success );
 		} else {
-			WP_CLI::error( 'Could not set profile data.' );	
+			WP_CLI::error( 'Could not set profile data.' );
 		}
 	}
 }
