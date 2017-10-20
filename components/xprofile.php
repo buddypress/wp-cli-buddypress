@@ -7,7 +7,7 @@
 class BPCLI_XProfile extends BPCLI_Component {
 
 	/**
-	 * Xprofile object fields
+	 * XProfile object fields.
 	 *
 	 * @var array
 	 */
@@ -37,8 +37,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *    wp bp xprofile create_group --name="Group Name" --description="Xprofile Group Description"
-	 *
-	 * @synopsis [--name=<name>] [--description=<description>] [--can-delete=<can-delete>]
 	 *
 	 * @since 1.2.0
 	 */
@@ -93,8 +91,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *    wp bp xprofile get_group 500
 	 *    wp bp xprofile get_group 56 --format=json
 	 *
-	 * @synopsis <field-group-id> [--fields=<fields>] [--format=<format>]
-	 *
 	 * @since 1.5.0
 	 */
 	public function get_group( $args, $assoc_args ) {
@@ -130,8 +126,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 *    wp bp xprofile delete_group 500
 	 *
-	 * @synopsis <field-group-id>
-	 *
 	 * @since 1.5.0
 	 */
 	public function delete_group( $args, $assoc_args ) {
@@ -164,8 +158,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *    wp bp xprofile list_fields
-	 *
-	 * @synopsis [--field=<value>]
 	 *
 	 * @since 1.4.0
 	 */
@@ -202,8 +194,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *    wp bp xprofile create_field --type=checkbox --field-group-id=508
-	 *
-	 * @synopsis [--field=<value>]
 	 *
 	 * @since 1.2.0
 	 */
@@ -250,8 +240,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *    wp bp xprofile delete_field 500
-	 *
-	 * @synopsis <field-id> [--delete-data=<delete-data>]
 	 *
 	 * @since 1.4.0
 	 */
@@ -309,8 +297,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *    wp bp xprofile get_field 500
 	 *    wp bp xprofile get_field 56 --format=json
 	 *
-	 * @synopsis <field-id> [--fields=<fields>] [--format=<format>]
-	 *
 	 * @since 1.5.0
 	 */
 	public function get_field( $args, $assoc_args ) {
@@ -359,8 +345,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 *    wp bp xprofile set_data --user-id=45 --field-id=120 --value=teste
 	 *
-	 * @synopsis [--user-id=<user>] [--field-id=<field>] [--value=<value>] [--is-required=<is-required>]
-	 *
 	 * @since 1.2.0
 	 */
 	public function set_data( $args, $assoc_args ) {
@@ -389,7 +373,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 		$field_id = ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
 			: absint( $field_id );
-
 
 		$field = new BP_XProfile_Field( $field_id );
 
