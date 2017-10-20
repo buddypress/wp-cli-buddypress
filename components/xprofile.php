@@ -188,8 +188,17 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See xprofile_insert_field()
+	 * --type=<type>
+	 * : Field type.
+	 * ---
+	 * default: textbox
+	 * ---
+	 *
+	 * --field_group_id=<field_group_id>
+	 * : ID of the field group where the new field will be created.
+	 *
+	 * --name=<name>
+	 * : Name of the new field.
 	 *
 	 * ## EXAMPLE
 	 *
@@ -198,20 +207,12 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * @since 1.2.0
 	 */
 	public function create_field( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'type'           => '',
-			'field_group_id' => '',
-		) );
-
-		if ( empty( $r['type'] ) ) {
-			WP_CLI::error( 'Please specify a field type.' );
+		// Check this is a non-empty, valid field type.
+		if ( ! in_array( $assoc_args['type'], (array) buddypress()->profile->field_types, true ) ) {
+			WP_CLI::error( 'Not a valid field type.' );
 		}
 
-		if ( empty( $r['field_group_id'] ) ) {
-			WP_CLI::error( 'Please specify a field group id.' );
-		}
-
-		$field_id = xprofile_insert_field( $r );
+		$field_id = xprofile_insert_field( $assoc_args );
 
 		if ( $field_id ) {
 			$field = new BP_XProfile_Field( $field_id );
