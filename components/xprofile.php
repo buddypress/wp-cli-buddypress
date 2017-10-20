@@ -321,17 +321,14 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--user-id=<user>]
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--field-id=<field>]
+	 * --field-id=<field>
 	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
 	 *
-	 * [--value=<value>]
+	 * --value=<value>
 	 * : Value to set.
-	 *
-	 * [--is-required=<is-required>]
-	 * : Whether a non-empty value is required. Default: false
 	 *
 	 * ## EXAMPLE
 	 *
@@ -340,28 +337,17 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * @since 1.2.0
 	 */
 	public function set_data( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'user_id'     => '',
-			'field_id'    => '',
-			'value'       => '',
-			'is_required' => false,
-		) );
-
-		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		if ( empty( $r['field_id'] ) ) {
-			WP_CLI::error( 'Please specify a field ID.' );
-		}
-
-		if ( empty( $r['value'] ) ) {
+		if ( empty( $assoc_args['value'] ) ) {
 			WP_CLI::error( 'Please specify a value information to set.' );
 		}
 
-		$field_id = $r['field_id'];
+		$field_id = $assoc_args['field-id'];
 		$field_id = ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
 			: absint( $field_id );
@@ -369,21 +355,23 @@ class BPCLI_XProfile extends BPCLI_Component {
 		$field = new BP_XProfile_Field( $field_id );
 
 		if ( empty( $field->name ) ) {
-			WP_CLI::error( 'No field found by that name' );
+			WP_CLI::error( 'Field not found.' );
 		}
 
 		if ( 'checkbox' === $field->type ) {
-			$r['value'] = explode( ',', $r['value'] );
+			$value = explode( ',', $assoc_args['value'] );
+		} else {
+			$value = $assoc_args['value'];
 		}
 
-		$updated = xprofile_set_field_data( $field->id, $user_id, $r['value'], $r['is_required'] );
+		$updated = xprofile_set_field_data( $field->id, $user_id, $value );
 
 		if ( $updated ) {
 			$success = sprintf(
 				'Updated field "%s" (ID %d) with value "%s" for user %s (ID %d)',
 				$field->name,
 				$field->id,
-				$r['value'],
+				$assoc_args['value'],
 				$user->user_nicename,
 				$user->ID
 			);
