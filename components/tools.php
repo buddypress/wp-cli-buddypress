@@ -9,7 +9,7 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --type=<type>
+	 * <type>
 	 * : Name of the repair tool.
 	 * ---
 	 * options:
@@ -22,13 +22,13 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp tools repair --type=friend-count
-	 *    $ wp bp tools repair --type=group-count
+	 *    $ wp bp tools repair friend-count
+	 *    $ wp bp tools fix group-count
 	 *
 	 * @alias fix
 	 */
 	public function repair( $args, $assoc_args ) {
-		$repair = 'bp_admin_repair_' . sanitize_key( $assoc_args['type'] );
+		$repair = 'bp_admin_repair_' . sanitize_key( $args[0] );
 
 		if ( function_exists( $repair ) ) {
 			$result = $repair();
