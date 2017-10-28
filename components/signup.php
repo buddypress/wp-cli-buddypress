@@ -27,10 +27,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com
 	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
-	 *
-	 * @synopsis [--user-login=<user-login>] [--user-email=<user-email>] [--meta=<meta>] [--silent=<silent>]
-	 *
-	 * @since 1.5.0
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -81,10 +77,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *  wp bp signup delete 520
-	 *
-	 * @synopsis <signup-id>
-	 *
-	 * @since 1.5.0
 	 */
 	public function delete( $args, $assoc_args ) {
 		$signup_id = isset( $args[0] ) ? $args[0] : '';
@@ -116,10 +108,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *  wp bp signup activate ee48ec319fef3nn4
-	 *
-	 * @synopsis <activation-key>
-	 *
-	 * @since 1.5.0
 	 */
 	public function activate( $args, $assoc_args ) {
 		$key = isset( $args[0] ) ? $args[0] : '';
@@ -149,10 +137,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *  wp bp signup generate --count=50
-	 *
-	 * @synopsis [--count=<number>]
-	 *
-	 * @since 1.5.0
 	 */
 	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -189,10 +173,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *   wp bp signup resend --user-id=20 --user-email=teste@site.com --key=ee48ec319fef3nn4
-	 *
-	 * @synopsis [--user-id=<user-id>] [--user-email=<user-email>] [--key=<key>]
-	 *
-	 * @since 1.5.0
 	 */
 	public function resend( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -245,10 +225,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *   wp bp signup list --usersearch=user_login
 	 *   wp bp signup list --number=100 --format=count
 	 *   wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
-	 *
-	 * @synopsis [--field=<value>] [--format=<format>]
-	 *
-	 * @since 1.5.0
 	 */
 	public function list_( $_, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
