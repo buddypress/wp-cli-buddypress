@@ -28,8 +28,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com
-	 *   wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
+	 *   $ wp bp signup add --user-login=test_user --user-email=teste@site.com
+	 *   $ wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -79,7 +79,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   wp bp signup delete 520
+	 *   $ wp bp signup delete 520
 	 */
 	public function delete( $args, $assoc_args ) {
 		if ( BP_Signup::delete( $args[0] ) ) {
@@ -99,7 +99,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   wp bp signup activate ee48ec319fef3nn4
+	 *   $ wp bp signup activate ee48ec319fef3nn4
 	 */
 	public function activate( $args, $assoc_args ) {
 
@@ -125,7 +125,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *  wp bp signup generate --count=50
+	 *  $ wp bp signup generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -161,7 +161,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   wp bp signup resend --user-id=20 --email=teste@site.com --key=ee48ec319fef3nn4
+	 *   $ wp bp signup resend --user-id=20 --email=teste@site.com --key=ee48ec319fef3nn4
 	 */
 	public function resend( $args, $assoc_args ) {
 		// Send email.
@@ -194,9 +194,9 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp bp signup list --format=ids
-	 *   wp bp signup list --number=100 --format=count
-	 *   wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
+	 *   $ wp bp signup list --format=ids
+	 *   $ wp bp signup list --number=100 --format=count
+	 *   $ wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
 	 *
 	 * @subcommand list
 	 */
