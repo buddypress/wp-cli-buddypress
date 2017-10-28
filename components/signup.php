@@ -150,26 +150,22 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --user-id=<user-id>
+	 * <user-id>
 	 * : User ID to send the e-mail.
 	 *
-	 * --email=<email>
+	 * <email>
 	 * : E-mail to send the activation.
 	 *
-	 * --key=<key>
+	 * <key>
 	 * : Activation key.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   $ wp bp signup resend --user-id=20 --email=teste@site.com --key=ee48ec319fef3nn4
+	 *   $ wp bp signup resend 20 teste@site.com ee48ec319fef3nn4
 	 */
 	public function resend( $args, $assoc_args ) {
 		// Send email.
-		bp_core_signup_send_validation_email(
-			$assoc_args['user-id'],
-			$assoc_args['email'],
-			$assoc_args['key']
-		);
+		bp_core_signup_send_validation_email( $args[0], $args[1], $args[2] );
 
 		WP_CLI::success( 'Email sent successfully.' );
 	}

@@ -21,7 +21,7 @@ Feature: Manage BuddyPress signups
   Scenario: Resend activation email
     Given a WP install
 
-    When I run `wp bp signup resend --user-id=20 --email=teste@site.com --key=ee48ec319fef3nn4`
+    When I run `wp bp signup resend 20 teste@site.com ee48ec319fef3nn4`
     Then STDOUT should contain:
       """
       Success: Email sent successfully.
@@ -30,7 +30,7 @@ Feature: Manage BuddyPress signups
   Scenario: List available signups
     Given a WP install
 
-    When I run `wp bp signup list_ --format=count`
+    When I run `wp bp signup list --format=count`
     Then STDOUT should be:
     """
     3
