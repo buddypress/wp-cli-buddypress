@@ -9,7 +9,7 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--type=<type>]
+	 * --type=<type>
 	 * : Name of the repair tool.
 	 * ---
 	 * options:
@@ -25,23 +25,10 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *    wp bp tools repair --type=friend-count
 	 *    wp bp tools repair --type=group-count
 	 *
-	 * @synopsis [--type=<type>]
-	 *
-	 * @since 1.5.0
+	 * @alias fix
 	 */
 	public function repair( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'type' => '',
-		) );
-
-
-		// If no type added, bail it.
-		if ( empty( $r['type'] ) ) {
-			WP_CLI::error( 'You need to add a name of the repair tool.' );
-		}
-
-		// Repair function.
-		$repair = 'bp_admin_repair_' . sanitize_key( $r['type'] );
+		$repair = 'bp_admin_repair_' . sanitize_key( $assoc_args['type'] );
 
 		if ( function_exists( $repair ) ) {
 			$result = $repair();
@@ -57,13 +44,11 @@ class BPCLI_Tools extends BPCLI_Component {
 	}
 
 	/**
-	 * Reinstall default emails.
+	 * Reinstall BuddyPress default emails.
 	 *
 	 * ## EXAMPLE
 	 *
 	 *    wp bp tools reinstall_emails
-	 *
-	 * @since 1.5.0
 	 */
 	public function reinstall_emails( $args, $assoc_args ) {
 		$result = bp_admin_reinstall_emails();
