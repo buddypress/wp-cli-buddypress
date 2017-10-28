@@ -21,7 +21,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * : User meta for the signup.
 	 *
 	 * [--silent=<silent>]
-	 * : Silent the signup creation. Default: false.
+	 * : Silent the signup creation.
+	 * ---
+	 * default: false.
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
@@ -76,21 +79,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *  wp bp signup delete 520
+	 *   wp bp signup delete 520
 	 */
 	public function delete( $args, $assoc_args ) {
-		$signup_id = isset( $args[0] ) ? $args[0] : '';
-
-		// Bail early.
-		if ( empty( $signup_id ) ) {
-			WP_CLI::error( 'Please specify a signup ID.' );
-		}
-
-		if ( ! is_numeric( $signup_id ) ) {
-			WP_CLI::error( 'Invalid signup ID.' );
-		}
-
-		if ( BP_Signup::delete( $signup_id ) ) {
+		if ( BP_Signup::delete( $args[0] ) ) {
 			WP_CLI::success( 'Signup deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete signup.' );
@@ -107,17 +99,11 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *  wp bp signup activate ee48ec319fef3nn4
+	 *   wp bp signup activate ee48ec319fef3nn4
 	 */
 	public function activate( $args, $assoc_args ) {
-		$key = isset( $args[0] ) ? $args[0] : '';
 
-		// Bail early.
-		if ( empty( $key ) ) {
-			WP_CLI::error( 'Please specify an activation key.' );
-		}
-
-		$id = bp_core_activate_signup( $key );
+		$id = bp_core_activate_signup( $args[0] );
 
 		if ( $id ) {
 			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d)', $id ) );
@@ -132,7 +118,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--count=<number>]
-	 * : How many signups to generate. Default: 100
+	 * : How many signups to generate.
+	 * ---
+	 * default: 100
+	 * ---
 	 *
 	 * ## EXAMPLE
 	 *
@@ -161,42 +150,26 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--user-id=<user-id>]
+	 * --user-id=<user-id>
 	 * : User ID to send the e-mail.
 	 *
-	 * [--user-email=<user-email>]
+	 * --email=<email>
 	 * : E-mail to send the activation.
 	 *
-	 * [--key=<key>]
-	 * : Activation key for the e-mail.
+	 * --key=<key>
+	 * : Activation key.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   wp bp signup resend --user-id=20 --user-email=teste@site.com --key=ee48ec319fef3nn4
+	 *   wp bp signup resend --user-id=20 --email=teste@site.com --key=ee48ec319fef3nn4
 	 */
 	public function resend( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'user-id'    => '',
-			'user-email' => '',
-			'key'        => '',
-		) );
-
-		// Bail if no user id.
-		if ( empty( $r['user-id'] ) ) {
-			WP_CLI::error( 'Please specify a user ID.' );
-		}
-
-		// Bail if no email.
-		if ( empty( $r['user-email'] ) ) {
-			WP_CLI::error( 'Please specify a user email.' );
-		}
-
-		// Bail if no key.
-		if ( empty( $r['key'] ) ) {
-			WP_CLI::error( 'Please specify an activation key.' );
-		}
-
-		bp_core_signup_send_validation_email( $r['user-id'], $r['user-email'], $r['key'] );
+		// Send email.
+		bp_core_signup_send_validation_email(
+			$assoc_args['user-id'],
+			$assoc_args['email'],
+			$assoc_args['key']
+		);
 
 		WP_CLI::success( 'Email sent successfully.' );
 	}
@@ -222,11 +195,12 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *   wp bp signup list --format=ids
-	 *   wp bp signup list --usersearch=user_login
 	 *   wp bp signup list --number=100 --format=count
 	 *   wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
+	 *
+	 * @subcommand list
 	 */
-	public function list_( $_, $assoc_args ) {
+	public function _list( $_, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$signups    = BP_Signup::get( $assoc_args );
 
