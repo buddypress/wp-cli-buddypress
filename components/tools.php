@@ -22,8 +22,8 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp tools repair --type=friend-count
-	 *    wp bp tools repair --type=group-count
+	 *    $ wp bp tools repair --type=friend-count
+	 *    $ wp bp tools repair --type=group-count
 	 *
 	 * @alias fix
 	 */
@@ -48,7 +48,7 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp tools reinstall_emails
+	 *    $ wp bp tools reinstall_emails
 	 */
 	public function reinstall_emails( $args, $assoc_args ) {
 		$result = bp_admin_reinstall_emails();
