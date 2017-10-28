@@ -596,38 +596,38 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --group-id=<group>
+	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * <user-id>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * --role=<role>
+	 * <role>
 	 * : Group role to promote the member (member, mod, admin).
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group promote --group-id=3 --user-id=10 --role=admin
-	 *    $ wp bp group promote --group-id=foo --user-id=admin --role=mod
+	 *    $ wp bp group promote 3 10 admin
+	 *    $ wp bp group promote foo admin mod
 	 */
 	public function promote( $args, $assoc_args ) {
 
 		// Group ID.
-		$group_id = $assoc_args['group-id'];
+		$group_id = $args[0];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$user = $this->get_user_id_from_identifier( $args[1] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$role = $assoc_args['role'];
-		if ( empty( $role ) && ! in_array( $role, $this->group_roles(), true ) ) {
+		$role = $args[2];
+		if ( ! in_array( $role, $this->group_roles(), true ) ) {
 			WP_CLI::error( 'You need a role to promote the member.' );
 		}
 
