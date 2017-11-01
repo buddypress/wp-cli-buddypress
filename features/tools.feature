@@ -6,7 +6,7 @@ Feature: Manage BuddyPress Tools
     When I run `wp bp tools repair friend-count`
     Then STDOUT should contain:
       """
-      Success: Counting the number of friends for each user&hellip; Complete!
+      Success: Counting the number of friends for each user. Complete!
       """
 
   Scenario: BuddyPress reinstall emails

@@ -1,6 +1,8 @@
 <?php
 /**
  * Manage BuddyPress Tools.
+ *
+ * @since 1.5.0
  */
 class BPCLI_Tools extends BPCLI_Component {
 
@@ -22,13 +24,13 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp tools repair friend-count
-	 *    $ wp bp tools fix group-count
+	 *     $ wp bp tools repair friend-count
+	 *     $ wp bp tools fix group-count
 	 *
 	 * @alias fix
 	 */
 	public function repair( $args, $assoc_args ) {
-		$repair = 'bp_admin_repair_' . sanitize_key( $args[0] );
+		$repair = 'bp_admin_repair_' . $this->sanitize_string( $args[0] );
 
 		if ( function_exists( $repair ) ) {
 			$result = $repair();
@@ -48,7 +50,7 @@ class BPCLI_Tools extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    $ wp bp tools reinstall_emails
+	 *     $ wp bp tools reinstall_emails
 	 */
 	public function reinstall_emails( $args, $assoc_args ) {
 		$result = bp_admin_reinstall_emails();
