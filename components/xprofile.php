@@ -335,10 +335,6 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		if ( empty( $assoc_args['value'] ) ) {
-			WP_CLI::error( 'Please specify a value information to set.' );
-		}
-
 		$field_id = $assoc_args['field-id'];
 		$field_id = ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
