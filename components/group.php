@@ -54,8 +54,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group create --name="Totally Cool Group"
-	 *    $ wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
+	 *     $ wp bp group create --name="Totally Cool Group"
+	 *     $ wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -114,7 +114,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   $ wp bp group generate --count=50
+	 *     $ wp bp group generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -136,7 +136,7 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Fetch a single group.
+	 * Get a group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -157,8 +157,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group get 500
-	 *   $ wp bp group get group-slug
+	 *     $ wp bp group get 500
+	 *     $ wp bp group get group-slug
 	 */
 	public function get( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -189,8 +189,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group delete 500
-	 *   $ wp bp group delete group-slug
+	 *     $ wp bp group delete 500
+	 *     $ wp bp group delete group-slug
 	 */
 	public function delete( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -221,7 +221,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   $ wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
+	 *     $ wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
 	 */
 	public function update( $args, $assoc_args ) {
 		$clean_group_ids = array();
@@ -251,8 +251,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group permalink 500
-	 *    $ wp bp group permalink group-slug
+	 *     $ wp bp group permalink 500
+	 *     $ wp bp group permalink group-slug
 	 */
 	public function permalink( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -291,12 +291,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group post_update 40 50  --content="Content to update"
-	 *    $ wp bp group post_update 49 140
+	 *     $ wp bp group post_update 40 50  --content="Content to update"
+	 *     $ wp bp group post_update 49 140
 	 */
 	public function post_update( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -349,14 +347,13 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group list --format=ids
-	 *   $ wp bp group list --format=count
-	 *   $ wp bp group list --per_page=5
+	 *     $ wp bp group list --format=ids
+	 *     $ wp bp group list --format=count
+	 *     $ wp bp group list --per_page=5
 	 *
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$query_args = wp_parse_args( $assoc_args, array(
@@ -385,7 +382,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [<role>]
@@ -396,13 +393,11 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group add_member 3 10
-	 *   $ wp bp group add_member bar 20
-	 *   $ wp bp group add_member foo admin mod
+	 *     $ wp bp group add_member 3 10
+	 *     $ wp bp group add_member bar 20
+	 *     $ wp bp group add_member foo admin mod
 	 */
 	public function add_member( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -417,8 +412,8 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		// Sanitize role.
-		$role = $r['role'];
-		if ( ! in_array( $role, $this->group_roles(), true ) ) {
+		$role = $args[2];
+		if ( empty( $role ) || ! in_array( $role, $this->group_roles(), true ) ) {
 			$role = 'member';
 		}
 
@@ -451,17 +446,15 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group remove_member 3 10
-	 *   $ wp bp group remove_member foo admin
+	 *     $ wp bp group remove_member 3 10
+	 *     $ wp bp group remove_member foo admin
 	 */
 	public function remove_member( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -493,8 +486,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group get_members --group-id=3
-	 *   $ wp bp group get_members --group-id=slug
+	 *     $ wp bp group get_members --group-id=3
+	 *     $ wp bp group get_members --group-id=slug
 	 */
 	public function get_members( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -548,9 +541,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group get_member_groups --user-id=30
-	 *   $ wp bp group get_member_groups --user-id=90 --order=DESC
-	 *   $ wp bp group get_member_groups --user-id=100 --order=DESC --is_mod=1
+	 *     $ wp bp group get_member_groups --user-id=30
+	 *     $ wp bp group get_member_groups --user-id=90 --order=DESC
+	 *     $ wp bp group get_member_groups --user-id=100 --order=DESC --is_mod=1
 	 */
 	public function get_member_groups( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -599,7 +592,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * <role>
@@ -607,12 +600,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group promote 3 10 admin
-	 *    $ wp bp group promote foo admin mod
+	 *     $ wp bp group promote 3 10 admin
+	 *     $ wp bp group promote foo admin mod
 	 */
 	public function promote( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -628,7 +619,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 		$role = $args[2];
 		if ( ! in_array( $role, $this->group_roles(), true ) ) {
-			WP_CLI::error( 'You need a role to promote the member.' );
+			WP_CLI::error( 'You need a valid role to promote the member.' );
 		}
 
 		if ( groups_promote_member( $user->ID, $group_id, $role ) ) {
@@ -646,17 +637,15 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group demote 3 10
-	 *    $ wp bp group demote foo admin
+	 *     $ wp bp group demote 3 10
+	 *     $ wp bp group demote foo admin
 	 */
 	public function demote( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -685,17 +674,15 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group ban 3 10
-	 *    $ wp bp group ban foo admin
+	 *     $ wp bp group ban 3 10
+	 *     $ wp bp group ban foo admin
 	 */
 	public function ban( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -724,17 +711,15 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group unban 3 10
-	 *    $ wp bp group unban foo admin
+	 *     $ wp bp group unban 3 10
+	 *     $ wp bp group unban foo admin
 	 */
 	public function unban( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $args[0];
 
 		// Check that group exists.
@@ -765,8 +750,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp group invites_from_user --user-id=30
-	 *   $ wp bp group invites_from_user --user-id=30 --limit=100 --exclude=100
+	 *     $ wp bp group invites_from_user --user-id=30
+	 *     $ wp bp group invites_from_user --user-id=30 --limit=100 --exclude=100
 	 */
 	public function invites_from_user( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -816,18 +801,13 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * --role=<role>
 	 * : Group member role (member, mod, admin).
-	 * ---
-	 * default: null
-	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group invite_list --user-id=30 --group-id=56
-	 *    $ wp bp group invite_list --user-id=30 --group-id=100 --role=member
+	 *     $ wp bp group invite_list --user-id=30 --group-id=56
+	 *     $ wp bp group invite_list --user-id=30 --group-id=100 --role=member
 	 */
 	public function invite_list( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
@@ -875,9 +855,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group invite --user-id=10 --group-id=40
-	 *    $ wp bp group invite --user-id=admin --group-id=40 --inviter_id=804
-	 *    $ wp bp group invite --user-id=user_login --group-id=60 --silent=1
+	 *     $ wp bp group invite --user-id=10 --group-id=40
+	 *     $ wp bp group invite --user-id=admin --group-id=40 --inviter_id=804
+	 *     $ wp bp group invite --user-id=user_login --group-id=60 --silent=1
 	 */
 	public function invite( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -921,7 +901,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --group-id=<group
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
 	 * --user-id=<user>
@@ -929,12 +909,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group uninvite --group-id=3 --user-id=10
-	 *    $ wp bp group uninvite --group-id=foo --user-id=admin
+	 *     $ wp bp group uninvite --group-id=3 --user-id=10
+	 *     $ wp bp group uninvite --group-id=foo --user-id=admin
 	 */
 	public function uninvite( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
@@ -968,7 +946,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *   $ $ wp bp group generate_invites --count=50
+	 *     $ wp bp group generate_invites --count=50
 	 */
 	public function generate_invites( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -1003,12 +981,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ wp bp group accept_invite --group-id=3 --user-id=10
-	 *    $ wp bp group accept_invite --group-id=foo --user-id=admin
+	 *     $ wp bp group accept_invite --group-id=3 --user-id=10
+	 *     $ wp bp group accept_invite --group-id=foo --user-id=admin
 	 */
 	public function accept_invite( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
@@ -1042,12 +1018,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ $ wp bp group reject_invite --group-id=3 --user-id=10
-	 *    $ $ wp bp group reject_invite --group-id=foo --user-id=admin
+	 *     $ wp bp group reject_invite --group-id=3 --user-id=10
+	 *     $ wp bp group reject_invite --group-id=foo --user-id=admin
 	 */
 	public function reject_invite( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $assoc_args['group_id'];
 
 		// Check that group exists.
@@ -1081,12 +1055,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ $ wp bp group delete_invite --group-id=3 --user-id=10
-	 *    $ $ wp bp group delete_invite --group-id=foo --user-id=admin
+	 *     $ wp bp group delete_invite --group-id=3 --user-id=10
+	 *     $ wp bp group delete_invite --group-id=foo --user-id=admin
 	 */
 	public function delete_invite( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
@@ -1120,12 +1092,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    $ $ wp bp group send_invites --group-id=3 --user-id=10
-	 *    $ $ wp bp group send_invites --group-id=foo --user-id=admin
+	 *     $ wp bp group send_invites --group-id=3 --user-id=10
+	 *     $ wp bp group send_invites --group-id=foo --user-id=admin
 	 */
 	public function send_invites( $args, $assoc_args ) {
-
-		// Group ID.
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
