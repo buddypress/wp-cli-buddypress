@@ -368,6 +368,45 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'Could not set profile data.' );
 		}
 	}
+
+	/**
+	 * Get profile data for a user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * --field-id=<field>
+	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
+	 *
+	 * [--multi-format=<multi-format>]
+	 * : The format for array data.
+	 *  ---
+	 * default: array
+	 * options:
+	 *   - array
+	 *   - comma
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp xprofile get_data --user-id=45 --field-id=120
+	 *     $ wp bp xprofile get_data --user-id=user_test --field-id=Hometown --multi-format=comma
+	 *
+	 * @since 1.2.0
+	 */
+	public function get_data( $args, $assoc_args ) {
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		$data = xprofile_get_field_data( $assoc_args['field-id'], $user->ID, $assoc_args['multi-format'] );
+
+		WP_CLI::print_value( $data, $assoc_args );
+	}
 }
 
 WP_CLI::add_command( 'bp xprofile', 'BPCLI_XProfile', array(
