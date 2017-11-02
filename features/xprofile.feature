@@ -1,5 +1,18 @@
 Feature: Manage BuddyPress xprofile fields.
 
+  Scenario: List XProfile fields
+    Given a WP install
+
+    When I run `wp bp xprofile list_fields`
+    Then STDOUT should contain:
+      """
+      +----+------+
+      | id | name |
+      +----+------+
+      | 1  | Name |
+      +----+------+
+      """
+
   Scenario: Delete a field group
     Given a WP install
 
