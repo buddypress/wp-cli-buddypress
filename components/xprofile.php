@@ -377,8 +377,17 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * --field-id=<field>
+	 * [--field-id=<field>]
 	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 * ---
 	 *
 	 * [--multi-format=<multi-format>]
 	 * : The format for array data.
@@ -403,10 +412,41 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$data = xprofile_get_field_data( $assoc_args['field-id'], $user->ID, $assoc_args['multi-format'] );
+		if ( isset( $assoc_args['field-id'] ) ) {
+			$data = xprofile_get_field_data( $assoc_args['field-id'], $user->ID, $assoc_args['multi-format'] );
+			WP_CLI::print_value( $data, $assoc_args );
+		} else {
+			$data = BP_XProfile_ProfileData::get_all_for_user( $user->ID );
 
-		WP_CLI::print_value( $data, $assoc_args );
+			$formatted_data = array();
+			foreach ( $data as $field_name => $field_data ) {
+				// Omit WP core fields.
+				if ( ! is_array( $field_data ) ) {
+					continue;
+				}
+
+				$_field_data = maybe_unserialize( $field_data['field_data'] );
+				$_field_data = json_encode( $_field_data );
+
+				$formatted_data[] = array(
+					'field_id' => $field_data['field_id'],
+					'field_name' => $field_name,
+					'value' => $_field_data,
+				);
+			}
+
+			$format_args = $assoc_args;
+			$format_args['fields'] = array(
+				'field_id',
+				'field_name',
+				'value',
+			);
+			$formatter = $this->get_formatter( $format_args );
+			$formatter->display_items( $formatted_data );
+		}
+
 	}
+
 }
 
 WP_CLI::add_command( 'bp xprofile', 'BPCLI_XProfile', array(
