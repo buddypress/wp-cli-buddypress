@@ -1,6 +1,6 @@
 <?php
 /**
- * Manage Xprofile data.
+ * Manage XProfile data.
  *
  * @since 1.2.0
  */
@@ -21,7 +21,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	);
 
 	/**
-	 * Create an xprofile group.
+	 * Create an XProfile group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -68,7 +68,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Fetch specific xprofile field group.
+	 * Fetch specific XProfile field group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -113,7 +113,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete a specific xprofile field group.
+	 * Delete a specific XProfile field group.
 	 *
 	 * ## OPTIONS
 	 *
@@ -140,7 +140,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of xprofile fields.
+	 * Get a list of XProfile fields.
 	 *
 	 * ## OPTIONS
 	 *
@@ -174,7 +174,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	}
 
 	/**
-	 * Create an xprofile field.
+	 * Create an XProfile field.
 	 *
 	 * ## OPTIONS
 	 *
@@ -213,7 +213,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			);
 			WP_CLI::success( $success );
 		} else {
-			WP_CLI::error( 'Could not create field.' );
+			WP_CLI::error( 'Could not create XProfile field.' );
 		}
 	}
 
@@ -254,7 +254,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			if ( $deleted ) {
 				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d)', $name, $id ) );
 			} else {
-				return array( 'error', sprintf( 'Failed deleting field %d.', $field_id ) );
+				return array( 'error', sprintf( 'Failed deleting XProfile field %d.', $field_id ) );
 			}
 		} );
 	}
@@ -303,7 +303,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			$formatter = $this->get_formatter( $assoc_args );
 			$formatter->display_item( $object_arr );
 		} else {
-			WP_CLI::error( 'No field found.' );
+			WP_CLI::error( 'No XProfile field found.' );
 		}
 	}
 
@@ -332,7 +332,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		$field_id = $assoc_args['field-id'];
@@ -343,7 +343,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 		$field = new BP_XProfile_Field( $field_id );
 
 		if ( empty( $field->name ) ) {
-			WP_CLI::error( 'Field not found.' );
+			WP_CLI::error( 'XProfile field not found.' );
 		}
 
 		if ( 'checkbox' === $field->type ) {
@@ -356,7 +356,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 
 		if ( $updated ) {
 			$success = sprintf(
-				'Updated field "%s" (ID %d) with value "%s" for user %s (ID %d)',
+				'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d)',
 				$field->name,
 				$field->id,
 				$assoc_args['value'],
@@ -403,13 +403,13 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *     $ wp bp xprofile get_data --user-id=45 --field-id=120
 	 *     $ wp bp xprofile get_data --user-id=user_test --field-id=Hometown --multi-format=comma
 	 *
-	 * @since 1.2.0
+	 * @since 1.5.0
 	 */
 	public function get_data( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		if ( isset( $assoc_args['field-id'] ) ) {
@@ -466,13 +466,13 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *     $ wp bp xprofile delete_data --user-id=45 --field-id=120
 	 *     $ wp bp xprofile delete_data --user-id=user_test --delete-all
 	 *
-	 * @since 1.2.0
+	 * @since 1.5.0
 	 */
 	public function delete_data( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		if ( ! isset( $assoc_args['field-id'] ) && ! isset( $assoc_args['delete-all'] ) ) {
