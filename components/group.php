@@ -82,6 +82,11 @@ class BPCLI_Group extends BPCLI_Component {
 			$r['description'] = sprintf( 'Description for group "%s"', $r['name'] );
 		}
 
+		// Fallback for group status.
+		if ( ! in_array( $r['status'], $this->group_status(), true ) ) {
+			$r['status'] = 'public';
+		}
+
 		$id = groups_create_group( $r );
 
 		if ( is_numeric( $id ) ) {
@@ -112,21 +117,47 @@ class BPCLI_Group extends BPCLI_Component {
 	 * default: 100
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * [--status=<status>]
+	 * : The status of the generated groups. Specify public, private, hidden, or mixed.
+	 * ---
+	 * default: public
+	 * ---
+	 *
+	 * [--creator-id=<creator-id>]
+	 * : ID of the group creator.
+	 * ---
+	 * default: 1
+	 * ---
+	 *
+	 * [--enable-forum=<enable-forum>]
+	 * : Whether to enable legacy bbPress forums.
+	 * ---
+	 * default: 0
+	 * ---
+	 *
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group generate --count=50
+	 *     $ wp bp group generate --count=5 --status=mixed
+	 *     $ wp bp group generate --count=10 --status=hidden --creator-id=30
 	 */
 	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'count' => 100,
+			'count'        => 100,
+			'creator_id'   => 1,
+			'status'       => 'public',
+			'enable_forum' => 0,
 		) );
 
 		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $r['count'] );
 
 		for ( $i = 0; $i < $r['count']; $i++ ) {
 			$this->create( array(), array(
-				'name'   => sprintf( 'Test Group - #%d', $i ),
-				'silent' => true,
+				'name'         => sprintf( 'Group - #%d', $i ),
+				'creator_id'   => $r['creator-id'],
+				'status'       => $this->random_group_status( $r['status'] ),
+				'enable_forum' => $r['enable-forum'],
+				'silent'       => true,
 			) );
 
 			$notify->tick();
@@ -1121,10 +1152,39 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @return array An array of group roles
+	 * @return array An array of group roles.
 	 */
 	protected function group_roles() {
 		return array( 'member', 'mod', 'admin' );
+	}
+
+	/**
+	 * Group Status
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return array An array of gruop status.
+	 */
+	protected function group_status() {
+		return array( 'public', 'private', 'hidden' );
+	}
+
+	/**
+	 * Gets a randon group status.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param  string $status Group status.
+	 * @return string Group Status.
+	 */
+	protected function random_group_status( $status ) {
+		$core_status = $this->group_status();
+
+		$status = ( 'mixed' === $status )
+			? $core_status[ array_rand( $core_status ) ]
+			: $status;
+
+		return $status;
 	}
 
 	/**
