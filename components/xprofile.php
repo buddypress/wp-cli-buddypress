@@ -32,13 +32,14 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * : The description for this field group.
 	 *
 	 * [--can-delete=<can-delete>]
-	 * : Whether the group can be deleted. Default: true.
+	 * : Whether the group can be deleted.
+	 * ---
+	 * Default: true.
+	 * ---
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp xprofile create_group --name="Group Name" --description="Xprofile Group Description"
-	 *
-	 * @since 1.2.0
+	 *     $ wp bp xprofile create_group --name="Group Name" --description="Xprofile Group Description"
 	 */
 	public function create_group( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -79,7 +80,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
-	 *  ---
+	 * ---
 	 * default: table
 	 * options:
 	 *   - table
@@ -88,28 +89,25 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp xprofile get_group 500
-	 *    wp bp xprofile get_group 56 --format=json
+	 *     $ wp bp xprofile get_group 500
+	 *     $ wp bp xprofile get_group 56 --format=json
 	 *
 	 * @since 1.5.0
 	 */
 	public function get_group( $args, $assoc_args ) {
-		$field_group_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $field_group_id ) ) {
-			WP_CLI::error( 'Please specify a field group ID.' );
-		}
+		$field_group_id = $args[0];
 
 		if ( ! is_numeric( $field_group_id ) ) {
 			WP_CLI::error( 'This is not a valid field group ID.' );
 		}
 
 		$object = xprofile_get_field_group( $field_group_id );
-
 		$object_arr = get_object_vars( $object );
+
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}
+
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_items( $object_arr );
 	}
@@ -124,16 +122,10 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp xprofile delete_group 500
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp xprofile delete_group 500
 	 */
 	public function delete_group( $args, $assoc_args ) {
-		$field_group_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $field_group_id ) ) {
-			WP_CLI::error( 'Please specify a field group ID.' );
-		}
+		$field_group_id = $args[0];
 
 		if ( ! is_numeric( $field_group_id ) ) {
 			WP_CLI::error( 'This is not a valid field group ID.' );
@@ -157,9 +149,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp xprofile list_fields
-	 *
-	 * @since 1.4.0
+	 *     $ wp bp xprofile list_fields
 	 */
 	public function list_fields_( $_, $assoc_args ) {
 		$r = array_merge( $assoc_args, array(
@@ -202,7 +192,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp xprofile create_field --type=checkbox --field-group-id=508
+	 *     $ wp bp xprofile create_field --type=checkbox --field-group-id=508
 	 *
 	 * @since 1.2.0
 	 */
@@ -241,9 +231,10 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * default: false
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
-	 *    wp bp xprofile delete_field 500
+	 *     $ wp bp xprofile delete_field 500
+	 *     $ wp bp xprofile delete_field 458 --delete-data
 	 *
 	 * @since 1.4.0
 	 */
@@ -290,8 +281,8 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp xprofile get_field 500
-	 *    wp bp xprofile get_field 56 --format=json
+	 *     $ wp bp xprofile get_field 500
+	 *     $ wp bp xprofile get_field 56 --format=json
 	 *
 	 * @since 1.5.0
 	 */
@@ -330,9 +321,10 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * --value=<value>
 	 * : Value to set.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
-	 *    wp bp xprofile set_data --user-id=45 --field-id=120 --value=teste
+	 *     $ wp bp xprofile set_data --user-id=45 --field-id=120 --value=teste
+	 *     $ wp bp xprofile set_data --user-id=user_test --field-id=445 --value=another_test
 	 *
 	 * @since 1.2.0
 	 */
