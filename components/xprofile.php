@@ -447,6 +447,52 @@ class BPCLI_XProfile extends BPCLI_Component {
 
 	}
 
+	/**
+	 * Delete profile data for a user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--field-id=<field>]
+	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
+	 *
+	 * [--delete-all]
+	 * : Delete all data for the user.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp xprofile delete_data --user-id=45 --field-id=120
+	 *     $ wp bp xprofile delete_data --user-id=user_test --delete-all
+	 *
+	 * @since 1.2.0
+	 */
+	public function delete_data( $args, $assoc_args ) {
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID' );
+		}
+
+		if ( ! isset( $assoc_args['field-id'] ) && ! isset( $assoc_args['delete-all'] ) ) {
+			WP_CLI::error( 'Either --field-id or --delete-all must be provided.' );
+		}
+
+		if ( isset( $assoc_args['delete-all'] ) ) {
+			WP_CLI::confirm( sprintf( 'Are you sure you want to delete all profile data for the user %s (#%d)?', $user->user_login, $user->ID ) );
+			xprofile_remove_data( $user->ID );
+			WP_CLI::success( 'Profile data removed.' );
+		} else {
+			WP_CLI::confirm( 'Are you sure you want to delete that?' );
+			$deleted = xprofile_delete_field_data( $assoc_args['field-id'], $user->ID );
+			if ( $deleted ) {
+				WP_CLI::success( 'Profile data removed.' );
+			} else {
+				WP_CLI::error( 'Could not delete profile data.' );
+			}
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp xprofile', 'BPCLI_XProfile', array(
