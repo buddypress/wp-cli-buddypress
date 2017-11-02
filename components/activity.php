@@ -1,6 +1,8 @@
 <?php
 /**
  * Manage BuddyPress activity items.
+ *
+ * @since 1.5.0
  */
 class BPCLI_Activity extends BPCLI_Component {
 
@@ -57,12 +59,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp activity create --is-spam=1
-	 *    wp bp activity create --component=groups --user-id=10
-	 *
-	 * @synopsis [--component=<component>] [--type=<type>] [--action=<action>] [--content=<content>] [--primary-link=<primary-link>] [--user-id=<user>] [--item-id=<item-id>] [--secondary-item-id=<secondary-item-id>] [--date-recorded=<date-recorded>] [--hide-sitewide=<hide-sitewide>] [--is-spam=<is-spam>] [--silent=<silent>]
-	 *
-	 * @since 1.1
+	 *     $ wp bp activity create --is-spam=1
+	 *     $ wp bp activity create --component=groups --user-id=10
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -173,17 +171,14 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp activity list --format=ids
-	 *    wp bp activity list --format=count
-	 *    wp bp activity list --per_page=5
-	 *    wp bp activity list --search_terms="Activity Comment"
+	 *     $ wp bp activity list --format=ids
+	 *     $ wp bp activity list --format=count
+	 *     $ wp bp activity list --per_page=5
+	 *     $ wp bp activity list --search_terms="Activity Comment"
 	 *
-	 * @synopsis [--field=<value>] [--format=<format>]
-	 *
-	 * @since 1.5.0
+	 * @subcommand list
 	 */
-	public function list_( $_, $assoc_args ) {
-
+	public function _list( $_, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args( $assoc_args, array(
@@ -218,7 +213,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--count=<number>]
-	 * : How many activity items to generate. Default: 100
+	 * : How many activity items to generate.
+	 * ---
+	 * default: 100
+	 * ---
 	 *
 	 * [--skip-activity-comments=<skip-activity-comments>
 	 * : Whether to skip activity comments. Recording activity_comment
@@ -226,11 +224,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity generate --count=50
-	 *
-	 * @synopsis [--count=<number>] [--skip-activity-comments=<skip-activity-comments>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -269,7 +263,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : Identifier for the activity.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields.
+	 * ---
+	 * default: Defaults to all fields
+	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -283,23 +280,11 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp activity get 500
-	 *    wp bp activity get 56 --format=json
-	 *
-	 * @synopsis <activity-id> [--fields=<fields>] [--format=<format>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity get 500
+	 *     $ wp bp activity get 56 --format=json
 	 */
 	public function get( $args, $assoc_args ) {
-		$activity_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $activity_id ) ) {
-			WP_CLI::error( 'Please specify an activity ID.' );
-		}
-
-		if ( ! is_numeric( $activity_id ) ) {
-			WP_CLI::error( 'This is not a valid activity ID.' );
-		}
+		$activity_id = $args[0];
 
 		$activity = bp_activity_get_specific( array(
 			'activity_ids' => $activity_id,
@@ -326,25 +311,11 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity delete 500
-	 *
-	 * @synopsis <activity-id>
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity delete 500
 	 */
 	public function delete( $args, $assoc_args ) {
-		$activity_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $activity_id ) ) {
-			WP_CLI::error( 'Please specify an activity ID.' );
-		}
-
-		if ( ! is_numeric( $activity_id ) ) {
-			WP_CLI::error( 'This is not a valid activity ID.' );
-		}
-
 		$activity = bp_activity_delete( array(
-			'id' => $activity_id,
+			'id' => $args[0],
 		) );
 
 		// Delete activity. True if deleted.
@@ -365,25 +336,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity spam 500
-	 *
-	 * @synopsis <activity-id>
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity spam 500
 	 */
 	public function spam( $args, $assoc_args ) {
-		$activity_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $activity_id ) ) {
-			WP_CLI::error( 'Please specify an activity ID.' );
-		}
-
-		if ( ! is_numeric( $activity_id ) ) {
-			WP_CLI::error( 'This is not a valid activity ID.' );
-		}
-
-		// Load up the activity item.
-		$activity = new BP_Activity_Activity( $activity_id );
+		$activity = new BP_Activity_Activity( $args[0] );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -409,25 +365,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity ham 500
-	 *
-	 * @synopsis <activity-id>
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity ham 500
 	 */
 	public function ham( $args, $assoc_args ) {
-		$activity_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $activity_id ) ) {
-			WP_CLI::error( 'Please specify an activity ID.' );
-		}
-
-		if ( ! is_numeric( $activity_id ) ) {
-			WP_CLI::error( 'This is not a valid activity ID.' );
-		}
-
-		// Load up the activity item.
-		$activity = new BP_Activity_Activity( $activity_id );
+		$activity = new BP_Activity_Activity( $args[0] );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -448,41 +389,27 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--content=<content>]
-	 * : Activity content text. If none is provided, default text will be generated.
-	 *
 	 * [--user-id=<user>]
 	 * : ID of the user. If none is provided, a user will be randomly selected.
 	 *
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be generated.
+	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp activity post_update --content="Content to update" --user-id=50
-	 *    wp bp activity post_update --user-id=140
-	 *
-	 * @synopsis [--content=<content>] [--user-id=<user>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity post_update --user-id=50 --content="Content to update"
+	 *     $ wp bp activity post_update --user-id=140
 	 */
 	public function post_update( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'content' => '',
-			'user_id' => '',
+			'content' => $this->generate_random_text(),
+			'user-id' => $this->get_random_user_id(),
 		) );
-
-		// If no content, let's add some.
-		if ( empty( $r['content'] ) ) {
-			$r['content'] = $this->generate_random_text();
-		}
-
-		// If no user, let's add one.
-		if ( empty( $r['user_id'] ) ) {
-			$r['user_id'] = $this->get_random_user_id();
-		}
 
 		// Post the activity update.
 		$id = bp_activity_post_update( array(
 			'content' => $r['content'],
-			'user_id' => (int) $r['user_id'],
+			'user_id' => (int) $r['user-id'],
 		) );
 
 		// Activity ID returned on success update.
@@ -498,61 +425,50 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--content=<content>]
-	 * : Activity content text. If none is provided, default text will be generated.
+	 * <activity-id>
+	 * : ID of the activity to add the comment.
 	 *
 	 * [--user-id=<user>]
 	 * : ID of the user. If none is provided, a user will be randomly selected.
 	 *
-	 * [--activity-id=<activity-id>]
-	 * : ID of the activity to add the comment.
+	 * [--content=<content>]
+	 * : Activity content text. If none is provided, default text will be generated.
 	 *
 	 * [--skip-notification=<skip-notification>]
-	 * : Whether to skip notification. Default: false
+	 * : Whether to skip notification.
+	 * * ---
+	 * default: false
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *    wp bp activity comment --content="New activity comment." --user-id=50 --activity-id=500
-	 *    wp bp activity comment --user-id=140  --activity-id=800
-	 *    wp bp activity comment --user-id=140  --activity-id=750 --skip-notification=1
-	 *
-	 * @synopsis [--content=<content>] [--user-id=<user>] [--activity-id=<activity-id>] [--skip-notification=<skip-notification>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity comment 560 --user-id=50 --content="New activity comment."
+	 *     $ wp bp activity comment 849 --user-id=140
+	 *     $ wp bp activity comment 459 --user-id=140 --skip-notification=1
 	 */
 	public function comment( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args,array(
-			'content'           => '',
-			'user_id'           => '',
-			'activity_id'       => '',
-			'skip_notification' => false,
+			'content'           => $this->generate_random_text(),
+			'user-id'           => $this->get_random_user_id(),
+			'skip-notification' => false,
 		) );
 
-		// If no content, let's add some.
-		if ( empty( $r['content'] ) ) {
-			$r['content'] = $this->generate_random_text();
-		}
+		$activity = new BP_Activity_Activity( $args[0] );
 
-		// IF no user, let's add one.
-		if ( empty( $r['user_id'] ) ) {
-			$r['user_id'] = $this->get_random_user_id();
-		}
-
-		// Bail if there is not activity id.
-		if ( empty( $r['activity_id'] ) ) {
-			WP_CLI::error( 'No activity ID found.' );
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
 		// Add activity comment.
 		$id = bp_activity_new_comment( array(
 			'content'           => $r['content'],
-			'user_id'           => (int) $r['user_id'],
-			'activity_id'       => (int) $r['activity_id'],
-			'skip_notification' => $r['skip_notification'],
+			'user_id'           => (int) $r['user-id'],
+			'activity_id'       => $activity->id,
+			'skip_notification' => $r['skip-notification'],
 		) );
 
 		// Activity Comment ID returned on success.
-		if ( is_numeric( $id ) {
+		if ( is_numeric( $id ) ) {
 			WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
 		} else {
 			WP_CLI::error( 'Could not post a new activity comment.' );
@@ -564,39 +480,28 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--activity-id=<activity-id>]
-	 * : ID of the activity to delete the comment.
+	 * <activity-id>
+	 * : Identifier for the activity.
 	 *
-	 * [--comment-id=<comment-id>]
+	 * <comment-id>
 	 * : ID of the comment to delete.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity delete_comment --activity-id=100 --comment-id=500
-	 *
-	 * @synopsis [--activity-id=<activity-id>] [--comment-id=<comment-id>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity delete_comment 100 500
 	 */
 	public function delete_comment( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'activity_id'  => '',
-			'comment_id'   => '',
-		) );
+		$activity_id = $args[0];
 
-		// Bail if there is not activity id.
-		if ( empty( $r['activity_id'] ) ) {
-			WP_CLI::error( 'No activity ID found.' );
-		}
+		$activity = new BP_Activity_Activity( $activity_id );
 
-		// Bail if there is not comment id.
-		if ( empty( $r['comment_id'] ) ) {
-			WP_CLI::error( 'No comment ID found.' );
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
 		$deleted = bp_activity_delete_comment( array(
-			'activity_id' => (int) $r['activity_id'],
-			'comment_id'  => (int) $r['comment_id'],
+			'activity_id' => (int) $activity_id,
+			'comment_id'  => (int) $args[1],
 		) );
 
 		// Delete Comment. True if deleted.
@@ -617,21 +522,15 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity permalink 500
-	 *
-	 * @synopsis <activity-id>
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity permalink 687
 	 */
 	public function permalink( $args, $assoc_args ) {
-		$activity_id = isset( $args[0] ) ? $args[0] : '';
+		$activity_id = $args[0];
 
-		if ( empty( $activity_id ) ) {
-			WP_CLI::error( 'Please specify an activity ID.' );
-		}
+		$activity = new BP_Activity_Activity( $activity_id );
 
-		if ( ! is_numeric( $activity_id ) ) {
-			WP_CLI::error( 'This is not a valid activity ID.' );
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
 		$permalink = bp_activity_get_permalink( $activity_id );
@@ -648,29 +547,18 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <user-id>
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity user_favorites 500
-	 *
-	 * @synopsis <user-id>
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity user_favorites 315
 	 */
 	public function user_favorites( $args, $assoc_args ) {
-		$user_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( empty( $user_id ) ) {
-			WP_CLI::error( 'Please specify an user ID or username.' );
-		}
-
-
-		$user = $this->get_user_id_from_identifier( $user_id );
+		$user = $this->get_user_id_from_identifier( $args[0] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		$favorites = bp_activity_get_user_favorites( $user->ID );
@@ -692,38 +580,33 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--activity-id=<activity-id>]
+	 * <activity-id>
 	 * : ID of the activity to add a item to.
 	 *
-	 * [--user-id=<user>]
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity add_favorite --activity-id=100 --user-id=500
-	 *
-	 * @synopsis [--activity-id=<activity-id>] [--user-id=<user>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity add_favorite 100 500
+	 *     $ wp bp activity add_favorite 100 user_test
 	 */
 	public function add_favorite( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'activity_id' => '',
-			'user_id'     => '',
-		) );
+		$activity_id = $args[0];
 
-		// Bail if there is not activity id.
-		if ( empty( $r['activity_id'] ) ) {
-			WP_CLI::error( 'No activity ID found.' );
+		$activity = new BP_Activity_Activity( $activity_id );
+
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $args[1] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$favorite = bp_activity_add_user_favorite( $r['activity_id'], $user->ID );
+		$favorite = bp_activity_add_user_favorite( $activity_id, $user->ID );
 
 		// True if added.
 		if ( $favorite ) {
@@ -740,38 +623,33 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--activity-id=<activity-id>]
+	 * <activity-id>
 	 * : ID of the activity to remove a item to.
 	 *
-	 * [--user-id=<user>]
+	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *    wp bp activity remove_favorite --activity-id=100 --user-id=500
-	 *
-	 * @synopsis [--activity-id=<activity-id>] [--user-id=<user>]
-	 *
-	 * @since 1.5.0
+	 *     $ wp bp activity remove_favorite 100 500
+	 *     $ wp bp activity remove_favorite 100 user_test
 	 */
 	public function remove_favorite( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'activity_id' => '',
-			'user_id'     => '',
-		) );
+		$activity_id = $args[0];
 
-		// Bail if there is not activity id.
-		if ( empty( $r['activity_id'] ) ) {
-			WP_CLI::error( 'No activity ID found.' );
+		$activity = new BP_Activity_Activity( $activity_id );
+
+		if ( empty( $activity->id ) ) {
+			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $args[1] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$favorite = bp_activity_remove_user_favorite( $r['activity_id'], $user->ID );
+		$favorite = bp_activity_remove_user_favorite( $activity_id, $user->ID );
 
 		// True if removed.
 		if ( $favorite ) {
