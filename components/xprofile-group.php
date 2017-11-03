@@ -119,9 +119,12 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * <field-group-id>
 	 * : Identifier for the field group.
 	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp xprofile group delete 500
+	 *     $ wp bp xprofile group delete 500 --yes
 	 */
 	public function delete( $args, $assoc_args ) {
 		$field_group_id = $args[0];
@@ -129,6 +132,8 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 		if ( ! is_numeric( $field_group_id ) ) {
 			WP_CLI::error( 'This is not a valid field group ID.' );
 		}
+
+		WP_CLI::confirm( 'Are you sure you want to delete this group?', $assoc_args );
 
 		// Delete field group. True if deleted.
 		if ( xprofile_delete_field_group( $field_group_id ) ) {
