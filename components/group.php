@@ -218,10 +218,16 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Can be a numeric ID or the group slug.
 	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group delete 500
-	 *     $ wp bp group delete group-slug
+	 *     Success: Group deleted.
+	 *
+	 *     $ wp bp group delete group-slug --yes
+	 *     Success: Group deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -230,6 +236,8 @@ class BPCLI_Group extends BPCLI_Component {
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
+
+		WP_CLI::confirm( 'Are you sure you want to delete this group?', $assoc_args );
 
 		// Delete group. True if deleted.
 		if ( groups_delete_group( $group_id ) ) {
