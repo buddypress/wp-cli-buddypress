@@ -298,7 +298,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_items( $activity_arr );
+		$formatter->display_item( $activity_arr );
 	}
 
 	/**
@@ -309,11 +309,17 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>
 	 * : Identifier for the activity.
 	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp activity delete 500
+	 *     $ wp bp activity delete 500 --yes
+	 *     Success: Activity deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
+		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
+
 		$activity = bp_activity_delete( array(
 			'id' => $args[0],
 		) );
