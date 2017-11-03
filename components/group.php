@@ -196,7 +196,7 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_items( $group_arr );
+		$formatter->display_item( $group_arr );
 	}
 
 	/**
