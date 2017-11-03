@@ -25,7 +25,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--name=<name>]
+	 * --name=<name>
 	 * : Name of the group.
 	 *
 	 * [--slug=<slug>]
@@ -68,10 +68,6 @@ class BPCLI_Group extends BPCLI_Component {
 			'date_created' => bp_core_current_time(),
 			'silent'       => false,
 		) );
-
-		if ( empty( $r['name'] ) ) {
-			WP_CLI::error( 'You must provide a --name parameter when creating a group.' );
-		}
 
 		// Auto-generate some stuff.
 		if ( empty( $r['slug'] ) ) {
