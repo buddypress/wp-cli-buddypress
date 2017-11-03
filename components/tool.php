@@ -4,7 +4,7 @@
  *
  * @since 1.5.0
  */
-class BPCLI_Tools extends BPCLI_Component {
+class BPCLI_Tool extends BPCLI_Component {
 
 	/**
 	 * Repair.
@@ -63,4 +63,4 @@ class BPCLI_Tools extends BPCLI_Component {
 	}
 }
 
-WP_CLI::add_command( 'bp tools', 'BPCLI_Tools' );
+WP_CLI::add_command( 'bp tool', 'BPCLI_Tool' );
