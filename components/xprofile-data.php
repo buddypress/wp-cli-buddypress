@@ -36,7 +36,6 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp xprofile data set --user-id=45 --field-id=120 --value=teste
-	 *     $ wp bp xprofile data set --user-id=user_test --field-id=445 --value=another_test
 	 *
 	 * @since 1.2.0
 	 */
@@ -151,7 +150,6 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 			$formatter = $this->get_formatter( $format_args );
 			$formatter->display_items( $formatted_data );
 		}
-
 	}
 
 	/**
@@ -199,18 +197,6 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 				WP_CLI::error( 'Could not delete profile data.' );
 			}
 		}
-	}
-
-	/**
-	 * Get field ID.
-	 *
-	 * @param  int $field_id Field ID.
-	 * @return int
-	 */
-	protected function get_field_id( $field_id ) {
-		return ( ! is_numeric( $field_id ) )
-			? xprofile_get_field_id_from_name( $field_id )
-			: absint( $field_id );
 	}
 }
 

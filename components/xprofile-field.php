@@ -65,7 +65,7 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * default: textbox
 	 * ---
 	 *
-	 * --field_group_id=<field_group_id>
+	 * --field-group-id=<field-group-id>
 	 * : ID of the field group where the new field will be created.
 	 *
 	 * --name=<name>
@@ -73,7 +73,7 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp xprofile field create --type=checkbox --field-group-id=508
+	 *     $ wp bp xprofile field create --type=checkbox --field-group-id=508 --name="Field Name"
 	 *
 	 * @since 1.2.0
 	 */
@@ -182,18 +182,6 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 		} else {
 			WP_CLI::error( 'No XProfile field found.' );
 		}
-	}
-
-	/**
-	 * Get field ID.
-	 *
-	 * @param  int $field_id Field ID.
-	 * @return int
-	 */
-	protected function get_field_id( $field_id ) {
-		return ( ! is_numeric( $field_id ) )
-			? xprofile_get_field_id_from_name( $field_id )
-			: absint( $field_id );
 	}
 }
 
