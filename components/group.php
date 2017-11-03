@@ -138,21 +138,14 @@ class BPCLI_Group extends BPCLI_Component {
 	 *     $ wp bp group generate --count=10 --status=hidden --creator-id=30
 	 */
 	public function generate( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'count'        => 100,
-			'creator_id'   => 1,
-			'status'       => 'public',
-			'enable_forum' => 0,
-		) );
-
 		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $r['count'] );
 
-		for ( $i = 0; $i < $r['count']; $i++ ) {
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
 				'name'         => sprintf( 'Group - #%d', $i ),
-				'creator_id'   => $r['creator-id'],
-				'status'       => $this->random_group_status( $r['status'] ),
-				'enable_forum' => $r['enable-forum'],
+				'creator_id'   => $assoc_args['creator-id'],
+				'status'       => $this->random_group_status( $assoc_args['status'] ),
+				'enable_forum' => $assoc_args['enable-forum'],
 				'silent'       => true,
 			) );
 
