@@ -24,8 +24,9 @@ class BPCLI_Tool extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp tools repair friend-count
-	 *     $ wp bp tools fix group-count
+	 *     $ wp bp tool repair group-count
+	 *     $ wp bp tool fix friend-count
+	 *     Success: Counting the number of friends for each user. Complete!
 	 *
 	 * @alias fix
 	 */
@@ -48,11 +49,19 @@ class BPCLI_Tool extends BPCLI_Component {
 	/**
 	 * Reinstall BuddyPress default emails.
 	 *
+	 * ## OPTIONS
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp tools reinstall_emails
+	 *     $ wp bp tool reinstall_emails --yes
+	 *     Success: Emails have been successfully reinstalled.
 	 */
 	public function reinstall_emails( $args, $assoc_args ) {
+		WP_CLI::confirm( 'Are you sure you want to reinstall BuddyPress emails?', $assoc_args );
+
 		$result = bp_admin_reinstall_emails();
 
 		if ( 0 === $result[0] ) {

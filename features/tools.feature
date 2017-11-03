@@ -12,7 +12,7 @@ Feature: Manage BuddyPress Tools
   Scenario: BuddyPress reinstall emails
     Given a WP install
 
-    When I run `wp bp tool reinstall_emails`
+    When I run `wp bp tool reinstall_emails --yes`
     Then STDOUT should contain:
       """
       Success: Emails have been successfully reinstalled.
