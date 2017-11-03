@@ -150,8 +150,10 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     $ wp bp xprofile list_fields
+	 *
+	 * @subcommand list
 	 */
-	public function list_fields_( $_, $assoc_args ) {
+	public function _list_fields( $_, $assoc_args ) {
 		$r = array_merge( $assoc_args, array(
 			'fields'       => 'id,name',
 			'fetch_fields' => true,
@@ -222,8 +224,8 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <field-id>
-	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
+	 * <field-id>...
+	 * : ID or IDs for the field. Accepts either the name of the field or a numeric ID.
 	 *
 	 * [--delete-data]
 	 * : Delete user data for the field as well.
@@ -239,11 +241,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 	 * @since 1.4.0
 	 */
 	public function delete_field( $args, $assoc_args ) {
-		$field_id = $args[0];
-
-		$field_id = ( ! is_numeric( $field_id ) )
-			? xprofile_get_field_id_from_name( $field_id )
-			: absint( $field_id );
+		$field_id = $this->get_field_id( $args[0] );
 
 		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
 			$field   = new BP_XProfile_Field( $field_id );
@@ -335,10 +333,7 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$field_id = $assoc_args['field-id'];
-		$field_id = ( ! is_numeric( $field_id ) )
-			? xprofile_get_field_id_from_name( $field_id )
-			: absint( $field_id );
+		$field_id = $this->get_field_id( $assoc_args['field-id'] );
 
 		$field = new BP_XProfile_Field( $field_id );
 
@@ -346,17 +341,15 @@ class BPCLI_XProfile extends BPCLI_Component {
 			WP_CLI::error( 'XProfile field not found.' );
 		}
 
-		if ( 'checkbox' === $field->type ) {
-			$value = explode( ',', $assoc_args['value'] );
-		} else {
-			$value = $assoc_args['value'];
-		}
+		$value = ( 'checkbox' === $field->type )
+			? explode( ',', $assoc_args['value'] )
+			: $assoc_args['value'];
 
 		$updated = xprofile_set_field_data( $field->id, $user_id, $value );
 
 		if ( $updated ) {
 			$success = sprintf(
-				'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d)',
+				'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d).',
 				$field->name,
 				$field->id,
 				$assoc_args['value'],
@@ -426,12 +419,12 @@ class BPCLI_XProfile extends BPCLI_Component {
 				}
 
 				$_field_data = maybe_unserialize( $field_data['field_data'] );
-				$_field_data = json_encode( $_field_data );
+				$_field_data = wp_json_encode( $_field_data );
 
 				$formatted_data[] = array(
-					'field_id' => $field_data['field_id'],
+					'field_id'   => $field_data['field_id'],
 					'field_name' => $field_name,
-					'value' => $_field_data,
+					'value'      => $_field_data,
 				);
 			}
 
@@ -492,6 +485,18 @@ class BPCLI_XProfile extends BPCLI_Component {
 				WP_CLI::error( 'Could not delete profile data.' );
 			}
 		}
+	}
+
+	/**
+	 * Get field ID.
+	 *
+	 * @param  int $field_id Field ID.
+	 * @return int
+	 */
+	protected function get_field_id( $field_id ) {
+		return ( ! is_numeric( $field_id ) )
+			? xprofile_get_field_id_from_name( $field_id )
+			: absint( $field_id );
 	}
 }
 
