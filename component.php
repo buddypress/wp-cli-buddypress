@@ -54,9 +54,9 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 			return false;
 		}
 		return true;
-  }
-  
-  /**
+	}
+
+	/**
 	 * Generates a random user login
 	 *
 	 * @todo Improve for a more elegant solution.

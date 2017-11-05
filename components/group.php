@@ -32,30 +32,53 @@ class BPCLI_Group extends BPCLI_Component {
 	 * : URL-safe slug for the group. If not provided, one will be generated automatically.
 	 *
 	 * [--description=<description>]
-	 * : Group description. Default: 'Description for group "[name]"'
+	 * : Group description.
+	 * ---
+	 * Default: 'Description for group "[name]"'
+	 * ---
 	 *
 	 * [--creator-id=<creator-id>]
-	 * : ID of the group creator. Default: 1.
+	 * : ID of the group creator.
+	 * ---
+	 * Default: 1
+	 * ---
 	 *
 	 * [--slug=<slug>]
 	 * : URL-safe slug for the group.
 	 *
 	 * [--status=<status>]
-	 * : Group status (public, private, hidden). Default: public.
+	 * : Group status (public, private, hidden).
+	 * ---
+	 * Default: public
+	 * ---
 	 *
 	 * [--enable-forum=<enable-forum>]
-	 * : Whether to enable legacy bbPress forums. Default: 0.
+	 * : Whether to enable legacy bbPress forums.
+	 * ---
+	 * Default: 0
+	 * ---
 	 *
 	 * [--date-created=<date-created>]
-	 * : MySQL-formatted date. Default: current date.
+	 * : MySQL-formatted date.
+	 * ---
+	 * Default: current date.
+	 * ---
 	 *
 	 * [--silent=<silent>]
-	 * : Whether to silent the group creation. Default: false.
+	 * : Whether to silent the group creation.
+	 * ---
+	 * Default: false.
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group create --name="Totally Cool Group"
+	 *     Success: Group (ID 5465) created: https://site.com/group-slug/
+	 *
 	 *     $ wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
+	 *     Success: Group (ID 6454)6 created: https://site.com/another-group-slug/
+	 *
+	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -96,7 +119,7 @@ class BPCLI_Group extends BPCLI_Component {
 				'group_id' => $id,
 			) );
 			$permalink = bp_get_group_permalink( $group );
-			WP_CLI::success( sprintf( 'Group %d created: %s', $id, $permalink ) );
+			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $id, $permalink ) );
 		} else {
 			WP_CLI::error( 'Could not create group.' );
 		}
@@ -191,7 +214,7 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$group     = groups_get_group( $group_id );
+		$group = groups_get_group( $group_id );
 		$group_arr = get_object_vars( $group );
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -210,16 +233,16 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Can be a numeric ID or the group slug.
 	 *
-	 * [--yes]
+	 * --yes
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group delete 500
-	 *     Success: Group deleted.
+	 *     Success: Group successfully deleted.
 	 *
 	 *     $ wp bp group delete group-slug --yes
-	 *     Success: Group deleted.
+	 *     Success: Group successfully deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -233,7 +256,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 		// Delete group. True if deleted.
 		if ( groups_delete_group( $group_id ) ) {
-			WP_CLI::success( 'Group deleted.' );
+			WP_CLI::success( 'Group successfully deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete the group.' );
 		}
@@ -283,7 +306,12 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group permalink 500
-	 *     $ wp bp group permalink group-slug
+	 *     Success: Group Permalink: https://site.com/group-slug/
+	 *
+	 *     $ wp bp group url group-slug
+	 *     Success: Group Permalink: https://site.com/another-group-slug/
+	 *
+	 * @alias url
 	 */
 	public function permalink( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -315,7 +343,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
 	 * <user>
-	 * : ID of the user.
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--content=<content>]
 	 * : Activity content text. If none is provided, default text will be generated.
@@ -376,7 +404,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 * options:
 	 *   - table
 	 *   - ids
+	 *   - csv
 	 *   - count
+	 *   - haml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -397,7 +427,7 @@ class BPCLI_Group extends BPCLI_Component {
 		) );
 
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
-		$groups     = groups_get_groups( $query_args );
+		$groups = groups_get_groups( $query_args );
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $groups['groups'], 'id' ) ); // WPCS: XSS ok.

@@ -40,8 +40,10 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group member add 3 10
+	 *     Success: Added member #3 (user_login) to group #3 (group_name) as member.
+	 *
 	 *     $ wp bp group member add bar 20
-	 *     $ wp bp group member add foo admin mod
+	 *     Success: Added member #20 (user_login) to group #45 (bar) as member.
 	 */
 	public function add( $args, $assoc_args ) {
 		$group_id = $args[0];
@@ -71,7 +73,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			}
 
 			$success = sprintf(
-				'Added member #%d (%s) to group #%d (%s) as %s',
+				'Added member #%d (%s) to group #%d (%s) as %s.',
 				$user->ID,
 				$user->user_login,
 				$group_id,
@@ -119,7 +121,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		// True on sucess.
+		// True on success.
 		if ( groups_remove_member( $group_id, $user->ID ) ) {
 			WP_CLI::success( sprintf( 'Member (#%d) removed from the group #%d.', $user->ID, $group_id ) );
 		} else {
@@ -193,8 +195,8 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group member get_groups --user-id=30
-	 *     $ wp bp group member get_groups --user-id=90 --order=DESC
-	 *     $ wp bp group member get_groups --user-id=100 --order=DESC --is_mod=1
+	 *     Success: Found 10 groups from member #30.
+	 *     Success: Current groups from member #30: 156,454,545
 	 *
 	 * @alias list_groups
 	 */
@@ -220,14 +222,14 @@ class BPCLI_Group_Members extends BPCLI_Component {
 
 		if ( ! empty( $groups ) ) {
 			$found = sprintf(
-				'Found %d groups from member #%d',
+				'Found %d groups from member #%d.',
 				count( $groups ),
 				$user->ID
 			);
 			WP_CLI::success( $found );
 
 			$success = sprintf(
-				'Current groups from member #%d: %s',
+				'Current groups from member #%d: %s.',
 				$user->ID,
 				implode( ', ', wp_list_pluck( $groups, 'group_id' ) )
 			);

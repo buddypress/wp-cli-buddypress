@@ -34,8 +34,13 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group invite add --user-id=10 --group-id=40
+	 *     Success: Member invited to the group.
+	 *
 	 *     $ wp bp group invite add --user-id=admin --group-id=40 --inviter_id=804
+	 *     Success: Member invited to the group.
+	 *
 	 *     $ wp bp group invite add --user-id=user_login --group-id=60 --silent=1
+	 *     Success: Member invited to the group.
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -88,7 +93,12 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group invite remove --group-id=3 --user-id=10
+	 *     Success: User uninvited from the group.
+	 *
 	 *     $ wp bp group invite remove --group-id=foo --user-id=admin
+	 *     Success: User uninvited from the group.
+	 *
+	 * @alias uninvite
 	 */
 	public function remove( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
