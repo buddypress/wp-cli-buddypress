@@ -2,7 +2,7 @@
 /**
  * Manage XProfile groups.
  *
- * @since 1.2.0
+ * @since 1.5.0
  */
 class BPCLI_XProfile_Group extends BPCLI_Component {
 
@@ -24,7 +24,7 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--name=<name>]
+	 * --name=<name>
 	 * : The name for this field group.
 	 *
 	 * [--description=<description>]
@@ -36,9 +36,15 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * Default: true.
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp xprofile group create --name="Group Name" --description="Xprofile Group Description"
+	 *     Success: Created XProfile field group "Group Name" (ID 123).
+	 *
+	 *     $ wp bp xprofile group add --name="Another Group" --can-delete=false
+	 *     Success: Created XProfile field group "Another Group" (ID 21212).
+	 *
+	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -47,16 +53,12 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 			'can_delete'  => true,
 		) );
 
-		if ( empty( $r['name'] ) ) {
-			WP_CLI::error( 'Please specify a group name.' );
-		}
-
 		$group = xprofile_insert_field_group( $r );
 
 		if ( $group ) {
 			$group = new BP_XProfile_Group( $group );
 			$success = sprintf(
-				'Created XProfile field group "%s" (ID %d)',
+				'Created XProfile field group "%s" (ID %d).',
 				$group->name,
 				$group->id
 			);
@@ -75,7 +77,10 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * : Identifier for the field group.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields.
+	 * ---
+	 * Default: All fields.
+	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -84,31 +89,38 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - haml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp xprofile group get 500
-	 *     $ wp bp xprofile group get 56 --format=json
+	 *     $ wp bp xprofile group see 56 --format=json
 	 *
-	 * @since 1.5.0
+	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
 		$field_group_id = $args[0];
 
 		if ( ! is_numeric( $field_group_id ) ) {
-			WP_CLI::error( 'This is not a valid field group ID.' );
+			WP_CLI::error( 'Please provide a numeric field group ID.' );
 		}
 
 		$object = xprofile_get_field_group( $field_group_id );
-		$object_arr = get_object_vars( $object );
 
-		if ( empty( $assoc_args['fields'] ) ) {
-			$assoc_args['fields'] = array_keys( $object_arr );
+		if ( is_object( $object ) && ! empty( $object->id ) ) {
+
+			$object_arr = get_object_vars( $object );
+
+			if ( empty( $assoc_args['fields'] ) ) {
+				$assoc_args['fields'] = array_keys( $object_arr );
+			}
+
+			$formatter = $this->get_formatter( $assoc_args );
+			$formatter->display_item( $object_arr );
+		} else {
+			WP_CLI::error( 'No XProfile field group found.' );
 		}
-
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_items( $object_arr );
 	}
 
 	/**
@@ -116,10 +128,10 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <field-group-id>
-	 * : Identifier for the field group.
+	 * <field-group-id>...
+	 * : ID or IDs for the field group.
 	 *
-	 * [--yes]
+	 * --yes
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLE
@@ -133,14 +145,18 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 			WP_CLI::error( 'This is not a valid field group ID.' );
 		}
 
-		WP_CLI::confirm( 'Are you sure you want to delete this group?', $assoc_args );
+		WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
 
-		// Delete field group. True if deleted.
-		if ( xprofile_delete_field_group( $field_group_id ) ) {
-			WP_CLI::success( 'Field group deleted.' );
-		} else {
-			WP_CLI::error( 'Could not delete the field group.' );
-		}
+		parent::_delete( array( $field_group_id ), $assoc_args, function( $field_group_id ) use ( $r ) {
+
+			$deleted = xprofile_delete_field_group( $field_group_id );
+
+			if ( $deleted ) {
+				return array( 'success', 'Field group deleted.' );
+			} else {
+				return array( 'error', 'Could not delete the field group.' );
+			}
+		} );
 	}
 }
 

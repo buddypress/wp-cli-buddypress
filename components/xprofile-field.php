@@ -2,7 +2,7 @@
 /**
  * Manage XProfile fields.
  *
- * @since 1.2.0
+ * @since 1.5.0
  */
 class BPCLI_XProfile_Field extends BPCLI_Component {
 
@@ -31,8 +31,10 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     $ wp bp xprofile field list
+	 *
+	 * @subcommand list
 	 */
-	public function list( $_, $assoc_args ) {
+	public function _list( $_, $assoc_args ) {
 		$r = array_merge( $assoc_args, array(
 			'fields'       => 'id,name',
 			'fetch_fields' => true,
@@ -71,11 +73,15 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * --name=<name>
 	 * : Name of the new field.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp xprofile field create --type=checkbox --field-group-id=508 --name="Field Name"
+	 *     Success: Created XProfile field "Field Name" (ID 24564).
 	 *
-	 * @since 1.2.0
+	 *     $ wp bp xprofile field add --type=checkbox --field-group-id=165 --name="Another Field"
+	 *     Success: Created XProfile field "Another Field" (ID 5465).
+	 *
+	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		// Check this is a non-empty, valid field type.
@@ -88,7 +94,7 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 		if ( $field_id ) {
 			$field = new BP_XProfile_Field( $field_id );
 			$success = sprintf(
-				'Created XProfile field "%s" (ID %d)',
+				'Created XProfile field "%s" (ID %d).',
 				$field->name,
 				$field->id
 			);
@@ -112,15 +118,21 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * default: false
 	 * ---
 	 *
+	 * --yes
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp xprofile field delete 500
-	 *     $ wp bp xprofile field delete 458 --delete-data
+	 *     $ wp bp xprofile field delete 500 --yes
+	 *     Success: Deleted XProfile field "Field Name" (ID 500).
 	 *
-	 * @since 1.4.0
+	 *     $ wp bp xprofile field delete 458 --delete-data --yes
+	 *     Success: Deleted XProfile field "Another Field Name" (ID 458).
 	 */
 	public function delete( $args, $assoc_args ) {
 		$field_id = $this->get_field_id( $args[0] );
+
+		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
 		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
 			$field   = new BP_XProfile_Field( $field_id );
@@ -129,9 +141,9 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 			$deleted = $field->delete( $r['delete_data'] );
 
 			if ( $deleted ) {
-				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d)', $name, $id ) );
+				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );
 			} else {
-				return array( 'error', sprintf( 'Failed deleting XProfile field %d.', $field_id ) );
+				return array( 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) );
 			}
 		} );
 	}
@@ -142,10 +154,13 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <field-id>
-	 * : Identifier for the field.
+	 * : Identifier for the field. Accepts either the name of the field or a numeric ID.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields.
+	 * ---
+	 * Default: All fields.
+	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -154,29 +169,27 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - haml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp xprofile field get 500
-	 *     $ wp bp xprofile field get 56 --format=json
+	 *     $ wp bp xprofile field see 56 --format=json
 	 *
-	 * @since 1.5.0
+	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$field_id = $args[0];
-
-		if ( ! is_numeric( $field_id ) ) {
-			WP_CLI::error( 'Please provide a numeric field ID.' );
-		}
-
-		$object = xprofile_get_field( $field_id );
+		$field_id = $this->get_field_id( $args[0] );
+		$object   = xprofile_get_field( $field_id );
 
 		if ( is_object( $object ) && ! empty( $object->id ) ) {
 			$object_arr = get_object_vars( $object );
+
 			if ( empty( $assoc_args['fields'] ) ) {
 				$assoc_args['fields'] = array_keys( $object_arr );
 			}
+
 			$formatter = $this->get_formatter( $assoc_args );
 			$formatter->display_item( $object_arr );
 		} else {
