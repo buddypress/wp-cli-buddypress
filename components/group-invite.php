@@ -180,15 +180,20 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * --role=<role>
+	 * [--role=<role>]
 	 * : Group member role (member, mod, admin).
+	 * ---
+	 * Default: member
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group invite list --user-id=30 --group-id=56
 	 *     $ wp bp group invite list --user-id=30 --group-id=100 --role=member
+	 *
+	 * @subcommand list
 	 */
-	public function list( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.

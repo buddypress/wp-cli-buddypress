@@ -25,42 +25,44 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * ## OPTIONS
+	 *
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user>
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * [<role>]
-	 * : Group role for the new member (member, mod, admin).
+	 * [--role=<role>]
+	 * : Group member role (member, mod, admin).
 	 * ---
-	 * default: member
+	 * Default: member
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group member add 3 10
-	 *     Success: Added member #3 (user_login) to group #3 (group_name) as member.
+	 *     $ wp bp group member add --group-id=3 --user-id=10
+	 *     Success: Added user #3 (user_login) to group #3 (group_name) as member.
 	 *
-	 *     $ wp bp group member add bar 20
-	 *     Success: Added member #20 (user_login) to group #45 (bar) as member.
+	 *     $ wp bp group member add --group-id=bar --user-id=20 --role=mod
+	 *     Success: Added user #20 (user_login) to group #45 (bar) as mod.
 	 */
 	public function add( $args, $assoc_args ) {
-		$group_id = $args[0];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
 		// Sanitize role.
-		$role = $args[2];
+		$role = $assoc_args['role'];
 		if ( empty( $role ) || ! in_array( $role, $this->group_roles(), true ) ) {
 			$role = 'member';
 		}
@@ -73,7 +75,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			}
 
 			$success = sprintf(
-				'Added member #%d (%s) to group #%d (%s) as %s.',
+				'Added user #%d (%s) to group #%d (%s) as %s.',
 				$user->ID,
 				$user->user_login,
 				$group_id,
@@ -82,7 +84,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			);
 			WP_CLI::success( $success );
 		} else {
-			WP_CLI::error( 'Could not add member to the group.' );
+			WP_CLI::error( 'Could not add user to the group.' );
 		}
 	}
 
@@ -91,18 +93,18 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user>
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group member remove 3 10
+	 *     $ wp bp group member remove --group-id=3 --user-id=10
 	 *     Success: Member (#10) removed from the group #3.
 	 *
-	 *     $ wp bp group member delete foo admin
+	 *     $ wp bp group member delete --group-id=foo --user-id=admin
 	 *     Success: Member (#545) removed from the group #12.
 	 *
 	 * @alias delete
