@@ -1,5 +1,14 @@
 Feature: Manage BuddyPress signups
 
+  Scenario: Add a signup
+    Given a WP install
+
+    When I run `wp bp signup add --user-login=test_user --user-email=teste@site.com`
+    Then STDOUT should contain:
+      """
+      Success: Successfully added new user signup (ID #345).
+      """
+
   Scenario: Delete a signup
     Given a WP install
 
@@ -22,6 +31,12 @@ Feature: Manage BuddyPress signups
     Given a WP install
 
     When I run `wp bp signup resend 20 teste@site.com ee48ec319fef3nn4`
+    Then STDOUT should contain:
+      """
+      Success: Email sent successfully.
+      """
+
+    When I run `wp bp signup send another_teste@site.com ee48ec319fef3nn4aasd`
     Then STDOUT should contain:
       """
       Success: Email sent successfully.

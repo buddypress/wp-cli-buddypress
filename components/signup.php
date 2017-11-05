@@ -29,7 +29,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com
+	 *     Success: Successfully added new user signup (ID #345).
+	 *
 	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
+	 *     Success: Successfully added new user signup (ID #4555).
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
@@ -63,7 +66,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		if ( $id ) {
-			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
 		} else {
 			WP_CLI::error( 'Could not add a user signup.' );
 		}
@@ -74,19 +77,28 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <signup-id>
-	 * : Identifier for the signup.
+	 * <signup-id>...
+	 * : ID or IDs of signup.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp signup delete 520
+	 *     Success: Signup deleted.
+	 *
+	 *     $ wp bp signup delete 55654 54564
+	 *     Success: Signup deleted.
+	 *     Success: Signup deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-		if ( BP_Signup::delete( $args[0] ) ) {
-			WP_CLI::success( 'Signup deleted.' );
-		} else {
-			WP_CLI::error( 'Could not delete signup.' );
-		}
+		$signup_id = $args[0];
+
+		parent::_delete( array( $signup_id ), $assoc_args, function( $signup_id ) {
+			if ( BP_Signup::delete( $signup_id ) ) {
+				return array( 'success', 'Signup deleted.' );
+			} else {
+				return array( 'error', 'Could not delete signup.' );
+			}
+		} );
 	}
 
 	/**
@@ -100,13 +112,13 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     $ wp bp signup activate ee48ec319fef3nn4
+	 *     Success: Signup activated, new user (ID #545).
 	 */
 	public function activate( $args, $assoc_args ) {
-
 		$id = bp_core_activate_signup( $args[0] );
 
 		if ( is_string( $id ) ) {
-			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d).', $id ) );
 		} else {
 			WP_CLI::error( 'Signup not activated.' );
 		}
@@ -150,8 +162,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <user-id>
-	 * : User ID to send the e-mail.
+	 * [<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * <email>
 	 * : E-mail to send the activation.
@@ -159,13 +171,37 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <key>
 	 * : Activation key.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp signup resend 20 teste@site.com ee48ec319fef3nn4
+	 *     Success: Email sent successfully.
+	 *
+	 *     $ wp bp signup send another_teste@site.com ee48ec319fefwtr3nn4
+	 *     Success: Email sent successfully.
+	 *
+	 * @alias send
 	 */
 	public function resend( $args, $assoc_args ) {
+		$user_id = '';
+
+		if ( ! defined( 'BP_SIGNUPS_SKIP_USER_CREATION' ) && ! BP_SIGNUPS_SKIP_USER_CREATION ) {
+			$user = $this->get_user_id_from_identifier( $args[0] );
+
+			if ( ! $user ) {
+				WP_CLI::error( 'No user found by that username or id' );
+				return;
+			}
+
+			$user_id = $user->ID;
+		}
+
+		$email = $args[1];
+		if ( ! is_email( $email ) ) {
+			WP_CLI::error( 'Invalid email added.' );
+		}
+
 		// Send email.
-		bp_core_signup_send_validation_email( $args[0], $args[1], $args[2] );
+		bp_core_signup_send_validation_email( $user_id, sanitize_email( $email ), $args[2] );
 
 		WP_CLI::success( 'Email sent successfully.' );
 	}
