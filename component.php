@@ -32,6 +32,31 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	}
 
 	/**
+	 * Check if a group exists.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param int|string $group_id Group ID or slug.
+	 * @return bool true|false
+	 */
+	protected function group_exists( $group_id ) {
+		// Group ID or slug.
+		$group_id = ( ! is_numeric( $group_id ) )
+			? groups_get_id( $group_id )
+			: $group_id;
+
+		// Get group object.
+		$group_obj = groups_get_group( array(
+			'group_id' => $group_id,
+		) );
+
+		if ( empty( $group_obj->id ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Verify a user ID by the passed identifier.
 	 *
 	 * @since 1.2.0
