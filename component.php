@@ -83,6 +83,20 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	}
 
 	/**
+	 * Get field ID.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param  int $field_id Field ID.
+	 * @return int
+	 */
+	protected function get_field_id( $field_id ) {
+		return ( ! is_numeric( $field_id ) )
+			? xprofile_get_field_id_from_name( $field_id )
+			: absint( $field_id );
+	}
+
+	/**
 	 * String Sanitization.
 	 *
 	 * @since 1.5.0
