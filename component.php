@@ -88,6 +88,7 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	}
 
 	/**
+	 * String Sanitization.
 	 *
 	 * @since 1.5.0
 	 *
