@@ -10,4 +10,4 @@ fi
 
 # Run the functional tests
 BEHAT_TAGS=$(php utils/behat-tags.php)
-behat --format progress $BEHAT_TAGS --strict
+vendor/behat/behat/bin/behat --format progress $BEHAT_TAGS --strict
