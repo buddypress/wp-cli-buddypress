@@ -20,6 +20,13 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	);
 
 	/**
+	 * Object ID key.
+	 *
+	 * @var int
+	 */
+	protected $obj_id_key = 'id';
+
+	/**
 	 * Create an XProfile group.
 	 *
 	 * ## OPTIONS
@@ -32,6 +39,10 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 *
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted.
+	 *
+	 * [--porcelain]
+	 * : Output just the new group id.
+	 *
 	 * ---
 	 * Default: true.
 	 * ---
@@ -53,18 +64,22 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 			'can_delete'  => true,
 		) );
 
-		$group = xprofile_insert_field_group( $r );
+		$group_id = xprofile_insert_field_group( $r );
 
-		if ( $group ) {
-			$group = new BP_XProfile_Group( $group );
+		if ( ! $group_id ) {
+			WP_CLI::error( 'Could not create field group.' );
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $group_id );
+		} else {
+			$group = new BP_XProfile_Group( $group_id );
 			$success = sprintf(
 				'Created XProfile field group "%s" (ID %d).',
 				$group->name,
 				$group->id
 			);
 			WP_CLI::success( $success );
-		} else {
-			WP_CLI::error( 'Could not create field group.' );
 		}
 	}
 
