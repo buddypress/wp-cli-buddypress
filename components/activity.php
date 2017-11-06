@@ -46,23 +46,35 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * be generated automatically, if your activity type requires it.
 	 *
 	 * [--date-recorded=<date-recorded>]
-	 * : GMT timestamp, in Y-m-d h:i:s format. Defaults to current time.
+	 * : GMT timestamp, in Y-m-d h:i:s format.
+	 * ---
+	 * Default: Current time
+	 * ---
 	 *
 	 * [--hide-sitewide=<hide-sitewide>]
-	 * : Whether to hide in sitewide streams. Default: 0.
+	 * : Whether to hide in sitewide streams.
+	 * ---
+	 * Default: 0
+	 * ---
 	 *
 	 * [--is-spam=<is-spam>]
-	 * : Whether the item should be marked as spam. Default: 0.
+	 * : Whether the item should be marked as spam.
+	 * ---
+	 * Default: 0
+	 * ---
 	 *
 	 * [--silent=<silent>]
-	 * : Whether to silent the activity creation. Default: false.
+	 * : Whether to silent the activity creation.
+	 * ---
+	 * Default: false
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity create --is-spam=1
 	 *     Success: Successfully created new activity item (ID #5464)
 	 *
-	 *     $ wp bp activity create --component=groups --user-id=10
+	 *     $ wp bp activity add --component=groups --user-id=10
 	 *     Success: Successfully created new activity item (ID #48949)
 	 *
 	 * @alias add
@@ -354,9 +366,12 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>
 	 * : Identifier for the activity.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity spam 500
+	 *     Success: Activity marked as spam.
+	 *
+	 *     $ wp bp activity unham 165165
 	 *     Success: Activity marked as spam.
 	 *
 	 * @alias unham
@@ -386,9 +401,12 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>
 	 * : Identifier for the activity.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity ham 500
+	 *     Success: Activity marked as ham.
+	 *
+	 *     $ wp bp activity unspam 4679
 	 *     Success: Activity marked as ham.
 	 *
 	 * @alias unspam

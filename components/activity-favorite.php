@@ -22,7 +22,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	 *     $ wp bp activity favorite add 100 500
 	 *     Success: Activity item added as a favorite for the user.
 	 *
-	 *     $ wp bp activity favorite add 100 user_test
+	 *     $ wp bp activity favorite create 100 user_test
 	 *     Success: Activity item added as a favorite for the user.
 	 *
 	 * @alias create
@@ -68,7 +68,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	 *     $ wp bp activity favorite remove 100 500
 	 *     Success: Activity item removed as a favorite for the user.
 	 *
-	 *     $ wp bp activity favorite remove 100 user_test
+	 *     $ wp bp activity favorite delete 100 user_test
 	 *     Success: Activity item removed as a favorite for the user.
 	 *
 	 * @alias delete
@@ -104,10 +104,13 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity favorite items 315
 	 *     Success: Favorites items for user #315: 166,1561,6516
+	 *
+	 *     $ wp bp activity favorite user_items 156165
+	 *     Success: Favorites items for user #156165: 64494,65465,4645
 	 *
 	 * @alias user_items
 	 */
