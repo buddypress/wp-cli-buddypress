@@ -14,6 +14,9 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/components/group-member.php' );
 	require_once( __DIR__ . '/components/group-invite.php' );
 	require_once( __DIR__ . '/components/member.php' );
+	require_once( __DIR__ . '/components/xprofile-group.php' );
+	require_once( __DIR__ . '/components/xprofile-field.php' );
+	require_once( __DIR__ . '/components/xprofile-data.php' );
 	require_once( __DIR__ . '/components/xprofile.php' );
 	require_once( __DIR__ . '/components/tool.php' );
 } );
