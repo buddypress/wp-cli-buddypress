@@ -118,7 +118,7 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * default: false
 	 * ---
 	 *
-	 * --yes
+	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLES

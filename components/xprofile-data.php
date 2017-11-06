@@ -166,7 +166,7 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	 * [--delete-all]
 	 * : Delete all data for the user.
 	 *
-	 * --yes
+	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLES

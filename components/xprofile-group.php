@@ -131,7 +131,7 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * <field-group-id>...
 	 * : ID or IDs for the field group.
 	 *
-	 * --yes
+	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLE
