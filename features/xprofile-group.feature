@@ -15,3 +15,16 @@ Feature: Manage BuddyPress XProfile Groups
         | description  | Group Description |
         | can_delete   | 1                 |
         | group_order  | 0                 |
+
+    When I run `wp bp xprofile group delete {GROUP_ID} --yes`
+    Then STDOUT should contain:
+        """
+	Field group deleted.
+	"""
+
+    When I run `wp bp xprofile group get {GROUP_ID}`
+    Then STDERR should contain:
+        """
+	No XProfile field group found.
+	"""
+
