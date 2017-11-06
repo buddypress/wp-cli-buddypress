@@ -32,6 +32,28 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	}
 
 	/**
+	 * Generates a random user login
+	 *
+	 * @todo Improve for a more elegant solution.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param  int $length Length of the user login. Default: 6.
+	 * @return string
+	 */
+	protected function get_random_login( $length = 6 ) {
+		$char        = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$char_length = strlen( $char );
+		$login       = '';
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			$login .= $char[ rand( 0, $char_length - 1 ) ];
+		}
+
+		return $login;
+	}
+
+	/**
 	 * Verify a user ID by the passed identifier.
 	 *
 	 * @since 1.2.0
@@ -63,5 +85,16 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 		return ( ! is_numeric( $field_id ) )
 			? xprofile_get_field_id_from_name( $field_id )
 			: absint( $field_id );
+	}
+
+	/**
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param  string $type String to sanitize.
+	 * @return string Sanitized string.
+	 */
+	protected function sanitize_string( $type ) {
+		return strtolower( str_replace( '-', '_', $type ) );
 	}
 }

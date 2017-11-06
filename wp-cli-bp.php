@@ -7,6 +7,7 @@ if ( ! defined( 'WP_CLI' ) ) {
 
 WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/component.php' );
+	require_once( __DIR__ . '/components/signup.php' );
 	require_once( __DIR__ . '/components/activity.php' );
 	require_once( __DIR__ . '/components/core.php' );
 	require_once( __DIR__ . '/components/group.php' );
@@ -14,4 +15,6 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/components/xprofile-group.php' );
 	require_once( __DIR__ . '/components/xprofile-field.php' );
 	require_once( __DIR__ . '/components/xprofile-data.php' );
+	require_once( __DIR__ . '/components/xprofile.php' );
+	require_once( __DIR__ . '/components/tool.php' );
 } );
