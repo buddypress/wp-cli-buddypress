@@ -1,25 +1,17 @@
 Feature: Manage BuddyPress XProfile Groups
 
-  Scenario: Create an XProfile group
-    Given a WP install
+  Scenario: XProfile Group CRUD operations
+    Given a BP install
 
-    When I run `wp bp xprofile group create --name="Group Name" --description="Xprofile Group Description"`
-    Then STDOUT should contain:
-      """
-      Success: Created XProfile field group "Group Name" (ID 123).
-      """
+    When I run `wp bp xprofile group create --name="Group Name" --description="Group Description" --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ID}
 
-    When I run `wp bp xprofile group add --name="Another Group" --can-delete=false`
-    Then STDOUT should contain:
-      """
-      Success: Created XProfile field group "Another Group" (ID 2455545).
-      """
-
-  Scenario: Delete a specific XProfile field group
-    Given a WP install
-
-    When I run `wp bp xprofile group delete 500 --yes`
-    Then STDOUT should contain:
-      """
-      Success: Field group deleted.
-      """
+    When I run `wp bp xprofile group get {GROUP_ID}`
+    Then STDOUT should be a table containing rows:
+        | Field        | Value             |
+        | id           | {GROUP_ID}        |
+        | name         | Group Name        |
+        | description  | Group Description |
+        | can_delete   | 1                 |
+        | group_order  | 0                 |
