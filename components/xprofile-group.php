@@ -39,13 +39,12 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 *
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted.
-	 *
-	 * [--porcelain]
-	 * : Output just the new group id.
-	 *
 	 * ---
 	 * Default: true.
 	 * ---
+	 *
+	 * [--porcelain]
+	 * : Output just the new group id.
 	 *
 	 * ## EXAMPLES
 	 *
