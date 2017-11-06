@@ -1,7 +1,7 @@
 Feature: Manage BuddyPress Group Invites
 
   Scenario: Invite a member to a group
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp group invite add --user-id=10 --group-id=40`
     Then STDOUT should contain:
@@ -10,7 +10,7 @@ Feature: Manage BuddyPress Group Invites
       """
 
   Scenario: Uninvite a user from a group
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp group invite remove --group-id=3 --user-id=10`
     Then STDOUT should contain:
@@ -19,7 +19,7 @@ Feature: Manage BuddyPress Group Invites
       """
 
   Scenario: Accept a group invitation
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp group invite accept --group-id=3 --user-id=10`
     Then STDOUT should contain:
@@ -28,7 +28,7 @@ Feature: Manage BuddyPress Group Invites
       """
 
   Scenario: Reject a group invitation
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp group invite reject --group-id=3 --user-id=10`
     Then STDOUT should contain:
@@ -37,7 +37,7 @@ Feature: Manage BuddyPress Group Invites
       """
 
   Scenario: Delete a group invitation
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp group invite delete --group-id=3 --user-id=10`
     Then STDOUT should contain:
@@ -46,7 +46,7 @@ Feature: Manage BuddyPress Group Invites
       """
 
   Scenario: Send pending invites by a user to a group.
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp group invite send --group-id=3 --user-id=10`
     Then STDOUT should contain:
