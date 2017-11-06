@@ -143,8 +143,10 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 *     $ wp bp group member list --group-id=3
 	 *     $ wp bp group member list --group-id=slug
+	 *
+	 * @subcommand list
 	 */
-	public function list( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'group_id'            => '',
 			'per_page'            => false,
