@@ -7,14 +7,30 @@ Feature: Manage BuddyPress Groups
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
-  Scenario: Delete a group
-    Given a WP install
+    When I run `wp bp group get {GROUP_ID}`
+    Then STDOUT should be a table containing rows:
+        | Field   | Value              |
+	| id      | {GROUP_ID}         |
+	| name    | Totally Cool Group |
 
-    When I run `wp bp group delete group-slug --yes`
+    When I run `wp bp group update {GROUP_ID} --description=foo`
+    Then STDOUT should not be empty
+
+    When I run `wp bp group get {GROUP_ID}`
+    Then STDOUT should be a table containing rows:
+        | Field       | Value              |
+	| id          | {GROUP_ID}         |
+	| name        | Totally Cool Group |
+	| description | foo                |
+
+    When I run `wp bp group delete {GROUP_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Group successfully deleted.
       """
+
+    When I try `wp bp group get {GROUP_ID}`
+    Then the return code should be 1
 
   Scenario: Get the permalink of a group
     Given a WP install
