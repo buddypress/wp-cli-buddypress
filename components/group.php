@@ -224,6 +224,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 		$group = groups_get_group( $group_id );
 		$group_arr = get_object_vars( $group );
+		$group_arr['url'] = bp_get_group_permalink( $group );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $group_arr );
@@ -301,45 +302,6 @@ class BPCLI_Group extends BPCLI_Component {
 		parent::_update( $clean_group_ids, $assoc_args, function( $params ) {
 			return groups_create_group( $params );
 		} );
-	}
-
-	/**
-	 * Get the permalink of a group.
-	 *
-	 * ## OPTIONS
-	 *
-	 * <group-id>
-	 * : Identifier for the group. Accepts either a slug or a numeric ID.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp group permalink 500
-	 *     Success: Group Permalink: https://site.com/group-slug/
-	 *
-	 *     $ wp bp group url group-slug
-	 *     Success: Group Permalink: https://site.com/another-group-slug/
-	 *
-	 * @alias url
-	 */
-	public function permalink( $args, $assoc_args ) {
-		$group_id = $args[0];
-
-		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		// Get the group object.
-		$group = groups_get_group( array(
-			'group_id' => $group_id,
-		) );
-		$permalink = bp_get_group_permalink( $group );
-
-		if ( is_string( $permalink ) ) {
-			WP_CLI::success( sprintf( 'Group Permalink: %s', $permalink ) );
-		} else {
-			WP_CLI::error( 'No permalink found for the group.' );
-		}
 	}
 
 	/**

@@ -18,10 +18,11 @@ Feature: Manage BuddyPress Groups
 
     When I run `wp bp group get {GROUP_ID}`
     Then STDOUT should be a table containing rows:
-        | Field       | Value              |
-	| id          | {GROUP_ID}         |
-	| name        | Totally Cool Group |
-	| description | foo                |
+        | Field       | Value                                         |
+	| id          | {GROUP_ID}                                    |
+	| name        | Totally Cool Group                            |
+	| description | foo                                           |
+	| url         | http://example.com/groups/totally-cool-group/ |
 
     When I run `wp bp group delete {GROUP_ID} --yes`
     Then STDOUT should contain:
@@ -31,21 +32,6 @@ Feature: Manage BuddyPress Groups
 
     When I try `wp bp group get {GROUP_ID}`
     Then the return code should be 1
-
-  Scenario: Get the permalink of a group
-    Given a WP install
-
-    When I run `wp bp group permalink 500`
-    Then STDOUT should contain:
-      """
-      Success: Group Permalink: https://site.com/group-slug/
-      """
-
-    When I run `wp bp group url 4645`
-    Then STDOUT should contain:
-      """
-      Success: Group Permalink: https://site.com/another-group-slug/
-      """
 
   Scenario: Post an Activity update affiliated with a group
     Given a WP install
