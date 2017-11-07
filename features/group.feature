@@ -1,13 +1,11 @@
 Feature: Manage BuddyPress Groups
 
-  Scenario: Create a group
-    Given a WP install
+  Scenario: Group CRUD Operations
+    Given a BP install
 
-    When I run `wp bp group create --name="Totally Cool Group"`
-    Then STDOUT should contain:
-      """
-      Success: Group (ID 5465) created: https://site.com/group-slug/
-      """
+    When I run `wp bp group create --name="Totally Cool Group" --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ID}
 
   Scenario: Delete a group
     Given a WP install

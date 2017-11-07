@@ -66,6 +66,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * [--silent=<silent>]
 	 * : Whether to silent the group creation.
+	 *
+	 * [--porcelain]
+	 * : Return only the new group id.
+	 *
 	 * ---
 	 * Default: false.
 	 * ---
@@ -106,22 +110,26 @@ class BPCLI_Group extends BPCLI_Component {
 			$r['status'] = 'public';
 		}
 
-		$id = groups_create_group( $r );
+		$group_id = groups_create_group( $r );
 
-		if ( is_numeric( $id ) ) {
-			groups_update_groupmeta( $id, 'total_member_count', 1 );
+		if ( ! is_numeric( $group_id ) ) {
+			WP_CLI::error( 'Could not create group.' );
+		}
 
-			if ( $r['silent'] ) {
-				return;
-			}
+		groups_update_groupmeta( $group_id, 'total_member_count', 1 );
 
+		if ( $r['silent'] ) {
+			return;
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $group_id );
+		} else {
 			$group = groups_get_group( array(
-				'group_id' => $id,
+				'group_id' => $group_id,
 			) );
 			$permalink = bp_get_group_permalink( $group );
-			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $id, $permalink ) );
-		} else {
-			WP_CLI::error( 'Could not create group.' );
+			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $group_id, $permalink ) );
 		}
 	}
 
