@@ -33,15 +33,6 @@ Feature: Manage BuddyPress Groups
     When I try `wp bp group get {GROUP_ID}`
     Then the return code should be 1
 
-  Scenario: Post an Activity update affiliated with a group
-    Given a WP install
-
-    When I run `wp bp group post_update 49 140`
-    Then STDOUT should contain:
-      """
-      Success: Successfully updated with a new activity item (ID #54646).
-      """
-
   Scenario: Promote a member to a new status within a group
     Given a WP install
 

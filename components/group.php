@@ -305,61 +305,6 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Post an Activity update affiliated with a group.
-	 *
-	 * ## OPTIONS
-	 *
-	 * <group-id>
-	 * : Identifier for the group. Accepts either a slug or a numeric ID.
-	 *
-	 * <user>
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
-	 * [--content=<content>]
-	 * : Activity content text. If none is provided, default text will be generated.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp group post_update 40 50  --content="Content to update"
-	 *     Success: Successfully updated with a new activity item (ID #1654).
-	 *
-	 *     $ wp bp group post_update 49 140
-	 *     Success: Successfully updated with a new activity item (ID #54646).
-	 */
-	public function post_update( $args, $assoc_args ) {
-		$group_id = $args[0];
-
-		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $args[1] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
-		}
-
-		// If no content, let's add some.
-		if ( empty( $assoc_args['content'] ) ) {
-			$assoc_args['content'] = $this->generate_random_text();
-		}
-
-		// Post the activity update.
-		$activity_id = groups_post_update( array(
-			'group_id' => $group_id,
-			'user_id'  => $user->ID,
-			'content'  => $assoc_args['content'],
-		) );
-
-		if ( is_numeric( $activity_id ) ) {
-			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d).', $activity_id ) );
-		} else {
-			WP_CLI::error( 'Could not post the activity update.' );
-		}
-	}
-
-	/**
 	 * Get a list of groups.
 	 *
 	 * ## OPTIONS
