@@ -22,9 +22,5 @@ Feature: Manage BuddyPress XProfile Groups
 	Field group deleted.
 	"""
 
-    When I run `wp bp xprofile group get {GROUP_ID}`
-    Then STDERR should contain:
-        """
-	No XProfile field group found.
-	"""
-
+    When I try `wp bp xprofile group get {GROUP_ID}`
+    Then the return code should be 1
