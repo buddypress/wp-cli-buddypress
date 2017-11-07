@@ -1,7 +1,7 @@
 Feature: Manage BuddyPress Activity Favorites
 
   Scenario: Add an activity item as a favorite for a user.
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity favorite add 100 500`
     Then STDOUT should contain:
@@ -10,7 +10,7 @@ Feature: Manage BuddyPress Activity Favorites
       """
 
   Scenario: Remove an activity item as a favorite for a user.
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity favorite remove 100 500`
     Then STDOUT should contain:
@@ -19,7 +19,7 @@ Feature: Manage BuddyPress Activity Favorites
       """
 
   Scenario: Get a users favorite activity items.
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity favorite items 315`
     Then STDOUT should contain:

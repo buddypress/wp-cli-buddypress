@@ -1,7 +1,7 @@
 Feature: Manage BuddyPress Activities
 
   Scenario: Create an activity item
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity create --component=groups --user-id=10`
     Then STDOUT should contain:
@@ -10,7 +10,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Delete an activity
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity delete 500 --yes`
     Then STDOUT should contain:
@@ -19,7 +19,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Spam an activity
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity spam 500`
     Then STDOUT should contain:
@@ -28,7 +28,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Ham an activity
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity ham 500`
     Then STDOUT should contain:
@@ -37,7 +37,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Post an activity update
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity post_update --user-id=140`
     Then STDOUT should contain:
@@ -46,7 +46,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Add an activity comment
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity comment 459 --user-id=140 --skip-notification=1`
     Then STDOUT should contain:
@@ -55,7 +55,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Delete an activity comment
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity delete_comment 100 500`
     Then STDOUT should contain:
@@ -64,7 +64,7 @@ Feature: Manage BuddyPress Activities
       """
 
   Scenario: Get the permalink for a single activity item
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp activity permalink 6465`
     Then STDOUT should contain:
