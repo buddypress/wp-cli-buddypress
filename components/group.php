@@ -241,7 +241,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * <group-id>
 	 * : Identifier for the group. Can be a numeric ID or the group slug.
 	 *
-	 * --yes
+	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLES
