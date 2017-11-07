@@ -73,6 +73,9 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * --name=<name>
 	 * : Name of the new field.
 	 *
+	 * [--porcelain]
+	 * : Output just the new field id.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp xprofile field create --type=checkbox --field-group-id=508 --name="Field Name"
@@ -89,9 +92,21 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 			WP_CLI::error( 'Not a valid field type.' );
 		}
 
-		$field_id = xprofile_insert_field( $assoc_args );
+		$create_args = array(
+			'type' => $assoc_args['type'],
+			'name' => $assoc_args['name'],
+			'field_group_id' => $assoc_args['field-group-id'],
+		);
 
-		if ( $field_id ) {
+		$field_id = xprofile_insert_field( $create_args );
+
+		if ( ! $field_id ) {
+			WP_CLI::error( 'Could not create XProfile field.' );
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $field_id );
+		} else {
 			$field = new BP_XProfile_Field( $field_id );
 			$success = sprintf(
 				'Created XProfile field "%s" (ID %d).',
@@ -99,8 +114,6 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 				$field->id
 			);
 			WP_CLI::success( $success );
-		} else {
-			WP_CLI::error( 'Could not create XProfile field.' );
 		}
 	}
 
