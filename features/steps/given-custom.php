@@ -16,7 +16,11 @@ $steps->Given( '/^a BP install$/',
 		try {
 			$world->copy_dir( $bp_src_dir, $dest_dir );
 			$world->proc( 'wp plugin activate buddypress' )->run_check();
-			$world->proc( 'wp bp core activate xprofile' )->run_check();
+
+			$components = array( 'groups', 'xprofile' );
+			foreach ( $components as $component ) {
+				$world->proc( "wp bp core activate $component" )->run_check();
+			}
 
 		} catch ( Exception $e ) {};
 	}
