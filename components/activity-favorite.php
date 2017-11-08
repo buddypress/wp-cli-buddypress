@@ -12,7 +12,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <activity-id>
-	 * : ID of the activity to add a item to.
+	 * : ID of the activity to add an item to.
 	 *
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
