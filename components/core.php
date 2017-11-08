@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Manage BuddyPress components.
+ *
+ * @since 1.1
  */
 class BPCLI_Core extends BPCLI_Component {
 
@@ -13,13 +14,10 @@ class BPCLI_Core extends BPCLI_Component {
 	 * <component>
 	 * : Name of the component to activate.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 * 	wp bp core activate groups
-	 *
-	 * @synopsis <component>
-	 *
-	 * @since 1.1
+	 *     $ wp bp core activate groups
+	 *     Success: The %groups component has been activated.
 	 */
 	public function activate( $args, $assoc_args ) {
 		$c = $args[0];
@@ -62,13 +60,10 @@ class BPCLI_Core extends BPCLI_Component {
 	 * <component>
 	 * : Name of the component to deactivate.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 * 	wp bp core deactivate groups
-	 *
-	 * @synopsis <component>
-	 *
-	 * @since 1.1
+	 *     $ wp bp core deactivate groups
+	 *     Success: The groups component has been deactivated.
 	 */
 	public function deactivate( $args, $assoc_args ) {
 		$c = $args[0];
