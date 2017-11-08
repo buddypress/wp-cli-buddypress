@@ -69,6 +69,9 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * Default: false
 	 * ---
 	 *
+	 * [--porcelain]
+	 * : Output only the new activity id.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity create --is-spam=1
@@ -137,10 +140,14 @@ class BPCLI_Activity extends BPCLI_Component {
 			return;
 		}
 
-		if ( $id ) {
-			WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
 		} else {
-			WP_CLI::error( 'Could not create activity item.' );
+			if ( $id ) {
+				WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
+			} else {
+				WP_CLI::error( 'Could not create activity item.' );
+			}
 		}
 	}
 
@@ -582,10 +589,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity permalink 687
-	 *     Success: Activity Permalink: https://site.com/activity/p/6465
+	 *     Success: Activity Permalink: http://example.com/activity/p/6465
 	 *
 	 *     $ wp bp activity url 16546
-	 *     Success: Activity Permalink: https://site.com/activity/p/16546
+	 *     Success: Activity Permalink: http://example.com/activity/p/16546
 	 *
 	 * @alias url
 	 */
