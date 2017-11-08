@@ -21,9 +21,9 @@ Feature: Manage BuddyPress XProfile Fields
 
     When I run `wp bp xprofile field delete {FIELD_ID} --yes`
     Then STDOUT should contain:
-       """
-       Deleted XProfile field
-       """
+      """
+      Deleted XProfile field
+      """
 
     When I try `wp bp xprofile field delete {FIELD_ID} --yes`
     Then the return code should be 1
