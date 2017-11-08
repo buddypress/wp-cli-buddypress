@@ -7,12 +7,12 @@
 class BPCLI_Signup extends BPCLI_Component {
 
 	/**
-	 * XProfile object fields.
+	 * Signup object fields.
 	 *
 	 * @var array
 	 */
 	protected $obj_fields = array(
-		'id',
+		'signup_id',
 		'user_login',
 		'user_name',
 		'meta',
@@ -98,13 +98,13 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <signup-id>
 	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
-	 * [--field=<field>]
+	 * [--match-field=<match-field>]
 	 * : Field to match the signup-id to. Use if there is ambiguity between, eg, signup ID and user_login.
 	 * ---
 	 * options:
-	 *   - id
-	 *   - email
-	 *   - login
+	 *   - signup_id
+	 *   - user_email
+	 *   - user_login
 	 * ---
 	 *
 	 * [--fields=<fields>]
@@ -127,7 +127,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 *     $ wp bp signup get 123
 	 *     $ wp bp signup get foo@example.com
-	 *     $ wp bp signup get 123 --field=id
+	 *     $ wp bp signup get 123 --match-field=id
 	 */
 	public function get( $args, $assoc_args ) {
 		$id = $args[0];
@@ -136,38 +136,14 @@ class BPCLI_Signup extends BPCLI_Component {
 			'number' => 1,
 		);
 
-		if ( isset( $assoc_args['field'] ) ) {
-			switch ( $assoc_args['field'] ) {
-				case 'id' :
-					$signup_args['include'] = array( $id );
-				break;
+		$signup = $this->get_signup_by_identifier( $id, $assoc_args );
 
-				case 'email' :
-					$signup_args['usersearch'] = $id;
-				break;
-
-				case 'login' :
-					$signup_args['user_login'] = $id;
-				break;
-			}
-		} else {
-			if ( is_numeric( $id ) ) {
-				$signup_args['include'] = array( $id );
-			} elseif ( is_email( $id ) ) {
-				$signup_args['usersearch'] = $id;
-			} else {
-				$signup_args['user_login'] = $id;
-			}
-		}
-
-		$signups = BP_Signup::get( $signup_args );
-		$formatter = $this->get_formatter( $assoc_args );
-
-		if ( ! empty( $signups['signups'] ) ) {
-			$formatter->display_item( $signups['signups'][0] );
-		} else {
+		if ( ! $signup ) {
 			WP_CLI::error( 'No signup found by that identifier.' );
 		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $signup );
 	}
 
 	/**
@@ -342,6 +318,45 @@ class BPCLI_Signup extends BPCLI_Component {
 		} else {
 			$formatter->display_items( $signups['signups'] );
 		}
+	}
+
+	/**
+	 * Look up a signup by the provided identifier.
+	 */
+	protected function get_signup_by_identifier( $identifier, $assoc_args ) {
+		if ( isset( $assoc_args['match-field'] ) ) {
+			switch ( $assoc_args['match-field'] ) {
+				case 'signup_id' :
+					$signup_args['include'] = array( $identifier );
+				break;
+
+				case 'user_login' :
+					$signup_args['user_login'] = $identifier;
+				break;
+
+				case 'user_email' :
+				default :
+					$signup_args['usersearch'] = $identifier;
+				break;
+			}
+		} else {
+			if ( is_numeric( $identifier ) ) {
+				$signup_args['include'] = array( intval( $identifier ) );
+			} elseif ( is_email( $identifier ) ) {
+				$signup_args['usersearch'] = $identifier;
+			} else {
+				$signup_args['user_login'] = $identifier;
+			}
+		}
+
+		$signups = BP_Signup::get( $signup_args );
+
+		$signup = null;
+		if ( ! empty( $signups['signups'] ) ) {
+			$signup = reset( $signups['signups'] );
+		}
+
+		return $signup;
 	}
 }
 
