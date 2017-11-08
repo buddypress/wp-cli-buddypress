@@ -455,6 +455,9 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--content=<content>]
 	 * : Activity content text. If none is provided, default text will be generated.
 	 *
+	 * [--porcelain]
+	 * : Output only the new activity id.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity post_update --user-id=50 --content="Content to update"
@@ -475,11 +478,15 @@ class BPCLI_Activity extends BPCLI_Component {
 			'user_id' => (int) $r['user-id'],
 		) );
 
-		// Activity ID returned on success update.
-		if ( is_numeric( $id ) ) {
-			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
 		} else {
-			WP_CLI::error( 'Could not post the activity update.' );
+			// Activity ID returned on success update.
+			if ( is_numeric( $id ) ) {
+				WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
+			} else {
+				WP_CLI::error( 'Could not post the activity update.' );
+			}
 		}
 	}
 
@@ -502,6 +509,9 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * * ---
 	 * default: false
 	 * ---
+	 *
+	 * [--porcelain]
+	 * : Output only the new activity comment id.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -532,11 +542,15 @@ class BPCLI_Activity extends BPCLI_Component {
 			'skip_notification' => $r['skip-notification'],
 		) );
 
-		// Activity Comment ID returned on success.
-		if ( is_numeric( $id ) ) {
-			WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
 		} else {
-			WP_CLI::error( 'Could not post a new activity comment.' );
+			// Activity Comment ID returned on success.
+			if ( is_numeric( $id ) ) {
+				WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
+			} else {
+				WP_CLI::error( 'Could not post a new activity comment.' );
+			}
 		}
 	}
 

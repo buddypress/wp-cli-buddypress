@@ -1,79 +1,76 @@
 Feature: Manage BuddyPress Activities
 
-  Scenario: Create an activity item
+  Scenario: Signup CRUD Operations
     Given a BP install
 
-    When I run `wp bp activity create --component=groups --user-id=10`
-    Then STDOUT should contain:
-      """
-      Success: Successfully created new activity item (ID #5464)
-      """
+    When I try `wp user get bogus-user`
+    Then the return code should be 1
+    And STDOUT should be empty
 
-  Scenario: Delete an activity
-    Given a BP install
+    When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp activity delete 500 --yes`
-    Then STDOUT should contain:
-      """
-      Success: Activity deleted.
-      """
+    When I run `wp bp activity create --component=groups --user-id={MEMBER_ID} --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {ACTIVITY_ID}
 
-  Scenario: Spam an activity
-    Given a BP install
+    When I run `wp bp activity list --fields=id,user_id,component`
+    Then STDOUT should be a table containing rows:
+      | id            | user_id      | component |
+      | {ACTIVITY_ID} | {MEMBER_ID}  | groups    |
 
-    When I run `wp bp activity spam 500`
+    When I run `wp bp activity spam {ACTIVITY_ID}`
     Then STDOUT should contain:
       """
       Success: Activity marked as spam.
       """
 
-  Scenario: Ham an activity
-    Given a BP install
-
-    When I run `wp bp activity ham 500`
+    When I run `wp bp activity ham {ACTIVITY_ID}`
     Then STDOUT should contain:
       """
       Success: Activity marked as ham.
       """
 
-  Scenario: Post an activity update
-    Given a BP install
-
-    When I run `wp bp activity post_update --user-id=140`
+    When I run `wp bp activity delete {ACTIVITY_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Successfully updated with a new activity item (ID #4548)
+      Success: Activity deleted.
+      """
+
+    When I run `wp bp activity list --format=ids`
+    Then STDOUT should not contain:
+      """
+      {ACTIVITY_ID}
       """
 
   Scenario: Add an activity comment
     Given a BP install
 
-    When I run `wp bp activity comment 459 --user-id=140 --skip-notification=1`
-    Then STDOUT should contain:
-      """
-      Success: Successfully added a new activity comment (ID #494)
-      """
+    When I try `wp user get bogus-user`
+    Then the return code should be 1
+    And STDOUT should be empty
 
-  Scenario: Delete an activity comment
-    Given a BP install
+    When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp activity delete_comment 100 500`
+    When I run `wp bp activity post_update --user-id={MEMBER_ID} --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {ACTIVITY_ID}
+
+    When I run `wp bp activity comment {ACTIVITY_ID} --user-id={MEMBER_ID} --skip-notification=1`
+    Then STDOUT should be a number
+    And save STDOUT as {COMMENT_ID}
+
+    When I run `wp bp activity delete_comment {ACTIVITY_ID} --comment-id={COMMENT_ID}`
     Then STDOUT should contain:
       """
       Success: Activity comment deleted.
       """
 
-  Scenario: Get the permalink for a single activity item
-    Given a BP install
-
-    When I run `wp bp activity permalink 6465`
+    When I run `wp bp activity permalink {ACTIVITY_ID}`
     Then STDOUT should contain:
       """
-      Success: Activity Permalink: https://site.com/activity/p/6465
-      """
-
-    When I run `wp bp activity url 16516`
-    Then STDOUT should contain:
-      """
-      Success: Activity Permalink: https://site.com/activity/p/16516
+      Success: Activity Permalink: http://example.com/activity/p/{ACTIVITY_ID}
       """
