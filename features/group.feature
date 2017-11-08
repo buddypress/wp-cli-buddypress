@@ -10,8 +10,8 @@ Feature: Manage BuddyPress Groups
     When I run `wp bp group get {GROUP_ID}`
     Then STDOUT should be a table containing rows:
         | Field   | Value              |
-	| id      | {GROUP_ID}         |
-	| name    | Totally Cool Group |
+	      | id      | {GROUP_ID}         |
+	      | name    | Totally Cool Group |
 
     When I run `wp bp group update {GROUP_ID} --description=foo`
     Then STDOUT should not be empty
@@ -19,10 +19,10 @@ Feature: Manage BuddyPress Groups
     When I run `wp bp group get {GROUP_ID}`
     Then STDOUT should be a table containing rows:
         | Field       | Value                                         |
-	| id          | {GROUP_ID}                                    |
-	| name        | Totally Cool Group                            |
-	| description | foo                                           |
-	| url         | http://example.com/groups/totally-cool-group/ |
+	      | id          | {GROUP_ID}                                    |
+	      | name        | Totally Cool Group                            |
+	      | description | foo                                           |
+	      | url         | http://example.com/groups/totally-cool-group/ |
 
     When I run `wp bp group delete {GROUP_ID} --yes`
     Then STDOUT should contain:
