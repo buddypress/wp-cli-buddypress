@@ -7,6 +7,20 @@
 class BPCLI_Signup extends BPCLI_Component {
 
 	/**
+	 * XProfile object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'user_login',
+		'user_name',
+		'meta',
+		'activation_key',
+		'registered',
+	);
+
+	/**
 	 * Add a signup.
 	 *
 	 * ## OPTIONS
@@ -46,23 +60,19 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		// Sanitize login (random or not).
-		$r['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $r['user_login'], true ) );
+		$signup_args['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $signup_args['user_login'], true ) );
 
 		// Add a random email if none is provided.
 		if ( isset( $assoc_args['user-email'] ) ) {
-			$r['user_email'] = $assoc_args['user-email'];
+			$signup_args['user_email'] = $assoc_args['user-email'];
 		} else {
-			$r['user_email'] = $this->get_random_login() . '@example.com';
+			$signup_args['user_email'] = $this->get_random_login() . '@example.com';
 		}
 
 		// Sanitize email (random or not).
-		$r['user_email'] = sanitize_email( $r['user_email'] );
+		$signup_args['user_email'] = sanitize_email( $signup_args['user_email'] );
 
-		$id = BP_Signup::add( $r );
-
-		if ( $r['silent'] ) {
-			return;
-		}
+		$id = BP_Signup::add( $signup_args );
 
 		if ( ! $id ) {
 			WP_CLI::error( 'Could not add user signup' );
@@ -244,7 +254,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		} elseif ( 'count' === $formatter->format ) {
 			$formatter->display_items( $signups['total'] );
 		} else {
-			$formatter->display_items( $signups );
+			$formatter->display_items( $signups['signups'] );
 		}
 	}
 }
