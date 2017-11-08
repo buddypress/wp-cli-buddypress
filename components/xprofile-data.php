@@ -57,7 +57,7 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 			? explode( ',', $assoc_args['value'] )
 			: $assoc_args['value'];
 
-		$updated = xprofile_set_field_data( $field->id, $user_id, $value );
+		$updated = xprofile_set_field_data( $field->id, $user->ID, $value );
 
 		if ( $updated ) {
 			$success = sprintf(

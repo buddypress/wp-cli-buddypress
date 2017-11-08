@@ -5,16 +5,28 @@ if ( ! class_exists( 'User_Command' ) ) {
 }
 
 /**
- * Manage BuddyPress members.
+ * Manage BuddyPress Members
+ *
+ * @since 1.0.0
  */
 class BPCLI_Member extends BPCLI_Component {
 
 	/**
-	 * Generate members. See documentation for `wp_user_generate`.
+	 * Generate BuddyPress members. See documentation for `wp_user_generate`.
 	 *
 	 * This is a kludge workaround for setting last activity. Should fix.
 	 *
-	 * @since 1.0
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many members to generate.
+	 * ---
+	 * default: 100
+	 * ---
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp member generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
 		add_action( 'user_register', array( __CLASS__, 'update_user_last_activity_random' ) );
@@ -22,9 +34,11 @@ class BPCLI_Member extends BPCLI_Component {
 	}
 
 	/**
-	 * Update the last user activity with a radom date.
+	 * Update the last user activity with a random date.
 	 *
 	 * @since 1.0
+	 *
+	 * @param int $user_id User ID.
 	 */
 	public static function update_user_last_activity_random( $user_id ) {
 		$time = rand( 0, time() );

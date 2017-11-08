@@ -7,6 +7,20 @@
 class BPCLI_Signup extends BPCLI_Component {
 
 	/**
+	 * XProfile object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'user_login',
+		'user_name',
+		'meta',
+		'activation_key',
+		'registered',
+	);
+
+	/**
 	 * Add a signup.
 	 *
 	 * ## OPTIONS
@@ -17,58 +31,142 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--user-email=<user-email>]
 	 * : User email for the signup. If none is provided, a random one will be used.
 	 *
-	 * [--meta=<meta>]
-	 * : User meta for the signup.
+	 * [--activation-key=<activation-key>]
+	 * : Activation key for the signup.
 	 *
 	 * [--silent=<silent>]
-	 * : Silent the signup creation.
+	 * : Silent signup creation.
 	 * ---
-	 * default: false.
+	 * Default: false
+	 * ---
+	 *
+	 * [--porcelain]
+	 * : Output only the new signup id.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com
+	 *     Success: Successfully added new user signup (ID #345).
+	 */
+	public function add( $args, $assoc_args ) {
+		$signup_args = array(
+			'meta' => '',
+		);
+
+		// Add a random user login if none is provided.
+		$signup_args['user_login'] = ( isset( $assoc_args['user-login'] ) )
+			? $assoc_args['user-login']
+			: $this->get_random_login();
+
+		// Sanitize login (random or not).
+		$signup_args['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $signup_args['user_login'], true ) );
+
+		// Add a random email if none is provided.
+		$signup_args['user_email'] = ( isset( $assoc_args['user-email'] ) )
+			? $assoc_args['user-email']
+			: $this->get_random_login() . '@example.com';
+
+		// Sanitize email (random or not).
+		$signup_args['user_email'] = sanitize_email( $signup_args['user_email'] );
+
+		$signup_args['activation_key'] = ( isset( $assoc_args['activation-key'] ) )
+			? $assoc_args['activation-key']
+			: wp_generate_password( 32, false );
+
+		$id = BP_Signup::add( $signup_args );
+
+		if ( ! $id ) {
+			WP_CLI::error( 'Could not add user signup' );
+		}
+
+		if ( $assoc_args['silent'] ) {
+			return;
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
+		} else {
+			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
+		}
+	}
+
+	/**
+	 * Get a signup.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <signup-id>
+	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
+	 *
+	 * [--field=<field>]
+	 * : Field to match the signup-id to. Use if there is ambiguity between, eg, signup ID and user_login.
+	 * ---
+	 * options:
+	 *   - id
+	 *   - email
+	 *   - login
+	 * ---
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific signup fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com
-	 *     Success: Successfully added new user signup (ID #345).
-	 *
-	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
-	 *     Success: Successfully added new user signup (ID #4555).
+	 *     $ wp bp signup get 123
+	 *     $ wp bp signup get foo@example.com
+	 *     $ wp bp signup get 123 --field=id
 	 */
-	public function add( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'user_login'     => '',
-			'user_email'     => '',
-			'activation_key' => wp_generate_password( 32, false ),
-			'meta'           => '',
-			'silent'         => false,
-		) );
+	public function get( $args, $assoc_args ) {
+		$id = $args[0];
 
-		// Add a random user login if none is provided.
-		if ( empty( $r['user_login'] ) ) {
-			$r['user_login'] = $this->get_random_login();
-		}
+		$signup_args = array(
+			'number' => 1,
+		);
 
-		// Sanitize login (random or not).
-		$r['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $r['user_login'], true ) );
+		if ( isset( $assoc_args['field'] ) ) {
+			switch ( $assoc_args['field'] ) {
+				case 'id' :
+					$signup_args['include'] = array( $id );
+				break;
 
-		// Add a random email if none is provided.
-		if ( empty( $r['user_email'] ) ) {
-			$r['user_email'] = is_email( $this->get_random_login() . '@site.com' );
-		}
+				case 'email' :
+					$signup_args['usersearch'] = $id;
+				break;
 
-		// Sanitize email (random or not).
-		$r['user_email'] = sanitize_email( $r['user_email'] );
-
-		$id = BP_Signup::add( $r );
-
-		if ( $r['silent'] ) {
-			return;
-		}
-
-		if ( $id ) {
-			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
+				case 'login' :
+					$signup_args['user_login'] = $id;
+				break;
+			}
 		} else {
-			WP_CLI::error( 'Could not add a user signup.' );
+			if ( is_numeric( $id ) ) {
+				$signup_args['include'] = array( $id );
+			} elseif ( is_email( $id ) ) {
+				$signup_args['usersearch'] = $id;
+			} else {
+				$signup_args['user_login'] = $id;
+			}
+		}
+
+		$signups = BP_Signup::get( $signup_args );
+		$formatter = $this->get_formatter( $assoc_args );
+
+		if ( ! empty( $signups['signups'] ) ) {
+			$formatter->display_item( $signups['signups'][0] );
+		} else {
+			WP_CLI::error( 'No signup found by that identifier.' );
 		}
 	}
 
@@ -80,20 +178,24 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <signup-id>...
 	 * : ID or IDs of signup.
 	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp signup delete 520
 	 *     Success: Signup deleted.
 	 *
-	 *     $ wp bp signup delete 55654 54564
-	 *     Success: Signup deleted.
+	 *     $ wp bp signup delete 55654 54564 --yes
 	 *     Success: Signup deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
 		$signup_id = $args[0];
 
+		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
+
 		parent::_delete( array( $signup_id ), $assoc_args, function( $signup_id ) {
-			if ( BP_Signup::delete( $signup_id ) ) {
+			if ( BP_Signup::delete( array( $signup_id ) ) ) {
 				return array( 'success', 'Signup deleted.' );
 			} else {
 				return array( 'error', 'Could not delete signup.' );
@@ -140,13 +242,9 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     $ wp bp signup generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'count' => 100,
-		) );
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $assoc_args['count'] );
 
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $r['count'] );
-
-		for ( $i = 0; $i < $r['count']; $i++ ) {
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
 				'silent' => true,
 			) );
@@ -222,6 +320,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *   - table
 	 *   - ids
 	 *   - count
+	 *   - csv
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -239,9 +338,9 @@ class BPCLI_Signup extends BPCLI_Component {
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $signups['total'] );
+			WP_CLI::line( $signups['total'] );
 		} else {
-			$formatter->display_items( $signups );
+			$formatter->display_items( $signups['signups'] );
 		}
 	}
 }
