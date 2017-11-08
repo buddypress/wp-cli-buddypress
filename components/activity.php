@@ -541,12 +541,12 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>
 	 * : Identifier for the activity.
 	 *
-	 * <comment-id>
+	 * --comment-id=<comment-id>
 	 * : ID of the comment to delete.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp activity delete_comment 100 500
+	 *     $ wp bp activity delete_comment 100 --comment-id=500
 	 *     Success: Activity comment deleted.
 	 */
 	public function delete_comment( $args, $assoc_args ) {
@@ -560,7 +560,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		$deleted = bp_activity_delete_comment( array(
 			'activity_id' => (int) $activity_id,
-			'comment_id'  => (int) $args[1],
+			'comment_id'  => (int) $assoc_args['comment-id'],
 		) );
 
 		// Delete Comment. True if deleted.
