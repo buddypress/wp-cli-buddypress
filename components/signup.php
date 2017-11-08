@@ -17,11 +17,9 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--user-email=<user-email>]
 	 * : User email for the signup. If none is provided, a random one will be used.
 	 *
-	 * [--meta=<meta>]
-	 * : User meta for the signup.
+	 * [--porcelain]
+	 * : Output only the new signup id.
 	 *
-	 * [--silent=<silent>]
-	 * : Silent the signup creation.
 	 * ---
 	 * default: false.
 	 * ---
@@ -35,25 +33,26 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     Success: Successfully added new user signup (ID #4555).
 	 */
 	public function add( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'user_login'     => '',
-			'user_email'     => '',
+		$signup_args = array(
 			'activation_key' => wp_generate_password( 32, false ),
-			'meta'           => '',
-			'silent'         => false,
-		) );
+			'meta' => '',
+		);
 
 		// Add a random user login if none is provided.
-		if ( empty( $r['user_login'] ) ) {
-			$r['user_login'] = $this->get_random_login();
+		if ( isset( $assoc_args['user-login'] ) ) {
+			$signup_args['user_login'] = $assoc_args['user-login'];
+		} else {
+			$signup_args['user_login'] = $this->get_random_login();
 		}
 
 		// Sanitize login (random or not).
 		$r['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $r['user_login'], true ) );
 
 		// Add a random email if none is provided.
-		if ( empty( $r['user_email'] ) ) {
-			$r['user_email'] = is_email( $this->get_random_login() . '@site.com' );
+		if ( isset( $assoc_args['user-email'] ) ) {
+			$r['user_email'] = $assoc_args['user-email'];
+		} else {
+			$r['user_email'] = $this->get_random_login() . '@example.com';
 		}
 
 		// Sanitize email (random or not).
@@ -65,10 +64,14 @@ class BPCLI_Signup extends BPCLI_Component {
 			return;
 		}
 
-		if ( $id ) {
-			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
+		if ( ! $id ) {
+			WP_CLI::error( 'Could not add user signup' );
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
 		} else {
-			WP_CLI::error( 'Could not add a user signup.' );
+			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
 		}
 	}
 
