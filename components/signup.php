@@ -31,6 +31,9 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--user-email=<user-email>]
 	 * : User email for the signup. If none is provided, a random one will be used.
 	 *
+	 * [--activation-key=<activation-key>]
+	 * : Activation key for the signup.
+	 *
 	 * [--porcelain]
 	 * : Output only the new signup id.
 	 *
@@ -48,7 +51,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 */
 	public function add( $args, $assoc_args ) {
 		$signup_args = array(
-			'activation_key' => wp_generate_password( 32, false ),
 			'meta' => '',
 		);
 
@@ -71,6 +73,12 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		// Sanitize email (random or not).
 		$signup_args['user_email'] = sanitize_email( $signup_args['user_email'] );
+
+		if ( isset( $assoc_args['activation-key'] ) ) {
+			$signup_args['activation_key'] = $assoc_args['activation-key'];
+		} else {
+			$signup_args['activation_key'] = wp_generate_password( 32, false );
+		}
 
 		$id = BP_Signup::add( $signup_args );
 
