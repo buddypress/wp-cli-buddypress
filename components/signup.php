@@ -100,13 +100,12 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 *     $ wp bp signup delete 55654 54564
 	 *     Success: Signup deleted.
-	 *     Success: Signup deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
 		$signup_id = $args[0];
 
 		parent::_delete( array( $signup_id ), $assoc_args, function( $signup_id ) {
-			if ( BP_Signup::delete( $signup_id ) ) {
+			if ( BP_Signup::delete( array( $signup_id ) ) ) {
 				return array( 'success', 'Signup deleted.' );
 			} else {
 				return array( 'error', 'Could not delete signup.' );
@@ -252,7 +251,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $signups['total'] );
+			WP_CLI::line( $signups['total'] );
 		} else {
 			$formatter->display_items( $signups['signups'] );
 		}

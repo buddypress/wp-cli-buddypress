@@ -1,25 +1,31 @@
 Feature: Manage BuddyPress signups
 
-  Scenario: Add a signup
-    Given a WP install
+  Scenario: Signup CRUD Operations
+    Given a BP install
 
-    When I run `wp bp signup add --user-login=test_user --user-email=teste@site.com`
-    Then STDOUT should contain:
-      """
-      Success: Successfully added new user signup (ID #345).
-      """
+    When I run `wp bp signup add --user-login=test_user --user-email=test@example.com --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {SIGNUP_ID}
 
-  Scenario: Delete a signup
-    Given a WP install
+    When I run `wp bp signup list --fields=id,user_login,user_email`
+    Then STDOUT should be a table containing rows:
+      | id          | user_login | user_email       |
+      | {SIGNUP_ID} | test_user  | test@example.com |
 
-    When I run `wp bp signup delete 520`
+    When I run `wp bp signup delete {SIGNUP_ID}`
     Then STDOUT should contain:
       """
       Success: Signup deleted.
       """
 
+    When I run `wp bp signup list --format=ids`
+    Then STDOUT should not contain:
+      """
+      {SIGNUP_ID}
+      """
+
   Scenario: Activate a signup
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp signup activate ee48ec319fef3nn4`
     Then STDOUT should contain:
@@ -28,7 +34,7 @@ Feature: Manage BuddyPress signups
       """
 
   Scenario: Resend activation email
-    Given a WP install
+    Given a BP install
 
     When I run `wp bp signup resend 20 teste@site.com ee48ec319fef3nn4`
     Then STDOUT should contain:
@@ -41,12 +47,3 @@ Feature: Manage BuddyPress signups
       """
       Success: Email sent successfully.
       """
-
-  Scenario: List available signups
-    Given a WP install
-
-    When I run `wp bp signup list --format=count`
-    Then STDOUT should be:
-    """
-    3
-    """
