@@ -1,35 +1,43 @@
 Feature: Manage BuddyPress Group Members
 
-  Scenario: Add a member to a group
-    Given a WP install
+  Scenario: Group Member CRUD Operations
+    Given a BP install
 
-    When I run `wp bp group member add --group-id=3 --user-id=10`
+    When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=author --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {MEMBER_ID}
+
+    When I run `wp bp group create --name="Totally Cool Group" --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ID}
+
+    When I run `wp bp group member add --group-id={GROUP_ID} --user-id={USER_ID}`
     Then STDOUT should contain:
       """
-      Success: Added user #3 (user_login) to group #3 (group_name) as member.
+      Success: Added user #{MEMBER_ID} (testuser2) to group #{GROUP_ID} (Totally Cool Group) as member.
       """
 
-  Scenario: Remove a member from a group
-    Given a WP install
-
-    When I run `wp bp group member remove --group-id=3 --user-id=10`
+    When I run `wp bp group member get_groups --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: Member (#10) removed from the group #3.
+      Success: Found 1 group(s) from member #{MEMBER_ID}.
+      Success: Current group(s) from member #{MEMBER_ID}: {GROUP_ID}
       """
 
-    When I run `wp bp group member delete --group-id=foo --user-id=admin`
+    When I run `wp bp group promote {GROUP_ID} {MEMBER_ID} mod`
     Then STDOUT should contain:
       """
-      Success: Member (#545) removed from the group #12.
+      Success: Member promoted to new role: mod.
       """
 
-  Scenario: Get a list of groups a user is a member of
-    Given a WP install
-
-    When I run `wp bp group member get_groups --user-id=30`
+    When I run `wp bp group demote {GROUP_ID} {MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: Found 10 groups from member #30.
-      Success: Current groups from member #30: 156,454,545
+      Success: User demoted to the "member" status.
+      """
+
+    When I run `wp bp group member remove --group-id={GROUP_ID} --user-id={MEMBER_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Member #{MEMBER_ID} removed from the group #{GROUP_ID}.
       """
