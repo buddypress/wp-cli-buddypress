@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Manage BuddyPress components.
+ *
+ * @since 1.1
  */
 class BPCLI_Core extends BPCLI_Component {
 
@@ -13,20 +14,16 @@ class BPCLI_Core extends BPCLI_Component {
 	 * <component>
 	 * : Name of the component to activate.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 * 	wp bp core activate groups
-	 *
-	 * @synopsis <component>
-	 *
-	 * @since 1.1
+	 *     $ wp bp core activate groups
+	 *     Success: The Groups component has been activated.
 	 */
 	public function activate( $args, $assoc_args ) {
 		$c = $args[0];
 
 		if ( bp_is_active( $c ) ) {
-			WP_CLI::warning( sprintf( 'The %s component is already active.', ucfirst( $c ) ) );
-			return;
+			WP_CLI::error( sprintf( 'The %s component is already active.', ucfirst( $c ) ) );
 		}
 
 		$acs =& buddypress()->active_components;
@@ -62,25 +59,20 @@ class BPCLI_Core extends BPCLI_Component {
 	 * <component>
 	 * : Name of the component to deactivate.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 * 	wp bp core deactivate groups
-	 *
-	 * @synopsis <component>
-	 *
-	 * @since 1.1
+	 *     $ wp bp core deactivate groups
+	 *     Success: The Groups component has been deactivated.
 	 */
 	public function deactivate( $args, $assoc_args ) {
 		$c = $args[0];
 
 		if ( ! bp_is_active( $c ) ) {
-			WP_CLI::warning( sprintf( 'The %s component is not active.', ucfirst( $c ) ) );
-			return;
+			WP_CLI::error( sprintf( 'The %s component is not active.', ucfirst( $c ) ) );
 		}
 
 		if ( array_key_exists( $c, bp_core_get_components( 'required' ) ) ) {
-			WP_CLI::warning( sprintf( 'You cannot deactivate a required component.' ) );
-			return;
+			WP_CLI::error( sprintf( 'You cannot deactivate a required component.' ) );
 		}
 
 		$acs =& buddypress()->active_components;
