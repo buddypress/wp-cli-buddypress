@@ -332,8 +332,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <activity-id>
-	 * : Identifier for the activity.
+	 * <activity-id>...
+	 * : ID or IDs of activities to delete.
 	 *
 	 * --yes
 	 * : Answer yes to the confirmation message.
@@ -344,18 +344,21 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *     Success: Activity deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
+		$activity_id = $args[0];
 
-		$retval = bp_activity_delete( array(
-			'id' => $args[0],
-		) );
+		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
 
-		// Delete activity. True if deleted.
-		if ( $retval ) {
-			WP_CLI::success( 'Activity deleted.' );
-		} else {
-			WP_CLI::error( 'Could not delete the activity.' );
-		}
+		parent::_delete( array( $activity_id ), $assoc_args, function( $activity_id ) {
+			$retval = bp_activity_delete( array(
+				'id' => $activity_id,
+			) );
+
+			if ( $retval ) {
+				return array( 'success', 'Activity deleted.' );
+			} else {
+				return array( 'error', 'Could not delete the activity.' );
+			}
+		} );
 	}
 
 	/**
