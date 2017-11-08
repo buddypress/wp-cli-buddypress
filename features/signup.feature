@@ -23,18 +23,3 @@ Feature: Manage BuddyPress signups
       """
       {SIGNUP_ID}
       """
-
-  Scenario: Resend activation email
-    Given a BP install
-
-    When I run `wp bp signup resend 20 teste@site.com ee48ec319fef3nn4`
-    Then STDOUT should contain:
-      """
-      Success: Email sent successfully.
-      """
-
-    When I run `wp bp signup send another_teste@site.com ee48ec319fef3nn4aasd`
-    Then STDOUT should contain:
-      """
-      Success: Email sent successfully.
-      """
