@@ -1,6 +1,6 @@
 Feature: Manage BuddyPress Activities
 
-  Scenario: Signup CRUD Operations
+  Scenario: Activity CRUD Operations
     Given a BP install
 
     When I try `wp user get bogus-user`
@@ -44,7 +44,7 @@ Feature: Manage BuddyPress Activities
       {ACTIVITY_ID}
       """
 
-  Scenario: Add an activity comment
+  Scenario: Activity Comment Operations
     Given a BP install
 
     When I try `wp user get bogus-user`
@@ -58,6 +58,11 @@ Feature: Manage BuddyPress Activities
     When I run `wp bp activity post_update --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
+
+    When I run `wp bp activity list --fields=id,user_id,component`
+    Then STDOUT should be a table containing rows:
+      | id            | user_id       | component   |
+      | {ACTIVITY_ID} | {MEMBER_ID}   | activity    |
 
     When I run `wp bp activity comment {ACTIVITY_ID} --user-id={MEMBER_ID} --skip-notification=1`
     Then STDOUT should be a number
@@ -73,4 +78,10 @@ Feature: Manage BuddyPress Activities
     Then STDOUT should contain:
       """
       Success: Activity Permalink: http://example.com/activity/p/{ACTIVITY_ID}
+      """
+
+    When I run `wp bp activity list --format=ids`
+    Then STDOUT should not contain:
+      """
+      {ACTIVITY_ID}
       """

@@ -107,10 +107,10 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity favorite items 315
-	 *     Success: Favorites items for user #315: 166,1561,6516
+	 *     Success: Favorite item(s) for user #315: 166,1561,6516
 	 *
 	 *     $ wp bp activity favorite user_items 156165
-	 *     Success: Favorites items for user #156165: 64494,65465,4645
+	 *     Success: Favorite item(s) for user #156165: 64494,65465,4645
 	 *
 	 * @alias user_items
 	 */
@@ -125,13 +125,13 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 
 		if ( $favorites ) {
 			$success = sprintf(
-				'Favorites for user #%d: %s',
+				'Favorite item(s) for user #%d: %s',
 				$user->ID,
 				implode( ', ', wp_list_pluck( $favorites ) )
 			);
 			WP_CLI::success( $success );
 		} else {
-			WP_CLI::error( 'No favorites found for this user.' );
+			WP_CLI::error( 'No favorite found for this user.' );
 		}
 	}
 }

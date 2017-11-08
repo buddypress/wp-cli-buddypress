@@ -1,28 +1,39 @@
 Feature: Manage BuddyPress Activity Favorites
 
-  Scenario: Add an activity item as a favorite for a user.
+  Scenario: Activity Favorite CRUD Operations
     Given a BP install
 
-    When I run `wp bp activity favorite add 100 500`
+    When I try `wp user get bogus-user`
+    Then the return code should be 1
+    And STDOUT should be empty
+
+    When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {MEMBER_ID}
+
+    When I run `wp bp activity create --user-id={MEMBER_ID} --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {ACTIVITY_ID}
+
+    When I run `wp bp activity list --fields=id,user_id`
+    Then STDOUT should be a table containing rows:
+      | id            | user_id      |
+      | {ACTIVITY_ID} | {MEMBER_ID}  |
+
+    When I run `wp bp activity favorite add {ACTIVITY_ID} {MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Activity item added as a favorite for the user.
       """
 
-  Scenario: Remove an activity item as a favorite for a user.
-    Given a BP install
+    When I run `wp bp activity favorite items {MEMBER_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Favorite items for user #{MEMBER_ID}: {ACTIVITY_ID}
+      """
 
-    When I run `wp bp activity favorite remove 100 500`
+    When I run `wp bp activity favorite remove {ACTIVITY_ID} {MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Activity item removed as a favorite for the user.
-      """
-
-  Scenario: Get a users favorite activity items.
-    Given a BP install
-
-    When I run `wp bp activity favorite items 315`
-    Then STDOUT should contain:
-      """
-      Success: Favorites items for user #315: 166,1561,6516
       """
