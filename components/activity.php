@@ -335,7 +335,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>...
 	 * : ID or IDs of activities to delete.
 	 *
-	 * --yes
+	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLE
