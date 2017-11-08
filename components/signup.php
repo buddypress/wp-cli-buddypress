@@ -94,6 +94,86 @@ class BPCLI_Signup extends BPCLI_Component {
 	}
 
 	/**
+	 * Get a signup.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <signup-id>
+	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
+	 *
+	 * [--field=<field>]
+	 * : Field to match the signup-id to. Use if there is ambiguity between, eg, signup ID and user_login.
+	 * ---
+	 * options:
+	 *   - id
+	 *   - email
+	 *   - login
+	 * ---
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific signup fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp signup get 123
+	 *     $ wp bp signup get foo@example.com
+	 *     $ wp bp signup get 123 --field=id
+	 */
+	public function get( $args, $assoc_args ) {
+		$id = $args[0];
+
+		$signup_args = array(
+			'number' => 1,
+		);
+
+		if ( isset( $assoc_args['field'] ) ) {
+			switch ( $assoc_args['field'] ) {
+				case 'id' :
+					$signup_args['include'] = array( $id );
+				break;
+
+				case 'email' :
+					$signup_args['usersearch'] = $id;
+				break;
+
+				case 'login' :
+					$signup_args['user_login'] = $id;
+				break;
+			}
+		} else {
+			if ( is_numeric( $id ) ) {
+				$signup_args['include'] = array( $id );
+			} elseif ( is_email( $id ) ) {
+				$signup_args['usersearch'] = $id;
+			} else {
+				$signup_args['user_login'] = $id;
+			}
+		}
+
+		$signups = BP_Signup::get( $signup_args );
+		$formatter = $this->get_formatter( $assoc_args );
+
+		if ( ! empty( $signups['signups'] ) ) {
+			$formatter->display_item( $signups['signups'][0] );
+		} else {
+			WP_CLI::error( 'No signup found by that identifier.' );
+		}
+	}
+
+	/**
 	 * Delete a signup.
 	 *
 	 * ## OPTIONS
@@ -242,6 +322,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *   - table
 	 *   - ids
 	 *   - count
+	 *   - csv
 	 * ---
 	 *
 	 * ## EXAMPLES
