@@ -346,9 +346,15 @@ class BPCLI_Activity extends BPCLI_Component {
 	public function delete( $args, $assoc_args ) {
 		$activity_id = $args[0];
 
-		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
+		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
 
 		parent::_delete( array( $activity_id ), $assoc_args, function( $activity_id ) {
+			$activity = new BP_Activity_Activity( $activity_id );
+
+			if ( empty( $activity->id ) ) {
+				WP_CLI::error( 'No activity found by that ID.' );
+			}
+
 			$retval = bp_activity_delete( array(
 				'id' => $activity_id,
 			) );
