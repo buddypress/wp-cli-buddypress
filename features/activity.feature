@@ -74,12 +74,6 @@ Feature: Manage BuddyPress Activities
       Success: Activity comment deleted.
       """
 
-    When I run `wp bp activity permalink {ACTIVITY_ID}`
-    Then STDOUT should contain:
-      """
-      Success: Activity Permalink: http://example.com/activity/p/{ACTIVITY_ID}
-      """
-
     When I run `wp bp activity list --format=ids`
     Then STDOUT should not contain:
       """

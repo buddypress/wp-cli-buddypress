@@ -322,6 +322,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		if ( is_object( $activity ) ) {
 			$activity_arr = get_object_vars( $activity );
+			$activity_arr['url'] = bp_activity_get_permalink( $activity_id );
 
 			if ( empty( $assoc_args['fields'] ) ) {
 				$assoc_args['fields'] = array_keys( $activity_arr );
@@ -589,42 +590,6 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::success( 'Activity comment deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete the activity comment.' );
-		}
-	}
-
-	/**
-	 * Get the permalink for a single activity item.
-	 *
-	 * ## OPTIONS
-	 *
-	 * <activity-id>
-	 * : Identifier for the activity.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp activity permalink 687
-	 *     Success: Activity Permalink: http://example.com/activity/p/6465
-	 *
-	 *     $ wp bp activity url 16546
-	 *     Success: Activity Permalink: http://example.com/activity/p/16546
-	 *
-	 * @alias url
-	 */
-	public function permalink( $args, $assoc_args ) {
-		$activity_id = $args[0];
-
-		$activity = new BP_Activity_Activity( $activity_id );
-
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
-		}
-
-		$permalink = bp_activity_get_permalink( $activity_id );
-
-		if ( is_string( $permalink ) ) {
-			WP_CLI::success( sprintf( 'Activity Permalink: %s', $permalink ) );
-		} else {
-			WP_CLI::error( 'No permalink found by that ID.' );
 		}
 	}
 
