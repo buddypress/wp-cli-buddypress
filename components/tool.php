@@ -22,9 +22,9 @@ class BPCLI_Tool extends BPCLI_Component {
 	 *   - last-activity
 	 * ---
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 *     $ wp bp tool repair group-count
+	 *     $ wp bp tool repair friend-count
 	 *     $ wp bp tool fix friend-count
 	 *     Success: Counting the number of friends for each user. Complete!
 	 *
