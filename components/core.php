@@ -17,7 +17,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     $ wp bp core activate groups
-	 *     Success: The %groups component has been activated.
+	 *     Success: The Groups component has been activated.
 	 */
 	public function activate( $args, $assoc_args ) {
 		$c = $args[0];
@@ -62,7 +62,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     $ wp bp core deactivate groups
-	 *     Success: The groups component has been deactivated.
+	 *     Success: The Groups component has been deactivated.
 	 */
 	public function deactivate( $args, $assoc_args ) {
 		$c = $args[0];
