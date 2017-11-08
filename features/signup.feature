@@ -24,15 +24,6 @@ Feature: Manage BuddyPress signups
       {SIGNUP_ID}
       """
 
-  Scenario: Activate a signup
-    Given a BP install
-
-    When I run `wp bp signup activate ee48ec319fef3nn4`
-    Then STDOUT should contain:
-      """
-      Success: Signup activated, new user (ID #10).
-      """
-
   Scenario: Resend activation email
     Given a BP install
 
