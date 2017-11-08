@@ -1,4 +1,4 @@
-Feature: Manage BuddyPress signups
+Feature: Manage BuddyPress Signups
 
   Scenario: Signup CRUD Operations
     Given a BP install
