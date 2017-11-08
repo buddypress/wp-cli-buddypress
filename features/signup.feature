@@ -12,7 +12,7 @@ Feature: Manage BuddyPress Signups
       | id          | user_login | user_email       |
       | {SIGNUP_ID} | test_user  | test@example.com |
 
-    When I run `wp bp signup delete {SIGNUP_ID}`
+    When I run `wp bp signup delete {SIGNUP_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Signup deleted.
