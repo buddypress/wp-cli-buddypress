@@ -1,7 +1,7 @@
 {
 	"name": "buddypress/wp-cli-buddypress",
 	"type": "wp-cli-package",
-	"description": "WP-CLI commands for BuddyPress",
+	"description": "WP-CLI Community Package of BuddyPress commands",
 	"keywords": [ "wp-cli", "buddypress", "community", "wordpress", "bp" ],
 	"homepage": "https://github.com/buddypress/wp-cli-buddypress",
 	"license": "MIT",
