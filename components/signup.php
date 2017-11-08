@@ -34,20 +34,19 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--activation-key=<activation-key>]
 	 * : Activation key for the signup.
 	 *
+	 * [--silent=<silent>]
+	 * : Silent signup creation.
+	 * ---
+	 * Default: false
+	 * ---
+	 *
 	 * [--porcelain]
 	 * : Output only the new signup id.
 	 *
-	 * ---
-	 * default: false.
-	 * ---
-	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com
 	 *     Success: Successfully added new user signup (ID #345).
-	 *
-	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com --silent=1
-	 *     Success: Successfully added new user signup (ID #4555).
 	 */
 	public function add( $args, $assoc_args ) {
 		$signup_args = array(
@@ -55,35 +54,33 @@ class BPCLI_Signup extends BPCLI_Component {
 		);
 
 		// Add a random user login if none is provided.
-		if ( isset( $assoc_args['user-login'] ) ) {
-			$signup_args['user_login'] = $assoc_args['user-login'];
-		} else {
-			$signup_args['user_login'] = $this->get_random_login();
-		}
+		$signup_args['user_login'] = ( isset( $assoc_args['user-login'] ) )
+			? $assoc_args['user-login']
+			: $this->get_random_login();
 
 		// Sanitize login (random or not).
 		$signup_args['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $signup_args['user_login'], true ) );
 
 		// Add a random email if none is provided.
-		if ( isset( $assoc_args['user-email'] ) ) {
-			$signup_args['user_email'] = $assoc_args['user-email'];
-		} else {
-			$signup_args['user_email'] = $this->get_random_login() . '@example.com';
-		}
+		$signup_args['user_email'] = ( isset( $assoc_args['user-email'] ) )
+			? $assoc_args['user-email']
+			: $this->get_random_login() . '@example.com';
 
 		// Sanitize email (random or not).
 		$signup_args['user_email'] = sanitize_email( $signup_args['user_email'] );
 
-		if ( isset( $assoc_args['activation-key'] ) ) {
-			$signup_args['activation_key'] = $assoc_args['activation-key'];
-		} else {
-			$signup_args['activation_key'] = wp_generate_password( 32, false );
-		}
+		$signup_args['activation_key'] = ( isset( $assoc_args['activation-key'] ) )
+			? $assoc_args['activation-key']
+			: wp_generate_password( 32, false );
 
 		$id = BP_Signup::add( $signup_args );
 
 		if ( ! $id ) {
 			WP_CLI::error( 'Could not add user signup' );
+		}
+
+		if ( $assoc_args['silent'] ) {
+			return;
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
