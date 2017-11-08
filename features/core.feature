@@ -1,6 +1,6 @@
 Feature: Manage BuddyPress Components
 
-  Scenario: Deactivate a component
+  Scenario: Core CRUD operations
     Given a BP install
 
     When I run `wp bp core deactive groups`
@@ -8,9 +8,6 @@ Feature: Manage BuddyPress Components
       """
       Success: The Groups component has been deactivated.
       """
-
-  Scenario: Activate a component
-    Given a BP install
 
     When I run `wp bp core activate groups`
     Then STDOUT should contain:
