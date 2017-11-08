@@ -66,13 +66,12 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * [--silent=<silent>]
 	 * : Whether to silent the group creation.
-	 *
-	 * [--porcelain]
-	 * : Return only the new group id.
-	 *
 	 * ---
 	 * Default: false.
 	 * ---
+	 *
+	 * [--porcelain]
+	 * : Return only the new group id.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -239,8 +238,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
-	 * : Identifier for the group. Can be a numeric ID or the group slug.
+	 * <group-id>...
+	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
 	 *
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
@@ -256,19 +255,20 @@ class BPCLI_Group extends BPCLI_Component {
 	public function delete( $args, $assoc_args ) {
 		$group_id = $args[0];
 
-		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
 		WP_CLI::confirm( 'Are you sure you want to delete this group?', $assoc_args );
 
-		// Delete group. True if deleted.
-		if ( groups_delete_group( $group_id ) ) {
-			WP_CLI::success( 'Group successfully deleted.' );
-		} else {
-			WP_CLI::error( 'Could not delete the group.' );
-		}
+		parent::_delete( array( $group_id ), $assoc_args, function( $group_id ) {
+			// Check that group exists.
+			if ( ! $this->group_exists( $group_id ) ) {
+				WP_CLI::error( 'No group found by that slug or ID.' );
+			}
+
+			if ( groups_delete_group( $group_id ) ) {
+				return array( 'success', 'Group successfully deleted.' );
+			} else {
+				return array( 'error', 'Could not delete the group.' );
+			}
+		} );
 	}
 
 	/**
