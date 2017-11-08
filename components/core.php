@@ -23,8 +23,7 @@ class BPCLI_Core extends BPCLI_Component {
 		$c = $args[0];
 
 		if ( bp_is_active( $c ) ) {
-			WP_CLI::warning( sprintf( 'The %s component is already active.', ucfirst( $c ) ) );
-			return;
+			WP_CLI::error( sprintf( 'The %s component is already active.', ucfirst( $c ) ) );
 		}
 
 		$acs =& buddypress()->active_components;
@@ -69,13 +68,11 @@ class BPCLI_Core extends BPCLI_Component {
 		$c = $args[0];
 
 		if ( ! bp_is_active( $c ) ) {
-			WP_CLI::warning( sprintf( 'The %s component is not active.', ucfirst( $c ) ) );
-			return;
+			WP_CLI::error( sprintf( 'The %s component is not active.', ucfirst( $c ) ) );
 		}
 
 		if ( array_key_exists( $c, bp_core_get_components( 'required' ) ) ) {
-			WP_CLI::warning( sprintf( 'You cannot deactivate a required component.' ) );
-			return;
+			WP_CLI::error( sprintf( 'You cannot deactivate a required component.' ) );
 		}
 
 		$acs =& buddypress()->active_components;
