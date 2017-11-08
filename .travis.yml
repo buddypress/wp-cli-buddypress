@@ -48,9 +48,10 @@ before_install:
     fi
 
 install:
-  - composer require wp-cli/wp-cli:dev-master
   - composer install
   - bash bin/install-package-tests.sh
+  - export BP_SRC_DIR=/tmp/bp-src/
+  - svn co --ignore-externals https://buddypress.svn.wordpress.org/trunk/src BP_SRC_DIR
 
 before_script:
   - composer validate
