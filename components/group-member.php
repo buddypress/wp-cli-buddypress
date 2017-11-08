@@ -39,6 +39,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * Default: member
 	 * ---
 	 *
+	 * [--porcelain]
+	 * : Return only the added group member id.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group member add --group-id=3 --user-id=10
@@ -70,19 +73,23 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$joined = groups_join_group( $group_id, $user->ID );
 
 		if ( $joined ) {
-			if ( 'member' !== $role ) {
-				groups_promote_member( $user->ID, $group_id, $role );
-			}
+			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+				WP_CLI::line( $user->ID );
+			} else {
+				if ( 'member' !== $role ) {
+					groups_promote_member( $user->ID, $group_id, $role );
+				}
 
-			$success = sprintf(
-				'Added user #%d (%s) to group #%d (%s) as %s.',
-				$user->ID,
-				$user->user_login,
-				$group_id,
-				$group_obj->name,
-				$role
-			);
-			WP_CLI::success( $success );
+				$success = sprintf(
+					'Added user #%d (%s) to group #%d (%s) as %s.',
+					$user->ID,
+					$user->user_login,
+					$group_id,
+					$group_obj->name,
+					$role
+				);
+				WP_CLI::success( $success );
+			}
 		} else {
 			WP_CLI::error( 'Could not add user to the group.' );
 		}
