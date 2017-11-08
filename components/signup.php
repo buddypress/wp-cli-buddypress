@@ -240,13 +240,9 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     $ wp bp signup generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'count' => 100,
-		) );
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $assoc_args['count'] );
 
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $r['count'] );
-
-		for ( $i = 0; $i < $r['count']; $i++ ) {
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
 				'silent' => true,
 			) );
