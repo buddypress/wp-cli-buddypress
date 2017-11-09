@@ -1,55 +1,48 @@
 Feature: Manage BuddyPress Group Invites
 
-  Scenario: Invite a member to a group
+  Scenario: Group Invite CRUD Operations
     Given a BP install
 
-    When I run `wp bp group invite add --user-id=10 --group-id=40`
+    When I run `wp user create testuser2 testuser2@example.com --role=subscriber --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {MEMBER_ID}
+
+    When I run `wp bp group create --name="Totally Cool Group" --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ID}
+
+    When I run `wp bp group invite add --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member invited to the group.
       """
 
-  Scenario: Uninvite a user from a group
-    Given a BP install
+    When I run `wp bp group invite send --group-id={GROUP_ID} --user-id={MEMBER_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Invitations by the user sent.
+      """
 
-    When I run `wp bp group invite remove --group-id=3 --user-id=10`
+    When I run `wp bp group invite remove --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: User uninvited from the group.
       """
 
-  Scenario: Accept a group invitation
-    Given a BP install
-
-    When I run `wp bp group invite accept --group-id=3 --user-id=10`
+    When I run `wp bp group invite accept --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: User is not a "member" of the group.
+      Success: User is now a "member" of the group.
       """
 
-  Scenario: Reject a group invitation
-    Given a BP install
-
-    When I run `wp bp group invite reject --group-id=3 --user-id=10`
+    When I run `wp bp group invite reject --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member invitation rejected.
       """
 
-  Scenario: Delete a group invitation
-    Given a BP install
-
-    When I run `wp bp group invite delete --group-id=3 --user-id=10`
+    When I run `wp bp group invite delete --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member invitation deleted from the group.
-      """
-
-  Scenario: Send pending invites by a user to a group.
-    Given a BP install
-
-    When I run `wp bp group invite send --group-id=3 --user-id=10`
-    Then STDOUT should contain:
-      """
-      Success: Invitations by the user sent.
       """

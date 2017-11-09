@@ -33,13 +33,13 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group invite add --user-id=10 --group-id=40
+	 *     $ wp bp group invite add --group-id=40 --user-id=10
 	 *     Success: Member invited to the group.
 	 *
-	 *     $ wp bp group invite add --user-id=admin --group-id=40 --inviter_id=804
+	 *     $ wp bp group invite add --group-id=40 --user-id=admin --inviter_id=804
 	 *     Success: Member invited to the group.
 	 *
-	 *     $ wp bp group invite add --user-id=user_login --group-id=60 --silent=1
+	 *     $ wp bp group invite add --group-id=60 --user-id=user_login --silent=1
 	 *     Success: Member invited to the group.
 	 */
 	public function add( $args, $assoc_args ) {
@@ -273,10 +273,10 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group invite accept --group-id=3 --user-id=10
-	 *     Success: User is not a "member" of the group.
+	 *     Success: User is now a "member" of the group.
 	 *
 	 *     $ wp bp group invite accept --group-id=foo --user-id=admin
-	 *     Success: User is not a "member" of the group.
+	 *     Success: User is now a "member" of the group.
 	 */
 	public function accept( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
