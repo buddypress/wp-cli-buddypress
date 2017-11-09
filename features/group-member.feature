@@ -3,7 +3,7 @@ Feature: Manage BuddyPress Group Members
   Scenario: Group Member CRUD Operations
     Given a BP install
 
-    When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=author --porcelain`
+    When I run `wp user create testuser2 testuser2@example.com --role=subscriber --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
@@ -11,7 +11,7 @@ Feature: Manage BuddyPress Group Members
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
-    When I run `wp bp group member add --group-id={GROUP_ID} --user-id={USER_ID}`
+    When I run `wp bp group member add --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Added user #{MEMBER_ID} (testuser2) to group #{GROUP_ID} (Totally Cool Group) as member.
@@ -34,6 +34,18 @@ Feature: Manage BuddyPress Group Members
     Then STDOUT should contain:
       """
       Success: User demoted to the "member" status.
+      """
+
+    When I run `wp bp group ban {GROUP_ID} {MEMBER_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Member banned from the group.
+      """
+
+    When I run `wp bp group unban {GROUP_ID} {MEMBER_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Member unbanned from the group.
       """
 
     When I run `wp bp group member remove --group-id={GROUP_ID} --user-id={MEMBER_ID}`
