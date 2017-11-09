@@ -73,9 +73,3 @@ Feature: Manage BuddyPress Activities
       """
       Success: Activity comment deleted.
       """
-
-    When I run `wp bp activity list --format=ids`
-    Then STDOUT should not contain:
-      """
-      {ACTIVITY_ID}
-      """
