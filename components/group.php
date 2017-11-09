@@ -76,10 +76,10 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group create --name="Totally Cool Group"
-	 *     Success: Group (ID 5465) created: https://site.com/group-slug/
+	 *     Success: Group (ID 5465) created: http://example.com/group-slug/
 	 *
 	 *     $ wp bp group create --name="Sports" --description="People who love sports" --creator-id=54 --status=private
-	 *     Success: Group (ID 6454)6 created: https://site.com/another-group-slug/
+	 *     Success: Group (ID 6454)6 created: http://example.com/another-group-slug/
 	 *
 	 * @alias add
 	 */
@@ -221,8 +221,8 @@ class BPCLI_Group extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$group = groups_get_group( $group_id );
-		$group_arr = get_object_vars( $group );
+		$group            = groups_get_group( $group_id );
+		$group_arr        = get_object_vars( $group );
 		$group_arr['url'] = bp_get_group_permalink( $group );
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -277,7 +277,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <group-id>
-	 * : Identifier for the group. Can be a numeric ID or the group slug.
+	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
 	 *
 	 * [--<field>=<value>]
 	 * : One or more fields to update. See groups_create_group()

@@ -161,7 +161,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			$success = sprintf(
 				'Group invitations from member #%d: %s',
 				$user->ID,
-				implode( ', ', wp_list_pluck( $invites, 'group_id' ) )
+				implode( ', ', wp_list_pluck( $invites['groups'], 'group_id' ) )
 			);
 			WP_CLI::success( $success );
 		} else {
@@ -220,7 +220,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			$success = sprintf(
 				'Current invitations from group #%d: %s',
 				$group_id,
-				implode( ', ', wp_list_pluck( $invites, 'id' ) )
+				implode( ', ', wp_list_pluck( $invites['groups'], 'id' ) )
 			);
 			WP_CLI::success( $success );
 		} else {
