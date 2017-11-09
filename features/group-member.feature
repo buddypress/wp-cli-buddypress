@@ -3,7 +3,7 @@ Feature: Manage BuddyPress Group Members
   Scenario: Group Member CRUD Operations
     Given a BP install
 
-    When I run `wp user create testuser2 testuser2@example.com --role=subscriber --porcelain`
+    When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 

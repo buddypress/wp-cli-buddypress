@@ -3,11 +3,11 @@ Feature: Manage BuddyPress Group Invites
   Scenario: Group Invite CRUD Operations
     Given a BP install
 
-    When I run `wp user create testuser2 testuser2@example.com --role=subscriber --porcelain`
+    When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp group create --name="Totally Cool Group" --porcelain`
+    When I run `wp bp group create --name="Cool Group" --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
