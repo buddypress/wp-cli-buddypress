@@ -580,13 +580,8 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
-		$deleted = bp_activity_delete_comment( array(
-			'activity_id' => (int) $activity_id,
-			'comment_id'  => (int) $assoc_args['comment-id'],
-		) );
-
 		// Delete Comment. True if deleted.
-		if ( $deleted ) {
+		if ( bp_activity_delete_comment( $activity_id, $assoc_args['comment-id'] ) ) {
 			WP_CLI::success( 'Activity comment deleted.' );
 		} else {
 			WP_CLI::error( 'Could not delete the activity comment.' );
