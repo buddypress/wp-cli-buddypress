@@ -8,7 +8,6 @@ Feature: Manage BuddyPress Activity Favorites
     And STDOUT should be empty
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
-    Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
     When I run `wp bp activity create --component=groups --user-id={MEMBER_ID} --porcelain`
@@ -21,22 +20,21 @@ Feature: Manage BuddyPress Activity Favorites
       | {ACTIVITY_ID} | {MEMBER_ID}  | groups    |
 
     When I run `wp user create testuser3 testuser3@example.com --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {MEMBER_ID_2}
+    And save STDOUT as {SEC_MEMBER_ID}
 
-    When I run `wp bp activity favorite add {ACTIVITY_ID} {MEMBER_ID_2}`
+    When I run `wp bp activity favorite add {ACTIVITY_ID} {SEC_MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Activity item added as a favorite for the user.
       """
 
-    When I run `wp bp activity favorite items {MEMBER_ID_2}`
+    When I run `wp bp activity favorite items {SEC_MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: Favorite items for user #{MEMBER_ID_2}: {ACTIVITY_ID}
+      Success: Favorite items for user #{SEC_MEMBER_ID}: {ACTIVITY_ID}
       """
 
-    When I run `wp bp activity favorite remove {ACTIVITY_ID} {MEMBER_ID_2}`
+    When I run `wp bp activity favorite remove {ACTIVITY_ID} {SEC_MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Activity item removed as a favorite for the user.
