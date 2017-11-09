@@ -53,8 +53,6 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	/**
 	 * Remove an activity item as a favorite for a user.
 	 *
-	 * @todo Test is_user_logged_in() possible error.
-	 *
 	 * ## OPTIONS
 	 *
 	 * <activity-id>
@@ -97,7 +95,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a users favorite activity items.
+	 * Get a user's favorite activity items.
 	 *
 	 * ## OPTIONS
 	 *
