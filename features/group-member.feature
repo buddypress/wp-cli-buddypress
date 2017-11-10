@@ -5,9 +5,13 @@ Feature: Manage BuddyPress Group Members
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number
+    And save STDOUT as {CREATOR_ID}
+
+    When I run `wp user create mod mod@example.com --porcelain`
+    Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp group create --name="Totally Cool Group" --porcelain`
+    When I run `wp bp group create --name="Totally Cool Group" --creator_id={CREATOR_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
@@ -24,10 +28,10 @@ Feature: Manage BuddyPress Group Members
       Success: Current group(s) from member #{MEMBER_ID}: {GROUP_ID}
       """
 
-    When I run `wp bp group member promote --group-id={GROUP_ID} --user-id={MEMBER_ID} --role=admin`
+    When I run `wp bp group member promote --group-id={GROUP_ID} --user-id={MEMBER_ID} --role=mod`
     Then STDOUT should contain:
       """
-      Success: Member promoted to new role.
+      Success: Member promoted to new role successfully.
       """
 
     When I run `wp bp group member demote --group-id={GROUP_ID} --user-id={MEMBER_ID}`

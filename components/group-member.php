@@ -280,15 +280,15 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * --role=<role>
-	 * : Group role to promote the member (member, mod, admin).
+	 * : Group role to promote the member (mod, admin).
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group member promote --group-id=3 --user-id=10 --role=admin
-	 *     Success: Member promoted to new role.
+	 *     Success: Member promoted to new role successfully.
 	 *
 	 *     $ wp bp group member promote --group-id=foo --user-id=admin --role=mod
-	 *     Success: Member promoted to new role.
+	 *     Success: Member promoted to new role successfully.
 	 */
 	public function promote( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
