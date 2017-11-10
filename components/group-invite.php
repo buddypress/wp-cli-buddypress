@@ -85,7 +85,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			'inviter_id'    => $inviter->ID,
 			'date_modified' => $assoc_args['date-modified'],
 			'is_confirmed'  => $assoc_args['is-confirmed'],
-			'silent'        => $assoc_args['silent'],
 		) );
 
 		if ( $r['silent'] ) {
