@@ -88,10 +88,10 @@ class BPCLI_Group extends BPCLI_Component {
 			'name'         => '',
 			'slug'         => '',
 			'description'  => '',
-			'creator_id'   => 1,
+			'creator-id'   => 1,
 			'status'       => 'public',
-			'enable_forum' => 0,
-			'date_created' => bp_core_current_time(),
+			'enable-forum' => 0,
+			'date-created' => bp_core_current_time(),
 			'silent'       => false,
 		) );
 
@@ -109,7 +109,15 @@ class BPCLI_Group extends BPCLI_Component {
 			$r['status'] = 'public';
 		}
 
-		$group_id = groups_create_group( $r );
+		$group_id = groups_create_group( array(
+			'name'         => $r['name'],
+			'slug'         => $r['slug'],
+			'description'  => $r['description'],
+			'creator_id'   => $r['creator-id'],
+			'status'       => $r['status'],
+			'enable_forum' => $r['enable-forum'],
+			'date_created' => $r['date-created'],
+		) );
 
 		if ( ! is_numeric( $group_id ) ) {
 			WP_CLI::error( 'Could not create group.' );
@@ -173,9 +181,9 @@ class BPCLI_Group extends BPCLI_Component {
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
 				'name'         => sprintf( 'Group - #%d', $i ),
-				'creator_id'   => $assoc_args['creator-id'],
+				'creator-id'   => $assoc_args['creator-id'],
 				'status'       => $this->random_group_status( $assoc_args['status'] ),
-				'enable_forum' => $assoc_args['enable-forum'],
+				'enable-forum' => $assoc_args['enable-forum'],
 				'silent'       => true,
 			) );
 
