@@ -309,7 +309,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			WP_CLI::error( 'You need a valid role to promote the member.' );
 		}
 
-		if ( groups_promote_member( $user->ID, $group_id, $role ) ) {
+		$member = new BP_Groups_Member( $user->ID, $group_id );
+
+		if ( $member->promote( $role ) ) {
 			WP_CLI::success( 'Member promoted to new role.' );
 		} else {
 			WP_CLI::error( 'Could not promote the member.' );
@@ -349,7 +351,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		if ( groups_demote_member( $user->ID, $group_id ) ) {
+		$member = new BP_Groups_Member( $user->ID, $group_id );
+
+		if ( $member->demote() ) {
 			WP_CLI::success( 'User demoted to the "member" status.' );
 		} else {
 			WP_CLI::error( 'Could not demote the member.' );
@@ -389,7 +393,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		if ( groups_ban_member( $user->ID, $group_id ) ) {
+		$member = new BP_Groups_Member( $user->ID, $group_id );
+
+		if ( $member->ban() ) {
 			WP_CLI::success( 'Member banned from the group.' );
 		} else {
 			WP_CLI::error( 'Could not ban the member.' );
@@ -429,7 +435,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		if ( groups_unban_member( $user->ID, $group_id ) ) {
+		$member = new BP_Groups_Member( $user->ID, $group_id );
+
+		if ( $member->unban() ) {
 			WP_CLI::success( 'Member unbanned from the group.' );
 		} else {
 			WP_CLI::error( 'Could not unban the member.' );

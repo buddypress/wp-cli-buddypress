@@ -28,6 +28,18 @@ Feature: Manage BuddyPress Group Members
       Success: Current group(s) from member #{MEMBER_ID}: {GROUP_ID}
       """
 
+    When I run `wp bp group member promote --group-id={GROUP_ID} --user-id={MEMBER_ID} --role=mod`
+    Then STDOUT should contain:
+      """
+      Success: Member promoted to new role successfully.
+      """
+
+    When I run `wp bp group member demote --group-id={GROUP_ID} --user-id={MEMBER_ID}`
+    Then STDOUT should contain:
+      """
+      Success: User demoted to the "member" status.
+      """
+
     When I run `wp bp group member ban --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
