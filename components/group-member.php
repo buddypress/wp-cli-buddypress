@@ -45,10 +45,10 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group member add --group-id=3 --user-id=10
-	 *     Success: Added user #3 (user_login) to group #3 (group_name) as member.
+	 *     Success: Added user #3 to group #3 as member.
 	 *
 	 *     $ wp bp group member add --group-id=bar --user-id=20 --role=mod
-	 *     Success: Added user #20 (user_login) to group #45 (bar) as mod.
+	 *     Success: Added user #20 to group #45 as mod.
 	 */
 	public function add( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
@@ -81,11 +81,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 				}
 
 				$success = sprintf(
-					'Added user #%d (%s) to group #%d (%s) as %s.',
+					'Added user #%d to group #%d as %s.',
 					$user->ID,
-					$user->user_login,
 					$group_id,
-					$group_obj->name,
 					$role
 				);
 				WP_CLI::success( $success );

@@ -14,7 +14,7 @@ Feature: Manage BuddyPress Group Members
     When I run `wp bp group member add --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: Added user #{MEMBER_ID} (testuser2) to group #{GROUP_ID} (Totally Cool Group) as member.
+      Success: Added user #{MEMBER_ID} to group #{GROUP_ID} as member.
       """
 
     When I run `wp bp group member get_groups --user-id={MEMBER_ID}`
