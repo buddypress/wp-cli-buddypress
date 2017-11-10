@@ -61,7 +61,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		// Sanitize role.
@@ -125,7 +125,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		// True on success.
@@ -236,7 +236,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		$groups = bp_get_user_groups( $user->ID, array(
@@ -285,10 +285,10 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group member promote --group-id=3 --user-id=10 --role=admin
-	 *     Success: Member promoted to new role: admin
+	 *     Success: Member promoted to new role.
 	 *
 	 *     $ wp bp group member promote --group-id=foo --user-id=admin --role=mod
-	 *     Success: Member promoted to new role: mod
+	 *     Success: Member promoted to new role.
 	 */
 	public function promote( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
@@ -301,7 +301,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		$role = $assoc_args['role'];
@@ -310,7 +310,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		}
 
 		if ( groups_promote_member( $user->ID, $group_id, $role ) ) {
-			WP_CLI::success( sprintf( 'Member promoted to new role: %s', $role ) );
+			WP_CLI::success( 'Member promoted to new role.' );
 		} else {
 			WP_CLI::error( 'Could not promote the member.' );
 		}
@@ -346,7 +346,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		if ( groups_demote_member( $user->ID, $group_id ) ) {
@@ -386,7 +386,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		if ( groups_ban_member( $user->ID, $group_id ) ) {
@@ -426,7 +426,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID' );
+			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
 		if ( groups_unban_member( $user->ID, $group_id ) ) {
