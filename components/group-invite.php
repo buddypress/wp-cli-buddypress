@@ -25,6 +25,12 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
+	 * --group-id=<group>
+	 * : Identifier for the group. Accepts either a slug or a numeric ID.
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_invite_user()
 	 *
@@ -36,37 +42,39 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *     $ wp bp group invite add --group-id=40 --user-id=10
 	 *     Success: Member invited to the group.
 	 *
-	 *     $ wp bp group invite add --group-id=40 --user-id=admin --inviter_id=804
-	 *     Success: Member invited to the group.
-	 *
-	 *     $ wp bp group invite add --group-id=60 --user-id=user_login --silent=1
+	 *     $ wp bp group invite add --group-id=40 --user-id=admin --inviter-id=804
 	 *     Success: Member invited to the group.
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'group_id'      => '',
-			'user_id'       => '',
-			'inviter_id'    => bp_loggedin_user_id(),
-			'date_modified' => bp_core_current_time(),
-			'is_confirmed'  => 0,
+			'inviter-id'    => bp_loggedin_user_id(),
+			'date-modified' => bp_core_current_time(),
+			'is-confirmed'  => 0,
 			'silent'        => false,
 		) );
 
 		// Group ID.
-		$group_id = $r['group_id'];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$invite = groups_invite_user( $r );
+		$invite = groups_invite_user( array(
+			'user_id'       => $user->ID,
+			'group_id'      => $group_id,
+			'inviter_id'    => $assoc_args['inviter-id'],
+			'date_modified' => $assoc_args['date-modified'],
+			'is_confirmed'  => $assoc_args['is-confirmed'],
+			'silent'        => $assoc_args['silent'],
+		) );
 
 		if ( $r['silent'] ) {
 			return;
