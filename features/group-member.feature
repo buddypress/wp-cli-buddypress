@@ -11,7 +11,7 @@ Feature: Manage BuddyPress Group Members
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp group create --name="Totally Cool Group" --creator_id={CREATOR_ID} --porcelain`
+    When I run `wp bp group create --name="Totally Cool Group" --creator-id={CREATOR_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 

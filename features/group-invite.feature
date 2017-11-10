@@ -39,12 +39,6 @@ Feature: Manage BuddyPress Group Invites
       Success: User is now a "member" of the group.
       """
 
-    When I run `wp bp group invite reject --group-id={GROUP_ID} --user-id={MEMBER_ID}`
-    Then STDOUT should contain:
-      """
-      Success: Member invitation rejected.
-      """
-
     When I run `wp bp group invite delete --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
