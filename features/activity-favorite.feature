@@ -31,7 +31,7 @@ Feature: Manage BuddyPress Activity Favorites
     When I run `wp bp activity favorite items {SEC_MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: Favorite items for user #{SEC_MEMBER_ID}: {ACTIVITY_ID}
+      Success: Favorite item(s) for user #{SEC_MEMBER_ID}: {ACTIVITY_ID}
       """
 
     When I run `wp bp activity favorite remove {ACTIVITY_ID} {SEC_MEMBER_ID}`
