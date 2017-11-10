@@ -312,7 +312,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$member = new BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->promote( $role ) ) {
-			WP_CLI::success( 'Member promoted to new role.' );
+			WP_CLI::success( 'Member promoted to new role successfully.' );
 		} else {
 			WP_CLI::error( 'Could not promote the member.' );
 		}
