@@ -265,12 +265,12 @@ class BPCLI_Group extends BPCLI_Component {
 
 		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
 
-		parent::_delete( array( $group_id ), $assoc_args, function( $group_id ) use ( $r ) {
-			// Check that group exists.
-			if ( ! $this->group_exists( $group_id ) ) {
-				WP_CLI::error( 'No group found by that slug or ID.' );
-			}
+		// Check that group exists.
+		if ( ! $this->group_exists( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
 
+		parent::_delete( array( $group_id ), $assoc_args, function( $group_id ) {
 			if ( groups_delete_group( $group_id ) ) {
 				return array( 'success', 'Group successfully deleted.' );
 			} else {
