@@ -184,8 +184,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <activation-key>
-	 * : Identifier for the activation key.
+	 * <signup-id>
+	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
 	 * ## EXAMPLE
 	 *
@@ -193,10 +193,16 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     Success: Signup activated, new user (ID #545).
 	 */
 	public function activate( $args, $assoc_args ) {
-		$id = bp_core_activate_signup( $args[0] );
+		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
 
-		if ( is_string( $id ) ) {
-			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d).', $id ) );
+		if ( ! $signup ) {
+			WP_CLI::error( 'No signup found by that identifier.' );
+		}
+
+		$user_id = bp_core_activate_signup( $signup->activation_key );
+
+		if ( $user_id ) {
+			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d).', $user_id ) );
 		} else {
 			WP_CLI::error( 'Signup not activated.' );
 		}
@@ -236,46 +242,25 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [<user>]
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
-	 * <email>
-	 * : E-mail to send the activation.
-	 *
-	 * <key>
-	 * : Activation key.
+	 * <signup-id>
+	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp signup resend 20 teste@site.com ee48ec319fef3nn4
-	 *     Success: Email sent successfully.
-	 *
-	 *     $ wp bp signup send another_teste@site.com ee48ec319fefwtr3nn4
+	 *     $ wp bp signup resend teste@site.com
 	 *     Success: Email sent successfully.
 	 *
 	 * @alias send
 	 */
 	public function resend( $args, $assoc_args ) {
-		$user_id = '';
+		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
 
-		if ( ! defined( 'BP_SIGNUPS_SKIP_USER_CREATION' ) && ! BP_SIGNUPS_SKIP_USER_CREATION ) {
-			$user = $this->get_user_id_from_identifier( $args[0] );
-
-			if ( ! $user ) {
-				WP_CLI::error( 'No user found by that username or id' );
-				return;
-			}
-
-			$user_id = $user->ID;
-		}
-
-		$email = $args[1];
-		if ( ! is_email( $email ) ) {
-			WP_CLI::error( 'Invalid email added.' );
+		if ( ! $signup ) {
+			WP_CLI::error( 'No signup found by that identifier.' );
 		}
 
 		// Send email.
-		bp_core_signup_send_validation_email( $user_id, sanitize_email( $email ), $args[2] );
+		BP_Signup::resend( array( $signup->signup_id ) );
 
 		WP_CLI::success( 'Email sent successfully.' );
 	}

@@ -55,3 +55,35 @@ Feature: Manage BuddyPress Signups
       | signup_id  | {SIGNUP_TWO_ID}     |
       | user_login | {SIGNUP_ONE_ID}     |
       | user_email | signup2@example.com |
+
+  Scenario: Signup activation
+    Given a BP install
+
+    When I run `wp bp signup add --user-login=test_user --user-email=test@example.com --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {SIGNUP_ID}
+
+    When I run `wp bp signup activate {SIGNUP_ID}`
+    Then STDOUT should contain:
+      """
+      Signup activated
+      """
+
+    When I run `wp user get test_user --field=user_email`
+    Then STDOUT should contain:
+      """
+      test@example.com
+      """
+
+  Scenario: Signup resending
+    Given a BP install
+
+    When I run `wp bp signup add --user-login=test_user --user-email=test@example.com --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {SIGNUP_ID}
+
+    When I run `wp bp signup resend {SIGNUP_ID}`
+    Then STDOUT should contain:
+      """
+      success
+      """
