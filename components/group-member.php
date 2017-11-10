@@ -128,8 +128,10 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
+		$member = new BP_Groups_Member( $user->ID, $group_id );
+
 		// True on success.
-		if ( groups_remove_member( $group_id, $user->ID ) ) {
+		if ( $member->remove() ) {
 			WP_CLI::success( sprintf( 'Member #%d removed from the group #%d.', $user->ID, $group_id ) );
 		} else {
 			WP_CLI::error( 'Could not remove member from the group.' );
