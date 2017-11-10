@@ -31,6 +31,9 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--inviter-id=<user>]
+	 * : Identifier for the inviter. Accepts either a user_login or a numeric ID.
+	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_invite_user()
 	 *
@@ -42,7 +45,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group invite add --group-id=40 --user-id=10
+	 *     $ wp bp group invite add --group-id=40 --user-id=10 --inviter-id=1331
 	 *     Success: Member invited to the group.
 	 *
 	 *     $ wp bp group invite add --group-id=40 --user-id=admin --inviter-id=804
@@ -52,7 +55,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$r = wp_parse_args( $assoc_args, array(
 			'user-id'       => '',
 			'group-id'      => '',
-			'inviter-id'    => bp_loggedin_user_id(),
+			'inviter-id'    => '',
 			'date-modified' => bp_core_current_time(),
 			'is-confirmed'  => 0,
 			'silent'        => false,
@@ -67,15 +70,19 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		}
 
 		$user = $this->get_user_id_from_identifier( $r['user-id'] );
-
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$inviter = $this->get_user_id_from_identifier( $r['inviter-id'] );
+		if ( ! $inviter ) {
+			WP_CLI::error( 'Inviter not found by that username or ID.' );
 		}
 
 		$invite = groups_invite_user( array(
 			'user_id'       => $user->ID,
 			'group_id'      => $group_id,
-			'inviter_id'    => $assoc_args['inviter-id'],
+			'inviter_id'    => $inviter->ID,
 			'date_modified' => $assoc_args['date-modified'],
 			'is_confirmed'  => $assoc_args['is-confirmed'],
 			'silent'        => $assoc_args['silent'],
@@ -263,9 +270,10 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
-				'user-id'  => $this->get_random_user_id(),
-				'group-id' => $this->get_random_group_id(),
-				'silent'   => true,
+				'user-id'    => $this->get_random_user_id(),
+				'group-id'   => $this->get_random_group_id(),
+				'inviter-id' => $this->get_random_user_id(),
+				'silent'     => true,
 			) );
 
 			$notify->tick();

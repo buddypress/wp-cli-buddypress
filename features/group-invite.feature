@@ -7,11 +7,15 @@ Feature: Manage BuddyPress Group Invites
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
+    When I run `wp user create inviter inviter@example.com --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {INVITER_ID}
+
     When I run `wp bp group create --name="Cool Group" --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
-    When I run `wp bp group invite add --group-id={GROUP_ID} --user-id={MEMBER_ID}`
+    When I run `wp bp group invite add --group-id={GROUP_ID} --user-id={MEMBER_ID} --inviter-id={INVITER_ID}`
     Then STDOUT should contain:
       """
       Success: Member invited to the group.
