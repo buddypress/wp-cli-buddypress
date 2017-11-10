@@ -435,11 +435,9 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		if ( groups_send_invites( $user->ID, $group_id ) ) {
-			WP_CLI::success( 'Invitations by the user sent.' );
-		} else {
-			WP_CLI::error( 'Could not send the invitations.' );
-		}
+		groups_send_invites( $user->ID, $group_id );
+
+		WP_CLI::success( 'Invitations by the user sent.' );
 	}
 }
 
