@@ -25,17 +25,20 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --group-id=<group>
+	 * [--group-id=<group>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_invite_user()
 	 *
 	 * [--silent=<silent>]
-	 * : Whether to silent the invite creation. Default: false.
+	 * : Whether to silent the invite creation.
+	 * ---
+	 * Default: false
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
@@ -47,6 +50,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 */
 	public function add( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
+			'user-id'       => '',
+			'group-id'      => '',
 			'inviter-id'    => bp_loggedin_user_id(),
 			'date-modified' => bp_core_current_time(),
 			'is-confirmed'  => 0,
@@ -54,14 +59,14 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		) );
 
 		// Group ID.
-		$group_id = $assoc_args['group-id'];
+		$group_id = $r['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
@@ -134,6 +139,9 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_invites_for_user()
 	 *
@@ -144,13 +152,12 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 */
 	public function users( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'user_id' => '',
 			'limit'   => false,
 			'page'    => false,
 			'exclude' => false,
 		) );
 
-		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
@@ -256,8 +263,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
-				'user_id'  => $this->get_random_user_id(),
-				'group_id' => $this->get_random_group_id(),
+				'user-id'  => $this->get_random_user_id(),
+				'group-id' => $this->get_random_group_id(),
 				'silent'   => true,
 			) );
 
@@ -327,7 +334,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *     Success: Member invitation rejected.
 	 */
 	public function reject( $args, $assoc_args ) {
-		$group_id = $assoc_args['group_id'];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {

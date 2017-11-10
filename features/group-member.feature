@@ -24,25 +24,25 @@ Feature: Manage BuddyPress Group Members
       Success: Current group(s) from member #{MEMBER_ID}: {GROUP_ID}
       """
 
-    When I run `wp bp group promote {GROUP_ID} {MEMBER_ID} mod`
+    When I run `wp bp group member promote --group-id={GROUP_ID} --user-id={MEMBER_ID} --role=mod`
     Then STDOUT should contain:
       """
       Success: Member promoted to new role: mod.
       """
 
-    When I run `wp bp group demote {GROUP_ID} {MEMBER_ID}`
+    When I run `wp bp group member demote --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: User demoted to the "member" status.
       """
 
-    When I run `wp bp group ban {GROUP_ID} {MEMBER_ID}`
+    When I run `wp bp group member ban --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member banned from the group.
       """
 
-    When I run `wp bp group unban {GROUP_ID} {MEMBER_ID}`
+    When I run `wp bp group member unban --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member unbanned from the group.

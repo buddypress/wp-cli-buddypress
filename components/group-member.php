@@ -115,14 +115,14 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 * @alias delete
 	 */
 	public function remove( $args, $assoc_args ) {
-		$group_id = $args[0];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
@@ -153,18 +153,18 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 */
 	public function _list( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'group_id'            => '',
-			'per_page'            => false,
+			'group-id'            => '',
+			'per-page'            => false,
 			'page'                => false,
-			'exclude_admins_mods' => true,
-			'exclude_banned'      => true,
+			'exclude-admins-mods' => true,
+			'exclude-banned'      => true,
 			'exclude'             => false,
-			'group_role'          => array(),
-			'search_terms'        => false,
+			'group-role'          => array(),
+			'search-terms'        => false,
 			'type'                => 'last_joined',
 		) );
 
-		$group_id = $r['group_id'];
+		$group_id = $r['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
@@ -172,7 +172,17 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		}
 
 		// Get our members.
-		$members = groups_get_group_members( $r );
+		$members = groups_get_group_members( array(
+			'group_id'            => $group_id,
+			'per_page'            => $r['per-page'],
+			'page'                => $r['page'],
+			'exclude_admins_mods' => $r['exclude-admins-mods'],
+			'exclude_banned'      => $r['exclude-banned'],
+			'exclude'             => $r['exclude'],
+			'group_role'          => $r['group-role'],
+			'search_terms'        => $r['search-terms'],
+			'type'                => $r['type'],
+		) );
 
 		if ( $members['count'] ) {
 			$found = sprintf(
@@ -198,6 +208,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See bp_get_user_groups()
 	 *
@@ -211,23 +224,30 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 */
 	public function get_groups( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'user-id'      => null,
-			'is_confirmed' => true,
-			'is_banned'    => false,
-			'is_admin'     => null,
-			'is_mod'       => null,
-			'invite_sent'  => null,
+			'is-confirmed' => true,
+			'is-banned'    => false,
+			'is-admin'     => null,
+			'is-mod'       => null,
+			'invite-sent'  => null,
 			'orderby'      => 'group_id',
 			'order'        => 'ASC',
 		) );
 
-		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$groups = bp_get_user_groups( $user->ID, $r );
+		$groups = bp_get_user_groups( $user->ID, array(
+			'is_confirmed' => $r['is-confirmed'],
+			'is_banned'    => $r['is-banned'],
+			'is_admin'     => $r['is-admin'],
+			'is_mod'       => $r['is-mod'],
+			'invite_sent'  => $r['invite-sent'],
+			'orderby'      => $r['orderby'],
+			'order'        => $r['order'],
+		) );
 
 		if ( ! empty( $groups ) ) {
 			$found = sprintf(
@@ -253,38 +273,38 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user>
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * <role>
+	 * --role=<role>
 	 * : Group role to promote the member (member, mod, admin).
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group promote 3 10 admin
+	 *     $ wp bp group member promote --group-id=3 --user-id=10 --role=admin
 	 *     Success: Member promoted to new role: admin
 	 *
-	 *     $ wp bp group promote foo admin mod
+	 *     $ wp bp group member promote --group-id=foo --user-id=admin --role=mod
 	 *     Success: Member promoted to new role: mod
 	 */
 	public function promote( $args, $assoc_args ) {
-		$group_id = $args[0];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$role = $args[2];
+		$role = $assoc_args['role'];
 		if ( ! in_array( $role, $this->group_roles(), true ) ) {
 			WP_CLI::error( 'You need a valid role to promote the member.' );
 		}
@@ -301,29 +321,29 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user>
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group demote 3 10
+	 *     $ wp bp group member demote --group-id=3 --user-id=10
 	 *     Success: User demoted to the "member" status.
 	 *
-	 *     $ wp bp group demote foo admin
+	 *     $ wp bp group member demote --group-id=foo --user-id=admin
 	 *     Success: User demoted to the "member" status.
 	 */
 	public function demote( $args, $assoc_args ) {
-		$group_id = $args[0];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
@@ -341,29 +361,29 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user>
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group ban 3 10
+	 *     $ wp bp group member ban --group-id=3 --user-id=10
 	 *     Success: Member banned from the group.
 	 *
-	 *     $ wp bp group ban foo admin
+	 *     $ wp bp group member ban --group-id=foo --user-id=admin
 	 *     Success: Member banned from the group.
 	 */
 	public function ban( $args, $assoc_args ) {
-		$group_id = $args[0];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
@@ -381,29 +401,29 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * <user>
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group unban 3 10
+	 *     $ wp bp group member unban --group-id=3 --user-id=10
 	 *     Success: Member unbanned from the group.
 	 *
-	 *     $ wp bp group unban foo admin
+	 *     $ wp bp group member unban --group-id=foo --user-id=admin
 	 *     Success: Member unbanned from the group.
 	 */
 	public function unban( $args, $assoc_args ) {
-		$group_id = $args[0];
+		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
