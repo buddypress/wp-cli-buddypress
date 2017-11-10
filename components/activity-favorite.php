@@ -125,7 +125,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 			$success = sprintf(
 				'Favorite item(s) for user #%d: %s',
 				$user->ID,
-				implode( ', ', wp_list_pluck( $favorites ) )
+				implode( ', ', $favorites )
 			);
 			WP_CLI::success( $success );
 		} else {
