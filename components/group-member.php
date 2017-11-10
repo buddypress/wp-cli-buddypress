@@ -211,7 +211,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 */
 	public function get_groups( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'user_id'      => null,
+			'user-id'      => null,
 			'is_confirmed' => true,
 			'is_banned'    => false,
 			'is_admin'     => null,
@@ -221,13 +221,13 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			'order'        => 'ASC',
 		) );
 
-		$user = $this->get_user_id_from_identifier( $r['user_id'] );
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
 
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID' );
 		}
 
-		$groups = bp_get_user_groups( $user_id, $r );
+		$groups = bp_get_user_groups( $user->ID, $r );
 
 		if ( ! empty( $groups ) ) {
 			$found = sprintf(
