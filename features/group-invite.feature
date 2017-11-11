@@ -21,12 +21,6 @@ Feature: Manage BuddyPress Group Invites
       Success: Member invited to the group.
       """
 
-    When I run `wp bp group invite send --group-id={GROUP_ID} --user-id={MEMBER_ID}`
-    Then STDOUT should contain:
-      """
-      Success: Invitation sent.
-      """
-
     When I run `wp bp group invite remove --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """

@@ -401,44 +401,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			WP_CLI::error( 'Could not delete member invitation from the group.' );
 		}
 	}
-
-	/**
-	 * Send pending invites by a user to a group.
-	 *
-	 * ## OPTIONS
-	 *
-	 * --group-id=<group>
-	 * : Identifier for the group. Accepts either a slug or a numeric ID.
-	 *
-	 * --user-id=<user>
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp group invite send --group-id=3 --user-id=10
-	 *     Success: Invitations by the user sent.
-	 *
-	 *     $ wp bp group invite send --group-id=foo --user-id=admin
-	 *     Success: Invitations by the user sent.
-	 */
-	public function send( $args, $assoc_args ) {
-		$group_id = $assoc_args['group-id'];
-
-		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
-		groups_send_invites( $user->ID, $group_id );
-
-		WP_CLI::success( 'Invitation sent.' );
-	}
 }
 
 WP_CLI::add_command( 'bp group invite', 'BPCLI_Group_Invite', array(

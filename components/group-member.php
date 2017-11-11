@@ -139,72 +139,97 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of members of a group.
+	 * Get a list of group memberships.
+	 *
+	 * This command can be used to fetch a list of a user's groups (using the --user-id
+	 * parameter) or a group's members (using the --group-id flag).
 	 *
 	 * ## OPTIONS
 	 *
 	 * <group-id>
-	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
+	 * : Identifier for the group. Can be a numeric ID or the group slug.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific signup fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
 	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_group_members()
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group member list --group-id=3
-	 *     $ wp bp group member list --group-id=slug
+	 *     $ wp bp group member list 3
+	 *     $ wp bp group member list my-group
 	 *
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'per-page'            => false,
-			'page'                => false,
-			'exclude-admins-mods' => false,
-			'exclude-banned'      => true,
-			'exclude'             => false,
-			'group-role'          => array(),
-			'search-terms'        => false,
-			'type'                => 'last_joined',
-		) );
-
-		$group_id = (int) $args[0];
+		$group_id = intval( $args[0] );
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		// Get our members.
-		$members = groups_get_group_members( array(
-			'group_id'            => $group_id,
-			'per_page'            => $r['per-page'],
-			'page'                => $r['page'],
-			'exclude_admins_mods' => $r['exclude-admins-mods'],
-			'exclude_banned'      => $r['exclude-banned'],
-			'exclude'             => $r['exclude'],
-			'group_role'          => $r['group-role'],
-			'search_terms'        => $r['search-terms'],
-			'type'                => $r['type'],
-		) );
-
-		if ( $members['count'] ) {
-			$found = sprintf(
-				'Found %d members in group #%d',
-				$members['count'],
-				$group_id
-			);
-			WP_CLI::success( $found );
-
-			$users = sprintf(
-				'Current members for group #%d: %s',
-				$group_id,
-				implode( ', ', wp_list_pluck( $members['members'], 'user_login' ) )
-			);
-			WP_CLI::success( $users );
-		} else {
-			WP_CLI::error( 'Could not find any members in the group.' );
+		$roles = array( 'members' );
+		if ( isset( $assoc_args['role'] ) ) {
+			if ( is_string( $assoc_args['role'] ) ) {
+				$roles = explode( ',', $assoc_args['role'] );
+			} else {
+				$roles = $assoc_args['role'];
+			}
 		}
+
+		// Get our members.
+		$members_query = groups_get_group_members( array(
+			'group_id'            => $group_id,
+			'exclude_admins_mods' => false,
+			'group_role'          => $roles,
+		) );
+		$members = $members_query['members'];
+
+		// Make 'role' human-readable.
+		foreach ( $members as &$member ) {
+			$role = 'member';
+			if ( $member->is_mod ) {
+				$role = 'mod';
+			} elseif ( $member->is_admin ) {
+				$role = 'admin';
+			}
+
+			$member->role = $role;
+		}
+
+		if ( empty( $members ) ) {
+			WP_CLI::error( 'No group members found.' );
+		}
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$fields = array(
+				'user_id',
+				'user_login',
+				'fullname',
+				'date_modified',
+				'role',
+			);
+
+			$assoc_args['fields'] = $fields;
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( $members );
 	}
 
 	/**

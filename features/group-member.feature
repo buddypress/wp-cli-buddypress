@@ -21,12 +21,11 @@ Feature: Manage BuddyPress Group Members
       Success: Added user #{MEMBER_ID} to group #{GROUP_ID} as member.
       """
 
-    When I run `wp bp group member get_groups --user-id={MEMBER_ID}`
-    Then STDOUT should contain:
-      """
-      Success: Found 1 group(s) from member #{MEMBER_ID}.
-      Success: Current group(s) from member #{MEMBER_ID}: {GROUP_ID}
-      """
+    When I run `wp bp group member list {GROUP_ID} --fields=user_id`
+    Then STDOUT should be a table containing rows:
+      | user_id      |
+      | {CREATOR_ID} |
+      | {MEMBER_ID}  |
 
     When I run `wp bp group member promote --group-id={GROUP_ID} --user-id={MEMBER_ID} --role=mod`
     Then STDOUT should contain:
@@ -34,11 +33,19 @@ Feature: Manage BuddyPress Group Members
       Success: Member promoted to new role successfully.
       """
 
+    When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=mod`
+    Then STDOUT should be a table containing rows:
+      | user_id      |
+      | {MEMBER_ID}  |
+
     When I run `wp bp group member demote --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: User demoted to the "member" status.
       """
+
+    When I try `wp bp group member list {GROUP_ID} --fields=user_id --role=mod`
+    Then the return code should be 1
 
     When I run `wp bp group member ban --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
@@ -46,14 +53,27 @@ Feature: Manage BuddyPress Group Members
       Success: Member banned from the group.
       """
 
+    When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=banned`
+    Then STDOUT should be a table containing rows:
+      | user_id      |
+      | {MEMBER_ID}  |
+
     When I run `wp bp group member unban --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member unbanned from the group.
       """
 
+    When I try `wp bp group member list {GROUP_ID} --fields=user_id --role=banned`
+    Then the return code should be 1
+
     When I run `wp bp group member remove --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Member #{MEMBER_ID} removed from the group #{GROUP_ID}.
       """
+
+    When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=member,admin,mod,banned`
+    Then STDOUT should be a table containing rows:
+      | user_id       |
+      | {CREATOR_ID}  |
