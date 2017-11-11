@@ -437,7 +437,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		groups_send_invites( $user->ID, $group_id );
 
-		WP_CLI::success( 'Invitations by the user sent.' );
+		WP_CLI::success( 'Invitation sent.' );
 	}
 }
 

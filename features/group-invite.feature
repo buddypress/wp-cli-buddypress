@@ -24,7 +24,7 @@ Feature: Manage BuddyPress Group Invites
     When I run `wp bp group invite send --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
-      Success: Invitations by the user sent.
+      Success: Invitation sent.
       """
 
     When I run `wp bp group invite remove --group-id={GROUP_ID} --user-id={MEMBER_ID}`
