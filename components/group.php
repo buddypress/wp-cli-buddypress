@@ -347,11 +347,14 @@ class BPCLI_Group extends BPCLI_Component {
 	 *   - haml
 	 * ---
 	 *
+	 * [--user-id=<user-id>]
+	 * : Limit results to groups of which a specific user is a member.
+
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group list --format=ids
 	 *     $ wp bp group list --format=count
-	 *     $ wp bp group list --per_page=5
+	 *     $ wp bp group list --user-id=123
 	 *
 	 * @subcommand list
 	 */
@@ -364,8 +367,20 @@ class BPCLI_Group extends BPCLI_Component {
 			'show_hidden' => true,
 		) );
 
+		if ( isset( $assoc_args['user-id'] ) ) {
+			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			if ( ! $user ) {
+				WP_CLI::error( 'No user found by that identifier.' );
+			}
+			$query_args['user_id'] = $user->ID;
+		}
+
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
 		$groups = groups_get_groups( $query_args );
+
+		if ( empty( $groups['groups'] ) ) {
+			WP_CLI::error( 'No groups found.' );
+		}
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $groups['groups'], 'id' ) ); // WPCS: XSS ok.

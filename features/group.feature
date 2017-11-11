@@ -49,3 +49,18 @@ Feature: Manage BuddyPress Groups
       | id             | name    | slug   |
       | {GROUP_ONE_ID} | Group 1 | group1 |
       | {GROUP_TWO_ID} | Group 2 | group2 |
+
+    When I run `wp user create testuser1 testuser1@example.com --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {MEMBER_ID}
+
+    When I try `wp bp group list --fields=id --user-id={MEMBER_ID}`
+    Then the return code should be 1
+
+    When I run `wp bp group member add --group-id={GROUP_ONE_ID} --user-id={MEMBER_ID}`
+    Then the return code should be 0
+
+    When I run `wp bp group list --fields=id --user-id={MEMBER_ID}`
+    Then STDOUT should be a table containing rows:
+      | id             |
+      | {GROUP_ONE_ID} |
