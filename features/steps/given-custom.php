@@ -13,6 +13,10 @@ $steps->Given( '/^a BP install$/',
 		}
 
 		$bp_src_dir = getenv( 'BP_SRC_DIR' );
+		if ( ! is_dir( $bp_src_dir ) ) {
+			throw new Exception( 'BuddyPress not found in BP_SRC_DIR' );
+		}
+
 		try {
 			$world->copy_dir( $bp_src_dir, $dest_dir );
 			$world->proc( 'wp plugin activate buddypress' )->run_check();
