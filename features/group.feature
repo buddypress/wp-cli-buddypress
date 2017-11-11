@@ -32,3 +32,20 @@ Feature: Manage BuddyPress Groups
 
     When I try `wp bp group get {GROUP_ID}`
     Then the return code should be 1
+
+  Scenario: Group list
+    Given a BP install
+
+    When I run `wp bp group create --name="Group 1" --slug=group1 --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ONE_ID}
+
+    When I run `wp bp group create --name="Group 2" --slug=group2 --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_TWO_ID}
+
+    When I run `wp bp group list --fields=id,name,slug`
+    Then STDOUT should be a table containing rows:
+      | id             | name    | slug   |
+      | {GROUP_ONE_ID} | Group 1 | group1 |
+      | {GROUP_TWO_ID} | Group 2 | group2 |

@@ -332,6 +332,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_groups()
 	 *
+	 * [--fields=<fields>]
+	 * : Fields to display.
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
