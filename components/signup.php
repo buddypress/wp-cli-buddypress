@@ -76,7 +76,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		$id = BP_Signup::add( $signup_args );
 
 		if ( ! $id ) {
-			WP_CLI::error( 'Could not add user signup' );
+			WP_CLI::error( 'Could not add user signup.' );
 		}
 
 		if ( $assoc_args['silent'] ) {
@@ -245,9 +245,9 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <signup-id>
 	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 *     $ wp bp signup resend teste@site.com
+	 *     $ wp bp signup resend test@example.com
 	 *     Success: Email sent successfully.
 	 *
 	 * @alias send
@@ -307,6 +307,8 @@ class BPCLI_Signup extends BPCLI_Component {
 
 	/**
 	 * Look up a signup by the provided identifier.
+	 *
+	 * @since 1.5.0
 	 */
 	protected function get_signup_by_identifier( $identifier, $assoc_args ) {
 		if ( isset( $assoc_args['match-field'] ) ) {
