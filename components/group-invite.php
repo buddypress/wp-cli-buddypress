@@ -143,111 +143,110 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of a user's outstanding group invitations.
-	 *
-	 * ## OPTIONS
-	 *
-	 * --user-id=<user>
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
-	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See groups_get_invites_for_user()
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp group invite users --user-id=30
-	 *     $ wp bp group invite users --user-id=30 --limit=100 --exclude=100
-	 */
-	public function users( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'limit'   => false,
-			'page'    => false,
-			'exclude' => false,
-		) );
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
-		$invites = groups_get_invites_for_user( $user->ID, $r['limit'], $r['page'], $r['exclude'] );
-
-		if ( $invites ) {
-			$found = sprintf(
-				'Found %d group invitations from member #%d',
-				$invites['total'],
-				$user->ID
-			);
-			WP_CLI::success( $found );
-
-			$success = sprintf(
-				'Group invitations from member #%d: %s',
-				$user->ID,
-				implode( ', ', wp_list_pluck( $invites['groups'], 'group_id' ) )
-			);
-			WP_CLI::success( $success );
-		} else {
-			WP_CLI::error( 'Could not find any group invitation for this member.' );
-		}
-	}
-
-	/**
 	 * Get a list of invitations from a group.
 	 *
 	 * ## OPTIONS
 	 *
-	 * --group-id=<group>
+	 * [--group-id=<group>]
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * --user-id=<user>
+	 * [--user-id=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--role=<role>]
-	 * : Group member role (member, mod, admin).
+	 * [--format=<format>]
+	 * : Render output in a particular format.
 	 * ---
-	 * Default: member
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - ids
+	 *   - csv
+	 *   - count
+	 *   - haml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group invite list --user-id=30 --group-id=56
-	 *     $ wp bp group invite list --user-id=30 --group-id=100 --role=member
 	 *
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-		$group_id = $assoc_args['group-id'];
+		if ( ! isset( $assoc_args['group-id'] ) && ! isset( $assoc_args['user-id'] ) ) {
+			WP_CLI::error( 'You must provide either a group-id or a user-id parameter.' );
+		}
+
+		$group_id = isset( $assoc_args['group-id'] ) ? intval( $assoc_args['group-id'] ) : null;
+		$user_id = isset( $assoc_args['user-id'] ) ? intval( $assoc_args['user-id'] ) : null;
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( $group_id && ! $this->group_exists( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		if ( $user_id ) {
+			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
+			if ( ! $user ) {
+				WP_CLI::error( 'No user found by that username or ID.' );
+			}
 		}
 
-		$invites = groups_get_invites_for_group( $user->ID, $group_id, $assoc_args['role'] );
+		if ( $group_id ) {
+			$invite_query = new BP_Group_Member_Query( array(
+				'is_confirmed' => false,
+				'group_id' => $group_id,
+			) );
 
-		if ( $invites ) {
-			$found = sprintf(
-				'Found %d invitations from group #%d.',
-				$invites['total'],
-				$group_id
-			);
-			WP_CLI::success( $found );
+			$invites = $invite_query->results;
 
-			$success = sprintf(
-				'Current invitations from group #%d: %s',
-				$group_id,
-				implode( ', ', wp_list_pluck( $invites['groups'], 'id' ) )
-			);
-			WP_CLI::success( $success );
+			// Manually filter out user ID - this is not supported by the API.
+			if ( $user_id ) {
+				$user_invites = array();
+				foreach ( $invites as $invite ) {
+					if ( $user_id == $invite->user_id ) {
+						$user_invites[] = $invite;
+					}
+				}
+				$invites = $user_invites;
+			}
+
+			if ( empty( $invites ) ) {
+				WP_CLI::error( 'No invitations found.' );
+			}
+
+			if ( empty( $assoc_args['fields'] ) ) {
+				$fields = array();
+
+				if ( ! $user_id ) {
+					$fields[] = 'user_id';
+				}
+
+				$fields[] = 'inviter_id';
+				$fields[] = 'invite_sent';
+				$fields[] = 'date_modified';
+
+				$assoc_args['fields'] = $fields;
+			}
+
+			$formatter = $this->get_formatter( $assoc_args );
+			$formatter->display_items( $invites );
 		} else {
-			WP_CLI::error( 'Could not find any invitation for this group.' );
+			$invite_query = groups_get_invites_for_user( $user_id );
+			$invites = $invite_query['groups'];
+
+			if ( empty( $assoc_args['fields'] ) ) {
+				$fields = array(
+					'id',
+					'name',
+					'slug',
+				);
+
+				$assoc_args['fields'] = $fields;
+			}
+
+			$formatter = $this->get_formatter( $assoc_args );
+			$formatter->display_items( $invites );
 		}
 	}
 
