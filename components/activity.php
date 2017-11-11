@@ -566,9 +566,15 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * --comment-id=<comment-id>
 	 * : ID of the comment to delete.
 	 *
-	 * ## EXAMPLE
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity delete_comment 100 --comment-id=500
+	 *     Success: Activity comment deleted.
+	 *
+	 *     $ wp bp activity delete_comment 165 --comment-id=35435 --yes
 	 *     Success: Activity comment deleted.
 	 */
 	public function delete_comment( $args, $assoc_args ) {
@@ -579,6 +585,8 @@ class BPCLI_Activity extends BPCLI_Component {
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
+
+		WP_CLI::confirm( 'Are you sure you want to delete this comment?', $assoc_args );
 
 		// Delete Comment. True if deleted.
 		if ( bp_activity_delete_comment( $activity_id, $assoc_args['comment-id'] ) ) {

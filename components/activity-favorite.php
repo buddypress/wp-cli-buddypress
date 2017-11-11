@@ -61,12 +61,15 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity favorite remove 100 500
 	 *     Success: Activity item removed as a favorite for the user.
 	 *
-	 *     $ wp bp activity favorite delete 100 user_test
+	 *     $ wp bp activity favorite delete 100 user_test --yes
 	 *     Success: Activity item removed as a favorite for the user.
 	 *
 	 * @alias delete
@@ -85,6 +88,8 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
+
+		WP_CLI::confirm( 'Are you sure you want to remove this activity item?', $assoc_args );
 
 		// True if removed.
 		if ( $this->remove_user_favorite( $activity_id, $user->ID ) ) {
