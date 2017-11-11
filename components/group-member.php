@@ -143,6 +143,9 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
+	 * <group-id>
+	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
+	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_group_members()
 	 *
@@ -155,7 +158,6 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	 */
 	public function _list( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'group-id'            => '',
 			'per-page'            => false,
 			'page'                => false,
 			'exclude-admins-mods' => true,
@@ -166,7 +168,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 			'type'                => 'last_joined',
 		) );
 
-		$group_id = $r['group-id'];
+		$group_id = (int) $args[0];
 
 		// Check that group exists.
 		if ( ! $this->group_exists( $group_id ) ) {
