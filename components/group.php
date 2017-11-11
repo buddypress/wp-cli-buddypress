@@ -335,6 +335,27 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--fields=<fields>]
 	 * : Fields to display.
 	 *
+	 * [--user-id=<user-id>]
+	 * : Limit results to groups of which a specific user is a member.
+	 *
+	 * [--orderby=<orderby>]
+	 * : Sort order for results.
+	 * ---
+	 * default: name
+	 * options:
+	 *   - date_created
+	 *   - last_activity
+	 *   - total_member_count
+	 *   - name
+	 *
+	 * [--order=<order>]
+	 * : Whether to sort results ascending or descending.
+	 * ---
+	 * default: ASC
+	 * options:
+	 *   - ASC
+	 *   - DESC
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -346,9 +367,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 *   - count
 	 *   - haml
 	 * ---
-	 *
-	 * [--user-id=<user-id>]
-	 * : Limit results to groups of which a specific user is a member.
 
 	 * ## EXAMPLES
 	 *
@@ -365,6 +383,8 @@ class BPCLI_Group extends BPCLI_Component {
 			'type'        => 'active',
 			'per_page'    => -1,
 			'show_hidden' => true,
+			'orderby'     => $assoc_args['orderby'],
+			'order'       => $assoc_args['order'],
 		) );
 
 		if ( isset( $assoc_args['user-id'] ) ) {
