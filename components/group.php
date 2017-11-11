@@ -1,10 +1,35 @@
 <?php
-
 /**
  * Manage BuddyPress groups.
+ *
+ * @since 1.5.0
  */
 class BPCLI_Group extends BPCLI_Component {
+	/**
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'name',
+		'slug',
+		'status',
+		'date_created',
+	);
+
+	/**
+	 * Group ID Object Key
+	 *
+	 * @var string
+	 */
 	protected $obj_id_key = 'group_id';
+
+	/**
+	 * Group Object Type
+	 *
+	 * @var string
+	 */
 	protected $obj_type = 'group';
 
 	/**
@@ -19,65 +44,111 @@ class BPCLI_Group extends BPCLI_Component {
 	 * : URL-safe slug for the group. If not provided, one will be generated automatically.
 	 *
 	 * [--description=<description>]
-	 * : Group description. Default: 'Description for group "[name]"'
+	 * : Group description.
+	 * ---
+	 * Default: 'Description for group "[name]"'
+	 * ---
 	 *
-	 * [--creator_id=<creator_id>]
-	 * : ID of the group creator. Default: 1.
+	 * [--creator-id=<creator-id>]
+	 * : ID of the group creator.
+	 * ---
+	 * Default: 1
+	 * ---
 	 *
 	 * [--slug=<slug>]
 	 * : URL-safe slug for the group.
 	 *
 	 * [--status=<status>]
-	 * : Group status (public, private, hidden). Default: public.
+	 * : Group status (public, private, hidden).
+	 * ---
+	 * Default: public
+	 * ---
 	 *
 	 * [--enable-forum=<enable-forum>]
-	 * : Whether to enable legacy bbPress forums. Default: 0.
+	 * : Whether to enable legacy bbPress forums.
+	 * ---
+	 * Default: 0
+	 * ---
 	 *
 	 * [--date-created=<date-created>]
-	 * : MySQL-formatted date. Default: current date.
+	 * : MySQL-formatted date.
+	 * ---
+	 * Default: current date.
+	 * ---
+	 *
+	 * [--silent=<silent>]
+	 * : Whether to silent the group creation.
+	 * ---
+	 * Default: false.
+	 * ---
+	 *
+	 * [--porcelain]
+	 * : Return only the new group id.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *        wp bp group create --name="Totally Cool Group"
-	 *        wp bp group create --name="Sports" --description="People who love sports" --creator_id=54 --status=private
+	 *     $ wp bp group create --name="Totally Cool Group"
+	 *     Success: Group (ID 5465) created: http://example.com/groups/totally-cool-group/
 	 *
-	 * @synopsis --name=<name> [--slug=<slug>] [--description=<description>] [--creator_id=<creator_id>] [--status=<status>] [--enable-forum=<enable-forum>] [--date-created=<date-created>]
+	 *     $ wp bp group create --name="Another Cool Group" --description="Cool Group" --creator-id=54 --status=private
+	 *     Success: Group (ID 6454)6 created: http://example.com/groups/another-cool-group/
 	 *
-	 * @since 1.0
+	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'name'         => '',
 			'slug'         => '',
 			'description'  => '',
-			'creator_id'   => 1,
+			'creator-id'   => 1,
 			'status'       => 'public',
-			'enable_forum' => 0,
-			'date_created' => bp_core_current_time(),
+			'enable-forum' => 0,
+			'date-created' => bp_core_current_time(),
+			'silent'       => false,
 		) );
 
-		if ( ! $r['name'] ) {
-			WP_CLI::error( 'You must provide a --name parameter when creating a group.' );
-		}
-
 		// Auto-generate some stuff.
-		if ( ! $r['slug'] ) {
+		if ( empty( $r['slug'] ) ) {
 			$r['slug'] = groups_check_slug( sanitize_title( $r['name'] ) );
 		}
 
-		if ( ! $r['description'] ) {
+		if ( empty( $r['description'] ) ) {
 			$r['description'] = sprintf( 'Description for group "%s"', $r['name'] );
 		}
 
-		$id = groups_create_group( $r );
-		if ( $id ) {
-			groups_update_groupmeta( $id, 'total_member_count', 1 );
-			$group = groups_get_group( array(
-				'group_id' => $id,
-			) );
-			WP_CLI::success( "Group $id created: " . bp_get_group_permalink( $group ) );
-		} else {
+		// Fallback for group status.
+		if ( ! in_array( $r['status'], $this->group_status(), true ) ) {
+			$r['status'] = 'public';
+		}
+
+		$group_id = groups_create_group( array(
+			'name'         => $r['name'],
+			'slug'         => $r['slug'],
+			'description'  => $r['description'],
+			'creator_id'   => $r['creator-id'],
+			'status'       => $r['status'],
+			'enable_forum' => $r['enable-forum'],
+			'date_created' => $r['date-created'],
+		) );
+
+		if ( ! is_numeric( $group_id ) ) {
 			WP_CLI::error( 'Could not create group.' );
+		}
+
+		groups_update_groupmeta( $group_id, 'total_member_count', 1 );
+
+		if ( $r['silent'] ) {
+			return;
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $group_id );
+		} else {
+			$group = groups_get_group( array(
+				'group_id' => $group_id,
+			) );
+			$permalink = bp_get_group_permalink( $group );
+			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $group_id, $permalink ) );
 		}
 	}
 
@@ -87,26 +158,45 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--count=<number>]
-	 * : How many groups to generate. Default: 100
+	 * : How many groups to generate.
+	 * ---
+	 * default: 100
+	 * ---
+	 *
+	 * [--status=<status>]
+	 * : The status of the generated groups. Specify public, private, hidden, or mixed.
+	 * ---
+	 * default: public
+	 * ---
+	 *
+	 * [--creator-id=<creator-id>]
+	 * : ID of the group creator.
+	 * ---
+	 * default: 1
+	 * ---
+	 *
+	 * [--enable-forum=<enable-forum>]
+	 * : Whether to enable legacy bbPress forums.
+	 * ---
+	 * default: 0
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  wp bp group generate --count=50
-	 *
-	 * @synopsis [--count=<number>]
-	 *
-	 * @since 1.3.0
+	 *     $ wp bp group generate --count=50
+	 *     $ wp bp group generate --count=5 --status=mixed
+	 *     $ wp bp group generate --count=10 --status=hidden --creator-id=30
 	 */
 	public function generate( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'count' => 100,
-		) );
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
 
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $r['count'] );
-
-		for ( $i = 0; $i < $r['count']; $i++ ) {
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
-				'name' => 'Test Group - ' . $i,
+				'name'         => sprintf( 'Group - #%d', $i ),
+				'creator-id'   => $assoc_args['creator-id'],
+				'status'       => $this->random_group_status( $assoc_args['status'] ),
+				'enable-forum' => $assoc_args['enable-forum'],
+				'silent'       => true,
 			) );
 
 			$notify->tick();
@@ -116,42 +206,89 @@ class BPCLI_Group extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete a group.
+	 * Get a group.
 	 *
 	 * ## OPTIONS
 	 *
 	 * <group-id>
 	 * : Identifier for the group. Can be a numeric ID or the group slug.
 	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to all fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 *   - haml
+	 * ---
+	 *
 	 * ## EXAMPLES
 	 *
-	 *  wp bp group delete 500
+	 *     $ wp bp group get 500
+	 *     $ wp bp group get group-slug
 	 *
-	 * @synopsis <group-id>
-	 *
-	 * @since 1.3.0
+	 * @alias see
 	 */
-	public function delete( $args, $assoc_args ) {
-		$group_id = isset( $args[0] ) ? $args[0] : '';
-
-		if ( ! is_numeric( $group_id ) ) {
-			$group_id = groups_get_id( $group_id );
-		}
+	public function get( $args, $assoc_args ) {
+		$group_id = $args[0];
 
 		// Check that group exists.
-		$group_obj = groups_get_group( array(
-			'group_id' => $group_id,
-		) );
-		if ( empty( $group_obj->id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		// Delete group. True if deleted.
-		if ( groups_delete_group( $group_id ) ) {
-			WP_CLI::success( 'Group deleted.' );
-		} else {
-			WP_CLI::error( 'Could not delete the group.' );
+		$group            = groups_get_group( $group_id );
+		$group_arr        = get_object_vars( $group );
+		$group_arr['url'] = bp_get_group_permalink( $group );
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $group_arr );
 		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $group_arr );
+	}
+
+	/**
+	 * Delete a group.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <group-id>...
+	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp group delete 500
+	 *     Success: Group successfully deleted.
+	 *
+	 *     $ wp bp group delete group-slug --yes
+	 *     Success: Group successfully deleted.
+	 */
+	public function delete( $args, $assoc_args ) {
+		$group_id = $args[0];
+
+		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
+
+		// Check that group exists.
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
+			WP_CLI::error( 'No group found by that slug or ID.' );
+		}
+
+		parent::_delete( array( $group_id ), $assoc_args, function( $group_id ) {
+			if ( groups_delete_group( $group_id ) ) {
+				return array( 'success', 'Group successfully deleted.' );
+			} else {
+				return array( 'error', 'Could not delete the group.' );
+			}
+		} );
 	}
 
 	/**
@@ -160,30 +297,22 @@ class BPCLI_Group extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <group-id>
-	 * : Identifier for the group. Can be a numeric ID or the group slug.
+	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
 	 *
-	 * --<field>=<value>
+	 * [--<field>=<value>]
 	 * : One or more fields to update. See groups_create_group()
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 *     wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
+	 *     $ wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
 	 */
 	public function update( $args, $assoc_args ) {
 		$clean_group_ids = array();
 
 		foreach ( $args as $group_id ) {
-			// Convert --group_id to group ID
-			// @todo this'll be screwed up if the group has a numeric slug.
-			if ( ! is_numeric( $group_id ) ) {
-				$group_id = groups_get_id( $group_id );
-			}
 
 			// Check that group exists.
-			$group_obj = groups_get_group( array(
-				'group_id' => $group_id,
-			) );
-			if ( empty( $group_obj->id ) ) {
+			if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 				WP_CLI::error( 'No group found by that slug or ID.' );
 			}
 
@@ -200,179 +329,114 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --<field>=<value>
+	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_get_groups()
+	 *
+	 * [--fields=<fields>]
+	 * : Fields to display.
+	 *
+	 * [--user-id=<user-id>]
+	 * : Limit results to groups of which a specific user is a member.
+	 *
+	 * [--orderby=<orderby>]
+	 * : Sort order for results.
+	 * ---
+	 * default: name
+	 * options:
+	 *   - date_created
+	 *   - last_activity
+	 *   - total_member_count
+	 *   - name
+	 *
+	 * [--order=<order>]
+	 * : Whether to sort results ascending or descending.
+	 * ---
+	 * default: ASC
+	 * options:
+	 *   - ASC
+	 *   - DESC
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
-	 *
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - ids
+	 *   - csv
+	 *   - count
+	 *   - haml
+	 * ---
+
 	 * ## EXAMPLES
 	 *
-	 *   wp bp group list --format=ids
+	 *     $ wp bp group list --format=ids
+	 *     $ wp bp group list --format=count
+	 *     $ wp bp group list --user-id=123
 	 *
-	 * @since 1.3.0
+	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) {
-		$r = wp_parse_args( $args, array(
-			'type' => 'active',
+	public function _list( $args, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$query_args = wp_parse_args( $assoc_args, array(
+			'per_page'    => -1,
+			'show_hidden' => true,
+			'orderby'     => $assoc_args['orderby'],
+			'order'       => $assoc_args['order'],
 		) );
 
-		$args      = array_merge( $r, $assoc_args );
-		$formatter = $this->get_formatter( $args );
+		if ( isset( $assoc_args['user-id'] ) ) {
+			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			if ( ! $user ) {
+				WP_CLI::error( 'No user found by that identifier.' );
+			}
+			$query_args['user_id'] = $user->ID;
+		}
+
+		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+		$groups = groups_get_groups( $query_args );
+
+		if ( empty( $groups['groups'] ) ) {
+			WP_CLI::error( 'No groups found.' );
+		}
 
 		if ( 'ids' === $formatter->format ) {
-			$args['fields']      = 'ids';
-			$args['show_hidden'] = true;
-			$args['per_page']    = null; // Return all results.
-
-			$groups  = groups_get_groups( $args );
-			$groups  = $groups['groups'];
-			echo implode( ' ', $groups ); // XSS ok.
+			echo implode( ' ', wp_list_pluck( $groups['groups'], 'id' ) ); // WPCS: XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $groups['total'] );
 		} else {
-			$groups  = groups_get_groups( $args );
-			$groups  = $groups['groups'];
-
-			$formatter->display_items( $groups );
+			$formatter->display_items( $groups['groups'] );
 		}
 	}
 
 	/**
-	 * Add a member to a group.
+	 * Group Status
 	 *
-	 * ## OPTIONS
+	 * @since 1.5.0
 	 *
-	 * --group-id=<group>
-	 * : Identifier for the group. Accepts either a slug or a numeric ID.
-	 *
-	 * --user-id=<user>
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 *
-	 * [--role=<role>]
-	 * : Group role for the new member (member, mod, admin). Default: member.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *        wp bp group add_member --group-id=3 --user-id=10
-	 *        wp bp group add_member --group-id=foo --user-id=admin role=mod
-	 *
-	 * @synopsis --group-id=<group> --user-id=<user> [--role=<role>]
-	 *
-	 * @since 1.0
+	 * @return array An array of gruop status.
 	 */
-	public function add_member( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'group-id' => null,
-			'user-id'  => null,
-			'role'     => 'member',
-		) );
-
-		// Convert --group_id to group ID
-		// @todo this'll be screwed up if the group has a numeric slug.
-		if ( ! is_numeric( $r['group-id'] ) ) {
-			$group_id = groups_get_id( $r['group-id'] );
-		} else {
-			$group_id = $r['group-id'];
-		}
-
-		// Check that group exists.
-		$group_obj = groups_get_group( array(
-			'group_id' => $group_id,
-		) );
-		if ( empty( $group_obj->id ) ) {
-			WP_CLI::error( 'No group found by that slug or id.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $r['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or id' );
-		}
-
-		// Sanitize role.
-		if ( ! in_array( $r['role'], array( 'member', 'mod', 'admin' ), true ) ) {
-			$r['role'] = 'member';
-		}
-
-		$joined = groups_join_group( $group_id, $user->ID );
-
-		if ( $joined ) {
-			if ( 'member' !== $r['role'] ) {
-				$the_member = new BP_Groups_Member( $user->ID, $group_id );
-				$the_member->promote( $r['role'] );
-			}
-
-			$success = sprintf(
-				'Added user #%d (%s) to group #%d (%s) as %s',
-				$user->ID,
-				$user->user_login,
-				$group_id,
-				$group_obj->name,
-				$r['role']
-			);
-			WP_CLI::success( $success );
-		} else {
-			WP_CLI::error( 'Could not add user to group.' );
-		}
+	protected function group_status() {
+		return array( 'public', 'private', 'hidden' );
 	}
 
 	/**
-	 * Get a list of members for a group.
+	 * Gets a randon group status.
 	 *
-	 * ## OPTIONS
+	 * @since 1.5.0
 	 *
-	 * <group-id>
-	 * : Identifier for the group. Accepts either a slug or a numeric ID.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *        wp bp group get_members 3
-	 *
-	 * @synopsis <group-id>
-	 *
-	 * @since 1.3.0
+	 * @param  string $status Group status.
+	 * @return string Group Status.
 	 */
-	public function get_members( $args, $assoc_args ) {
-		$group_id = isset( $args[0] ) ? $args[0] : '';
+	protected function random_group_status( $status ) {
+		$core_status = $this->group_status();
 
-		// Convert --group_id to group ID
-		// @todo this'll be screwed up if the group has a numeric slug.
-		if ( ! is_numeric( $group_id ) ) {
-			$group_id = groups_get_id( $group_id );
-		}
+		$status = ( 'mixed' === $status )
+			? $core_status[ array_rand( $core_status ) ]
+			: $status;
 
-		// Check that group exists.
-		$group_obj = groups_get_group( array(
-			'group_id' => $group_id,
-		) );
-		if ( empty( $group_obj->id ) ) {
-			WP_CLI::error( 'No group found by that slug or id.' );
-		}
-
-		// Get our members.
-		$members = groups_get_group_members( array(
-			'group_id' => $group_id,
-		) );
-
-		if ( $members['count'] ) {
-			$found = sprintf(
-				'Found %d members in group #%d',
-				$members['count'],
-				$group_id
-			);
-			WP_CLI::success( $found );
-
-			$member_list = implode( ', ', wp_list_pluck( $members['members'], 'user_login' ) );
-
-			$users = sprintf(
-				'Current members for group #%d: %s',
-				$group_id,
-				$member_list
-			);
-
-			WP_CLI::success( $users );
-		} else {
-			WP_CLI::error( 'Could not find any users in the group.' );
-		}
+		return $status;
 	}
 }
 
@@ -383,4 +447,3 @@ WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
 		}
 	},
 ) );
-
