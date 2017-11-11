@@ -237,7 +237,7 @@ class BPCLI_Group extends BPCLI_Component {
 		$group_id = $args[0];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -278,7 +278,7 @@ class BPCLI_Group extends BPCLI_Component {
 		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -312,7 +312,7 @@ class BPCLI_Group extends BPCLI_Component {
 		foreach ( $args as $group_id ) {
 
 			// Check that group exists.
-			if ( ! $this->group_exists( $group_id ) ) {
+			if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 				WP_CLI::error( 'No group found by that slug or ID.' );
 			}
 

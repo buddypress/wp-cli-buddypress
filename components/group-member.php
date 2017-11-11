@@ -54,7 +54,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -118,7 +118,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -179,7 +179,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = intval( $args[0] );
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -258,7 +258,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -305,7 +305,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -347,7 +347,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -389,7 +389,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 

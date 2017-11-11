@@ -65,7 +65,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$group_id = $r['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -125,7 +125,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -180,7 +180,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$user_id = isset( $assoc_args['user-id'] ) ? intval( $assoc_args['user-id'] ) : null;
 
 		// Check that group exists.
-		if ( $group_id && ! $this->group_exists( $group_id ) ) {
+		if ( $group_id && ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -305,7 +305,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -345,7 +345,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
@@ -385,7 +385,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.
-		if ( ! $this->group_exists( $group_id ) ) {
+		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
