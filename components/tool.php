@@ -22,7 +22,7 @@ class BPCLI_Tool extends BPCLI_Component {
 	 *   - last-activity
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp tool repair friend-count
 	 *     $ wp bp tool fix friend-count
