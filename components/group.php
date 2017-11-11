@@ -380,7 +380,6 @@ class BPCLI_Group extends BPCLI_Component {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$query_args = wp_parse_args( $assoc_args, array(
-			'type'        => 'active',
 			'per_page'    => -1,
 			'show_hidden' => true,
 			'orderby'     => $assoc_args['orderby'],
