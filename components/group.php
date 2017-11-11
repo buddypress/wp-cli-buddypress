@@ -5,6 +5,18 @@
  * @since 1.5.0
  */
 class BPCLI_Group extends BPCLI_Component {
+	/**
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'name',
+		'slug',
+		'status',
+		'date_created',
+	);
 
 	/**
 	 * Group ID Object Key
