@@ -160,7 +160,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 		$r = wp_parse_args( $assoc_args, array(
 			'per-page'            => false,
 			'page'                => false,
-			'exclude-admins-mods' => true,
+			'exclude-admins-mods' => false,
 			'exclude-banned'      => true,
 			'exclude'             => false,
 			'group-role'          => array(),
