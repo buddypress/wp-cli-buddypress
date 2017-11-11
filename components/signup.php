@@ -7,12 +7,12 @@
 class BPCLI_Signup extends BPCLI_Component {
 
 	/**
-	 * XProfile object fields.
+	 * Signup object fields.
 	 *
 	 * @var array
 	 */
 	protected $obj_fields = array(
-		'id',
+		'signup_id',
 		'user_login',
 		'user_name',
 		'meta',
@@ -76,7 +76,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		$id = BP_Signup::add( $signup_args );
 
 		if ( ! $id ) {
-			WP_CLI::error( 'Could not add user signup' );
+			WP_CLI::error( 'Could not add user signup.' );
 		}
 
 		if ( $assoc_args['silent'] ) {
@@ -98,13 +98,13 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * <signup-id>
 	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
-	 * [--field=<field>]
+	 * [--match-field=<match-field>]
 	 * : Field to match the signup-id to. Use if there is ambiguity between, eg, signup ID and user_login.
 	 * ---
 	 * options:
-	 *   - id
-	 *   - email
-	 *   - login
+	 *   - signup_id
+	 *   - user_email
+	 *   - user_login
 	 * ---
 	 *
 	 * [--fields=<fields>]
@@ -127,7 +127,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 *     $ wp bp signup get 123
 	 *     $ wp bp signup get foo@example.com
-	 *     $ wp bp signup get 123 --field=id
+	 *     $ wp bp signup get 123 --match-field=id
 	 */
 	public function get( $args, $assoc_args ) {
 		$id = $args[0];
@@ -136,38 +136,14 @@ class BPCLI_Signup extends BPCLI_Component {
 			'number' => 1,
 		);
 
-		if ( isset( $assoc_args['field'] ) ) {
-			switch ( $assoc_args['field'] ) {
-				case 'id' :
-					$signup_args['include'] = array( $id );
-				break;
+		$signup = $this->get_signup_by_identifier( $id, $assoc_args );
 
-				case 'email' :
-					$signup_args['usersearch'] = $id;
-				break;
-
-				case 'login' :
-					$signup_args['user_login'] = $id;
-				break;
-			}
-		} else {
-			if ( is_numeric( $id ) ) {
-				$signup_args['include'] = array( $id );
-			} elseif ( is_email( $id ) ) {
-				$signup_args['usersearch'] = $id;
-			} else {
-				$signup_args['user_login'] = $id;
-			}
-		}
-
-		$signups = BP_Signup::get( $signup_args );
-		$formatter = $this->get_formatter( $assoc_args );
-
-		if ( ! empty( $signups['signups'] ) ) {
-			$formatter->display_item( $signups['signups'][0] );
-		} else {
+		if ( ! $signup ) {
 			WP_CLI::error( 'No signup found by that identifier.' );
 		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $signup );
 	}
 
 	/**
@@ -208,8 +184,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <activation-key>
-	 * : Identifier for the activation key.
+	 * <signup-id>
+	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
 	 * ## EXAMPLE
 	 *
@@ -217,10 +193,16 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     Success: Signup activated, new user (ID #545).
 	 */
 	public function activate( $args, $assoc_args ) {
-		$id = bp_core_activate_signup( $args[0] );
+		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
 
-		if ( is_string( $id ) ) {
-			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d).', $id ) );
+		if ( ! $signup ) {
+			WP_CLI::error( 'No signup found by that identifier.' );
+		}
+
+		$user_id = bp_core_activate_signup( $signup->activation_key );
+
+		if ( $user_id ) {
+			WP_CLI::success( sprintf( 'Signup activated, new user (ID #%d).', $user_id ) );
 		} else {
 			WP_CLI::error( 'Signup not activated.' );
 		}
@@ -260,46 +242,25 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [<user>]
-	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 * <signup-id>
+	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
-	 * <email>
-	 * : E-mail to send the activation.
+	 * ## EXAMPLE
 	 *
-	 * <key>
-	 * : Activation key.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp signup resend 20 teste@site.com ee48ec319fef3nn4
-	 *     Success: Email sent successfully.
-	 *
-	 *     $ wp bp signup send another_teste@site.com ee48ec319fefwtr3nn4
+	 *     $ wp bp signup resend test@example.com
 	 *     Success: Email sent successfully.
 	 *
 	 * @alias send
 	 */
 	public function resend( $args, $assoc_args ) {
-		$user_id = '';
+		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
 
-		if ( ! defined( 'BP_SIGNUPS_SKIP_USER_CREATION' ) && ! BP_SIGNUPS_SKIP_USER_CREATION ) {
-			$user = $this->get_user_id_from_identifier( $args[0] );
-
-			if ( ! $user ) {
-				WP_CLI::error( 'No user found by that username or id' );
-				return;
-			}
-
-			$user_id = $user->ID;
-		}
-
-		$email = $args[1];
-		if ( ! is_email( $email ) ) {
-			WP_CLI::error( 'Invalid email added.' );
+		if ( ! $signup ) {
+			WP_CLI::error( 'No signup found by that identifier.' );
 		}
 
 		// Send email.
-		bp_core_signup_send_validation_email( $user_id, sanitize_email( $email ), $args[2] );
+		BP_Signup::resend( array( $signup->signup_id ) );
 
 		WP_CLI::success( 'Email sent successfully.' );
 	}
@@ -342,6 +303,47 @@ class BPCLI_Signup extends BPCLI_Component {
 		} else {
 			$formatter->display_items( $signups['signups'] );
 		}
+	}
+
+	/**
+	 * Look up a signup by the provided identifier.
+	 *
+	 * @since 1.5.0
+	 */
+	protected function get_signup_by_identifier( $identifier, $assoc_args ) {
+		if ( isset( $assoc_args['match-field'] ) ) {
+			switch ( $assoc_args['match-field'] ) {
+				case 'signup_id' :
+					$signup_args['include'] = array( $identifier );
+				break;
+
+				case 'user_login' :
+					$signup_args['user_login'] = $identifier;
+				break;
+
+				case 'user_email' :
+				default :
+					$signup_args['usersearch'] = $identifier;
+				break;
+			}
+		} else {
+			if ( is_numeric( $identifier ) ) {
+				$signup_args['include'] = array( intval( $identifier ) );
+			} elseif ( is_email( $identifier ) ) {
+				$signup_args['usersearch'] = $identifier;
+			} else {
+				$signup_args['user_login'] = $identifier;
+			}
+		}
+
+		$signups = BP_Signup::get( $signup_args );
+
+		$signup = null;
+		if ( ! empty( $signups['signups'] ) ) {
+			$signup = reset( $signups['signups'] );
+		}
+
+		return $signup;
 	}
 }
 
