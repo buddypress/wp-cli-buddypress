@@ -68,7 +68,7 @@ Feature: Manage BuddyPress Activities
     Then STDOUT should be a number
     And save STDOUT as {COMMENT_ID}
 
-    When I run `wp bp activity delete_comment {ACTIVITY_ID} --comment-id={COMMENT_ID}`
+    When I run `wp bp activity delete_comment {ACTIVITY_ID} --comment-id={COMMENT_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Activity comment deleted.

@@ -34,7 +34,7 @@ Feature: Manage BuddyPress Activity Favorites
       Success: Favorite item(s) for user #{SEC_MEMBER_ID}: {ACTIVITY_ID}
       """
 
-    When I run `wp bp activity favorite remove {ACTIVITY_ID} {SEC_MEMBER_ID}`
+    When I run `wp bp activity favorite remove {ACTIVITY_ID} {SEC_MEMBER_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Activity item removed as a favorite for the user.
