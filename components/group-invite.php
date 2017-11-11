@@ -87,6 +87,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			'is_confirmed'  => $assoc_args['is-confirmed'],
 		) );
 
+		groups_send_invites( $inviter->ID, $group_id );
+
 		if ( $r['silent'] ) {
 			return;
 		}
