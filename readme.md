@@ -2,21 +2,63 @@
 
 WP-CLI commands for use with BuddyPress. Currently supported commands:
 
+### Core Commands
 * `bp core activate` -- Activate a component.
 * `bp core deactivate` -- Deactivate a component.
+
+### Tool Commands
+* `bp tool repair` -- Repair something on BuddyPress.
+* `bp tool reinstall_emails` -- Reinstall BuddyPress default emails.
+
+### Signup Commands
+* `bp signup add` -- Create a signup.
+* `bp signup delete` -- Delete a signup.
+* `bp signup get` -- Get a signup.
+* `bp signup activate` -- Activate a signup.
+* `bp signup generate` -- Generate signups.
+* `bp signup resend` -- Resend a signup.
+* `bp signup list` -- Get a list of signups.
+
+### Activity Commands
 * `bp activity create` -- Create a single activity item.
 * `bp activity generate` -- Generate a large number of random activity items.
-* `bp group add_member` -- Add a member to a BuddyPress group.
-* `bp group create` -- Create new BuddyPress groups.
+
+### Group Commands
+* `bp group create` -- Create a group.
+* `bp group delete` -- Delete a group.
+* `bp group get` -- Get a group.
+* `bp group update` -- Update a group.
+* `bp group list` -- List groups.
 * `bp group generate` -- Generate a large number of random groups.
-* `bp group update` -- Update an existing BuddyPress group.
-* `bp group delete` -- Delete an existing BuddyPress group.
+* `bp group invite add` -- Invite a user from a group.
+* `bp group invite remove` -- Uninvite a user from a group.
+* `bp group invite list` -- Get a list of invitations from a group.
+* `bp group invite generate` -- Generate random group invitations.
+* `bp group invite accept` -- Accept a group invitation.
+* `bp group invite reject` -- Reject a group invitation.
+* `bp group invite delete` -- Delete a group invitation.
+* `bp group member add` -- Add a group member.
+* `bp group member remove` -- Remove a group member.
+* `bp group member list` -- List group members.
+* `bp group member promote` -- Promote a member to a new status withing a group.
+* `bp group member demote` -- Demote user to the 'member' status.
+* `bp group member ban` -- Ban a member from a group.
+* `bp group member unban` -- Unban a member from a group.
+
+### Member Command
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
-* `bp xprofile create_group` -- Create an XProfile field group.
-* `bp xprofile list_fields` -- List XProfile fields.
-* `bp xprofile create_field` -- Create an XProfile field.
-* `bp xprofile delete_field` -- Create an XProfile field.
-* `bp xprofile set_data` -- Set XProfile data for a specific user/field combination.
+
+### XProfile Commands
+* `bp xprofile group create` -- Create an XProfile field group.
+* `bp xprofile group delete` -- Delete an XProfile field group.
+* `bp xprofile group get` -- Fetch an XProfile field group.
+* `bp xprofile field create` -- Create an XProfile field.
+* `bp xprofile field delete` -- Delete an XProfile field.
+* `bp xprofile field get` -- Get an XProfile field.
+* `bp xprofile list` -- List XProfile fields.
+* `bp xprofile data set` -- Set XProfile data for user.
+* `bp xprofile data get` -- Get XProfile data for user.
+* `bp xprofile data delete` -- Delete XProfile data for user.
 
 ## Why doesn't this do _x_?
 
@@ -25,7 +67,7 @@ Because I haven't built it yet. I'm filling in commands as I need them, which me
 ## System Requirements
 
 * PHP >=5.3
-* wp-cli >=0.15.0
+* wp-cli >=0.23.0
 
 If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 
@@ -36,6 +78,8 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 * Inside of a WP installation, type `wp bp`. You should see a list of available commands.
 
 ## Changelog
+
+### 1.5.0
 
 ### 1.4.0
 
