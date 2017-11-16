@@ -4,6 +4,8 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 
 * `bp core activate` -- Activate a component.
 * `bp core deactivate` -- Deactivate a component.
+* `bp tool repair` -- Repair something on BuddyPress.
+* `bp tool reinstall_emails` -- Reinstall BuddyPress default emails.
 * `bp activity create` -- Create a single activity item.
 * `bp activity generate` -- Generate a large number of random activity items.
 * `bp group add_member` -- Add a member to a BuddyPress group.
@@ -12,11 +14,16 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp group update` -- Update an existing BuddyPress group.
 * `bp group delete` -- Delete an existing BuddyPress group.
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
-* `bp xprofile create_group` -- Create an XProfile field group.
-* `bp xprofile list_fields` -- List XProfile fields.
-* `bp xprofile create_field` -- Create an XProfile field.
-* `bp xprofile delete_field` -- Create an XProfile field.
-* `bp xprofile set_data` -- Set XProfile data for a specific user/field combination.
+* `bp xprofile group create` -- Create an XProfile field group.
+* `bp xprofile group delete` -- Delete an XProfile field group.
+* `bp xprofile group get` -- Fetch an XProfile field group.
+* `bp xprofile field create` -- Create an XProfile field.
+* `bp xprofile field delete` -- Delete an XProfile field.
+* `bp xprofile field get` -- Get an XProfile field.
+* `bp xprofile list` -- List XProfile fields.
+* `bp xprofile data set` -- Set XProfile data for user.
+* `bp xprofile data get` -- Get XProfile data for user.
+* `bp xprofile data delete` -- Delete XProfile data for user.
 
 ## Why doesn't this do _x_?
 
