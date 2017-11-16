@@ -1,10 +1,10 @@
 <?php
 /**
- * Manage BuddyPress activity favorites.
+ * Manage BuddyPress activity favorite.
  *
  * @since 1.5.0
  */
-class BPCLI_Activity_Favorites extends BPCLI_Component {
+class BPCLI_Activity_Favorite extends BPCLI_Component {
 
 	/**
 	 * Add an activity item as a favorite for a user.
@@ -153,7 +153,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 		}
 
 		// Bail if the user has already favorited this activity item.
-		if ( in_array( $activity_id, $my_favs ) ) {
+		if ( in_array( $activity_id, $my_favs, true ) ) {
 			return false;
 		}
 
@@ -162,7 +162,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 
 		// Update the total number of users who have favorited this activity.
 		$fav_count = bp_activity_get_meta( $activity_id, 'favorite_count' );
-		$fav_count = !empty( $fav_count ) ? (int) $fav_count + 1 : 1;
+		$fav_count = ! empty( $fav_count ) ? (int) $fav_count + 1 : 1;
 
 		// Update user meta.
 		bp_update_user_meta( $user_id, 'bp_favorite_activities', $my_favs );
@@ -196,7 +196,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 		}
 
 		// Remove the fav from the user's favs.
-		unset( $my_favs[$activity_id] );
+		unset( $my_favs[ $activity_id ] );
 		$my_favs = array_unique( array_flip( $my_favs ) );
 
 		// Update the total number of users who have favorited this activity.
@@ -229,7 +229,7 @@ class BPCLI_Activity_Favorites extends BPCLI_Component {
 	}
 }
 
-WP_CLI::add_command( 'bp activity favorite', 'BPCLI_Activity_Favorites', array(
+WP_CLI::add_command( 'bp activity favorite', 'BPCLI_Activity_Favorite', array(
 	'before_invoke' => function() {
 		if ( ! bp_is_active( 'activity' ) ) {
 			WP_CLI::error( 'The Activity component is not active.' );

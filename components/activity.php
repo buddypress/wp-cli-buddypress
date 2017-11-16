@@ -140,14 +140,14 @@ class BPCLI_Activity extends BPCLI_Component {
 			return;
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
-		} else {
-			if ( $id ) {
-				WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
+		if ( is_numeric( $id ) ) {
+			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+				WP_CLI::line( $id );
 			} else {
-				WP_CLI::error( 'Could not create activity item.' );
+				WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
 			}
+		} else {
+			WP_CLI::error( 'Could not create activity item.' );
 		}
 	}
 
@@ -346,10 +346,15 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp activity delete 958695
+	 *     Success: Activity deleted.
 	 *
 	 *     $ wp bp activity delete 500 --yes
 	 *     Success: Activity deleted.
+	 *
+	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
 		$activity_id = $args[0];
@@ -479,15 +484,15 @@ class BPCLI_Activity extends BPCLI_Component {
 			'user_id' => (int) $r['user-id'],
 		) );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
-		} else {
-			// Activity ID returned on success update.
-			if ( is_numeric( $id ) ) {
-				WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
+		// Activity ID returned on success update.
+		if ( is_numeric( $id ) ) {
+			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+				WP_CLI::line( $id );
 			} else {
-				WP_CLI::error( 'Could not post the activity update.' );
+				WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
 			}
+		} else {
+			WP_CLI::error( 'Could not post the activity update.' );
 		}
 	}
 
@@ -543,15 +548,15 @@ class BPCLI_Activity extends BPCLI_Component {
 			'skip_notification' => $r['skip-notification'],
 		) );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
-		} else {
-			// Activity Comment ID returned on success.
-			if ( is_numeric( $id ) ) {
-				WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
+		// Activity Comment ID returned on success.
+		if ( is_numeric( $id ) ) {
+			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+				WP_CLI::line( $id );
 			} else {
-				WP_CLI::error( 'Could not post a new activity comment.' );
+				WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
 			}
+		} else {
+			WP_CLI::error( 'Could not post a new activity comment.' );
 		}
 	}
 
@@ -576,6 +581,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 *     $ wp bp activity delete_comment 165 --comment-id=35435 --yes
 	 *     Success: Activity comment deleted.
+	 *
+	 * @alias remove_comment
 	 */
 	public function delete_comment( $args, $assoc_args ) {
 		$activity_id = $args[0];
@@ -586,7 +593,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
-		WP_CLI::confirm( 'Are you sure you want to delete this comment?', $assoc_args );
+		WP_CLI::confirm( 'Are you sure you want to delete this activity comment?', $assoc_args );
 
 		// Delete Comment. True if deleted.
 		if ( bp_activity_delete_comment( $activity_id, $assoc_args['comment-id'] ) ) {
