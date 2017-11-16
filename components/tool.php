@@ -39,7 +39,7 @@ class BPCLI_Tool extends BPCLI_Component {
 			if ( 0 === $result[0] ) {
 				WP_CLI::success( $result[1] );
 			} else {
-				WP_CLI::error( sprintf( 'Error: %s', $result[1] ) );
+				WP_CLI::error( $result[1] );
 			}
 		} else {
 			WP_CLI::error( 'There is no repair tool with that name.' );
@@ -67,7 +67,7 @@ class BPCLI_Tool extends BPCLI_Component {
 		if ( 0 === $result[0] ) {
 			WP_CLI::success( $result[1] );
 		} else {
-			WP_CLI::error( sprintf( 'Error: %s', $result[1] ) );
+			WP_CLI::error( $result[1] );
 		}
 	}
 }
