@@ -326,6 +326,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		$activity = bp_activity_get_specific( array(
 			'activity_ids' => $activity_id,
 			'spam' => null,
+			'display_comments' => true,
 		) );
 
 		$activity = $activity['activities'][0];
