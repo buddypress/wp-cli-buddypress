@@ -29,11 +29,23 @@ Feature: Manage BuddyPress Activities
       Success: Activity marked as spam.
       """
 
+    When I run `wp bp activity get {ACTIVITY_ID} --fields=id,is_spam`
+    Then STDOUT should be a table containing rows:
+      | Field     | Value         |
+      | id        | {ACTIVITY_ID} |
+      | is_spam   | 1             |
+
     When I run `wp bp activity ham {ACTIVITY_ID}`
     Then STDOUT should contain:
       """
       Success: Activity marked as ham.
       """
+
+    When I run `wp bp activity get {ACTIVITY_ID} --fields=id,is_spam`
+    Then STDOUT should be a table containing rows:
+      | Field     | Value         |
+      | id        | {ACTIVITY_ID} |
+      | is_spam   | 0             |
 
     When I run `wp bp activity delete {ACTIVITY_ID} --yes`
     Then STDOUT should contain:
@@ -41,11 +53,8 @@ Feature: Manage BuddyPress Activities
       Success: Activity deleted.
       """
 
-    When I run `wp bp activity list --format=ids`
-    Then STDOUT should not contain:
-      """
-      {ACTIVITY_ID}
-      """
+    When I try `wp bp activity get {ACTIVITY_ID}`
+    Then the return code should be 1
 
   Scenario: Activity Comment Operations
     Given a BP install
