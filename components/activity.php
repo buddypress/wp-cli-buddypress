@@ -5,6 +5,24 @@
  * @since 1.5.0
  */
 class BPCLI_Activity extends BPCLI_Component {
+	/**
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'user_id',
+		'component',
+		'type',
+		'action',
+		'item_id',
+		'primary_link',
+		'secondary_item_id',
+		'date_recorded',
+		'hide_sitewide',
+		'is_spam',
+	);
 
 	/**
 	 * Create an activity item.
@@ -280,9 +298,6 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields.
-	 * ---
-	 * default: All fields.
-	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -312,7 +327,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			'activity_ids' => $activity_id,
 		) );
 
-		$activity = $activity['activities'];
+		$activity = $activity['activities'][0];
 
 		if ( is_object( $activity ) ) {
 			$activity_arr = get_object_vars( $activity );

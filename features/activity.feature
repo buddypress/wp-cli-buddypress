@@ -3,10 +3,6 @@ Feature: Manage BuddyPress Activities
   Scenario: Activity CRUD Operations
     Given a BP install
 
-    When I try `wp user get bogus-user`
-    Then the return code should be 1
-    And STDOUT should be empty
-
     When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
@@ -14,6 +10,13 @@ Feature: Manage BuddyPress Activities
     When I run `wp bp activity create --component=groups --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
+
+    When I run `wp bp activity get {ACTIVITY_ID} --fields=id,user_id,component`
+    Then STDOUT should be a table containing rows:
+      | Field     | Value         |
+      | id        | {ACTIVITY_ID} |
+      | user_id   | {MEMBER_ID}   |
+      | component | groups        |
 
     When I run `wp bp activity list --fields=id,user_id,component`
     Then STDOUT should be a table containing rows:
