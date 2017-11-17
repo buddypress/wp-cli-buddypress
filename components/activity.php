@@ -130,7 +130,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		// If some data is not set, we have to generate it.
-		if ( empty( $r['item_id'] ) || empty( $r['secondary_item_id'] ) ) {
+		if ( empty( $r['item-id'] ) || empty( $r['secondary-item-id'] ) ) {
 			$r = $this->generate_item_details( $r );
 		}
 
