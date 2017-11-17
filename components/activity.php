@@ -108,13 +108,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		if ( 'groups' === $r['component'] ) {
-			// Item ID for groups is a group ID.
-			// Therefore, handle group slugs, too.
-			// Convert --item-id to group ID.
-			// @todo this'll be screwed up if the group has a numeric slug.
-			if ( $r['item-id'] && ! is_numeric( $r['item-id'] ) ) {
-				$r['item-id'] = groups_get_id( $r['item-id'] );
-			}
+			$r['item-id'] = $this->get_group_id_from_identifier( $r['component'] );
 		}
 
 		// If some data is not set, we have to generate it.
