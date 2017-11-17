@@ -3,7 +3,7 @@ Feature: Manage BuddyPress Groups
   Scenario: Group CRUD Operations
     Given a BP install
 
-    When I run `wp bp group create --name="Totally Cool Group" --porcelain`
+    When I run `wp bp group create --name="Totally Cool Group" --slug=totally-cool-group --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
@@ -12,6 +12,15 @@ Feature: Manage BuddyPress Groups
       | Field   | Value              |
       | id      | {GROUP_ID}         |
       | name    | Totally Cool Group |
+
+    When I run `wp bp group get totally-cool-group`
+    Then STDOUT should be a table containing rows:
+      | Field   | Value              |
+      | id      | {GROUP_ID}         |
+      | name    | Totally Cool Group |
+
+    When I try `wp bp group get i-do-not-exist`
+    Then the return code should be 1
 
     When I run `wp bp group update {GROUP_ID} --description=foo`
     Then STDOUT should not be empty

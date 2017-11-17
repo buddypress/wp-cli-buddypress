@@ -37,7 +37,7 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	 * @since 1.5.0
 	 *
 	 * @param int|string $group_id Group ID or slug.
-	 * @return bool true|false
+	 * @return int|bool
 	 */
 	protected function get_group_id_from_identifier( $group_id ) {
 		// Group ID or slug.
@@ -53,7 +53,8 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 		if ( empty( $group_obj->id ) ) {
 			return false;
 		}
-		return true;
+
+		return intval( $group_obj->id );
 	}
 
 	/**
