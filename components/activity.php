@@ -520,11 +520,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--content=<content>]
 	 * : Activity content text. If none is provided, default text will be generated.
 	 *
-	 * [--skip-notification=<skip-notification>]
+	 * [--skip-notification]
 	 * : Whether to skip notification.
-	 * * ---
-	 * default: false
-	 * ---
 	 *
 	 * [--porcelain]
 	 * : Output only the new activity comment id.
@@ -538,10 +535,9 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *     Success: Successfully added a new activity comment (ID #494)
 	 */
 	public function comment( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args,array(
-			'content'           => $this->generate_random_text(),
-			'user-id'           => $this->get_random_user_id(),
-			'skip-notification' => false,
+		$r = wp_parse_args( $assoc_args, array(
+			'content' => $this->generate_random_text(),
+			'user-id' => $this->get_random_user_id(),
 		) );
 
 		$activity = new BP_Activity_Activity( $args[0] );
@@ -550,12 +546,14 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
+		$skip_notification = \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
+
 		// Add activity comment.
 		$id = bp_activity_new_comment( array(
 			'content'           => $r['content'],
 			'user_id'           => (int) $r['user-id'],
 			'activity_id'       => $activity->id,
-			'skip_notification' => $r['skip-notification'],
+			'skip_notification' => $skip_notification,
 		) );
 
 		// Activity Comment ID returned on success.

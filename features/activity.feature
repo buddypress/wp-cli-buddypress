@@ -76,7 +76,7 @@ Feature: Manage BuddyPress Activities
       | id            | user_id       | component   |
       | {ACTIVITY_ID} | {MEMBER_ID}   | activity    |
 
-    When I run `wp bp activity comment {ACTIVITY_ID} --user-id={MEMBER_ID} --skip-notification=1 --porcelain`
+    When I run `wp bp activity comment {ACTIVITY_ID} --user-id={MEMBER_ID} --skip-notification --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {COMMENT_ID}
 
