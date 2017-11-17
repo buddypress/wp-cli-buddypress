@@ -59,10 +59,6 @@ Feature: Manage BuddyPress Activities
   Scenario: Activity Comment Operations
     Given a BP install
 
-    When I try `wp user get bogus-user`
-    Then the return code should be 1
-    And STDOUT should be empty
-
     When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
@@ -80,8 +76,17 @@ Feature: Manage BuddyPress Activities
     Then STDOUT should be a number
     And save STDOUT as {COMMENT_ID}
 
+    When I run `wp bp activity get {COMMENT_ID} --fields=id,type`
+    Then STDOUT should be a table containing rows:
+      | Field | Value            |
+      | id    | {COMMENT_ID}     |
+      | type  | activity_comment |
+
     When I run `wp bp activity delete_comment {ACTIVITY_ID} --comment-id={COMMENT_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Activity comment deleted.
       """
+
+    When I try `wp bp activity get {COMMENT_ID} --fields=id,type`
+    Then the return code should be 1
