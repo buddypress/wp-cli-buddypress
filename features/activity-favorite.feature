@@ -3,10 +3,6 @@ Feature: Manage BuddyPress Activity Favorites
   Scenario: Activity Favorite CRUD Operations
     Given a BP install
 
-    When I try `wp user get bogus-user`
-    Then the return code should be 1
-    And STDOUT should be empty
-
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     And save STDOUT as {MEMBER_ID}
 
@@ -28,14 +24,16 @@ Feature: Manage BuddyPress Activity Favorites
       Success: Activity item added as a favorite for the user.
       """
 
-    When I run `wp bp activity favorite items {SEC_MEMBER_ID}`
-    Then STDOUT should contain:
-      """
-      Success: Favorite item(s) for user #{SEC_MEMBER_ID}: {ACTIVITY_ID}
-      """
+    When I run `wp bp activity favorite list {SEC_MEMBER_ID} --fields=id`
+    Then STDOUT should be a table containing rows:
+      | id            |
+      | {ACTIVITY_ID} |
 
     When I run `wp bp activity favorite remove {ACTIVITY_ID} {SEC_MEMBER_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Activity item removed as a favorite for the user.
       """
+
+    When I try `wp bp activity favorite list {SEC_MEMBER_ID} --fields=id`
+    Then the return code should be 1

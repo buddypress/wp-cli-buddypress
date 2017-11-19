@@ -107,17 +107,31 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass to BP_Activity_Activity::get()
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp activity favorite items 315
-	 *     Success: Favorite item(s) for user #315: 166,1561,6516
+	 *     $ wp bp activity favorite list 315
 	 *
-	 *     $ wp bp activity favorite user_items 156165
-	 *     Success: Favorite item(s) for user #156165: 64494,65465,4645
-	 *
+	 * @subcommand list
+	 * @alias items
 	 * @alias user_items
 	 */
-	public function items( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $args[0] );
 
 		if ( ! $user ) {
@@ -126,16 +140,21 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 
 		$favorites = bp_activity_get_user_favorites( $user->ID );
 
-		if ( $favorites ) {
-			$success = sprintf(
-				'Favorite item(s) for user #%d: %s',
-				$user->ID,
-				implode( ', ', $favorites )
-			);
-			WP_CLI::success( $success );
-		} else {
+		if ( ! $favorites ) {
 			WP_CLI::error( 'No favorite found for this user.' );
 		}
+
+		$activities = bp_activity_get_specific( array(
+			'activity_ids' => $favorites,
+		) );
+
+		// Sanity check.
+		if ( empty( $activities['activities'] ) ) {
+			WP_CLI::error( 'No favorite found for this user.' );
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( $activities['activities'] );
 	}
 
 	/**
