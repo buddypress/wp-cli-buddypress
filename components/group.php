@@ -46,13 +46,13 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--description=<description>]
 	 * : Group description.
 	 * ---
-	 * Default: 'Description for group "[name]"'
+	 * default: 'Description for group "[name]"'
 	 * ---
 	 *
 	 * [--creator-id=<creator-id>]
 	 * : ID of the group creator.
 	 * ---
-	 * Default: 1
+	 * default: 1
 	 * ---
 	 *
 	 * [--slug=<slug>]
@@ -61,25 +61,25 @@ class BPCLI_Group extends BPCLI_Component {
 	 * [--status=<status>]
 	 * : Group status (public, private, hidden).
 	 * ---
-	 * Default: public
+	 * default: public
 	 * ---
 	 *
 	 * [--enable-forum=<enable-forum>]
 	 * : Whether to enable legacy bbPress forums.
 	 * ---
-	 * Default: 0
+	 * default: 0
 	 * ---
 	 *
 	 * [--date-created=<date-created>]
 	 * : MySQL-formatted date.
 	 * ---
-	 * Default: current date.
+	 * default: current date.
 	 * ---
 	 *
 	 * [--silent=<silent>]
 	 * : Whether to silent the group creation.
 	 * ---
-	 * Default: false.
+	 * default: false.
 	 * ---
 	 *
 	 * [--porcelain]

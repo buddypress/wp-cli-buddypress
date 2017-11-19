@@ -40,7 +40,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * [--silent=<silent>]
 	 * : Whether to silent the invite creation.
 	 * ---
-	 * Default: false
+	 * default: false
 	 * ---
 	 *
 	 * ## EXAMPLES

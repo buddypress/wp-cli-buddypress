@@ -172,7 +172,7 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields.
 	 * ---
-	 * Default: All fields.
+	 * default: All fields.
 	 * ---
 	 *
 	 * [--format=<format>]

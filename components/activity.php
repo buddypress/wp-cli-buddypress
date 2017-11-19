@@ -67,25 +67,25 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--date-recorded=<date-recorded>]
 	 * : GMT timestamp, in Y-m-d h:i:s format.
 	 * ---
-	 * Default: Current time
+	 * default: Current time
 	 * ---
 	 *
 	 * [--hide-sitewide=<hide-sitewide>]
 	 * : Whether to hide in sitewide streams.
 	 * ---
-	 * Default: 0
+	 * default: 0
 	 * ---
 	 *
 	 * [--is-spam=<is-spam>]
 	 * : Whether the item should be marked as spam.
 	 * ---
-	 * Default: 0
+	 * default: 0
 	 * ---
 	 *
 	 * [--silent=<silent>]
 	 * : Whether to silent the activity creation.
 	 * ---
-	 * Default: false
+	 * default: false
 	 * ---
 	 *
 	 * [--porcelain]
@@ -259,7 +259,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : Whether to skip activity comments. Recording activity_comment
 	 * items requires a resource-intensive tree rebuild.
 	 * ---
-	 * Default: 1
+	 * default: 1
 	 * ---
 	 *
 	 * ## EXAMPLE
