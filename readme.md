@@ -32,7 +32,7 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp activity delete_comment` -- Delete an activity comment.
 * `bp activity favorite add` -- Add an activity item as a favorite for a user.
 * `bp activity favorite add` -- Remove an activity item as a favorite for a user.
-* `bp activity favorite items` -- Get a user's favorite activity items.
+* `bp activity favorite list` -- Get a user's favorite activity items.
 
 ### Group Commands
 * `bp group create` -- Create a group.
@@ -91,6 +91,10 @@ If you need support for wp-cli < 0.15.0, please use the 1.1.x branch.
 ## Changelog
 
 ### 1.5.0
+
+* CRUD commands introduced to the BuddyPress components
+* Behat tests added for all commands
+* Codebase fixed for WPCS
 
 ### 1.4.0
 
