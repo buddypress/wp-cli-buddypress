@@ -30,6 +30,8 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp activity post_update` -- Post an activity update.
 * `bp activity comment` -- Add an activity comment.
 * `bp activity delete_comment` -- Delete an activity comment.
+
+#### Activitiy Favorites Commands
 * `bp activity favorite add` -- Add an activity item as a favorite for a user.
 * `bp activity favorite add` -- Remove an activity item as a favorite for a user.
 * `bp activity favorite list` -- Get a user's favorite activity items.
@@ -41,6 +43,8 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp group update` -- Update a group.
 * `bp group list` -- List groups.
 * `bp group generate` -- Generate a large number of random groups.
+
+#### Group Invites Commands
 * `bp group invite add` -- Invite a user from a group.
 * `bp group invite remove` -- Uninvite a user from a group.
 * `bp group invite list` -- Get a list of invitations from a group.
@@ -48,6 +52,8 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp group invite accept` -- Accept a group invitation.
 * `bp group invite reject` -- Reject a group invitation.
 * `bp group invite delete` -- Delete a group invitation.
+
+#### Group Members Commands
 * `bp group member add` -- Add a group member.
 * `bp group member remove` -- Remove a group member.
 * `bp group member list` -- List group members.
@@ -60,13 +66,19 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 * `bp member generate` -- Create lots of site members, with the proper BP metadata.
 
 ### XProfile Commands
+
+#### XProfile Group Commands
 * `bp xprofile group create` -- Create an XProfile field group.
 * `bp xprofile group delete` -- Delete an XProfile field group.
 * `bp xprofile group get` -- Fetch an XProfile field group.
+
+#### XProfile Field Commands
 * `bp xprofile field create` -- Create an XProfile field.
 * `bp xprofile field delete` -- Delete an XProfile field.
 * `bp xprofile field get` -- Get an XProfile field.
-* `bp xprofile list` -- List XProfile fields.
+* `bp xprofile field list` -- List XProfile fields.
+
+#### XProfile Data Commands
 * `bp xprofile data set` -- Set XProfile data for user.
 * `bp xprofile data get` -- Get XProfile data for user.
 * `bp xprofile data delete` -- Delete XProfile data for user.
