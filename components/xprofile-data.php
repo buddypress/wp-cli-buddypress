@@ -59,19 +59,19 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 
 		$updated = xprofile_set_field_data( $field->id, $user->ID, $value );
 
-		if ( $updated ) {
-			$success = sprintf(
-				'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d).',
-				$field->name,
-				$field->id,
-				$assoc_args['value'],
-				$user->user_nicename,
-				$user->ID
-			);
-			WP_CLI::success( $success );
-		} else {
+		if ( ! $updated ) {
 			WP_CLI::error( 'Could not set profile data.' );
 		}
+
+		$success = sprintf(
+			'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d).',
+			$field->name,
+			$field->id,
+			$assoc_args['value'],
+			$user->user_nicename,
+			$user->ID
+		);
+		WP_CLI::success( $success );
 	}
 
 	/**

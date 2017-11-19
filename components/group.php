@@ -5,6 +5,7 @@
  * @since 1.5.0
  */
 class BPCLI_Group extends BPCLI_Component {
+
 	/**
 	 * Object fields.
 	 *

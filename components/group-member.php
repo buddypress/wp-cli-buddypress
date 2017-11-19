@@ -4,7 +4,7 @@
  *
  * @since 1.5.0
  */
-class BPCLI_Group_Members extends BPCLI_Component {
+class BPCLI_Group_Member extends BPCLI_Component {
 
 	/**
 	 * Group ID Object Key
@@ -72,24 +72,24 @@ class BPCLI_Group_Members extends BPCLI_Component {
 
 		$joined = groups_join_group( $group_id, $user->ID );
 
-		if ( $joined ) {
-			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-				WP_CLI::line( $user->ID );
-			} else {
-				if ( 'member' !== $role ) {
-					groups_promote_member( $user->ID, $group_id, $role );
-				}
-
-				$success = sprintf(
-					'Added user #%d to group #%d as %s.',
-					$user->ID,
-					$group_id,
-					$role
-				);
-				WP_CLI::success( $success );
-			}
-		} else {
+		if ( ! $joined ) {
 			WP_CLI::error( 'Could not add user to the group.' );
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $user->ID );
+		} else {
+			if ( 'member' !== $role ) {
+				groups_promote_member( $user->ID, $group_id, $role );
+			}
+
+			$success = sprintf(
+				'Added user #%d to group #%d as %s.',
+				$user->ID,
+				$group_id,
+				$role
+			);
+			WP_CLI::success( $success );
 		}
 	}
 
@@ -420,7 +420,7 @@ class BPCLI_Group_Members extends BPCLI_Component {
 	}
 }
 
-WP_CLI::add_command( 'bp group member', 'BPCLI_Group_Members', array(
+WP_CLI::add_command( 'bp group member', 'BPCLI_Group_Member', array(
 	'before_invoke' => function() {
 		if ( ! bp_is_active( 'groups' ) ) {
 			WP_CLI::error( 'The Groups component is not active.' );

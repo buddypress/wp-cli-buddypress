@@ -89,11 +89,11 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		groups_send_invites( $inviter->ID, $group_id );
 
-		if ( $r['silent'] ) {
-			return;
-		}
-
 		if ( $invite ) {
+			if ( $r['silent'] ) {
+				return;
+			}
+
 			WP_CLI::success( 'Member invited to the group.' );
 		} else {
 			WP_CLI::error( 'Could not invite the member.' );

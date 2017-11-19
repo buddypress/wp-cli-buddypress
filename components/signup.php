@@ -313,18 +313,18 @@ class BPCLI_Signup extends BPCLI_Component {
 	protected function get_signup_by_identifier( $identifier, $assoc_args ) {
 		if ( isset( $assoc_args['match-field'] ) ) {
 			switch ( $assoc_args['match-field'] ) {
-				case 'signup_id' :
+				case 'signup_id':
 					$signup_args['include'] = array( $identifier );
-				break;
+					break;
 
-				case 'user_login' :
+				case 'user_login':
 					$signup_args['user_login'] = $identifier;
-				break;
+					break;
 
-				case 'user_email' :
-				default :
+				case 'user_email':
+				default:
 					$signup_args['usersearch'] = $identifier;
-				break;
+					break;
 			}
 		} else {
 			if ( is_numeric( $identifier ) ) {

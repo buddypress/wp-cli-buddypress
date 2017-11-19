@@ -123,7 +123,6 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 		$object = xprofile_get_field_group( $field_group_id );
 
 		if ( is_object( $object ) && ! empty( $object->id ) ) {
-
 			$object_arr = get_object_vars( $object );
 
 			if ( empty( $assoc_args['fields'] ) ) {

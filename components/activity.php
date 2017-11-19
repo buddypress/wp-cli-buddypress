@@ -149,18 +149,18 @@ class BPCLI_Activity extends BPCLI_Component {
 			'is_spam'           => (bool) $r['is-spam'],
 		) );
 
+		if ( ! is_numeric( $id ) ) {
+			WP_CLI::error( 'Could not create activity item.' );
+		}
+
 		if ( $r['silent'] ) {
 			return;
 		}
 
-		if ( is_numeric( $id ) ) {
-			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-				WP_CLI::line( $id );
-			} else {
-				WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
-			}
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
 		} else {
-			WP_CLI::error( 'Could not create activity item.' );
+			WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
 		}
 	}
 
