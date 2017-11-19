@@ -21,7 +21,18 @@ WP-CLI commands for use with BuddyPress. Currently supported commands:
 
 ### Activity Commands
 * `bp activity create` -- Create a single activity item.
+* `bp activity delete` -- Delete an activity.
 * `bp activity generate` -- Generate a large number of random activity items.
+* `bp activity list` -- Get a list of activities.
+* `bp activity get` -- Get an activity.
+* `bp activity spam` -- Spam an activity.
+* `bp activity ham` -- Ham an activity.
+* `bp activity post_update` -- Post an activity update.
+* `bp activity comment` -- Add an activity comment.
+* `bp activity delete_comment` -- Delete an activity comment.
+* `bp activity favorite add` -- Add an activity item as a favorite for a user.
+* `bp activity favorite add` -- Remove an activity item as a favorite for a user.
+* `bp activity favorite items` -- Get a user's favorite activity items.
 
 ### Group Commands
 * `bp group create` -- Create a group.

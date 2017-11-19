@@ -100,6 +100,15 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	}
 
 	/**
+	 * Generate random text
+	 *
+	 * @since 1.1
+	 */
+	protected function generate_random_text() {
+		return 'Here is some random text';
+	}
+
+	/**
 	 * Get field ID.
 	 *
 	 * @since 1.5.0
