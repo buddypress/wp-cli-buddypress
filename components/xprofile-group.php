@@ -40,7 +40,7 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted.
 	 * ---
-	 * default: true.
+	 * Default: true.
 	 * ---
 	 *
 	 * [--porcelain]
@@ -93,7 +93,7 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields.
 	 * ---
-	 * default: All fields.
+	 * Default: All fields.
 	 * ---
 	 *
 	 * [--format=<format>]

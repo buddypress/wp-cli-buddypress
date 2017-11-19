@@ -37,7 +37,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--silent=<silent>]
 	 * : Silent signup creation.
 	 * ---
-	 * default: false
+	 * Default: false
 	 * ---
 	 *
 	 * [--porcelain]

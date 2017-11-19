@@ -36,7 +36,7 @@ class BPCLI_Group_Member extends BPCLI_Component {
 	 * [--role=<role>]
 	 * : Group member role (member, mod, admin).
 	 * ---
-	 * default: member
+	 * Default: member
 	 * ---
 	 *
 	 * [--porcelain]
