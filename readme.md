@@ -14,7 +14,7 @@ Please use and provide feedback!
 ## Setup
 
 * Install [wp-cli](https://wp-cli.org)
-* Install wp-cli-buddypress. Manuall installation is recommended, though Composer installation should work too. See https://github.com/wp-cli/wp-cli/wiki/Community-Packages for information.
+* Install wp-cli-buddypress. Manuall installation is recommended, though Composer installation should work too. See https://wp-cli.org/package-index/ for information.
 * Inside of a WP installation, type `wp bp`. You should see a list of available commands.
 
 ## Changelog
