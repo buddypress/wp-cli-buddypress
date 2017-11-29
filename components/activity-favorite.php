@@ -61,7 +61,6 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		// True if added.
 		if ( bp_activity_add_user_favorite( $activity_id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item added as a favorite for the user.' );
 		} else {
@@ -110,7 +109,6 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 
 		WP_CLI::confirm( 'Are you sure you want to remove this activity item?', $assoc_args );
 
-		// True if removed.
 		if ( bp_activity_remove_user_favorite( $activity_id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item removed as a favorite for the user.' );
 		} else {
