@@ -1,6 +1,8 @@
-# wp-cli-buddypress
+# buddypress/wp-cli-buddypress
 
 WP-CLI commands for use with BuddyPress.
+
+[![Build Status](https://travis-ci.org/buddypress/wp-cli-buddypress.svg?branch=master)](https://travis-ci.org/buddypress/wp-cli-buddypress)
 
 These commands may be in flux, as we work toward a potential merge into BuddyPress. See https://buddypress.trac.wordpress.org/ticket/7604.
 
