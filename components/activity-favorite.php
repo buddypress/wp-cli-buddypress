@@ -62,7 +62,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 		}
 
 		// True if added.
-		if ( $this->add_user_favorite( $activity_id, $user->ID ) ) {
+		if ( bp_activity_add_user_favorite( $activity_id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item added as a favorite for the user.' );
 		} else {
 			WP_CLI::error( 'Could not add the activity item.' );
@@ -111,7 +111,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 		WP_CLI::confirm( 'Are you sure you want to remove this activity item?', $assoc_args );
 
 		// True if removed.
-		if ( $this->remove_user_favorite( $activity_id, $user->ID ) ) {
+		if ( bp_activity_remove_user_favorite( $activity_id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item removed as a favorite for the user.' );
 		} else {
 			WP_CLI::error( 'Could not remove the activity item.' );
@@ -174,96 +174,6 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_items( $activities['activities'] );
-	}
-
-	/**
-	 * Add user favorite
-	 *
-	 * @todo Remove after https://buddypress.trac.wordpress.org/ticket/7623
-	 *
-	 * @return bool
-	 */
-	protected function add_user_favorite( $activity_id, $user_id ) {
-
-		$my_favs = bp_get_user_meta( $user_id, 'bp_favorite_activities', true );
-		if ( empty( $my_favs ) || ! is_array( $my_favs ) ) {
-			$my_favs = array();
-		}
-
-		// Bail if the user has already favorited this activity item.
-		if ( in_array( $activity_id, $my_favs, true ) ) {
-			return false;
-		}
-
-		// Add to user's favorites.
-		$my_favs[] = $activity_id;
-
-		// Update the total number of users who have favorited this activity.
-		$fav_count = bp_activity_get_meta( $activity_id, 'favorite_count' );
-		$fav_count = ! empty( $fav_count ) ? (int) $fav_count + 1 : 1;
-
-		// Update user meta.
-		bp_update_user_meta( $user_id, 'bp_favorite_activities', $my_favs );
-
-		// Update activity meta counts.
-		if ( bp_activity_update_meta( $activity_id, 'favorite_count', $fav_count ) ) {
-			// Success.
-			return true;
-
-		// Saving meta was unsuccessful for an unknown reason.
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Remove user favorite
-	 *
-	 * @todo Remove after https://buddypress.trac.wordpress.org/ticket/7623
-	 *
-	 * @return bool
-	 */
-	protected function remove_user_favorite( $activity_id, $user_id ) {
-
-		$my_favs = bp_get_user_meta( $user_id, 'bp_favorite_activities', true );
-		$my_favs = array_flip( (array) $my_favs );
-
-		// Bail if the user has not previously favorited the item.
-		if ( ! isset( $my_favs[ $activity_id ] ) ) {
-			return false;
-		}
-
-		// Remove the fav from the user's favs.
-		unset( $my_favs[ $activity_id ] );
-		$my_favs = array_unique( array_flip( $my_favs ) );
-
-		// Update the total number of users who have favorited this activity.
-		$fav_count = bp_activity_get_meta( $activity_id, 'favorite_count' );
-		if ( ! empty( $fav_count ) ) {
-
-			// Deduct from total favorites.
-			if ( bp_activity_update_meta( $activity_id, 'favorite_count', (int) $fav_count - 1 ) ) {
-
-				// Update users favorites.
-				if ( bp_update_user_meta( $user_id, 'bp_favorite_activities', $my_favs ) ) {
-
-					// Success.
-					return true;
-
-				// Error updating.
-				} else {
-					return false;
-				}
-
-			// Error updating favorite count.
-			} else {
-				return false;
-			}
-
-		// Error getting favorite count.
-		} else {
-			return false;
-		}
 	}
 }
 
