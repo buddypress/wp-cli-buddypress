@@ -332,19 +332,19 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		$activity = $activity['activities'][0];
 
-		if ( is_object( $activity ) ) {
-			$activity_arr = get_object_vars( $activity );
-			$activity_arr['url'] = bp_activity_get_permalink( $activity_id );
-
-			if ( empty( $assoc_args['fields'] ) ) {
-				$assoc_args['fields'] = array_keys( $activity_arr );
-			}
-
-			$formatter = $this->get_formatter( $assoc_args );
-			$formatter->display_item( $activity_arr );
-		} else {
+		if ( ! is_object( $activity ) ) {
 			WP_CLI::error( 'Could not find the activity.' );
 		}
+
+		$activity_arr = get_object_vars( $activity );
+		$activity_arr['url'] = bp_activity_get_permalink( $activity_id );
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $activity_arr );
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $activity_arr );
 	}
 
 	/**
@@ -497,14 +497,14 @@ class BPCLI_Activity extends BPCLI_Component {
 		) );
 
 		// Activity ID returned on success update.
-		if ( is_numeric( $id ) ) {
-			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-				WP_CLI::line( $id );
-			} else {
-				WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
-			}
-		} else {
+		if ( ! is_numeric( $id ) ) {
 			WP_CLI::error( 'Could not post the activity update.' );
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
+		} else {
+			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
 		}
 	}
 
@@ -559,14 +559,14 @@ class BPCLI_Activity extends BPCLI_Component {
 		) );
 
 		// Activity Comment ID returned on success.
-		if ( is_numeric( $id ) ) {
-			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-				WP_CLI::line( $id );
-			} else {
-				WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
-			}
-		} else {
+		if ( ! is_numeric( $id ) ) {
 			WP_CLI::error( 'Could not post a new activity comment.' );
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $id );
+		} else {
+			WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
 		}
 	}
 
