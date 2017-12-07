@@ -399,6 +399,12 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+
+		// If count or ids, no need for group objects.
+		if ( is_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
+			$query_args['fields'] = 'ids';
+		}
+
 		$groups = groups_get_groups( $query_args );
 
 		if ( empty( $groups['groups'] ) ) {
@@ -406,7 +412,7 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $groups['groups'], 'id' ) ); // WPCS: XSS ok.
+			echo implode( ' ', $groups['groups'] ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
 			$formatter->display_items( $groups['total'] );
 		} else {
