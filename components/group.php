@@ -401,7 +401,7 @@ class BPCLI_Group extends BPCLI_Component {
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
 
 		// If count or ids, no need for group objects.
-		if ( is_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
+		if ( in_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
 			$query_args['fields'] = 'ids';
 		}
 
