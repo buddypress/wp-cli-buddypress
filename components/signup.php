@@ -260,9 +260,14 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		// Send email.
-		BP_Signup::resend( array( $signup->signup_id ) );
+		$send = BP_Signup::resend( array( $signup->signup_id ) );
 
-		WP_CLI::success( 'Email sent successfully.' );
+		// Add feedback message.
+		if ( ! empty( $send['errors'] ) ) {
+			WP_CLI::error( 'this account is already activated.' );
+		} else {
+			WP_CLI::success( 'Email sent successfully.' );
+		}
 	}
 
 	/**
