@@ -296,6 +296,10 @@ class BPCLI_Signup extends BPCLI_Component {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$signups    = BP_Signup::get( $assoc_args );
 
+		if ( empty( $signups['signups'] ) ) {
+			WP_CLI::error( 'No signups found.' );
+		}
+
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
