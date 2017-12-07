@@ -33,16 +33,16 @@ class BPCLI_Tool extends BPCLI_Component {
 	public function repair( $args, $assoc_args ) {
 		$repair = 'bp_admin_repair_' . $this->sanitize_string( $args[0] );
 
-		if ( function_exists( $repair ) ) {
-			$result = $repair();
-
-			if ( 0 === $result[0] ) {
-				WP_CLI::success( $result[1] );
-			} else {
-				WP_CLI::error( $result[1] );
-			}
-		} else {
+		if ( ! function_exists( $repair ) ) {
 			WP_CLI::error( 'There is no repair tool with that name.' );
+		}
+
+		$result = $repair();
+
+		if ( 0 === $result[0] ) {
+			WP_CLI::success( $result[1] );
+		} else {
+			WP_CLI::error( $result[1] );
 		}
 	}
 

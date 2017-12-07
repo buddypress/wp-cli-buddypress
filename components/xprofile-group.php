@@ -122,18 +122,18 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 
 		$object = xprofile_get_field_group( $field_group_id );
 
-		if ( is_object( $object ) && ! empty( $object->id ) ) {
-			$object_arr = get_object_vars( $object );
-
-			if ( empty( $assoc_args['fields'] ) ) {
-				$assoc_args['fields'] = array_keys( $object_arr );
-			}
-
-			$formatter = $this->get_formatter( $assoc_args );
-			$formatter->display_item( $object_arr );
-		} else {
+		if ( ! is_object( $object ) && empty( $object->id ) ) {
 			WP_CLI::error( 'No XProfile field group found.' );
 		}
+
+		$object_arr = get_object_vars( $object );
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $object_arr );
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $object_arr );
 	}
 
 	/**
