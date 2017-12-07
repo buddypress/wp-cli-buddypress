@@ -264,7 +264,7 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		// Add feedback message.
 		if ( ! empty( $send['errors'] ) ) {
-			WP_CLI::error( 'this account is already activated.' );
+			WP_CLI::error( 'This account is already activated.' );
 		} else {
 			WP_CLI::success( 'Email sent successfully.' );
 		}
