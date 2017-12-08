@@ -280,6 +280,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			$this->create( array(), array(
 				'component' => $component,
 				'type'      => $type,
+				'content'   => $this->generate_random_text(),
 				'silent'    => true,
 			) );
 
