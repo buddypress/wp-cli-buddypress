@@ -255,7 +255,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * default: 100
 	 * ---
 	 *
-	 * [--skip-activity-comments=<skip-activity-comments>
+	 * [--skip-activity-comments=<skip-activity-comments>]
 	 * : Whether to skip activity comments. Recording activity_comment
 	 * items requires a resource-intensive tree rebuild.
 	 * ---
