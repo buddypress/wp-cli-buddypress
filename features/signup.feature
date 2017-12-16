@@ -18,9 +18,6 @@ Feature: Manage BuddyPress Signups
       Success: Signup deleted.
       """
 
-    When I run `wp bp signup list --format=ids`
-    Then the return code should be 1
-
   Scenario: Signup fetching by identifier
     Given a BP install
 
