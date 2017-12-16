@@ -172,6 +172,12 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass to BP_Activity_Activity::get()
 	 *
+	 * [--user-id=<user>]
+	 * : Limit activities to a specific user id. Accepts a numeric ID.
+	 *
+	 * [--component=<component>]
+	 * : Limit activities to a specific or certain components.
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 *  ---
@@ -223,7 +229,21 @@ class BPCLI_Activity extends BPCLI_Component {
 			'per_page'    => -1,
 			'count_total' => false,
 			'show_hidden' => true,
+			'filter'      => false,
 		) );
+
+		if ( isset( $assoc_args['component'] ) ) {
+			$r['filter']['object'] = $assoc_args['component'];
+		}
+
+		if ( isset( $assoc_args['user-id'] ) ) {
+			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			if ( ! $user ) {
+				WP_CLI::error( 'No user found by that username or ID.' );
+			}
+
+			$r['filter']['user_id'] = $assoc_args['user-id'];
+		}
 
 		$r = self::process_csv_arguments_to_arrays( $r );
 
@@ -259,7 +279,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : Whether to skip activity comments. Recording activity_comment
 	 * items requires a resource-intensive tree rebuild.
 	 * ---
-	 * Default: 1
+	 * default: 1
 	 * ---
 	 *
 	 * ## EXAMPLE
