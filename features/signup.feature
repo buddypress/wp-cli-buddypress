@@ -21,7 +21,7 @@ Feature: Manage BuddyPress Signups
     When I run `wp bp signup list --format=ids`
     Then STDOUT should not contain:
       """
-      Error: No signups found.
+      error
       """
 
   Scenario: Signup fetching by identifier
