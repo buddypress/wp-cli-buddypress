@@ -173,7 +173,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : One or more parameters to pass to BP_Activity_Activity::get()
 	 *
 	 * [--user-id=<user>]
-	 * : Limit activities to a specific user id. Accepts a numeric ID.
+	 * : Limit activities to a specific user id. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--component=<component>]
 	 * : Limit activities to a specific or certain components.
@@ -218,6 +218,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *     $ wp bp activity list --format=count
 	 *     $ wp bp activity list --per_page=5
 	 *     $ wp bp activity list --search_terms="Activity Comment"
+	 *     $ wp bp activity list --user-id=10
+	 *     $ wp bp activity list --user-id=123 --component=groups
 	 *
 	 * @subcommand list
 	 */
@@ -242,7 +244,7 @@ class BPCLI_Activity extends BPCLI_Component {
 				WP_CLI::error( 'No user found by that username or ID.' );
 			}
 
-			$r['filter']['user_id'] = $assoc_args['user-id'];
+			$r['filter']['user_id'] = $user->ID;
 		}
 
 		$r = self::process_csv_arguments_to_arrays( $r );
