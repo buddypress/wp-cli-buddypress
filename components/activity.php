@@ -173,10 +173,19 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * : One or more parameters to pass to BP_Activity_Activity::get()
 	 *
 	 * [--user-id=<user>]
-	 * : Limit activities to a specific user id. Accepts either a user_login or a numeric ID.
+	 * : Limit activities to a specific user id. Accepts a numeric ID.
 	 *
 	 * [--component=<component>]
 	 * : Limit activities to a specific or certain components.
+	 *
+	 * [--type=<type>]
+	 * : Type of the activity. Ex.: activity_update, profile_updated.
+	 *
+	 * [--primary-id=<primary-id>]
+	 * : Object ID to filter the activities. Ex.: group_id or forum_id or blog_id, etc.
+	 *
+	 * [--secondary-id=<secondary-id>]
+	 * : Secondary object ID to filter the activities. Ex.: a post_id.
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -234,17 +243,24 @@ class BPCLI_Activity extends BPCLI_Component {
 			'filter'      => false,
 		) );
 
+		if ( isset( $assoc_args['user-id'] ) && is_numeric( $assoc_args['user-id'] ) ) {
+			$r['filter']['user_id'] = $assoc_args['user-id'];
+		}
+
 		if ( isset( $assoc_args['component'] ) ) {
 			$r['filter']['object'] = $assoc_args['component'];
 		}
 
-		if ( isset( $assoc_args['user-id'] ) ) {
-			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-			if ( ! $user ) {
-				WP_CLI::error( 'No user found by that username or ID.' );
-			}
+		if ( isset( $assoc_args['type'] ) ) {
+			$r['filter']['action'] = $assoc_args['type'];
+		}
 
-			$r['filter']['user_id'] = $user->ID;
+		if ( isset( $assoc_args['primary-id'] ) ) {
+			$r['filter']['primary_id'] = $assoc_args['primary-id'];
+		}
+
+		if ( isset( $assoc_args['secondary-id'] ) ) {
+			$r['filter']['secondary_id'] = $assoc_args['secondary-id'];
 		}
 
 		$r = self::process_csv_arguments_to_arrays( $r );
