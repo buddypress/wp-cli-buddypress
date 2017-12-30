@@ -74,7 +74,7 @@ class BPCLI_Message extends BPCLI_Component {
 
 		$msg_id = messages_new_message( array(
 			'sender_id'  => $r['from'],
-			'recipients' => $r['to']
+			'recipients' => $r['to'],
 			'subject'    => $r['subject'],
 			'content'    => $r['content'],
 			'thread_id'  => $r['thread-id'],
