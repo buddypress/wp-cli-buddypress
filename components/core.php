@@ -85,6 +85,52 @@ class BPCLI_Core extends BPCLI_Component {
 
 		WP_CLI::success( sprintf( 'The %s component has been deactivated.', ucfirst( $c ) ) );
 	}
+
+	/**
+	 * Get a list of components.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--type=<type>]
+	 * : Type of the component (all, optional, retired, required).
+	 * ---
+	 * default: all
+	 * ---
+	 *
+	 * [--status=<status>]
+	 * : Status of the component (all, active, inactive).
+	 * ---
+	 * default: all
+	 * ---
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - count
+	 *   - csv
+	 * ---
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp core list --format=count
+	 *     10
+	 *
+	 * @subcommand list
+	 */
+	public function _list( $args, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$components = bp_core_get_components( $assoc_args['type'] );
+
+		if ( 'count' === $formatter->format ) {
+			WP_CLI::line( $components );
+		} else {
+			$formatter->display_items( $components );
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp core', 'BPCLI_Core' );

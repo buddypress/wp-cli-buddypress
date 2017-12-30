@@ -3,6 +3,12 @@ Feature: Manage BuddyPress Components
   Scenario: Component activation and deactivation
     Given a BP install
 
+    When I run `wp bp core list --format=count`
+    Then STDOUT should be:
+      """
+      10
+      """
+
     When I run `wp bp core deactivate groups`
     Then STDOUT should contain:
       """
