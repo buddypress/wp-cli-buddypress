@@ -19,4 +19,5 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/components/xprofile-field.php' );
 	require_once( __DIR__ . '/components/xprofile-data.php' );
 	require_once( __DIR__ . '/components/tool.php' );
+	require_once( __DIR__ . '/components/message.php' );
 } );

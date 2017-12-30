@@ -1,0 +1,309 @@
+<?php
+/**
+ * Manage BuddyPress Messages.
+ *
+ * @since 1.6.0
+ */
+class BPCLI_Message extends BPCLI_Component {
+
+	/**
+	 * Add a message.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--user-id=<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 * ---
+	 * default: random user id.
+	 * ---
+	 *
+	 * [--subject=<subject>]
+	 * : Message subject.
+	 *
+	 * [--content=<content>]
+	 * : Message content.
+	 * ---
+	 * default: Random content.
+	 * ---
+	 *
+	 * [--thread-id=<thread-id>]
+	 * : Thread ID.
+	 * ---
+	 * default: false
+	 * ---
+	 *
+	 * [--recipient=<recipient>]
+	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--date-sent=<date-sent>]
+	 * : MySQL-formatted date.
+	 * ---
+	 * default: current date.
+	 * ---
+	 *
+	 * [--silent=<silent>]
+	 * : Whether to silent the message creation.
+	 * ---
+	 * default: false.
+	 * ---
+	 *
+	 * [--porcelain]
+	 * : Return only the new message id.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message create --user-id=user_login --subject=Message Title --content="We are ready"
+	 *     Success: Message (ID 35) successfully created.
+	 *
+	 * @alias add
+	 */
+	public function create( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'user-id'    => $this->get_random_user_id(),
+			'subject'    => '',
+			'content'    => $this->generate_random_text(),
+			'recipients' => array(),
+			'thread-id'  => false,
+			'date-sent'  => bp_core_current_time(),
+			'silent'     => false,
+		) );
+
+		if ( empty( $r['subject'] ) ) {
+			$r['subject'] = sprintf( 'Message Subject' );
+		}
+
+		$msg_id = messages_new_message( array(
+			'sender_id'  => $r['user-id'],
+			'subject'    => $r['subject'],
+			'content'    => $r['content'],
+			'recipients' => $r['recipients']
+			'thread_id'  => $r['thread-id'],
+			'date_sent'  => $r['date-sent'],
+		) );
+
+		if ( ! is_numeric( $msg_id ) ) {
+			WP_CLI::error( 'Could not add message.' );
+		}
+
+		if ( $r['silent'] ) {
+			return;
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( $msg_id );
+		} else {
+			WP_CLI::success( sprintf( 'Message (ID %d) successfully created.', $msg_id ) );
+		}
+	}
+
+	/**
+	 * Delete message thread(s) for a given user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <thread-id>...
+	 * : Thread ID(s).
+	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp message delete 500 687867--user-id=40
+	 *     Success: Thread(s) successfully deleted.
+	 *
+	 *     $ wp bp message delete 564 5465465 456456 --user-id=user_logon --yes
+	 *     Success: Thread(s) successfully deleted.
+	 */
+	public function delete( $args, $assoc_args ) {
+		$thread_id = $args[0];
+
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$user_id = $user->ID;
+
+		WP_CLI::confirm( 'Are you sure you want to delete thread(s) ?', $assoc_args );
+
+		parent::_delete( array( $thread_id ), $assoc_args, function( $thread_id ) {
+
+			// Bail if the user has no access to the thread.
+			$msg_id = messages_check_thread_access( $thread_id, $user_id )
+			if ( ! is_numeric( $msg_id ) ) {
+				WP_CLI::error( 'This user has no access to this thread.' );
+			}
+
+			if ( messages_delete_thread( $thread_id, $user_id ) ) {
+				return array( 'success', 'Thread(s) successfully deleted.' );
+			} else {
+				return array( 'error', 'Could not delete the thread(s).' );
+			}
+		} );
+
+	}
+
+	/**
+	 * Generate random messages.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--thread-id=<thread-id>]
+	 * : Thread ID to generate messages against.
+	 * ---
+	 * default: false
+	 * ---
+	 *
+	 * [--count=<number>]
+	 * : How many messages to generate.
+	 * ---
+	 * default: 20
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp message generate --thread-id=6465 --count=10
+	 *     $ wp bp message generate --count=100
+	 */
+	public function generate( $args, $assoc_args ) {
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating messages', $assoc_args['count'] );
+
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
+			$this->create( array(), array(
+				'user-id'   => $this->get_random_user_id(),
+				'subject'    => sprintf( 'Message Subject - #%d', $i ),
+				'content'    => $this->generate_random_text(),
+				'thread-id'  => $assoc_args['thread-id'],
+				'recipients' => array( $this->get_random_user_id() ),
+				'silent'     => true,
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
+	}
+
+	/**
+	 * Star a message.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --message-id=<message-id>
+	 * : Message ID to star.
+	 *
+	 * --user-id=<user>
+	 * : User that is starring the message. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message star --message-id=3543 --user-id=user_login
+	 *     Success: Message was successfully starred.
+	 */
+	public function star( $args, $assoc_args ) {
+
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$args = array(
+			'action'     => 'star',
+			'message_id' => (int) $assoc_args['message-id'],
+			'user_id'    => $user->ID,
+		)
+
+		if ( bp_messages_star_set_action( $args ) ) {
+			WP_CLI::success( 'Message was successfully starred.' );
+		} else {
+			WP_CLI::error( 'Message was not starred.' );
+		}
+	}
+
+	/**
+	 * Unstar a thread.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --thread-id=<thread-id>
+	 * : Thread ID to unstar.
+	 *
+	 * --user-id=<user>
+	 * : User that is unstarring the thread. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message unstar --thread-id=212 --user-id=another_user_login
+	 *     Success: Message was successfully unstarred.
+	 */
+	public function unstar( $args, $assoc_args ) {
+
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$args = array(
+			'action'    => 'unstar',
+			'thread_id' => (int) $assoc_args['thread-id'],
+			'user_id'   => $user->ID,
+			'bulk'      => true
+		)
+
+		if ( bp_messages_star_set_action( $args ) ) {
+			WP_CLI::success( 'Message was successfully unstarred.' );
+		} else {
+			WP_CLI::error( 'Message was not unstarred.' );
+		}
+	}
+
+	/**
+	 * Send a notice.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--subject=<subject>]
+	 * : Subject of the notice/message.
+	 *
+	 * [--content=<content>]
+	 * : Content of the message.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message send --subject="Important notice" --content="We need to improve"
+	 *     Success: Notice was successfully sent.
+	 *
+	 * @alias send_notice
+	 */
+	public function send( $args, $assoc_args ) {
+		if ( empty( $assoc_args['subject'] ) ) {
+			$assoc_args['subject'] = sprintf( 'Randon Notice Subject' );
+		}
+
+		if ( empty( $assoc_args['content'] ) ) {
+			$assoc_args['content'] = $this->generate_random_text();
+		}
+
+		if ( messages_send_notice( $assoc_args['subject'], $assoc_args['content'] ) ) {
+			WP_CLI::success( 'Notice was successfully sent.' );
+		} else {
+			WP_CLI::error( 'Notice was not sent.' );
+		}
+	}
+}
+
+WP_CLI::add_command( 'bp message', 'BPCLI_Message', array(
+	'before_invoke' => function() {
+		if ( ! bp_is_active( 'messages' ) ) {
+			WP_CLI::error( 'The Message component is not active.' );
+		}
+	},
+) );
+
