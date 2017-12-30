@@ -134,7 +134,7 @@ class BPCLI_Message extends BPCLI_Component {
 		parent::_delete( array( $thread_id ), $assoc_args, function( $thread_id ) {
 
 			// Bail if the user has no access to the thread.
-			$msg_id = messages_check_thread_access( $thread_id, $user_id )
+			$msg_id = messages_check_thread_access( $thread_id, $user_id );
 			if ( ! is_numeric( $msg_id ) ) {
 				WP_CLI::error( 'This user has no access to this thread.' );
 			}
@@ -224,7 +224,7 @@ class BPCLI_Message extends BPCLI_Component {
 			'action'     => 'star',
 			'message_id' => $msg_id,
 			'user_id'    => $user_id,
-		)
+		);
 
 		if ( bp_messages_star_set_action( $args ) ) {
 			WP_CLI::success( 'Message was successfully starred.' );
@@ -261,8 +261,8 @@ class BPCLI_Message extends BPCLI_Component {
 			'action'    => 'unstar',
 			'thread_id' => (int) $assoc_args['thread-id'],
 			'user_id'   => $user->ID,
-			'bulk'      => true
-		)
+			'bulk'      => true,
+		);
 
 		if ( bp_messages_star_set_action( $args ) ) {
 			WP_CLI::success( 'Message was successfully unstarred.' );
