@@ -11,17 +11,17 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--user-id=<user>]
+	 * [--from=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 * ---
-	 * default: random user id.
+	 * default: Random user.
 	 * ---
 	 *
 	 * [--subject=<subject>]
-	 * : Message subject.
+	 * : Subject of the message.
 	 *
 	 * [--content=<content>]
-	 * : Message content.
+	 * : Content of the message.
 	 * ---
 	 * default: Random content.
 	 * ---
@@ -32,7 +32,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * default: false
 	 * ---
 	 *
-	 * [--recipient=<recipient>]
+	 * [--to=<user>]
 	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--date-sent=<date-sent>]
@@ -59,13 +59,13 @@ class BPCLI_Message extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'user-id'    => $this->get_random_user_id(),
-			'subject'    => '',
-			'content'    => $this->generate_random_text(),
-			'recipients' => array(),
-			'thread-id'  => false,
-			'date-sent'  => bp_core_current_time(),
-			'silent'     => false,
+			'from'      => $this->get_random_user_id(),
+			'to'        => array(),
+			'subject'   => '',
+			'content'   => $this->generate_random_text(),
+			'thread-id' => false,
+			'date-sent' => bp_core_current_time(),
+			'silent'    => false,
 		) );
 
 		if ( empty( $r['subject'] ) ) {
@@ -73,10 +73,10 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		$msg_id = messages_new_message( array(
-			'sender_id'  => $r['user-id'],
+			'sender_id'  => $r['from'],
+			'recipients' => $r['to']
 			'subject'    => $r['subject'],
 			'content'    => $r['content'],
-			'recipients' => $r['recipients']
 			'thread_id'  => $r['thread-id'],
 			'date_sent'  => $r['date-sent'],
 		) );
@@ -112,7 +112,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp message delete 500 687867--user-id=40
+	 *     $ wp bp message delete 500 687867 --user-id=40
 	 *     Success: Thread(s) successfully deleted.
 	 *
 	 *     $ wp bp message delete 564 5465465 456456 --user-id=user_logon --yes
@@ -175,12 +175,12 @@ class BPCLI_Message extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
-				'user-id'   => $this->get_random_user_id(),
-				'subject'    => sprintf( 'Message Subject - #%d', $i ),
-				'content'    => $this->generate_random_text(),
-				'thread-id'  => $assoc_args['thread-id'],
-				'recipients' => array( $this->get_random_user_id() ),
-				'silent'     => true,
+				'from'      => $this->get_random_user_id(),
+				'subject'   => sprintf( 'Message Subject - #%d', $i ),
+				'content'   => $this->generate_random_text(),
+				'thread-id' => $assoc_args['thread-id'],
+				'to'        => $this->get_random_user_id(),
+				'silent'    => true,
 			) );
 
 			$notify->tick();
@@ -213,10 +213,17 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
+		$msg_id  = (int) $assoc_args['message-id'];
+		$user_id = $user->ID;
+
+		if ( bp_messages_is_message_starred( $msg_id, $user_id ) ) {
+			WP_CLI::error( 'The message is already starred.' );
+		}
+
 		$args = array(
 			'action'     => 'star',
-			'message_id' => (int) $assoc_args['message-id'],
-			'user_id'    => $user->ID,
+			'message_id' => $msg_id,
+			'user_id'    => $user_id,
 		)
 
 		if ( bp_messages_star_set_action( $args ) ) {
