@@ -159,7 +159,7 @@ class BPCLI_Core extends BPCLI_Component {
 		}
 
 		if ( 'count' === $formatter->format ) {
-			WP_CLI::line( $current_components );
+			$formatter->display_items( $current_components )
 		} else {
 			$formatter->display_items( $current_components );
 		}
