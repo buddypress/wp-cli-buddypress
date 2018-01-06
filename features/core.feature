@@ -9,6 +9,12 @@ Feature: Manage BuddyPress Components
       10
       """
 
+    When I run `wp bp core list --type=required --format=count`
+    Then STDOUT should be:
+      """
+      2
+      """
+
     When I run `wp bp core deactivate groups`
     Then STDOUT should contain:
       """

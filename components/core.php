@@ -113,23 +113,78 @@ class BPCLI_Core extends BPCLI_Component {
 	 *   - csv
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp core list --format=count
 	 *     10
+	 *
+	 *     $ wp bp core list --status=inactive
+	 *     4
 	 *
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
 
-		$components = bp_core_get_components( $assoc_args['type'] );
+		// Sanitize type.
+		$type = $assoc_args['type'];
+		if ( empty( $type ) || ! in_array( $type, $this->component_types(), true ) ) {
+			$type = 'all';
+		}
+
+		// Sanitize status.
+		$status = $assoc_args['status'];
+		if ( empty( $status ) || ! in_array( $status, $this->component_status(), true ) ) {
+			$status = 'all';
+		}
+
+		$components          = bp_core_get_components( $type );
+		$active_components   = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components' ) );
+		$inactive_components = array_diff( array_keys( $components ) , array_keys( $active_components ) );
+
+		switch ( $status ) {
+			case 'all':
+				$current_components = $components;
+				break;
+			case 'active':
+				foreach ( array_keys( $active_components ) as $c ) {
+					$current_components[ $c ] = $components[ $c ];
+				}
+				break;
+			case 'inactive':
+				foreach ( $inactive_components as $c ) {
+					$current_components[ $c ] = $components[ $c ];
+				}
+				break;
+		}
 
 		if ( 'count' === $formatter->format ) {
-			WP_CLI::line( $components );
+			WP_CLI::line( $current_components );
 		} else {
-			$formatter->display_items( $components );
+			$formatter->display_items( $current_components );
 		}
+	}
+
+	/**
+	 * Component Types.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return array An array of component types.
+	 */
+	protected function component_types() {
+		return array( 'all', 'optional', 'retired', 'required' );
+	}
+
+	/**
+	 * Component Status.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return array An array of component status.
+	 */
+	protected function component_status() {
+		return array( 'all', 'active', 'inactive' );
 	}
 }
 
