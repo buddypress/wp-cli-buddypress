@@ -7,6 +7,17 @@
 class BPCLI_Core extends BPCLI_Component {
 
 	/**
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'name',
+		'title',
+		'description',
+	);
+
+	/**
 	 * Activate a component.
 	 *
 	 * ## OPTIONS
@@ -72,7 +83,7 @@ class BPCLI_Core extends BPCLI_Component {
 		}
 
 		if ( array_key_exists( $c, bp_core_get_components( 'required' ) ) ) {
-			WP_CLI::error( sprintf( 'You cannot deactivate a required component.' ) );
+			WP_CLI::error( 'You cannot deactivate a required component.' );
 		}
 
 		$acs =& buddypress()->active_components;
@@ -158,6 +169,11 @@ class BPCLI_Core extends BPCLI_Component {
 				break;
 		}
 
+		// Bail early.
+		if ( empty( $current_components ) ) {
+			WP_CLI::error( 'There is not component available.' );
+		}
+
 		if ( 'count' === $formatter->format ) {
 			$formatter->display_items( $current_components );
 		} else {
@@ -170,7 +186,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 *
 	 * @since 1.6.0
 	 *
-	 * @return array An array of component types.
+	 * @return array An array of valid component types.
 	 */
 	protected function component_types() {
 		return array( 'all', 'optional', 'retired', 'required' );
@@ -181,7 +197,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 *
 	 * @since 1.6.0
 	 *
-	 * @return array An array of component status.
+	 * @return array An array of valid component status.
 	 */
 	protected function component_status() {
 		return array( 'all', 'active', 'inactive' );
