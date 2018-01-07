@@ -60,17 +60,13 @@ class BPCLI_Message extends BPCLI_Component {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'from'      => $this->get_random_user_id(),
-			'to'        => array(),
-			'subject'   => '',
+			'to'        => $this->get_random_user_id(),
+			'subject'   => sprintf( 'Message Subject' ),
 			'content'   => $this->generate_random_text(),
 			'thread-id' => false,
 			'date-sent' => bp_core_current_time(),
 			'silent'    => false,
 		) );
-
-		if ( empty( $r['subject'] ) ) {
-			$r['subject'] = sprintf( 'Message Subject' );
-		}
 
 		$msg_id = messages_new_message( array(
 			'sender_id'  => $r['from'],
@@ -122,11 +118,9 @@ class BPCLI_Message extends BPCLI_Component {
 		$thread_id = $args[0];
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
-
 		$user_id = $user->ID;
 
 		WP_CLI::confirm( 'Are you sure you want to delete thread(s) ?', $assoc_args );
@@ -175,11 +169,8 @@ class BPCLI_Message extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
-				'from'      => $this->get_random_user_id(),
 				'subject'   => sprintf( 'Message Subject - #%d', $i ),
-				'content'   => $this->generate_random_text(),
 				'thread-id' => $assoc_args['thread-id'],
-				'to'        => $this->get_random_user_id(),
 				'silent'    => true,
 			) );
 
@@ -206,15 +197,13 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     Success: Message was successfully starred.
 	 */
 	public function star( $args, $assoc_args ) {
-
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$msg_id  = (int) $assoc_args['message-id'];
 		$user_id = $user->ID;
+		$msg_id  = (int) $assoc_args['message-id'];
 
 		if ( bp_messages_is_message_starred( $msg_id, $user_id ) ) {
 			WP_CLI::error( 'The message is already starred.' );
@@ -250,9 +239,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     Success: Message was successfully unstarred.
 	 */
 	public function unstar( $args, $assoc_args ) {
-
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
@@ -291,7 +278,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 */
 	public function send( $args, $assoc_args ) {
 		if ( empty( $assoc_args['subject'] ) ) {
-			$assoc_args['subject'] = sprintf( 'Randon Notice Subject' );
+			$assoc_args['subject'] = sprintf( 'Random Notice Subject' );
 		}
 
 		if ( empty( $assoc_args['content'] ) ) {
