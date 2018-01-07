@@ -278,10 +278,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See BP_Signup::get()
 	 *
-	 * [--<count>=<count>]
+	 * [--<number>=<number>]
 	 * : How many signups to list.
 	 * ---
-	 * default: 500
+	 * default: 20
 	 * ---
 	 *
 	 * [--format=<format>]
@@ -307,7 +307,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		$formatter  = $this->get_formatter( $assoc_args );
 
 		$assoc_args = wp_parse_args( $assoc_args, array(
-			'number' => 500,
+			'number' => 20,
 		) );
 
 		$signups = BP_Signup::get( $assoc_args );
