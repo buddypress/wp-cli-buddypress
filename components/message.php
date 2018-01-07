@@ -83,7 +83,7 @@ class BPCLI_Message extends BPCLI_Component {
 			'date_sent'  => $r['date-sent'],
 		) );
 
-		if ( ! is_numeric( $msg_id ) ) {
+		if ( false === is_int( $msg_id ) ) {
 			WP_CLI::error( 'Could not add message.' );
 		}
 
