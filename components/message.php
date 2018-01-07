@@ -139,7 +139,129 @@ class BPCLI_Message extends BPCLI_Component {
 				return array( 'error', 'Could not delete the thread(s).' );
 			}
 		} );
+	}
 
+	/**
+	 * Get a message.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <message-id>
+	 * : Identifier for the message.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to all fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 *   - haml
+	 * ---
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message get 5465
+	 *
+	 * @alias see
+	 */
+	public function get( $args, $assoc_args ) {
+		$message_id  = $args[0];
+		$message     = new BP_Messages_Message( $message_id );
+		$message_arr = get_object_vars( $message );
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $message_arr );
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $message_arr );
+	}
+
+	/**
+	 * Get a list of messages.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass. See BP_Messages_Box_Template
+	 *
+	 * [--<count>=<count>]
+	 * : How many messages to list.
+	 * ---
+	 * default: 10
+	 * ---
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - ids
+	 *   - count
+	 *   - csv
+	 *   - json
+	 *   - haml
+	 * ---
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message list --count=12 --format=count
+	 *     10
+	 *
+	 * @subcommand list
+	 */
+	public function _list( $_, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$r = wp_parse_args( $assoc_args, array(
+			'user-id'      => '',
+			'box'          => 'sentbox',
+			'type'         => 'all',
+			'search'       => '',
+			'count'        => 10,
+		) );
+
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+		if ( empty( $r['user-id'] ) || ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$type = $r['type'];
+		if ( ! in_array( $r['type'], $this->message_types(), true ) ) {
+			$type = 'all';
+		}
+
+		$box = $r['box'];
+		if ( ! in_array( $r['box'], $this->message_boxes(), true ) ) {
+			$box = 'sentbox';
+		}
+
+		$inbox = new BP_Messages_Box_Template( array(
+			'user_id'      => $user->ID,
+			'box'          => $box,
+			'type'         => $type,
+			'max'          => $r['count'],
+			'search_terms' => $r['search'],
+		) );
+
+		if ( ! $inbox->has_threads() ) {
+			WP_CLI::error( 'No messages found.' );
+		}
+
+		$messages = $inbox->threads->messages;
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', wp_list_pluck( $messages, 'id' ) ); // WPCS: XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $messages );
+		} else {
+			$formatter->display_items( $messages );
+		}
 	}
 
 	/**
@@ -290,6 +412,28 @@ class BPCLI_Message extends BPCLI_Component {
 		} else {
 			WP_CLI::error( 'Notice was not sent.' );
 		}
+	}
+
+	/**
+	 * Message Types.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return array An array of message types.
+	 */
+	protected function message_types() {
+		return array( 'all', 'read', 'unread' );
+	}
+
+	/**
+	 * Message Boxes.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return array An array of message boxes.
+	 */
+	protected function message_boxes() {
+		return array( 'notices', 'sentbox', 'inbox' );
 	}
 }
 
