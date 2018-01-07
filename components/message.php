@@ -17,8 +17,17 @@ class BPCLI_Message extends BPCLI_Component {
 	 * default: Random user.
 	 * ---
 	 *
+	 * [--to=<user>]
+	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
+	 * ---
+	 * default: Random user.
+	 * ---
+	 *
 	 * [--subject=<subject>]
 	 * : Subject of the message.
+	 * ---
+	 * default: Message Subject.
+	 * ---
 	 *
 	 * [--content=<content>]
 	 * : Content of the message.
@@ -31,9 +40,6 @@ class BPCLI_Message extends BPCLI_Component {
 	 * ---
 	 * default: false
 	 * ---
-	 *
-	 * [--to=<user>]
-	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--date-sent=<date-sent>]
 	 * : MySQL-formatted date.
@@ -52,7 +58,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp message create --user-id=user_login --subject=Message Title --content="We are ready"
+	 *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
 	 *     Success: Message (ID 35) successfully created.
 	 *
 	 * @alias add
@@ -188,6 +194,9 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See BP_Messages_Box_Template
+	 *
+	 * [--fields=<fields>]
+	 * : Fields to display.
 	 *
 	 * [--<count>=<count>]
 	 * : How many messages to list.
