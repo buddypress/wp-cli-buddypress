@@ -11,7 +11,7 @@ Feature: Manage BuddyPress Messages
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID_2}
 
-    When I run `wp bp message add --from={MEMBER_ID} --to={MEMBER_ID_2} --subject="Message Title" --content="Test" --porcelain`
+    When I run `wp bp message create --from={MEMBER_ID} --to={MEMBER_ID_2} --subject="Message Title" --content="Test" --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {THREAD_ID}
 
