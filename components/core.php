@@ -174,10 +174,12 @@ class BPCLI_Core extends BPCLI_Component {
 			WP_CLI::error( 'There is not component available.' );
 		}
 
+		$object_arr = get_object_vars( $current_components );
+
 		if ( 'count' === $formatter->format ) {
 			$formatter->display_items( $current_components );
 		} else {
-			$formatter->display_items( $current_components );
+			$formatter->display_items( $object_arr );
 		}
 	}
 
