@@ -308,7 +308,12 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		$assoc_args = wp_parse_args( $assoc_args, array(
 			'number' => 500,
+			'fields' => 'all',
 		) );
+
+		if ( 'ids' === $formatter->format ) {
+			$assoc_args['fields'] = 'ids';
+		}
 
 		$signups = BP_Signup::get( $assoc_args );
 
@@ -317,7 +322,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
+			echo implode( ' ', $signups['signups'] ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
 			WP_CLI::line( $signups['total'] );
 		} else {
