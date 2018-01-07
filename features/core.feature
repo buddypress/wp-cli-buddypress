@@ -1,6 +1,6 @@
-Feature: Manage BuddyPress Components
+Feature: Manage BuddyPress Components (Core)
 
-  Scenario: Component activation and deactivation
+  Scenario: Components (Core) CRUD Operations
     Given a BP install
 
     When I run `wp bp core list --format=count`

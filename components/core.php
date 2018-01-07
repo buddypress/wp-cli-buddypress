@@ -125,6 +125,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 *   - table
 	 *   - count
 	 *   - csv
+	 *   - haml
 	 * ---
 	 *
 	 * ## EXAMPLES
