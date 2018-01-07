@@ -12,7 +12,6 @@ class BPCLI_Core extends BPCLI_Component {
 	 * @var array
 	 */
 	protected $obj_fields = array(
-		'name',
 		'title',
 		'description',
 	);
@@ -135,7 +134,6 @@ class BPCLI_Core extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-		$formatter = $this->get_formatter( $assoc_args );
 
 		// Sanitize type.
 		$type = $assoc_args['type'];
@@ -151,7 +149,7 @@ class BPCLI_Core extends BPCLI_Component {
 
 		$components          = bp_core_get_components( $type );
 		$active_components   = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components' ) );
-		$inactive_components = array_diff( array_keys( $components ) , array_keys( $active_components ) );
+		$inactive_components = array_diff( array_keys( $components ), array_keys( $active_components ) );
 
 		switch ( $status ) {
 			case 'all':
@@ -171,15 +169,17 @@ class BPCLI_Core extends BPCLI_Component {
 
 		// Bail early.
 		if ( empty( $current_components ) ) {
-			WP_CLI::error( 'There is not component available.' );
+			WP_CLI::error( 'There is no component available.' );
 		}
 
-		$object_arr = get_object_vars( $current_components );
+		$core_arr             = get_object_vars( $current_components );
+		$assoc_args['fields'] = array_keys( $core_arr );
+		$formatter            = $this->get_formatter( $assoc_args );
 
 		if ( 'count' === $formatter->format ) {
 			$formatter->display_items( $current_components );
 		} else {
-			$formatter->display_items( $object_arr );
+			$formatter->display_items( $core_arr );
 		}
 	}
 
