@@ -17,9 +17,15 @@ Feature: Manage BuddyPress Components
 
     When I run `wp bp core list --type=required`
     Then STDOUT should be a table containing rows:
-      | name    | title             | description                                                        |
+      | id      | title             | description                                                        |
       | core    | BuddyPress Core   | It‘s what makes time travel BuddyPress possible!                   |
       | members | Community Members | Everything in a BuddyPress community revolves around its members.  |
+
+    When I run `wp bp core list --fields=id --type=required`
+    Then STDOUT should be a table containing rows:
+      | id      |
+      | core    |
+      | members |
 
     When I run `wp bp core deactivate groups`
     Then STDOUT should contain:

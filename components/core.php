@@ -12,7 +12,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 * @var array
 	 */
 	protected $obj_fields = array(
-		'name',
+		'id',
 		'title',
 		'description',
 	);
@@ -114,6 +114,9 @@ class BPCLI_Core extends BPCLI_Component {
 	 * default: all
 	 * ---
 	 *
+	 * [--fields=<fields>]
+	 * : Fields to display (id, title, description).
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -129,7 +132,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 *     $ wp bp core list --format=count
 	 *     10
 	 *
-	 *     $ wp bp core list --status=inactive
+	 *     $ wp bp core list --status=inactive --format=count
 	 *     4
 	 *
 	 * @subcommand list
@@ -158,7 +161,7 @@ class BPCLI_Core extends BPCLI_Component {
 			case 'all':
 				foreach ( $components as $name => $labels ) {
 					$current_components[] = array(
-						'name'        => $name,
+						'id'          => $name,
 						'title'       => $labels['title'],
 						'description' => $labels['description'],
 					);
@@ -167,7 +170,7 @@ class BPCLI_Core extends BPCLI_Component {
 			case 'active':
 				foreach ( $active_components as $name => $labels ) {
 					$current_components[] = array(
-						'name'        => $name,
+						'id'          => $name,
 						'title'       => $labels['title'],
 						'description' => $labels['description'],
 					);
@@ -176,7 +179,7 @@ class BPCLI_Core extends BPCLI_Component {
 			case 'inactive':
 				foreach ( $inactive_components as $name => $labels ) {
 					$current_components[] = array(
-						'name'        => $name,
+						'id'          => $name,
 						'title'       => $labels['title'],
 						'description' => $labels['description'],
 					);
