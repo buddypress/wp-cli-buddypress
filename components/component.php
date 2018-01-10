@@ -2,7 +2,7 @@
 /**
  * Manage BuddyPress components.
  *
- * @since 1.1.0
+ * @since 1.6.0
  */
 class BPCLI_Components extends BPCLI_Component {
 
