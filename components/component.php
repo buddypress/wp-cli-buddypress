@@ -4,7 +4,7 @@
  *
  * @since 1.1.0
  */
-class BPCLI_Core extends BPCLI_Component {
+class BPCLI_Components extends BPCLI_Component {
 
 	/**
 	 * Object fields.
@@ -27,7 +27,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp core activate groups
+	 *     $ wp bp component activate groups
 	 *     Success: The Groups component has been activated.
 	 */
 	public function activate( $args, $assoc_args ) {
@@ -72,7 +72,7 @@ class BPCLI_Core extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp core deactivate groups
+	 *     $ wp bp component deactivate groups
 	 *     Success: The Groups component has been deactivated.
 	 */
 	public function deactivate( $args, $assoc_args ) {
@@ -130,10 +130,10 @@ class BPCLI_Core extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp core list --format=count
+	 *     $ wp bp component list --format=count
 	 *     10
 	 *
-	 *     $ wp bp core list --status=inactive --format=count
+	 *     $ wp bp component list --status=inactive --format=count
 	 *     4
 	 *
 	 * @subcommand list
@@ -223,4 +223,4 @@ class BPCLI_Core extends BPCLI_Component {
 	}
 }
 
-WP_CLI::add_command( 'bp core', 'BPCLI_Core' );
+WP_CLI::add_command( 'bp component', 'BPCLI_Components' );
