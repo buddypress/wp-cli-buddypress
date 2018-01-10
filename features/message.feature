@@ -4,11 +4,9 @@ Feature: Manage BuddyPress Messages
     Given a BP install
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
-    Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
     When I run `wp user create anothermember anothermember@example.com --porcelain`
-    Then STDOUT should be a number
     And save STDOUT as {ANOTHER_MEMBER}
 
     When I run `wp bp message create --from={MEMBER_ID} --to={ANOTHER_MEMBER} --content="Test" --porcelain`
