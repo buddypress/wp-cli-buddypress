@@ -164,7 +164,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * <user>
-	 * : ID of the first ser. Accepts either a user_login or a numeric ID.
+	 * : ID of the first user. Accepts either a user_login or a numeric ID.
 	 *
 	 * <possible_friend>
 	 * : ID of the other user. Accepts either a user_login or a numeric ID.
@@ -192,6 +192,60 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::success( 'Yes, they are friends.' );
 		} else {
 			WP_CLI::error( 'No, they are not friends.' );
+		}
+	}
+
+	/**
+	 * Get a list of user's friends.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <user>
+	 * : ID of the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--fields=<fields>]
+	 * : Fields to display.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - ids
+	 *   - csv
+	 *   - count
+	 *   - haml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp friend list 65465 --format=ids
+	 *     $ wp bp friend list 2422 --format=count
+	 *
+	 * @subcommand list
+	 */
+	public function _list( $args, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$user = $this->get_user_id_from_identifier( $args[0] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$friends = BP_Friends_Friendship::get_friendships( $user->ID );
+
+		if ( empty( $friends ) ) {
+			WP_CLI::error( 'This member has no friends.' );
+		}
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', BP_Friends_Friendship::get_friend_user_ids( $user->ID ) ); // WPCS: XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $friends );
+		} else {
+			$formatter->display_items( $friends );
 		}
 	}
 }
