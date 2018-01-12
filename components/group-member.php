@@ -47,10 +47,12 @@ class BPCLI_Group_Member extends BPCLI_Component {
 	 *     $ wp bp group member add --group-id=3 --user-id=10
 	 *     Success: Added user #3 to group #3 as member.
 	 *
-	 *     $ wp bp group member add --group-id=bar --user-id=20 --role=mod
+	 *     $ wp bp group member create --group-id=bar --user-id=20 --role=mod
 	 *     Success: Added user #20 to group #45 as mod.
+	 *
+	 * @alias add
 	 */
-	public function add( $args, $assoc_args ) {
+	public function create( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];
 
 		// Check that group exists.

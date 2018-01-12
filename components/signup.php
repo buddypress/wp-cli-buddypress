@@ -45,10 +45,12 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com
+	 *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
 	 *     Success: Successfully added new user signup (ID #345).
+	 *
+	 * @alias add
 	 */
-	public function add( $args, $assoc_args ) {
+	public function create( $args, $assoc_args ) {
 		$signup_args = array(
 			'meta' => '',
 		);
@@ -278,10 +280,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See BP_Signup::get()
 	 *
-	 * [--<count>=<count>]
+	 * [--<number>=<number>]
 	 * : How many signups to list.
 	 * ---
-	 * default: 500
+	 * default: 20
 	 * ---
 	 *
 	 * [--format=<format>]
@@ -307,8 +309,13 @@ class BPCLI_Signup extends BPCLI_Component {
 		$formatter  = $this->get_formatter( $assoc_args );
 
 		$assoc_args = wp_parse_args( $assoc_args, array(
-			'number' => 500,
+			'number' => 20,
+			'fields' => 'all',
 		) );
+
+		if ( 'ids' === $formatter->format ) {
+			$assoc_args['fields'] = 'ids';
+		}
 
 		$signups = BP_Signup::get( $assoc_args );
 
@@ -317,7 +324,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $signups['signups'], 'signup_id' ) ); // WPCS: XSS ok.
+			echo implode( ' ', $signups['signups'] ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
 			WP_CLI::line( $signups['total'] );
 		} else {

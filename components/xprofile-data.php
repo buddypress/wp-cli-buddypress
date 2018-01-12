@@ -174,8 +174,10 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	 *     $ wp bp xprofile data delete --user-id=45 --field-id=120 --yes
 	 *     Success: XProfile data removed.
 	 *
-	 *     $ wp bp xprofile data delete --user-id=user_test --delete-all --yes
+	 *     $ wp bp xprofile data remove --user-id=user_test --delete-all --yes
 	 *     Success: XProfile data removed.
+	 *
+	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );

@@ -118,50 +118,6 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete an XProfile field.
-	 *
-	 * ## OPTIONS
-	 *
-	 * <field-id>...
-	 * : ID or IDs for the field. Accepts either the name of the field or a numeric ID.
-	 *
-	 * [--delete-data]
-	 * : Delete user data for the field as well.
-	 * ---
-	 * default: false
-	 * ---
-	 *
-	 * [--yes]
-	 * : Answer yes to the confirmation message.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     $ wp bp xprofile field delete 500 --yes
-	 *     Success: Deleted XProfile field "Field Name" (ID 500).
-	 *
-	 *     $ wp bp xprofile field delete 458 --delete-data --yes
-	 *     Success: Deleted XProfile field "Another Field Name" (ID 458).
-	 */
-	public function delete( $args, $assoc_args ) {
-		$field_id = $this->get_field_id( $args[0] );
-
-		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
-
-		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
-			$field   = new BP_XProfile_Field( $field_id );
-			$name    = $field->name;
-			$id      = $field->id;
-			$deleted = $field->delete( $r['delete_data'] );
-
-			if ( $deleted ) {
-				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );
-			} else {
-				return array( 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) );
-			}
-		} );
-	}
-
-	/**
 	 * Get an XProfile field.
 	 *
 	 * ## OPTIONS
@@ -208,6 +164,52 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_item( $object_arr );
+	}
+
+	/**
+	 * Delete an XProfile field.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <field-id>...
+	 * : ID or IDs for the field. Accepts either the name of the field or a numeric ID.
+	 *
+	 * [--delete-data]
+	 * : Delete user data for the field as well.
+	 * ---
+	 * default: false
+	 * ---
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp xprofile field delete 500 --yes
+	 *     Success: Deleted XProfile field "Field Name" (ID 500).
+	 *
+	 *     $ wp bp xprofile field remove 458 --delete-data --yes
+	 *     Success: Deleted XProfile field "Another Field Name" (ID 458).
+	 *
+	 * @alias remove
+	 */
+	public function delete( $args, $assoc_args ) {
+		$field_id = $this->get_field_id( $args[0] );
+
+		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
+
+		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
+			$field   = new BP_XProfile_Field( $field_id );
+			$name    = $field->name;
+			$id      = $field->id;
+			$deleted = $field->delete( $r['delete_data'] );
+
+			if ( $deleted ) {
+				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );
+			} else {
+				return array( 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) );
+			}
+		} );
 	}
 }
 

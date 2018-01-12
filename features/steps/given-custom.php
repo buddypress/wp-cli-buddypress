@@ -23,7 +23,7 @@ $steps->Given( '/^a BP install$/',
 
 			$components = array( 'friends', 'groups', 'xprofile', 'activity', 'messages' );
 			foreach ( $components as $component ) {
-				$world->proc( "wp bp core activate $component" )->run_check();
+				$world->proc( "wp bp component activate $component" )->run_check();
 			}
 		} catch ( Exception $e ) {};
 	}
