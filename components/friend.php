@@ -261,7 +261,7 @@ class BPCLI_Friend extends BPCLI_Component {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', BP_Friends_Friendship::get_friend_user_ids( $user->ID ) ); // WPCS: XSS ok.
+			echo implode( ' ', wp_list_pluck( $friends, 'friend_user_id' ) ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
 			$formatter->display_items( $friends );
 		} else {

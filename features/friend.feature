@@ -37,11 +37,11 @@ Feature: Manage BuddyPress Friends
       Success: Friendship successfully created.
       """
 
-    When I run `wp bp friend list {BOB_ID} --fields=initiator_user_id,friend_user_id,is_confirmed`
+    When I run `wp bp friend list {BOB_ID} --fields=friend_user_id,is_confirmed`
     Then STDOUT should be a table containing rows:
-      | initiator_user_id | friend_user_id | is_confirmed |
-      | {BOB_ID}          | {SALLY_ID}     | true         |
-      | {BOB_ID}          | {JOHN_ID}      | true         |
+      | friend_user_id | is_confirmed |
+      | {SALLY_ID}     | 1            |
+      | {JOHN_ID}      | 1            |
 
     When I run `wp bp friend remove {BOB_ID} {SALLY_ID}`
     Then STDOUT should contain:
