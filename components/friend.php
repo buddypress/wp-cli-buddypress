@@ -67,7 +67,11 @@ class BPCLI_Friend extends BPCLI_Component {
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
 		} else {
-			WP_CLI::success( 'Friendship successfully created.' );
+			if ( $r['force-accept'] ) {
+				WP_CLI::success( 'Friendship successfully created.' );
+			} else {
+				WP_CLI::success( 'Friendship successfully created but not accepted.' );
+			}
 		}
 	}
 

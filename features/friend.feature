@@ -32,7 +32,7 @@ Feature: Manage BuddyPress Friends
       """
 
     When I run `wp bp friend check {BOB_ID} {JOHN_ID}`
-    Then STDOUT should contain:
+    Then STDERR should be:
       """
       Error: No, they are not friends.
       """
