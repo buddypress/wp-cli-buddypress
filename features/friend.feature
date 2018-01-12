@@ -49,7 +49,7 @@ Feature: Manage BuddyPress Friends
 
     When I run `wp bp friend list {BOB_ID} --fields=id,user_login`
     Then STDOUT should be a table containing rows:
-      | user_login  | user_login |
+      | id          | user_login |
       | {SALLY_ID}  | testuser2  |
       | {JOHN_ID}   | testuser3  |
 
