@@ -13,7 +13,7 @@ Feature: Manage BuddyPress Friends
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     Then STDOUT should be a number
-    And save STDOUT as {SALLY_ID2}
+    And save STDOUT as {SALLY_ID}
 
     When I run `wp bp friend create {BOB_ID} {SALLY_ID}`
     Then STDOUT should contain:
