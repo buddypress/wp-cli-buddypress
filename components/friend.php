@@ -17,7 +17,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * <friend>
 	 * : ID of the user whose friendship is being requested. Accepts either a user_login or a numeric ID.
 	 *
-	 * [force-accept=<force-accept>]
+	 * [--force-accept=<force-accept>]
 	 * : Whether to force acceptance.
 	 * ---
 	 * default: true
@@ -26,15 +26,15 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * [--silent=<silent>]
 	 * : Silent friendship creation.
 	 * ---
-	 * Default: false
+	 * default: false
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp friend create user1 another_use
 	 *     Success: Friendship successfully created.
 	 *
-	 *     $ wp bp friend create user1 another_use force-accept
+	 *     $ wp bp friend create user1 another_use --force-accept=false
 	 *     Success: Friendship successfully created.
 	 *
 	 * @alias add
