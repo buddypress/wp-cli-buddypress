@@ -4,16 +4,16 @@ Feature: Manage BuddyPress Messages
     Given a BP install
 
     When I run `wp user create frommember frommember1@example.com --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {FROM_MEMBER}
+    And STDOUT should be a number
+    Then save STDOUT as {FROM_MEMBER}
 
     When I run `wp user create tomember tomember2@example.com --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {TO_MEMBER}
+    And STDOUT should be a number
+    Then save STDOUT as {TO_MEMBER}
 
     When I run `wp bp message create --from={FROM_MEMBER} --to={TO_MEMBER} --content="Test" --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {THREAD_ID}
+    And STDOUT should be a number
+    Then save STDOUT as {THREAD_ID}
 
     When I run `wp bp message list --fields=id,subject,message --user-id={FROM_MEMBER}`
     Then STDOUT should be a table containing rows:
