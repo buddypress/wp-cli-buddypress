@@ -251,6 +251,64 @@ class BPCLI_Friend extends BPCLI_Component {
 			$formatter->display_items( $friends );
 		}
 	}
+
+	/**
+	 * Generate random friendships.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many friendships to generate.
+	 * ---
+	 * default: 100
+	 * ---
+	 *
+	 * [--initiator=<user>]
+	 * : ID of the first user. Accepts either a user_login or a numeric ID.
+	 * ---
+	 * default: Random user.
+	 * ---
+	 *
+	 * [--force-accept=<force-accept>]
+	 * : Whether to force acceptance.
+	 * ---
+	 * default: false
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp friend generate --count=50
+	 *     $ wp bp friend generate --initiator=121 --count=50
+	 */
+	public function generate( $args, $assoc_args ) {
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating friendships', $assoc_args['count'] );
+
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
+
+			$member = $this->get_random_user_id();
+			if ( isset( $assoc_args['user-id'] ) ) {
+				$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+
+				if ( ! $user ) {
+					WP_CLI::error( 'No user found by that username or ID.' );
+				}
+
+				$member = $user->ID;
+			}
+
+			// Random members for friendship.
+			$members = array( $member, $this->get_random_user_id() );
+
+			$this->create( $members, array(
+				'force-accept' => $assoc_args['force-accept'],
+				'silent'       => true,
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
+	}
 }
 
 WP_CLI::add_command( 'bp friend', 'BPCLI_Friend', array(
