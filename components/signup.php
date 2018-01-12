@@ -45,10 +45,12 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp signup add --user-login=test_user --user-email=teste@site.com
+	 *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
 	 *     Success: Successfully added new user signup (ID #345).
+	 *
+	 * @alias add
 	 */
-	public function add( $args, $assoc_args ) {
+	public function create( $args, $assoc_args ) {
 		$signup_args = array(
 			'meta' => '',
 		);

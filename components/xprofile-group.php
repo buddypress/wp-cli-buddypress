@@ -150,6 +150,8 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     $ wp bp xprofile group delete 500 --yes
+	 *
+	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
 		$field_group_id = $args[0];

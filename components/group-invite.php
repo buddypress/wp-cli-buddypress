@@ -48,10 +48,12 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *     $ wp bp group invite add --group-id=40 --user-id=10 --inviter-id=1331
 	 *     Success: Member invited to the group.
 	 *
-	 *     $ wp bp group invite add --group-id=40 --user-id=admin --inviter-id=804
+	 *     $ wp bp group invite create --group-id=40 --user-id=admin --inviter-id=804
 	 *     Success: Member invited to the group.
+	 *
+	 * @alias add
 	 */
-	public function add( $args, $assoc_args ) {
+	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'user-id'       => '',
 			'group-id'      => '',
@@ -204,7 +206,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			if ( $user_id ) {
 				$user_invites = array();
 				foreach ( $invites as $invite ) {
-					if ( $user_id == $invite->user_id ) {
+					if ( $user_id === $invite->user_id ) {
 						$user_invites[] = $invite;
 					}
 				}
@@ -380,6 +382,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 *     $ wp bp group invite delete --group-id=foo --user-id=admin
 	 *     Success: Member invitation deleted from the group.
+	 *
+	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
 		$group_id = $assoc_args['group-id'];

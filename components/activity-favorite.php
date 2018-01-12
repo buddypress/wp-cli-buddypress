@@ -44,9 +44,9 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 *     $ wp bp activity favorite create 100 user_test
 	 *     Success: Activity item added as a favorite for the user.
 	 *
-	 * @alias create
+	 * @alias add
 	 */
-	public function add( $args, $assoc_args ) {
+	public function create( $args, $assoc_args ) {
 		$activity_id = $args[0];
 
 		$activity = new BP_Activity_Activity( $activity_id );
