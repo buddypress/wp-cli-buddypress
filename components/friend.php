@@ -29,6 +29,9 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * default: false
 	 * ---
 	 *
+	 * [--porcelain]
+	 * : Return only the friendship id.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp friend create user1 another_use
@@ -50,15 +53,20 @@ class BPCLI_Friend extends BPCLI_Component {
 
 		$force_accept = ( (bool) $assoc_args['force-accept'] ) ? false : true;
 
-		if ( friends_add_friend( $initiator->ID, $friend->ID, $force_accept ) ) {
+		$retval = friends_add_friend( $initiator->ID, $friend->ID, $force_accept );
 
-			if ( $assoc_args['silent'] ) {
-				return;
-			}
-
-			WP_CLI::success( 'Friendship successfully created.' );
-		} else {
+		if ( ! $retval ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
+		}
+
+		if ( $assoc_args['silent'] ) {
+			return;
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
+		} else {
+			WP_CLI::success( 'Friendship successfully created.' );
 		}
 	}
 
@@ -93,6 +101,34 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::success( 'Friendship successfully removed.' );
 		} else {
 			WP_CLI::error( 'There was a problem while removing the friendship.' );
+		}
+	}
+
+	/**
+	 * Mark a friendship request as accepted.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <friendship-id>...
+	 * : ID(s) of the friendship(s).
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp friend accept_invitation 2161
+	 *     Success: Friendship successfully accepted.
+	 *
+	 *     $ wp bp friend accept 2161 151 2121
+	 *     Success: Friendship successfully accepted.
+	 *
+	 * @alias accept
+	 */
+	public function accept_invitation( $args, $assoc_args ) {
+		foreach ( $args as $friendship_id ) {
+			if ( friends_accept_friendship( (int) $friendship_id ) ) {
+				WP_CLI::success( 'Friendship successfully accepted.' );
+			} else {
+				WP_CLI::error( 'There was a problem accepting the friendship.' );
+			}
 		}
 	}
 }
