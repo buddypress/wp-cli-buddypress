@@ -31,13 +31,6 @@ Feature: Manage BuddyPress Friends
       Success: Yes, they are friends.
       """
 
-    When I run `wp bp friend check {BOB_ID} {JOHN_ID}`
-    Then STDERR should be:
-      """
-      Error: No, they are not friends.
-      """
-    And the return code should be 1
-
     When I run `wp bp friend create {BOB_ID} {JOHN_ID} --force-accept=true`
     Then STDOUT should contain:
       """
