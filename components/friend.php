@@ -110,8 +110,8 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <friendship-id>
-	 * : ID of the friendship.
+	 * <friendship>...
+	 * : ID(s) of the friendship(s).
 	 *
 	 * ## EXAMPLES
 	 *
@@ -121,13 +121,15 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *     $ wp bp friend accept 2161
 	 *     Success: Friendship successfully accepted.
 	 *
-	 * @alias accept
+	 * @alias accept_invitation
 	 */
-	public function accept_invitation( $args, $assoc_args ) {
-		if ( friends_accept_friendship( $args[0] ) ) {
-			WP_CLI::success( 'Friendship successfully accepted.' );
-		} else {
-			WP_CLI::error( 'There was a problem accepting the friendship.' );
+	public function accept( $args, $assoc_args ) {
+		foreach ( $args as $friendship_id ) {
+			if ( friends_accept_friendship( (int) $friendship_id ) ) {
+				WP_CLI::success( 'Friendship successfully accepted.' );
+			} else {
+				WP_CLI::error( 'There was a problem accepting the friendship.' );
+			}
 		}
 	}
 
@@ -136,7 +138,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <friendship-id>...
+	 * <friendship>...
 	 * : ID(s) of the friendship(s).
 	 *
 	 * ## EXAMPLES
@@ -147,9 +149,9 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *     $ wp bp friend reject 2161 151 2121
 	 *     Success: Friendship successfully accepted.
 	 *
-	 * @alias reject
+	 * @alias reject_invitation
 	 */
-	public function reject_invitation( $args, $assoc_args ) {
+	public function reject( $args, $assoc_args ) {
 		foreach ( $args as $friendship_id ) {
 			if ( friends_reject_friendship( (int) $friendship_id ) ) {
 				WP_CLI::success( 'Friendship successfully rejected.' );
@@ -167,7 +169,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * <user>
 	 * : ID of the first user. Accepts either a user_login or a numeric ID.
 	 *
-	 * <possible_friend>
+	 * <friend>
 	 * : ID of the other user. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLES

@@ -15,11 +15,15 @@ Feature: Manage BuddyPress Friends
     Then STDOUT should be a number
     And save STDOUT as {SALLY_ID}
 
+    When I run `wp user create testuser3 testuser3@example.com --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {JOHN_ID}
+
     When I run `wp bp friend create {BOB_ID} {SALLY_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {FRIENDSHIP_ID}
 
-    When I run `wp bp friend accept {FRIENDSHIP_ID}`
+    When I run `wp bp friend accept_invitation {FRIENDSHIP_ID}`
     Then STDOUT should contain:
       """
       Success: Friendship successfully accepted.
@@ -31,9 +35,26 @@ Feature: Manage BuddyPress Friends
       Success: Yes, they are friends.
       """
 
+    When I run `wp bp friend check {BOB_ID} {JOHN_ID}`
+    Then STDOUT should contain:
+      """
+      Error: No, they are not friends.
+      """
+
+    When I run `wp bp friend create {BOB_ID} {JOHN_ID} --force-accept=true --porcelain`
+    Then STDOUT should contain:
+      """
+      Success: Friendship successfully created.
+      """
+
+    When I run `wp bp friend list {BOB_ID} --fields=id,user_login`
+    Then STDOUT should be a table containing rows:
+      | user_login  | user_login |
+      | {SALLY_ID}  | testuser2  |
+      | {JOHN_ID}   | testuser3  |
+
     When I run `wp bp friend remove {BOB_ID} {SALLY_ID}`
     Then STDOUT should contain:
       """
       Success: Friendship successfully removed.
       """
-
