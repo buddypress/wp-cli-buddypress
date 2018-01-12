@@ -7,6 +7,17 @@
 class BPCLI_Message extends BPCLI_Component {
 
 	/**
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'subject',
+		'message',
+	);
+
+	/**
 	 * Add a message.
 	 *
 	 * ## OPTIONS
