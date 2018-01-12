@@ -36,6 +36,7 @@ Feature: Manage BuddyPress Friends
       """
       Error: No, they are not friends.
       """
+    And the return code should be 1
 
     When I run `wp bp friend create {BOB_ID} {JOHN_ID} --force-accept=true`
     Then STDOUT should contain:
