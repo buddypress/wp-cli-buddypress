@@ -12,6 +12,7 @@ Please use and provide feedback!
 
 * PHP >=5.3
 * wp-cli >=0.23.0
+* BuddyPress trunk (development version).
 
 ## Setup
 
