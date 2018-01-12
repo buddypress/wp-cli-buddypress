@@ -7,6 +7,19 @@
 class BPCLI_Friend extends BPCLI_Component {
 
 	/**
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'initiator_user_id',
+		'friend_user_id',
+		'is_confirmed',
+		'is_limited',
+	);
+
+	/**
 	 * Create a new friendship.
 	 *
 	 * ## OPTIONS
