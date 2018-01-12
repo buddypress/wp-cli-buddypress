@@ -9,22 +9,22 @@ Feature: Manage BuddyPress Messages
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number
-    And save STDOUT as {USER_ID}
+    And save STDOUT as {BOB}
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     Then STDOUT should be a number
-    And save STDOUT as {USER_ID_2}
+    And save STDOUT as {SALLY}
 
-    When I run `wp bp message create --from={USER_ID} --to={USER_ID_2} --content="Test" --porcelain`
+    When I run `wp bp message create --from={BOB} --to={SALLY} --content="Test" --porcelain`
     And STDOUT should be a number
     Then save STDOUT as {THREAD_ID}
 
-    When I run `wp bp message list --fields=id,subject,message --user-id={USER_ID}`
+    When I run `wp bp message list --fields=id,subject,message --user-id={BOB}`
     Then STDOUT should be a table containing rows:
       | id          | subject          | message |
       | {THREAD_ID} | Message Subject  | Test    |
 
-    When I run `wp bp message delete {THREAD_ID} --user-id={USER_ID} --yes`
+    When I run `wp bp message delete {THREAD_ID} --user-id={BOB} --yes`
     Then STDOUT should contain:
       """
       Success: Thread(s) successfully deleted.
