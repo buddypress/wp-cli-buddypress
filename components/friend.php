@@ -157,6 +157,43 @@ class BPCLI_Friend extends BPCLI_Component {
 			}
 		}
 	}
+
+	/**
+	 * Check whether two users are friends.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <user>
+	 * : ID of the first ser. Accepts either a user_login or a numeric ID.
+	 *
+	 * <possible_friend>
+	 * : ID of the other user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp friend check 2161 65465
+	 *     Success: Yes, they are friends.
+	 *
+	 *     $ wp bp friend see 2121 65456
+	 *     Success: Yes, they are friends.
+	 *
+	 * @alias see
+	 */
+	public function check( $args, $assoc_args ) {
+		// Members.
+		$user = $this->get_user_id_from_identifier( $args[0] );
+		$friend = $this->get_user_id_from_identifier( $args[1] );
+
+		if ( ! $user || ! $friend ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		if ( friends_check_friendship( $user->ID, $friend->ID ) ) {
+			WP_CLI::success( 'Yes, they are friends.' );
+		} else {
+			WP_CLI::error( 'No, they are not friends.' );
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp friend', 'BPCLI_Friend', array(
