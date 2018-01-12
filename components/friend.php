@@ -107,26 +107,24 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <friendship-id>...
-	 * : ID(s) of the friendship(s).
+	 * <friendship-id>
+	 * : ID of the friendship.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp friend accept_invitation 2161
 	 *     Success: Friendship successfully accepted.
 	 *
-	 *     $ wp bp friend accept 2161 151 2121
+	 *     $ wp bp friend accept 2161
 	 *     Success: Friendship successfully accepted.
 	 *
 	 * @alias accept
 	 */
 	public function accept_invitation( $args, $assoc_args ) {
-		foreach ( $args as $friendship_id ) {
-			if ( friends_accept_friendship( $friendship_id ) ) {
-				WP_CLI::success( 'Friendship successfully accepted.' );
-			} else {
-				WP_CLI::error( 'There was a problem accepting the friendship.' );
-			}
+		if ( friends_accept_friendship( $args[0] ) ) {
+			WP_CLI::success( 'Friendship successfully accepted.' );
+		} else {
+			WP_CLI::error( 'There was a problem accepting the friendship.' );
 		}
 	}
 
