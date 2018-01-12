@@ -19,14 +19,10 @@ Feature: Manage BuddyPress Friends
     Then STDOUT should be a number
     And save STDOUT as {JOHN_ID}
 
-    When I run `wp bp friend create {BOB_ID} {SALLY_ID} --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {FRIENDSHIP_ID}
-
-    When I run `wp bp friend accept_invitation {FRIENDSHIP_ID}`
+    When I run `wp bp friend create {BOB_ID} {SALLY_ID} --force-accept=true --porcelain`
     Then STDOUT should contain:
       """
-      Success: Friendship successfully accepted.
+      Success: Friendship successfully created.
       """
 
     When I run `wp bp friend check {BOB_ID} {SALLY_ID}`
