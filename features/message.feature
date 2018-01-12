@@ -25,6 +25,3 @@ Feature: Manage BuddyPress Messages
       """
       Success: Thread(s) successfully deleted.
       """
-
-    When I try `wp bp message get {THREAD_ID}`
-    Then the return code should be 1
