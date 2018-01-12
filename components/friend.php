@@ -61,6 +61,40 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
 		}
 	}
+
+	/**
+	 * Remove a friendship.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <initiator>
+	 * : ID of the friendship initiator. Accepts either a user_login or a numeric ID.
+	 *
+	 * <friend>
+	 * : ID of the friend user. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp friend remove user1 another_use
+	 *     Success: Friendship successfully removed.
+	 *
+	 * @alias delete
+	 */
+	public function remove( $args, $assoc_args ) {
+		// Members.
+		$initiator = $this->get_user_id_from_identifier( $args[0] );
+		$friend = $this->get_user_id_from_identifier( $args[1] );
+
+		if ( ! $initiator || ! $friend ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		if ( friends_remove_friend( $initiator->ID, $friend->ID ) ) {
+			WP_CLI::success( 'Friendship successfully removed.' );
+		} else {
+			WP_CLI::error( 'There was a problem while removing the friendship.' );
+		}
+	}
 }
 
 WP_CLI::add_command( 'bp friend', 'BPCLI_Friend', array(

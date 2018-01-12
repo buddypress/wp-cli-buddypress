@@ -20,3 +20,9 @@ Feature: Manage BuddyPress Friends
       """
       Success: Friendship successfully created.
       """
+
+    When I run `wp bp friend remove {BOB_ID} {SALLY_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Friendship successfully removed.
+      """
