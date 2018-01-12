@@ -119,6 +119,8 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 *     $ wp bp message delete 564 5465465 456456 --user-id=user_logon --yes
 	 *     Success: Thread(s) successfully deleted.
+	 *
+	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
 		$thread_id = $args[0];
@@ -175,9 +177,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$message_id  = $args[0];
-		$message     = new BP_Messages_Message( $message_id );
-		$message_arr = get_object_vars( $message );
+		$message_arr = get_object_vars( new BP_Messages_Message( $args[0] ) );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $message_arr );
