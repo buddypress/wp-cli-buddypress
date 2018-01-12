@@ -3,11 +3,11 @@ Feature: Manage BuddyPress Messages
   Scenario: Message CRUD Operations
     Given a BP install
 
-    When I run `wp user create testuser1 testuser1@example.com --porcelain`
+    When I run `wp user create testuser2 testuser2@example.com --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {BOB_ID}
 
-    When I run `wp user create testuser2 testuser2@example.com --porcelain`
+    When I run `wp user create testuser3 testuser3@example.com --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {SALLY_ID}
 
