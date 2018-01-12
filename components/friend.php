@@ -20,7 +20,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * [--force-accept]
 	 * : Whether to force acceptance.
 	 * ---
-	 * default: true
+	 * default: false
 	 * ---
 	 *
 	 * [--silent=<silent>]
@@ -51,7 +51,7 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$force_accept = ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' ) ) ? false : true;
+		$force_accept = ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' ) ) ? true : false;
 
 		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force_accept ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
@@ -126,6 +126,34 @@ class BPCLI_Friend extends BPCLI_Component {
 				WP_CLI::success( 'Friendship successfully accepted.' );
 			} else {
 				WP_CLI::error( 'There was a problem accepting the friendship.' );
+			}
+		}
+	}
+
+	/**
+	 * Mark a friendship request as rejected.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <friendship-id>...
+	 * : ID(s) of the friendship(s).
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp friend reject_invitation 2161
+	 *     Success: Friendship successfully accepted.
+	 *
+	 *     $ wp bp friend reject 2161 151 2121
+	 *     Success: Friendship successfully accepted.
+	 *
+	 * @alias reject
+	 */
+	public function reject_invitation( $args, $assoc_args ) {
+		foreach ( $args as $friendship_id ) {
+			if ( friends_reject_friendship( (int) $friendship_id ) ) {
+				WP_CLI::success( 'Friendship successfully rejected.' );
+			} else {
+				WP_CLI::error( 'There was a problem rejecting the friendship.' );
 			}
 		}
 	}
