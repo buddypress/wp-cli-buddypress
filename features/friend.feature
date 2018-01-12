@@ -15,7 +15,7 @@ Feature: Manage BuddyPress Friends
     Then STDOUT should be a number
     And save STDOUT as {SALLY_ID}
 
-    When I run `wp bp friend create {BOB_ID} {SALLY_ID} --force-accept=false --porcerlain`
+    When I run `wp bp friend create {BOB_ID} {SALLY_ID} --force-accept --porcerlain`
     Then STDOUT should be a number
     And save STDOUT as {FRIENDSHIP_ID}
 

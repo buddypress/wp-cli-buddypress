@@ -17,7 +17,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * <friend>
 	 * : ID of the user whose friendship is being requested. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--force-accept=<force-accept>]
+	 * [--force-accept]
 	 * : Whether to force acceptance.
 	 * ---
 	 * default: true
@@ -51,11 +51,9 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$force_accept = ( (bool) $assoc_args['force-accept'] ) ? false : true;
+		$force_accept = ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' ) ) ? false : true;
 
-		$retval = friends_add_friend( $initiator->ID, $friend->ID, $force_accept );
-
-		if ( ! $retval ) {
+		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force_accept ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
 		}
 
