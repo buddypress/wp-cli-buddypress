@@ -122,7 +122,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 */
 	public function accept_invitation( $args, $assoc_args ) {
 		foreach ( $args as $friendship_id ) {
-			if ( friends_accept_friendship( (int) $friendship_id ) ) {
+			if ( friends_accept_friendship( $friendship_id ) ) {
 				WP_CLI::success( 'Friendship successfully accepted.' );
 			} else {
 				WP_CLI::error( 'There was a problem accepting the friendship.' );
