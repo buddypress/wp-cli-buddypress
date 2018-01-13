@@ -7,11 +7,9 @@ Feature: Manage BuddyPress Messages
     Then the return code should be 1
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
-    Then STDOUT should be a number
     And save STDOUT as {BOB_ID}
 
     When I run `wp user create testuser3 testuser3@example.com --porcelain`
-    Then STDOUT should be a number
     And save STDOUT as {SALLY_ID}
 
     When I run `wp bp message add --from={BOB_ID} --to={SALLY_ID} --content="Test" --porcelain`
