@@ -16,7 +16,7 @@ Feature: Manage BuddyPress Messages
     When I run `wp bp message add --from={BOB_ID} --to={SALLY_ID} --content="Test"`
     Then STDOUT should contain:
       """
-      Success: Message successfully creted.
+      Success: Message successfully created.
       """
 
     When I run `wp bp message list --fields=subject,message --user-id={BOB_ID}`
