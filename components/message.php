@@ -15,6 +15,9 @@ class BPCLI_Message extends BPCLI_Component {
 		'id',
 		'subject',
 		'message',
+		'thread_id',
+		'sender_id',
+		'date_sent',
 	);
 
 	/**
@@ -66,7 +69,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
 	 *     Success: Message successfully created.
 	 *
-	 *     $ wp bp message add --from=545 --to=313
+	 *     $ wp bp message create --from=545 --to=313
 	 *     Success: Message successfully created.
 	 *
 	 * @alias add
@@ -205,12 +208,15 @@ class BPCLI_Message extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of messages.
+	 * Get a list of messages for a specific user.
 	 *
 	 * ## OPTIONS
 	 *
+	 * --user-id=<user>
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See BP_Messages_Box_Template
+	 * : One or more parameters to pass. See BP_Messages_Box_Template()
 	 *
 	 * [--fields=<fields>]
 	 * : Fields to display.
@@ -234,10 +240,13 @@ class BPCLI_Message extends BPCLI_Component {
 	 *   - haml
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
-	 *     $ wp bp message list --count=12 --format=count
+	 *     $ wp bp message list --user-id=544 --format=count
 	 *     10
+	 *
+	 *     $ wp bp message list --user-id=user_login --count=3 --format=ids
+	 *     5454 45454 4545 465465
 	 *
 	 * @subcommand list
 	 */
@@ -245,15 +254,14 @@ class BPCLI_Message extends BPCLI_Component {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args( $assoc_args, array(
-			'user-id'      => '',
 			'box'          => 'sentbox',
 			'type'         => 'all',
 			'search'       => '',
 			'count'        => 10,
 		) );
 
-		$user = $this->get_user_id_from_identifier( $r['user-id'] );
-		if ( empty( $r['user-id'] ) || ! $user ) {
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		if ( empty( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
@@ -264,7 +272,7 @@ class BPCLI_Message extends BPCLI_Component {
 
 		$box = $r['box'];
 		if ( ! in_array( $r['box'], $this->message_boxes(), true ) ) {
-			$box = 'sentbox';
+			$box = 'inbox';
 		}
 
 		$inbox = new BP_Messages_Box_Template( array(
