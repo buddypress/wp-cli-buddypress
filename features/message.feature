@@ -5,7 +5,6 @@ Feature: Manage BuddyPress Messages
 
     When I try `wp user get bogus-user`
     Then the return code should be 1
-    And STDOUT should be empty
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     Then STDOUT should be a number
@@ -29,3 +28,6 @@ Feature: Manage BuddyPress Messages
       """
       Success: Thread successfully deleted.
       """
+
+    When I run `wp bp message delete {THREAD_ID} --user-id={BOB_ID} --yes`
+    Then the return code should be 1
