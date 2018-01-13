@@ -254,7 +254,7 @@ class BPCLI_Message extends BPCLI_Component {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args( $assoc_args, array(
-			'box'          => 'sentbox',
+			'box'          => 'inbox',
 			'type'         => 'all',
 			'search'       => '',
 			'count'        => 10,
