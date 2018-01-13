@@ -13,9 +13,11 @@ Feature: Manage BuddyPress Messages
     When I run `wp user create testuser3 testuser3@example.com --porcelain`
     And save STDOUT as {SALLY_ID}
 
-    When I run `wp bp message add --from={BOB_ID} --to={SALLY_ID} --content="Test" --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {THREAD_ID}
+    When I run `wp bp message add --from={BOB_ID} --to={SALLY_ID} --content="Test"`
+    Then STDOUT should contain:
+      """
+      Success: Message successfully creted.
+      """
 
     When I run `wp bp message list --fields=subject,message --user-id={BOB_ID}`
     Then STDOUT should be a table containing rows:

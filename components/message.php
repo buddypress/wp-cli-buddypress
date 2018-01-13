@@ -59,15 +59,15 @@ class BPCLI_Message extends BPCLI_Component {
 	 * ---
 	 *
 	 * [--porcelain]
-	 * : Return only the new message id.
+	 * : Return the thread id of the message.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
-	 *     Success: Message (Thread ID 35) successfully created.
+	 *     Success: Message successfully created.
 	 *
 	 *     $ wp bp message add --from=545 --to=313
-	 *     Success: Message (Thread ID 39) successfully created.
+	 *     Success: Message successfully created.
 	 *
 	 * @alias add
 	 */
@@ -106,7 +106,7 @@ class BPCLI_Message extends BPCLI_Component {
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $thread_id );
 		} else {
-			WP_CLI::success( sprintf( 'Message (Thread ID %d) successfully created.', $thread_id ) );
+			WP_CLI::success( 'Message successfully created.' );
 		}
 	}
 
