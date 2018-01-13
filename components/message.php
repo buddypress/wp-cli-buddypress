@@ -86,7 +86,7 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$msg_id = messages_new_message( array(
+		$thread_id = messages_new_message( array(
 			'sender_id'  => $user->ID,
 			'recipients' => array( $recipient->ID ),
 			'subject'    => $r['subject'],
@@ -95,7 +95,7 @@ class BPCLI_Message extends BPCLI_Component {
 			'date_sent'  => $r['date-sent'],
 		) );
 
-		if ( ! is_numeric( $msg_id ) ) {
+		if ( ! is_numeric( $thread_id ) ) {
 			WP_CLI::error( 'Could not add a message.' );
 		}
 
@@ -104,9 +104,9 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $msg_id );
+			WP_CLI::line( $thread_id );
 		} else {
-			WP_CLI::success( sprintf( 'Message (ID %d) successfully created.', $msg_id ) );
+			WP_CLI::success( sprintf( 'Message (ID %d) successfully created.', $thread_id ) );
 		}
 	}
 
