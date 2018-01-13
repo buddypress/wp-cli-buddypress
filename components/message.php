@@ -91,10 +91,10 @@ class BPCLI_Message extends BPCLI_Component {
 
 		$thread_id = messages_new_message( array(
 			'sender_id'  => $user->ID,
+			'thread_id'  => $r['thread-id'],
 			'recipients' => array( $recipient->ID ),
 			'subject'    => $r['subject'],
 			'content'    => $r['content'],
-			'thread_id'  => $r['thread-id'],
 			'date_sent'  => $r['date-sent'],
 		) );
 
