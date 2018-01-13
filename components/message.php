@@ -76,12 +76,22 @@ class BPCLI_Message extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'subject'   => sprintf( 'Message Subject' ),
-			'content'   => $this->generate_random_text(),
+			'subject'   => '',
+			'content'   => '',
 			'thread-id' => false,
 			'date-sent' => bp_core_current_time(),
 			'silent'    => false,
 		) );
+
+		// Fill in the content.
+		if ( empty( $r['content'] ) ) {
+			$r['content'] = $this->generate_random_text();
+		}
+
+		// Fill in the subject.
+		if ( empty( $r['subject'] ) ) {
+			$r['subject'] = sprintf( 'Message Subject' );
+		}
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
 		$recipient = $this->get_user_id_from_identifier( $assoc_args['to'] );
