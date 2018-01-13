@@ -22,17 +22,11 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--from=<user>]
+	 * --from=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
-	 * ---
-	 * default: Random user.
-	 * ---
 	 *
-	 * [--to=<user>]
+	 * --to=<user>
 	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
-	 * ---
-	 * default: Random user.
-	 * ---
 	 *
 	 * [--subject=<subject>]
 	 * : Subject of the message.
@@ -67,17 +61,18 @@ class BPCLI_Message extends BPCLI_Component {
 	 * [--porcelain]
 	 * : Return only the new message id.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
 	 *     Success: Message (ID 35) successfully created.
+	 *
+	 *     $ wp bp message create --from=545 --to=313
+	 *     Success: Message (ID 39) successfully created.
 	 *
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'from'      => $this->get_random_user_id(),
-			'to'        => $this->get_random_user_id(),
 			'subject'   => sprintf( 'Message Subject' ),
 			'content'   => $this->generate_random_text(),
 			'thread-id' => false,
@@ -85,17 +80,23 @@ class BPCLI_Message extends BPCLI_Component {
 			'silent'    => false,
 		) );
 
+		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
+		$recipient = $this->get_user_id_from_identifier( $assoc_args['to'] );
+		if ( ! $user || ! $recipient ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
 		$msg_id = messages_new_message( array(
-			'sender_id'  => $r['from'],
-			'recipients' => array( $r['to'] ),
+			'sender_id'  => $user->ID,
+			'recipients' => array( $recipient->ID ),
 			'subject'    => $r['subject'],
 			'content'    => $r['content'],
 			'thread_id'  => $r['thread-id'],
 			'date_sent'  => $r['date-sent'],
 		) );
 
-		if ( false === is_int( $msg_id ) ) {
-			WP_CLI::error( 'Could not add message.' );
+		if ( ! is_numeric( $msg_id ) ) {
+			WP_CLI::error( 'Could not add a message.' );
 		}
 
 		if ( $r['silent'] ) {
@@ -126,10 +127,10 @@ class BPCLI_Message extends BPCLI_Component {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp message delete 500 687867 --user-id=40
-	 *     Success: Thread(s) successfully deleted.
+	 *     Success: Thread successfully deleted.
 	 *
 	 *     $ wp bp message delete 564 5465465 456456 --user-id=user_logon --yes
-	 *     Success: Thread(s) successfully deleted.
+	 *     Success: Thread successfully deleted.
 	 *
 	 * @alias remove
 	 */
@@ -142,7 +143,7 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 		$user_id = $user->ID;
 
-		WP_CLI::confirm( 'Are you sure you want to delete thread(s) ?', $assoc_args );
+		WP_CLI::confirm( 'Are you sure you want to delete this thread(s) ?', $assoc_args );
 
 		parent::_delete( array( $thread_id ), $assoc_args, function( $thread_id ) {
 
@@ -153,9 +154,9 @@ class BPCLI_Message extends BPCLI_Component {
 			}
 
 			if ( messages_delete_thread( $thread_id, $user_id ) ) {
-				return array( 'success', 'Thread(s) successfully deleted.' );
+				return array( 'success', 'Thread successfully deleted.' );
 			} else {
-				return array( 'error', 'Could not delete the thread(s).' );
+				return array( 'error', 'Could not delete the thread.' );
 			}
 		} );
 	}
@@ -169,7 +170,10 @@ class BPCLI_Message extends BPCLI_Component {
 	 * : Identifier for the message.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields.
+	 * ---
+	 * default: All fields.
+	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -181,14 +185,16 @@ class BPCLI_Message extends BPCLI_Component {
 	 *   - haml
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp message get 5465
+	 *     $ wp bp message see 5454
 	 *
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$message_arr = get_object_vars( new BP_Messages_Message( $args[0] ) );
+		$m = new BP_Messages_Message( $args[0] );
+		$message_arr = get_object_vars( $m );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $message_arr );
@@ -311,6 +317,8 @@ class BPCLI_Message extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
+				'from'      => $this->get_random_user_id(),
+				'to'        => $this->get_random_user_id(),
 				'subject'   => sprintf( 'Message Subject - #%d', $i ),
 				'thread-id' => $assoc_args['thread-id'],
 				'silent'    => true,
@@ -351,13 +359,13 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'The message is already starred.' );
 		}
 
-		$args = array(
+		$star_args = array(
 			'action'     => 'star',
 			'message_id' => $msg_id,
 			'user_id'    => $user_id,
 		);
 
-		if ( bp_messages_star_set_action( $args ) ) {
+		if ( bp_messages_star_set_action( $star_args ) ) {
 			WP_CLI::success( 'Message was successfully starred.' );
 		} else {
 			WP_CLI::error( 'Message was not starred.' );
@@ -386,14 +394,14 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$args = array(
+		$star_args = array(
 			'action'    => 'unstar',
 			'thread_id' => (int) $assoc_args['thread-id'],
 			'user_id'   => $user->ID,
 			'bulk'      => true,
 		);
 
-		if ( bp_messages_star_set_action( $args ) ) {
+		if ( bp_messages_star_set_action( $star_args ) ) {
 			WP_CLI::success( 'Message was successfully unstarred.' );
 		} else {
 			WP_CLI::error( 'Message was not unstarred.' );

@@ -15,13 +15,13 @@ Feature: Manage BuddyPress Messages
     And STDOUT should be a number
     Then save STDOUT as {THREAD_ID}
 
-    When I run `wp bp message list --fields=id,subject,message --user-id={BOB_ID}`
+    When I run `wp bp message list --fields=subject,message --user-id={BOB_ID}`
     Then STDOUT should be a table containing rows:
-      | id          | subject          | message |
-      | {THREAD_ID} | Message Subject  | Test    |
+      | subject          | message |
+      | Message Subject  | Test    |
 
     When I run `wp bp message delete {THREAD_ID} --user-id={BOB_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Thread(s) successfully deleted.
+      Success: Thread successfully deleted.
       """
