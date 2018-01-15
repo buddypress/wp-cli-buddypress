@@ -1,7 +1,7 @@
 <?php
 
-// Bail if WP-CLI or BuddyPress is not present.
-if ( ! defined( 'WP_CLI' ) || ! class_exists( 'BuddyPress' ) ) {
+// Bail if WP-CLI is not present.
+if ( ! defined( 'WP_CLI' ) ) {
 	return;
 }
 
