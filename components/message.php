@@ -457,7 +457,14 @@ class BPCLI_Message extends BPCLI_Component {
 			'content' => $this->generate_random_text(),
 		) );
 
-		if ( messages_send_notice( $r['subject'], $r['content'] ) ) {
+		$notice            = new BP_Messages_Notice();
+		$notice->subject   = $r['subject'];
+		$notice->message   = $r['content'];
+		$notice->date_sent = bp_core_current_time();
+		$notice->is_active = 1;
+
+		// Send it.
+		if ( $notice->save() ) {
 			WP_CLI::success( 'Notice was successfully sent.' );
 		} else {
 			WP_CLI::error( 'Notice was not sent.' );
