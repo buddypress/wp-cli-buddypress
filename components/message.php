@@ -28,37 +28,40 @@ class BPCLI_Message extends BPCLI_Component {
 	 * --from=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * --to=<user>
+	 * [--to=<user>]
 	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
+	 * ---
+	 * Default: Empty.
+	 * ---
 	 *
 	 * [--subject=<subject>]
 	 * : Subject of the message.
 	 * ---
-	 * default: Message Subject.
+	 * Default: Message Subject.
 	 * ---
 	 *
 	 * [--content=<content>]
 	 * : Content of the message.
 	 * ---
-	 * default: Random content.
+	 * Default: Random content.
 	 * ---
 	 *
 	 * [--thread-id=<thread-id>]
 	 * : Thread ID.
 	 * ---
-	 * default: false
+	 * Default: false
 	 * ---
 	 *
 	 * [--date-sent=<date-sent>]
 	 * : MySQL-formatted date.
 	 * ---
-	 * default: current date.
+	 * Default: current date.
 	 * ---
 	 *
 	 * [--silent=<silent>]
 	 * : Whether to silent the message creation.
 	 * ---
-	 * default: false.
+	 * Default: false.
 	 * ---
 	 *
 	 * [--porcelain]
@@ -76,6 +79,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
+			'to'        => '',
 			'subject'   => '',
 			'content'   => '',
 			'thread-id' => false,
@@ -94,15 +98,26 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
-		$recipient = $this->get_user_id_from_identifier( $assoc_args['to'] );
-		if ( ! $user || ! $recipient ) {
+		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
+
+		// To is not required when thread id is set.
+		if ( ! empty( $r['to'] ) ) {
+			$recipient = $this->get_user_id_from_identifier( (int) $r['to'] );
+
+			if ( ! $recipient ) {
+				WP_CLI::error( 'No user found by that username or ID.' );
+			}
+		}
+
+		// Existing thread recipients will be assumed.
+		$recipient = ( ! empty( $r['thread_id'] ) ) ? array() : array( $recipient->ID );
 
 		$thread_id = messages_new_message( array(
 			'sender_id'  => $user->ID,
 			'thread_id'  => $r['thread-id'],
-			'recipients' => array( $recipient->ID ),
+			'recipients' => $recipient,
 			'subject'    => $r['subject'],
 			'content'    => $r['content'],
 			'date_sent'  => $r['date-sent'],
@@ -154,19 +169,12 @@ class BPCLI_Message extends BPCLI_Component {
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
-		$user_id = $user->ID;
 
 		WP_CLI::confirm( 'Are you sure you want to delete this thread(s) ?', $assoc_args );
 
 		parent::_delete( array( $thread_id ), $assoc_args, function( $thread_id ) {
 
-			// Bail if the user has no access to the thread.
-			$msg_id = messages_check_thread_access( $thread_id, $user_id );
-			if ( ! is_numeric( $msg_id ) ) {
-				WP_CLI::error( 'This user has no access to this thread.' );
-			}
-
-			if ( messages_delete_thread( $thread_id, $user_id ) ) {
+			if ( messages_delete_thread( $thread_id, $user->ID ) ) {
 				return array( 'success', 'Thread successfully deleted.' );
 			} else {
 				return array( 'error', 'Could not delete the thread.' );
@@ -231,7 +239,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * [--fields=<fields>]
 	 * : Fields to display.
 	 *
-	 * [--<count>=<count>]
+	 * [--count=<count>]
 	 * : How many messages to list.
 	 * ---
 	 * default: 10
@@ -264,26 +272,19 @@ class BPCLI_Message extends BPCLI_Component {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args( $assoc_args, array(
-			'box'          => 'inbox',
+			'box'          => 'sentbox',
 			'type'         => 'all',
 			'search'       => '',
 			'count'        => 10,
 		) );
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( empty( ! $user ) ) {
+		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		$type = $r['type'];
-		if ( ! in_array( $r['type'], $this->message_types(), true ) ) {
-			$type = 'all';
-		}
-
-		$box = $r['box'];
-		if ( ! in_array( $r['box'], $this->message_boxes(), true ) ) {
-			$box = 'inbox';
-		}
+		$type = ( ! in_array( $r['type'], $this->message_types(), true ) ) ? 'all' : $r['type'];
+		$box  = ( ! in_array( $r['box'], $this->message_boxes(), true ) ) ? 'sentbox' : $r['box'];
 
 		$inbox = new BP_Messages_Box_Template( array(
 			'user_id'      => $user->ID,
@@ -297,7 +298,7 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'No messages found.' );
 		}
 
-		$messages = $inbox->threads->messages;
+		$messages = $inbox->threads[0]->messages;
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $messages, 'id' ) ); // WPCS: XSS ok.
@@ -433,9 +434,15 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * [--subject=<subject>]
 	 * : Subject of the notice/message.
+	 * ---
+	 * Default: Random Notice Subject.
+	 * ---
 	 *
 	 * [--content=<content>]
 	 * : Content of the message.
+	 * ---
+	 * Default: Random content.
+	 * ---
 	 *
 	 * ## EXAMPLE
 	 *
@@ -445,15 +452,12 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias send_notice
 	 */
 	public function send( $args, $assoc_args ) {
-		if ( empty( $assoc_args['subject'] ) ) {
-			$assoc_args['subject'] = sprintf( 'Random Notice Subject' );
-		}
+		$r = wp_parse_args( $assoc_args, array(
+			'subject' => sprintf( 'Random Notice Subject' ),
+			'content' => $this->generate_random_text(),
+		) );
 
-		if ( empty( $assoc_args['content'] ) ) {
-			$assoc_args['content'] = $this->generate_random_text();
-		}
-
-		if ( messages_send_notice( $assoc_args['subject'], $assoc_args['content'] ) ) {
+		if ( messages_send_notice( $r['subject'], $r['content'] ) ) {
 			WP_CLI::success( 'Notice was successfully sent.' );
 		} else {
 			WP_CLI::error( 'Notice was not sent.' );
