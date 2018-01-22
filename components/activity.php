@@ -529,10 +529,16 @@ class BPCLI_Activity extends BPCLI_Component {
 			'user-id' => $this->get_random_user_id(),
 		) );
 
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
 		// Post the activity update.
 		$id = bp_activity_post_update( array(
 			'content' => $r['content'],
-			'user_id' => (int) $r['user-id'],
+			'user_id' => $user->ID,
 		) );
 
 		// Activity ID returned on success update.
@@ -587,12 +593,18 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
+		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
 		$skip_notification = \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
 		// Add activity comment.
 		$id = bp_activity_new_comment( array(
 			'content'           => $r['content'],
-			'user_id'           => (int) $r['user-id'],
+			'user_id'           => $user->ID,
 			'activity_id'       => $activity->id,
 			'skip_notification' => $skip_notification,
 		) );
