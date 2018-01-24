@@ -11,7 +11,7 @@ Feature: Manage BuddyPress Messages
     Then STDOUT should be a number
     And save STDOUT as {SALLY_ID}
 
-    When I run `wp bp message send --subject="Important Notice" --content="Notice Message"`
+    When I run `wp bp message send-notice --subject="Important Notice" --content="Notice Message"`
     Then STDOUT should contain:
       """
       Success: Notice was successfully sent.
@@ -20,6 +20,18 @@ Feature: Manage BuddyPress Messages
     When I run `wp bp message create --from={BOB_ID} --to={SALLY_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {THREAD_ID}
+
+    When I run `wp bp message star-thread {THREAD_ID} --user-id={SALLY_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Thread was successfully starred.
+      """
+
+    When I run `wp bp message unstar-thread {THREAD_ID} --user-id={SALLY_ID}`
+    Then STDOUT should contain:
+      """
+      Success: Thread was successfully unstarred.
+      """
 
     When I run `wp bp message delete-thread {THREAD_ID} --user-id={SALLY_ID} --yes`
     Then STDOUT should contain:

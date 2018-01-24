@@ -183,9 +183,6 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields.
-	 * ---
-	 * default: All fields.
-	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -230,7 +227,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * [--fields=<fields>]
 	 * : Fields to display.
 	 *
-	 * [--count=<count>]
+	 * [--count=<number>]
 	 * : How many messages to list.
 	 * ---
 	 * default: 10
@@ -383,19 +380,19 @@ class BPCLI_Message extends BPCLI_Component {
 	}
 
 	/**
-	 * Unstar a thread.
+	 * Unstar a message.
 	 *
 	 * ## OPTIONS
 	 *
-	 * --thread-id=<thread-id>
-	 * : Thread ID to unstar.
+	 * --message-id=<message-id>
+	 * : Message ID to unstar.
 	 *
 	 * --user-id=<user>
-	 * : User that is unstarring the thread. Accepts either a user_login or a numeric ID.
+	 * : User that is unstarring the message. Accepts either a user_login or a numeric ID.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp message unstar --thread-id=212 --user-id=another_user_login
+	 *     $ wp bp message unstar --message-id=212 --user-id=another_user_login
 	 *     Success: Message was successfully unstarred.
 	 */
 	public function unstar( $args, $assoc_args ) {
@@ -405,10 +402,9 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		$star_args = array(
-			'action'    => 'unstar',
-			'thread_id' => (int) $assoc_args['thread-id'],
-			'user_id'   => $user->ID,
-			'bulk'      => true,
+			'action'     => 'unstar',
+			'message_id' => (int) $assoc_args['message-id'],
+			'user_id'    => $user->ID,
 		);
 
 		if ( bp_messages_star_set_action( $star_args ) ) {
@@ -419,38 +415,123 @@ class BPCLI_Message extends BPCLI_Component {
 	}
 
 	/**
+	 * Star a thread.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <thread-id>
+	 * : Thread ID to star.
+	 *
+	 * --user-id=<user>
+	 * : User that is starring the thread. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message star-thread 212 --user-id=another_user_login
+	 *     Success: Thread was successfully starred.
+	 */
+	public function star_thread( $args, $assoc_args ) {
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$thread_id = (int) $args[0];
+
+		// Check if it is a valid thread.
+		if ( ! messages_is_valid_thread( $thread_id ) ) {
+			WP_CLI::error( 'This is not a valid thread ID.' );
+		}
+
+		// Check if the user has access to this thread.
+		if ( ! messages_check_thread_access( $thread_id, $user->ID ) ) {
+			WP_CLI::error( 'User has no access to this thread.' );
+		}
+
+		$star_args = array(
+			'action'    => 'star',
+			'thread_id' => $thread_id,
+			'user_id'   => $user->ID,
+			'bulk'      => true,
+		);
+
+		if ( bp_messages_star_set_action( $star_args ) ) {
+			WP_CLI::success( 'Thread was successfully starred.' );
+		} else {
+			WP_CLI::error( 'Something wrong while trying to star the thread.' );
+		}
+	}
+
+	/**
+	 * Unstar a thread.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <thread-id>
+	 * : Thread ID to unstar.
+	 *
+	 * --user-id=<user>
+	 * : User that is unstarring the thread. Accepts either a user_login or a numeric ID.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp message unstar-thread --thread-id=212 --user-id=another_user_login
+	 *     Success: Thread was successfully unstarred.
+	 */
+	public function unstar_thread( $args, $assoc_args ) {
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		if ( ! $user ) {
+			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		$thread_id = (int) $args[0];
+
+		// Check if it is a valid thread.
+		if ( ! messages_is_valid_thread( $thread_id ) ) {
+			WP_CLI::error( 'This is not a valid thread ID.' );
+		}
+
+		// Check if the user has access to this thread.
+		if ( ! messages_check_thread_access( $thread_id, $user->ID ) ) {
+			WP_CLI::error( 'User has no access to this thread.' );
+		}
+
+		$star_args = array(
+			'action'    => 'unstar',
+			'thread_id' => $thread_id,
+			'user_id'   => $user->ID,
+			'bulk'      => true,
+		);
+
+		if ( bp_messages_star_set_action( $star_args ) ) {
+			WP_CLI::success( 'Thread was successfully unstarred.' );
+		} else {
+			WP_CLI::error( 'Something wrong while trying to unstar the thread.' );
+		}
+	}
+
+	/**
 	 * Send a notice.
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--subject=<subject>]
+	 * --subject=<subject>
 	 * : Subject of the notice/message.
-	 * ---
-	 * Default: Random Notice Subject.
-	 * ---
 	 *
-	 * [--content=<content>]
-	 * : Content of the message.
-	 * ---
-	 * Default: Random content.
-	 * ---
+	 * --content=<content>
+	 * : Content of the notice.
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp message send --subject="Important notice" --content="We need to improve"
+	 *     $ wp bp message send-notice --subject="Important notice" --content="We need to improve"
 	 *     Success: Notice was successfully sent.
 	 *
-	 * @alias send_notice
+	 * @alias send
 	 */
-	public function send( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'subject' => sprintf( 'Random Notice Subject' ),
-			'content' => $this->generate_random_text(),
-		) );
-
+	public function send_notice( $args, $assoc_args ) {
 		$notice            = new BP_Messages_Notice();
-		$notice->subject   = $r['subject'];
-		$notice->message   = $r['content'];
+		$notice->subject   = $assoc_args['subject'];
+		$notice->message   = $assoc_args['content'];
 		$notice->date_sent = bp_core_current_time();
 		$notice->is_active = 1;
 
