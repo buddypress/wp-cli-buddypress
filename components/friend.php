@@ -104,7 +104,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp friend remove user1 another_use
+	 *     $ wp bp friend remove user1 another_user
 	 *     Success: Friendship successfully removed.
 	 *
 	 * @alias delete
@@ -116,6 +116,11 @@ class BPCLI_Friend extends BPCLI_Component {
 
 		if ( ! $initiator || ! $friend ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
+		}
+
+		// Check if already friends, if not, bail.
+		if ( ! friends_check_friendship( $initiator->ID, $friend->ID ) ) {
+			WP_CLI::error( 'These users are not friends.' );
 		}
 
 		if ( friends_remove_friend( $initiator->ID, $friend->ID ) ) {
