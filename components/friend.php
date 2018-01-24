@@ -295,7 +295,13 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * [--initiator=<user>]
 	 * : ID of the first user. Accepts either a user_login or a numeric ID.
 	 * ---
-	 * default: Random user.
+	 * default: If none is provided, a random user will be selected for each friendship.
+	 * ---
+	 *
+	 * [--friend=<user>]
+	 * : ID of the second user. Accepts either a user_login or a numeric ID.
+	 * ---
+	 * default: If none is provided, a random user will be selected for each friendship.
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -319,8 +325,19 @@ class BPCLI_Friend extends BPCLI_Component {
 				$member = $user->ID;
 			}
 
+			$friend = $this->get_random_user_id();
+			if ( isset( $assoc_args['friend'] ) ) {
+				$friend = $this->get_user_id_from_identifier( $assoc_args['friend'] );
+
+				if ( ! $friend ) {
+					WP_CLI::error( 'No user found by that username or ID.' );
+				}
+
+				$friend = $friend->ID;
+			}
+
 			// Random members for friendship.
-			$members = array( $member, $this->get_random_user_id() );
+			$members = array( $member, $friend );
 
 			$this->create( $members, array(
 				'silent' => true,
