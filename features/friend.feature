@@ -19,7 +19,7 @@ Feature: Manage BuddyPress Friends
     Then STDOUT should be a number
     And save STDOUT as {JOHN_ID}
 
-    When I run `wp bp friend create {BOB_ID} {SALLY_ID} --force-accept=true`
+    When I run `wp bp friend create {BOB_ID} {SALLY_ID} --force-accept`
     Then STDOUT should contain:
       """
       Success: Friendship successfully created.
@@ -31,7 +31,7 @@ Feature: Manage BuddyPress Friends
       Success: Yes, they are friends.
       """
 
-    When I run `wp bp friend create {BOB_ID} {JOHN_ID} --force-accept=true`
+    When I run `wp bp friend create {BOB_ID} {JOHN_ID} --force-accept`
     Then STDOUT should contain:
       """
       Success: Friendship successfully created.

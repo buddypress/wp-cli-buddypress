@@ -30,11 +30,8 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * <friend>
 	 * : ID of the user whose friendship is being requested. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--force-accept=<force-accept>]
+	 * [--force-accept]
 	 * : Whether to force acceptance.
-	 * ---
-	 * default: false
-	 * ---
 	 *
 	 * [--silent=<silent>]
 	 * : Silent friendship creation.
@@ -50,15 +47,14 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *     $ wp bp friend create user1 another_use
 	 *     Success: Friendship successfully created.
 	 *
-	 *     $ wp bp friend create user1 another_use --force-accept=true
+	 *     $ wp bp friend create user1 another_use --force-accept
 	 *     Success: Friendship successfully created.
 	 *
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'force-accept' => false,
-			'silent'       => false,
+			'silent' => false,
 		) );
 
 		// Members.
@@ -69,7 +65,9 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $r['force-accept'] ) ) {
+		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
+
+		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
 		}
 
@@ -80,7 +78,7 @@ class BPCLI_Friend extends BPCLI_Component {
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
 		} else {
-			if ( $r['force-accept'] ) {
+			if ( $force ) {
 				WP_CLI::success( 'Friendship successfully created.' );
 			} else {
 				WP_CLI::success( 'Friendship successfully created but not accepted.' );
@@ -286,12 +284,6 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * default: Random user.
 	 * ---
 	 *
-	 * [--force-accept=<force-accept>]
-	 * : Whether to force acceptance.
-	 * ---
-	 * default: false
-	 * ---
-	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp friend generate --count=50
@@ -317,8 +309,7 @@ class BPCLI_Friend extends BPCLI_Component {
 			$members = array( $member, $this->get_random_user_id() );
 
 			$this->create( $members, array(
-				'force-accept' => $assoc_args['force-accept'],
-				'silent'       => true,
+				'silent' => true,
 			) );
 
 			$notify->tick();
