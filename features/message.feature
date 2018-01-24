@@ -21,7 +21,7 @@ Feature: Manage BuddyPress Messages
     Then STDOUT should be a number
     And save STDOUT as {THREAD_ID}
 
-    When I run `wp bp message delete {THREAD_ID} --user-id={SALLY_ID} --yes`
+    When I run `wp bp message delete-thread {THREAD_ID} --user-id={SALLY_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Thread successfully deleted.

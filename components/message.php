@@ -118,7 +118,7 @@ class BPCLI_Message extends BPCLI_Component {
 	}
 
 	/**
-	 * Delete message thread(s) for a given user.
+	 * Delete thread(s) for a given user.
 	 *
 	 * ## OPTIONS
 	 *
@@ -133,26 +133,38 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp message delete 500 687867 --user-id=40
+	 *     $ wp bp message delete-thread 500 687867 --user-id=40
 	 *     Success: Thread successfully deleted.
 	 *
-	 *     $ wp bp message delete 564 5465465 456456 --user-id=user_logon --yes
+	 *     $ wp bp message delete-thread 564 5465465 456456 --user-id=user_logon --yes
 	 *     Success: Thread successfully deleted.
 	 *
-	 * @alias remove
+	 * @alias remove-thread
 	 */
-	public function delete( $args, $assoc_args ) {
+	public function delete_thread( $args, $assoc_args ) {
 		$thread_id = $args[0];
 
+		// Check if we have a valid user.
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		if ( ! $user ) {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
-		WP_CLI::confirm( 'Are you sure you want to delete this thread(s) ?', $assoc_args );
+		WP_CLI::confirm( 'Are you sure you want to delete this thread(s)?', $assoc_args );
 
 		parent::_delete( array( $thread_id ), $assoc_args, function( $thread_id ) {
 
+			// Check if it is a valid thread before deleting.
+			if ( ! messages_is_valid_thread( $thread_id ) ) {
+				WP_CLI::error( 'This is not a valid thread ID.' );
+			}
+
+			// Check if the user has access to this thread.
+			if ( ! messages_check_thread_access( $thread_id, $user->ID ) ) {
+				WP_CLI::error( 'User has no access to this thread.' );
+			}
+
+			// Actually, delete it.
 			if ( messages_delete_thread( $thread_id, $user->ID ) ) {
 				return array( 'success', 'Thread successfully deleted.' );
 			} else {
