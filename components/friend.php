@@ -33,11 +33,8 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * [--force-accept]
 	 * : Whether to force acceptance.
 	 *
-	 * [--silent=<silent>]
-	 * : Silent friendship creation.
-	 * ---
-	 * default: false
-	 * ---
+	 * [--silent]
+	 * : Silent the message creation.
 	 *
 	 * [--porcelain]
 	 * : Return only the friendship id.
@@ -53,9 +50,6 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'silent' => false,
-		) );
 
 		// Members.
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
@@ -76,7 +70,7 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
 		}
 
-		if ( $r['silent'] ) {
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -330,20 +324,21 @@ class BPCLI_Friend extends BPCLI_Component {
 
 			$friend = $this->get_random_user_id();
 			if ( isset( $assoc_args['friend'] ) ) {
-				$friend = $this->get_user_id_from_identifier( $assoc_args['friend'] );
+				$user_2 = $this->get_user_id_from_identifier( $assoc_args['friend'] );
 
-				if ( ! $friend ) {
+				if ( ! $user_2 ) {
 					WP_CLI::error( 'No user found by that username or ID.' );
 				}
 
-				$friend = $friend->ID;
+				$friend = $user_2->ID;
 			}
 
 			// Random members for friendship.
 			$members = array( $member, $friend );
 
 			$this->create( $members, array(
-				'silent' => true,
+				'silent',
+				'force-accept',
 			) );
 
 			$notify->tick();
