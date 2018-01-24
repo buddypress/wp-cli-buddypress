@@ -29,22 +29,17 @@ class BPCLI_Message extends BPCLI_Component {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--to=<user>]
-	 * : Identifier for the recipient. Accepts either a user_login or a numeric ID.
+	 * : Identifier for the recipient. To is not required when thread id is set.
+	 *  Accepts either a user_login or a numeric ID.
 	 * ---
 	 * Default: Empty.
 	 * ---
 	 *
-	 * [--subject=<subject>]
+	 * --subject=<subject>
 	 * : Subject of the message.
-	 * ---
-	 * Default: Message Subject.
-	 * ---
 	 *
-	 * [--content=<content>]
+	 * --content=<content>
 	 * : Content of the message.
-	 * ---
-	 * Default: Random content.
-	 * ---
 	 *
 	 * [--thread-id=<thread-id>]
 	 * : Thread ID.
@@ -58,11 +53,8 @@ class BPCLI_Message extends BPCLI_Component {
 	 * Default: current date.
 	 * ---
 	 *
-	 * [--silent=<silent>]
+	 * [--silent]
 	 * : Whether to silent the message creation.
-	 * ---
-	 * Default: false.
-	 * ---
 	 *
 	 * [--porcelain]
 	 * : Return the thread id of the message.
@@ -72,7 +64,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
 	 *     Success: Message successfully created.
 	 *
-	 *     $ wp bp message create --from=545 --to=313
+	 *     $ wp bp message create --from=545 --to=313 --subject="Another Message Title" --content="Message OK"
 	 *     Success: Message successfully created.
 	 *
 	 * @alias add
@@ -80,34 +72,21 @@ class BPCLI_Message extends BPCLI_Component {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'to'        => '',
-			'subject'   => '',
-			'content'   => '',
 			'thread-id' => false,
 			'date-sent' => bp_core_current_time(),
-			'silent'    => false,
 		) );
-
-		// Fill in the content.
-		if ( empty( $r['content'] ) ) {
-			$r['content'] = $this->generate_random_text();
-		}
-
-		// Fill in the subject.
-		if ( empty( $r['subject'] ) ) {
-			$r['subject'] = sprintf( 'Message Subject' );
-		}
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
 		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
+			WP_CLI::error( sprintf( 'No user found by that username or ID %s.', $assoc_args['from'] ) );
 		}
 
 		// To is not required when thread id is set.
-		if ( ! empty( $r['to'] ) ) {
-			$recipient = $this->get_user_id_from_identifier( (int) $r['to'] );
+		if ( isset( $r['to'] ) ) {
+			$recipient = $this->get_user_id_from_identifier( $r['to'] );
 
 			if ( ! $recipient ) {
-				WP_CLI::error( 'No user found by that username or ID.' );
+				WP_CLI::error( sprintf( 'No user found by that username or ID %s.', $r['to'] ) );
 			}
 		}
 
@@ -118,8 +97,8 @@ class BPCLI_Message extends BPCLI_Component {
 			'sender_id'  => $user->ID,
 			'thread_id'  => $r['thread-id'],
 			'recipients' => $recipient,
-			'subject'    => $r['subject'],
-			'content'    => $r['content'],
+			'subject'    => $assoc_args['subject'],
+			'content'    => $assoc_args['content'],
 			'date_sent'  => $r['date-sent'],
 		) );
 
@@ -127,7 +106,7 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'Could not add a message.' );
 		}
 
-		if ( $r['silent'] ) {
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -340,7 +319,7 @@ class BPCLI_Message extends BPCLI_Component {
 				'to'        => $this->get_random_user_id(),
 				'subject'   => sprintf( 'Message Subject - #%d', $i ),
 				'thread-id' => $assoc_args['thread-id'],
-				'silent'    => true,
+				'silent',
 			) );
 
 			$notify->tick();
