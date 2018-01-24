@@ -67,6 +67,11 @@ class BPCLI_Friend extends BPCLI_Component {
 
 		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
 
+		// Check if already friends, and bail if so.
+		if ( friends_check_friendship( $initiator->ID, $friend->ID ) ) {
+			WP_CLI::error( 'These users are already friends.' );
+		}
+
 		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
 		}
