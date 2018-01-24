@@ -212,8 +212,12 @@ class BPCLI_Friend extends BPCLI_Component {
 		$user = $this->get_user_id_from_identifier( $args[0] );
 		$friend = $this->get_user_id_from_identifier( $args[1] );
 
-		if ( ! $user || ! $friend ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
+		if ( ! $user ) {
+			WP_CLI::error( sprintf( 'No user found by that username or ID "%s"', $args[0] ) );
+		}
+
+		if ( ! $friend ) {
+			WP_CLI::error( sprintf( 'No user found by that username or ID "%s"', $args[1] ) );
 		}
 
 		if ( friends_check_friendship( $user->ID, $friend->ID ) ) {
