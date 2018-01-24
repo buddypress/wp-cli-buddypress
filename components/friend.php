@@ -304,6 +304,9 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * default: If none is provided, a random user will be selected for each friendship.
 	 * ---
 	 *
+	 * [--force-accept]
+	 * : Whether to force acceptance.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp friend generate --count=50
