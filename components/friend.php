@@ -309,8 +309,8 @@ class BPCLI_Friend extends BPCLI_Component {
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 
 			$member = $this->get_random_user_id();
-			if ( isset( $assoc_args['user-id'] ) ) {
-				$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			if ( isset( $assoc_args['initiator'] ) ) {
+				$user = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
 
 				if ( ! $user ) {
 					WP_CLI::error( 'No user found by that username or ID.' );
