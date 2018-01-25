@@ -82,7 +82,7 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		// To is not required when thread id is set.
-		if ( isset( $r['to'] ) ) {
+		if ( ! empty( $r['to'] ) ) {
 			$recipient = $this->get_user_id_from_identifier( $r['to'] );
 
 			if ( ! $recipient ) {
@@ -139,6 +139,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     $ wp bp message delete-thread 564 5465465 456456 --user-id=user_logon --yes
 	 *     Success: Thread successfully deleted.
 	 *
+	 * @alias delete-thread
 	 * @alias remove-thread
 	 */
 	public function delete_thread( $args, $assoc_args ) {
@@ -157,11 +158,6 @@ class BPCLI_Message extends BPCLI_Component {
 			// Check if it is a valid thread before deleting.
 			if ( ! messages_is_valid_thread( $thread_id ) ) {
 				WP_CLI::error( 'This is not a valid thread ID.' );
-			}
-
-			// Check if the user has access to this thread.
-			if ( ! messages_check_thread_access( $thread_id, $user->ID ) ) {
-				WP_CLI::error( 'User has no access to this thread.' );
 			}
 
 			// Actually, delete it.
@@ -429,6 +425,8 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 *     $ wp bp message star-thread 212 --user-id=another_user_login
 	 *     Success: Thread was successfully starred.
+	 *
+	 * @alias star-thread
 	 */
 	public function star_thread( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -444,7 +442,8 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		// Check if the user has access to this thread.
-		if ( ! messages_check_thread_access( $thread_id, $user->ID ) ) {
+		$id = messages_check_thread_access( $thread_id, $user->ID );
+		if ( ! is_numeric( $id ) ) {
 			WP_CLI::error( 'User has no access to this thread.' );
 		}
 
@@ -477,6 +476,8 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 *     $ wp bp message unstar-thread --thread-id=212 --user-id=another_user_login
 	 *     Success: Thread was successfully unstarred.
+	 *
+	 * @alias unstar-thread
 	 */
 	public function unstar_thread( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -492,7 +493,8 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		// Check if the user has access to this thread.
-		if ( ! messages_check_thread_access( $thread_id, $user->ID ) ) {
+		$id = messages_check_thread_access( $thread_id, $user->ID );
+		if ( ! is_numeric( $id ) ) {
 			WP_CLI::error( 'User has no access to this thread.' );
 		}
 
