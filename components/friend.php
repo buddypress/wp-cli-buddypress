@@ -296,15 +296,9 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *
 	 * [--initiator=<user>]
 	 * : ID of the first user. Accepts either a user_login or a numeric ID.
-	 * ---
-	 * default: If none is provided, a random user will be selected for each friendship.
-	 * ---
 	 *
 	 * [--friend=<user>]
 	 * : ID of the second user. Accepts either a user_login or a numeric ID.
-	 * ---
-	 * default: If none is provided, a random user will be selected for each friendship.
-	 * ---
 	 *
 	 * [--force-accept]
 	 * : Whether to force acceptance.
@@ -319,7 +313,6 @@ class BPCLI_Friend extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 
-			$member = $this->get_random_user_id();
 			if ( isset( $assoc_args['initiator'] ) ) {
 				$user = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
 
@@ -328,9 +321,10 @@ class BPCLI_Friend extends BPCLI_Component {
 				}
 
 				$member = $user->ID;
+			} else {
+				$member = $this->get_random_user_id();
 			}
 
-			$friend = $this->get_random_user_id();
 			if ( isset( $assoc_args['friend'] ) ) {
 				$user_2 = $this->get_user_id_from_identifier( $assoc_args['friend'] );
 
@@ -339,6 +333,8 @@ class BPCLI_Friend extends BPCLI_Component {
 				}
 
 				$friend = $user_2->ID;
+			} else {
+				$friend = $this->get_random_user_id();
 			}
 
 			// Random members for friendship.
