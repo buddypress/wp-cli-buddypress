@@ -338,7 +338,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --message-id=<message-id>
+	 * <message-id>
 	 * : Message ID to star.
 	 *
 	 * --user-id=<user>
@@ -346,7 +346,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp message star --message-id=3543 --user-id=user_login
+	 *     $ wp bp message star 3543 --user-id=user_login
 	 *     Success: Message was successfully starred.
 	 */
 	public function star( $args, $assoc_args ) {
@@ -356,7 +356,7 @@ class BPCLI_Message extends BPCLI_Component {
 		}
 
 		$user_id = $user->ID;
-		$msg_id  = (int) $assoc_args['message-id'];
+		$msg_id  = (int) $args[0];
 
 		if ( bp_messages_is_message_starred( $msg_id, $user_id ) ) {
 			WP_CLI::error( 'The message is already starred.' );
@@ -380,7 +380,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --message-id=<message-id>
+	 * <message-id>
 	 * : Message ID to unstar.
 	 *
 	 * --user-id=<user>
@@ -388,7 +388,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp message unstar --message-id=212 --user-id=another_user_login
+	 *     $ wp bp message unstar 212 --user-id=another_user_login
 	 *     Success: Message was successfully unstarred.
 	 */
 	public function unstar( $args, $assoc_args ) {
@@ -397,10 +397,18 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'No user found by that username or ID.' );
 		}
 
+		$user_id = $user->ID;
+		$msg_id  = (int) $args[0];
+
+		// Check if the message is starred first.
+		if ( ! bp_messages_is_message_starred( $msg_id, $user_id ) ) {
+			WP_CLI::error( 'You need to star a message first before unstarring it.' );
+		}
+
 		$star_args = array(
 			'action'     => 'unstar',
-			'message_id' => (int) $assoc_args['message-id'],
-			'user_id'    => $user->ID,
+			'message_id' => $msg_id,
+			'user_id'    => $user_id,
 		);
 
 		if ( bp_messages_star_set_action( $star_args ) ) {
@@ -474,7 +482,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp message unstar-thread --thread-id=212 --user-id=another_user_login
+	 *     $ wp bp message unstar-thread 212 --user-id=another_user_login
 	 *     Success: Thread was successfully unstarred.
 	 *
 	 * @alias unstar-thread
