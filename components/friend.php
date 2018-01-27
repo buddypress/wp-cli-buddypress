@@ -55,16 +55,20 @@ class BPCLI_Friend extends BPCLI_Component {
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend = $this->get_user_id_from_identifier( $args[1] );
 
-		if ( ! $initiator || ! $friend ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
+		if ( ! $initiator ) {
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[0] ) );
 		}
 
-		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
+		if ( ! $friend ) {
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[1] ) );
+		}
 
-		// Check if already friends, and bail if so.
+		// Check if users are already friends, and bail if they do.
 		if ( friends_check_friendship( $initiator->ID, $friend->ID ) ) {
 			WP_CLI::error( 'These users are already friends.' );
 		}
+
+		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
 
 		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
@@ -108,11 +112,15 @@ class BPCLI_Friend extends BPCLI_Component {
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend = $this->get_user_id_from_identifier( $args[1] );
 
-		if ( ! $initiator || ! $friend ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
+		if ( ! $initiator ) {
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[0] ) );
 		}
 
-		// Check if already friends, if not, bail.
+		if ( ! $friend ) {
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[1] ) );
+		}
+
+		// Check if users are already friends, if not, bail.
 		if ( ! friends_check_friendship( $initiator->ID, $friend->ID ) ) {
 			WP_CLI::error( 'These users are not friends.' );
 		}
@@ -207,11 +215,11 @@ class BPCLI_Friend extends BPCLI_Component {
 		$friend = $this->get_user_id_from_identifier( $args[1] );
 
 		if ( ! $user ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID "%s"', $args[0] ) );
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[0] ) );
 		}
 
 		if ( ! $friend ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID "%s"', $args[1] ) );
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[1] ) );
 		}
 
 		if ( friends_check_friendship( $user->ID, $friend->ID ) ) {
