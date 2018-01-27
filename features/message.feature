@@ -11,7 +11,7 @@ Feature: Manage BuddyPress Messages
     Then STDOUT should be a number
     And save STDOUT as {SALLY_ID}
 
-    When I run `wp bp message send --subject="Important Notice" --content="Notice Message"`
+    When I run `wp bp message send-notice --subject="Important Notice" --content="Notice Message"`
     Then STDOUT should contain:
       """
       Success: Notice was successfully sent.

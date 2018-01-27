@@ -78,7 +78,7 @@ class BPCLI_Message extends BPCLI_Component {
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
 		if ( ! $user ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID %s.', $assoc_args['from'] ) );
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $assoc_args['from'] ) );
 		}
 
 		// To is not required when thread id is set.
@@ -86,7 +86,7 @@ class BPCLI_Message extends BPCLI_Component {
 			$recipient = $this->get_user_id_from_identifier( $r['to'] );
 
 			if ( ! $recipient ) {
-				WP_CLI::error( sprintf( 'No user found by that username or ID %s.', $r['to'] ) );
+				WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $r['to'] ) );
 			}
 		}
 
@@ -528,7 +528,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     $ wp bp message send-notice --subject="Important notice" --content="We need to improve"
 	 *     Success: Notice was successfully sent.
 	 *
-	 * @alias send
+	 * @alias send-notice
 	 */
 	public function send_notice( $args, $assoc_args ) {
 		$notice            = new BP_Messages_Notice();
