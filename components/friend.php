@@ -317,7 +317,7 @@ class BPCLI_Friend extends BPCLI_Component {
 				$user = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
 
 				if ( ! $user ) {
-					WP_CLI::error( 'No user found by that username or ID.' );
+					WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $assoc_args['initiator'] ) );
 				}
 
 				$member = $user->ID;
@@ -329,7 +329,7 @@ class BPCLI_Friend extends BPCLI_Component {
 				$user_2 = $this->get_user_id_from_identifier( $assoc_args['friend'] );
 
 				if ( ! $user_2 ) {
-					WP_CLI::error( 'No user found by that username or ID.' );
+					WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $assoc_args['friend'] ) );
 				}
 
 				$friend = $user_2->ID;
@@ -337,10 +337,7 @@ class BPCLI_Friend extends BPCLI_Component {
 				$friend = $this->get_random_user_id();
 			}
 
-			// Random members for friendship.
-			$members = array( $member, $friend );
-
-			$this->create( $members, array(
+			$this->create( array( $member, $friend ), array(
 				'silent',
 				'force-accept',
 			) );
