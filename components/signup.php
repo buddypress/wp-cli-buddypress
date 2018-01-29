@@ -34,11 +34,8 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * [--activation-key=<activation-key>]
 	 * : Activation key for the signup.
 	 *
-	 * [--silent=<silent>]
+	 * [--silent]
 	 * : Silent signup creation.
-	 * ---
-	 * Default: false
-	 * ---
 	 *
 	 * [--porcelain]
 	 * : Output only the new signup id.
@@ -77,12 +74,13 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		$id = BP_Signup::add( $signup_args );
 
-		if ( ! $id ) {
-			WP_CLI::error( 'Could not add user signup.' );
+		// Silent it before it errors.
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
 		}
 
-		if ( $assoc_args['silent'] ) {
-			return;
+		if ( ! $id ) {
+			WP_CLI::error( 'Could not add user signup.' );
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
@@ -221,7 +219,7 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
-				'silent' => true,
+				'silent',
 			) );
 
 			$notify->tick();

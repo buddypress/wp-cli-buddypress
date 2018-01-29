@@ -77,11 +77,8 @@ class BPCLI_Group extends BPCLI_Component {
 	 * Default: current date.
 	 * ---
 	 *
-	 * [--silent=<silent>]
+	 * [--silent]
 	 * : Whether to silent the group creation.
-	 * ---
-	 * Default: false.
-	 * ---
 	 *
 	 * [--porcelain]
 	 * : Return only the new group id.
@@ -105,7 +102,6 @@ class BPCLI_Group extends BPCLI_Component {
 			'status'       => 'public',
 			'enable-forum' => 0,
 			'date-created' => bp_core_current_time(),
-			'silent'       => false,
 		) );
 
 		// Auto-generate some stuff.
@@ -132,15 +128,16 @@ class BPCLI_Group extends BPCLI_Component {
 			'date_created' => $r['date-created'],
 		) );
 
+		// Silent it before it errors.
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
+
 		if ( ! is_numeric( $group_id ) ) {
 			WP_CLI::error( 'Could not create group.' );
 		}
 
 		groups_update_groupmeta( $group_id, 'total_member_count', 1 );
-
-		if ( $r['silent'] ) {
-			return;
-		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $group_id );
@@ -197,7 +194,7 @@ class BPCLI_Group extends BPCLI_Component {
 				'creator-id'   => $assoc_args['creator-id'],
 				'status'       => $this->random_group_status( $assoc_args['status'] ),
 				'enable-forum' => $assoc_args['enable-forum'],
-				'silent'       => true,
+				'silent',
 			) );
 
 			$notify->tick();

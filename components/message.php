@@ -95,12 +95,13 @@ class BPCLI_Message extends BPCLI_Component {
 			'date_sent'  => $r['date-sent'],
 		) );
 
-		if ( ! is_numeric( $thread_id ) ) {
-			WP_CLI::error( 'Could not add a message.' );
-		}
-
+		// Silent it before it errors.
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
+		}
+
+		if ( ! is_numeric( $thread_id ) ) {
+			WP_CLI::error( 'Could not add a message.' );
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {

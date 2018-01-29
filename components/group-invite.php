@@ -37,11 +37,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See groups_invite_user()
 	 *
-	 * [--silent=<silent>]
+	 * [--silent]
 	 * : Whether to silent the invite creation.
-	 * ---
-	 * Default: false
-	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
@@ -60,7 +57,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			'inviter-id'    => '',
 			'date-modified' => bp_core_current_time(),
 			'is-confirmed'  => 0,
-			'silent'        => false,
 		) );
 
 		// Group ID.
@@ -85,7 +81,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		groups_send_invites( $inviter->ID, $group_id );
 
 		if ( $invite ) {
-			if ( $r['silent'] ) {
+			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 				return;
 			}
 
@@ -260,7 +256,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 				'user-id'    => $this->get_random_user_id(),
 				'group-id'   => $this->get_random_group_id(),
 				'inviter-id' => $this->get_random_user_id(),
-				'silent'     => true,
+				'silent',
 			) );
 
 			$notify->tick();

@@ -82,11 +82,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * Default: 0
 	 * ---
 	 *
-	 * [--silent=<silent>]
+	 * [--silent]
 	 * : Whether to silent the activity creation.
-	 * ---
-	 * Default: false
-	 * ---
 	 *
 	 * [--porcelain]
 	 * : Output only the new activity id.
@@ -114,7 +111,6 @@ class BPCLI_Activity extends BPCLI_Component {
 			'date-recorded'     => bp_core_current_time(),
 			'hide-sitewide'     => 0,
 			'is-spam'           => 0,
-			'silent'            => false,
 		) );
 
 		// Fill in any missing information.
@@ -149,12 +145,13 @@ class BPCLI_Activity extends BPCLI_Component {
 			'is_spam'           => (bool) $r['is-spam'],
 		) );
 
-		if ( ! is_numeric( $id ) ) {
-			WP_CLI::error( 'Could not create activity item.' );
+		// Silent it before it errors.
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
 		}
 
-		if ( $r['silent'] ) {
-			return;
+		if ( ! is_numeric( $id ) ) {
+			WP_CLI::error( 'Could not create activity item.' );
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
@@ -319,7 +316,7 @@ class BPCLI_Activity extends BPCLI_Component {
 				'component' => $component,
 				'type'      => $type,
 				'content'   => $this->generate_random_text(),
-				'silent'    => true,
+				'silent',
 			) );
 
 			$notify->tick();

@@ -55,6 +55,11 @@ class BPCLI_Friend extends BPCLI_Component {
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend    = $this->get_user_id_from_identifier( $args[1] );
 
+		// Silent it before it errors.
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
+
 		// Check if users are already friends, and bail if they do.
 		if ( friends_check_friendship( $initiator->ID, $friend->ID ) ) {
 			WP_CLI::error( 'These users are already friends.' );
@@ -64,10 +69,6 @@ class BPCLI_Friend extends BPCLI_Component {
 
 		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
-		}
-
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
-			return;
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
