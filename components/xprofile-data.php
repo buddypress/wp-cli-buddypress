@@ -39,16 +39,10 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	 *     Success: Updated XProfile field "Field Name" (ID 120) with value  "teste" for user user_login (ID 45).
 	 */
 	public function set( $args, $assoc_args ) {
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
+		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$field_id = $this->get_field_id( $assoc_args['field-id'] );
 
-		$field = new BP_XProfile_Field( $field_id );
-
+		$field    = new BP_XProfile_Field( $field_id );
 		if ( empty( $field->name ) ) {
 			WP_CLI::error( 'XProfile field not found.' );
 		}
@@ -114,10 +108,6 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	public function get( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
 		if ( isset( $assoc_args['field-id'] ) ) {
 			$data = xprofile_get_field_data( $assoc_args['field-id'], $user->ID, $assoc_args['multi-format'] );
 			WP_CLI::print_value( $data, $assoc_args );
@@ -181,10 +171,6 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	 */
 	public function delete( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		if ( ! isset( $assoc_args['field-id'] ) && ! isset( $assoc_args['delete-all'] ) ) {
 			WP_CLI::error( 'Either --field-id or --delete-all must be provided.' );

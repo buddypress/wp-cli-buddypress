@@ -140,10 +140,6 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		$signup = $this->get_signup_by_identifier( $id, $assoc_args );
 
-		if ( ! $signup ) {
-			WP_CLI::error( 'No signup found by that identifier.' );
-		}
-
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_item( $signup );
 	}
@@ -196,11 +192,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	 */
 	public function activate( $args, $assoc_args ) {
 		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
-
-		if ( ! $signup ) {
-			WP_CLI::error( 'No signup found by that identifier.' );
-		}
-
 		$user_id = bp_core_activate_signup( $signup->activation_key );
 
 		if ( $user_id ) {
@@ -257,10 +248,6 @@ class BPCLI_Signup extends BPCLI_Component {
 	public function resend( $args, $assoc_args ) {
 		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
 
-		if ( ! $signup ) {
-			WP_CLI::error( 'No signup found by that identifier.' );
-		}
-
 		// Send email.
 		$send = BP_Signup::resend( array( $signup->signup_id ) );
 
@@ -306,7 +293,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $_, $assoc_args ) {
-		$formatter  = $this->get_formatter( $assoc_args );
+		$formatter = $this->get_formatter( $assoc_args );
 
 		$assoc_args = wp_parse_args( $assoc_args, array(
 			'number' => 20,
@@ -368,6 +355,10 @@ class BPCLI_Signup extends BPCLI_Component {
 		$signup = null;
 		if ( ! empty( $signups['signups'] ) ) {
 			$signup = reset( $signups['signups'] );
+		}
+
+		if ( ! $signup ) {
+			WP_CLI::error( 'No signup found by that identifier.' );
 		}
 
 		return $signup;

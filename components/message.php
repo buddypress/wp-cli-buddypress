@@ -77,17 +77,10 @@ class BPCLI_Message extends BPCLI_Component {
 		) );
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
-		if ( ! $user ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $assoc_args['from'] ) );
-		}
 
 		// To is not required when thread id is set.
 		if ( ! empty( $r['to'] ) ) {
 			$recipient = $this->get_user_id_from_identifier( $r['to'] );
-
-			if ( ! $recipient ) {
-				WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $r['to'] ) );
-			}
 		}
 
 		// Existing thread recipients will be assumed.
@@ -147,9 +140,6 @@ class BPCLI_Message extends BPCLI_Component {
 
 		// Check if we have a valid user.
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		WP_CLI::confirm( 'Are you sure you want to delete this thread(s)?', $assoc_args );
 
@@ -263,10 +253,6 @@ class BPCLI_Message extends BPCLI_Component {
 		) );
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
 		$type = ( ! in_array( $r['type'], $this->message_types(), true ) ) ? 'all' : $r['type'];
 		$box  = ( ! in_array( $r['box'], $this->message_boxes(), true ) ) ? 'sentbox' : $r['box'];
 
@@ -350,11 +336,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     Success: Message was successfully starred.
 	 */
 	public function star( $args, $assoc_args ) {
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
+		$user    = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id = $user->ID;
 		$msg_id  = (int) $args[0];
 
@@ -392,11 +374,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     Success: Message was successfully unstarred.
 	 */
 	public function unstar( $args, $assoc_args ) {
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
+		$user    = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id = $user->ID;
 		$msg_id  = (int) $args[0];
 
@@ -438,9 +416,6 @@ class BPCLI_Message extends BPCLI_Component {
 	 */
 	public function star_thread( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		$thread_id = (int) $args[0];
 
@@ -489,9 +464,6 @@ class BPCLI_Message extends BPCLI_Component {
 	 */
 	public function unstar_thread( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		$thread_id = (int) $args[0];
 

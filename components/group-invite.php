@@ -71,15 +71,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $r['user-id'] );
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
+		$user    = $this->get_user_id_from_identifier( $r['user-id'] );
 		$inviter = $this->get_user_id_from_identifier( $r['inviter-id'] );
-		if ( ! $inviter ) {
-			WP_CLI::error( 'Inviter not found by that username or ID.' );
-		}
 
 		$invite = groups_invite_user( array(
 			'user_id'       => $user->ID,
@@ -133,10 +126,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
 		if ( groups_uninvite_user( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'User uninvited from the group.' );
 		} else {
@@ -188,10 +177,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		if ( $user_id ) {
 			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-			if ( ! $user ) {
-				WP_CLI::error( 'No user found by that username or ID.' );
-			}
 		}
 
 		if ( $group_id ) {
@@ -313,10 +298,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
 		if ( groups_accept_invite( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'User is now a "member" of the group.' );
 		} else {
@@ -352,10 +333,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		}
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		if ( groups_reject_invite( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'Member invitation rejected.' );
@@ -394,10 +371,6 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		}
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		if ( groups_delete_invite( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'Member invitation deleted from the group.' );

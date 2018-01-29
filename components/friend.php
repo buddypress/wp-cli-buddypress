@@ -53,15 +53,7 @@ class BPCLI_Friend extends BPCLI_Component {
 
 		// Members.
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
-		$friend = $this->get_user_id_from_identifier( $args[1] );
-
-		if ( ! $initiator ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[0] ) );
-		}
-
-		if ( ! $friend ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[1] ) );
-		}
+		$friend    = $this->get_user_id_from_identifier( $args[1] );
 
 		// Check if users are already friends, and bail if they do.
 		if ( friends_check_friendship( $initiator->ID, $friend->ID ) ) {
@@ -110,15 +102,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	public function remove( $args, $assoc_args ) {
 		// Members.
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
-		$friend = $this->get_user_id_from_identifier( $args[1] );
-
-		if ( ! $initiator ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[0] ) );
-		}
-
-		if ( ! $friend ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[1] ) );
-		}
+		$friend    = $this->get_user_id_from_identifier( $args[1] );
 
 		// Check if users are already friends, if not, bail.
 		if ( ! friends_check_friendship( $initiator->ID, $friend->ID ) ) {
@@ -211,16 +195,8 @@ class BPCLI_Friend extends BPCLI_Component {
 	 */
 	public function check( $args, $assoc_args ) {
 		// Members.
-		$user = $this->get_user_id_from_identifier( $args[0] );
+		$user   = $this->get_user_id_from_identifier( $args[0] );
 		$friend = $this->get_user_id_from_identifier( $args[1] );
-
-		if ( ! $user ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[0] ) );
-		}
-
-		if ( ! $friend ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $args[1] ) );
-		}
 
 		if ( friends_check_friendship( $user->ID, $friend->ID ) ) {
 			WP_CLI::success( 'Yes, they are friends.' );
@@ -260,15 +236,10 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
+
 		$formatter = $this->get_formatter( $assoc_args );
-
-		$user = $this->get_user_id_from_identifier( $args[0] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
-		$friends = BP_Friends_Friendship::get_friendships( $user->ID );
+		$user      = $this->get_user_id_from_identifier( $args[0] );
+		$friends   = BP_Friends_Friendship::get_friendships( $user->ID );
 
 		if ( empty( $friends ) ) {
 			WP_CLI::error( 'This member has no friends.' );
@@ -315,11 +286,6 @@ class BPCLI_Friend extends BPCLI_Component {
 
 			if ( isset( $assoc_args['initiator'] ) ) {
 				$user = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
-
-				if ( ! $user ) {
-					WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $assoc_args['initiator'] ) );
-				}
-
 				$member = $user->ID;
 			} else {
 				$member = $this->get_random_user_id();
@@ -327,11 +293,6 @@ class BPCLI_Friend extends BPCLI_Component {
 
 			if ( isset( $assoc_args['friend'] ) ) {
 				$user_2 = $this->get_user_id_from_identifier( $assoc_args['friend'] );
-
-				if ( ! $user_2 ) {
-					WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $assoc_args['friend'] ) );
-				}
-
 				$friend = $user_2->ID;
 			} else {
 				$friend = $this->get_random_user_id();

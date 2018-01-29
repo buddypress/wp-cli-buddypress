@@ -235,10 +235,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$group_identifier = $args[0];
 
 		// Check that group exists.
-		$group_id = $this->get_group_id_from_identifier( $group_identifier );
+		$group_id = $this->get_group_id_from_identifier( $args[0] );
 		if ( ! $group_id ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
@@ -275,10 +274,9 @@ class BPCLI_Group extends BPCLI_Component {
 	 *     Success: Group successfully deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-		$group_identifier = $args[0];
 
 		// Check that group exists.
-		$group_id = $this->get_group_id_from_identifier( $group_identifier );
+		$group_id = $this->get_group_id_from_identifier( $args[0] );
 		if ( ! $group_id ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
@@ -393,9 +391,6 @@ class BPCLI_Group extends BPCLI_Component {
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-			if ( ! $user ) {
-				WP_CLI::error( 'No user found by that username or ID.' );
-			}
 			$query_args['user_id'] = $user->ID;
 		}
 

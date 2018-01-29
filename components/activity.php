@@ -531,10 +531,6 @@ class BPCLI_Activity extends BPCLI_Component {
 
 		$user = $this->get_user_id_from_identifier( $r['user-id'] );
 
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
-
 		// Post the activity update.
 		$id = bp_activity_post_update( array(
 			'content' => $r['content'],
@@ -594,10 +590,6 @@ class BPCLI_Activity extends BPCLI_Component {
 		}
 
 		$user = $this->get_user_id_from_identifier( $r['user-id'] );
-
-		if ( ! $user ) {
-			WP_CLI::error( 'No user found by that username or ID.' );
-		}
 
 		$skip_notification = \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
