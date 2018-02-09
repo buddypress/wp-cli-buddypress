@@ -35,7 +35,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * : Activation key for the signup.
 	 *
 	 * [--silent]
-	 * : Silent signup creation.
+	 * : Whether to silent the signup creation.
 	 *
 	 * [--porcelain]
 	 * : Output only the new signup id.

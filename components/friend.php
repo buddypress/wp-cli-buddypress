@@ -34,7 +34,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * : Whether to force acceptance.
 	 *
 	 * [--silent]
-	 * : Silent the message creation.
+	 * : Whether to silent the message creation.
 	 *
 	 * [--porcelain]
 	 * : Return only the friendship id.
