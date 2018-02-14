@@ -78,7 +78,7 @@ Feature: Manage BuddyPress Groups
     When I try `wp bp group list --fields=id --user-id={MEMBER_ID}`
     Then the return code should be 1
 
-    When I run `wp bp group member add --group-id={GROUP_ONE_ID} --user-id={MEMBER_ID}`
+    When I run `wp bp group member create --group-id={GROUP_ONE_ID} --user-id={MEMBER_ID}`
     Then the return code should be 0
 
     When I run `wp bp group list --fields=id --user-id={MEMBER_ID}`

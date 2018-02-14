@@ -18,7 +18,7 @@ Feature: Manage BuddyPress Activity Favorites
     When I run `wp user create testuser3 testuser3@example.com --porcelain`
     And save STDOUT as {SEC_MEMBER_ID}
 
-    When I run `wp bp activity favorite add {ACTIVITY_ID} {SEC_MEMBER_ID}`
+    When I run `wp bp activity favorite create {ACTIVITY_ID} {SEC_MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Activity item added as a favorite for the user.

@@ -15,7 +15,7 @@ Feature: Manage BuddyPress Group Members
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ID}
 
-    When I run `wp bp group member add --group-id={GROUP_ID} --user-id={MEMBER_ID}`
+    When I run `wp bp group member create --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
       """
       Success: Added user #{MEMBER_ID} to group #{GROUP_ID} as member.
