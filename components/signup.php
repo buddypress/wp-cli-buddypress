@@ -58,7 +58,7 @@ class BPCLI_Signup extends BPCLI_Component {
 
 		// Add a random user login if none is provided.
 		if ( isset( $assoc_args['user-login'] ) ) {
-			$signup_args['user_login'] = $assoc_args['user-login']
+			$signup_args['user_login'] = $assoc_args['user-login'];
 		}
 
 		// Sanitize login (random or not).
