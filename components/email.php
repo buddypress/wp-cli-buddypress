@@ -40,15 +40,6 @@ class BPCLI_Email extends BPCLI_Component {
 			switch_to_blog( bp_get_root_blog_id() );
 		}
 
-		// 'type' is required.
-		if ( empty( $assoc_args['type'] ) ) {
-			if ( true === $switched ) {
-				restore_current_blog();
-			}
-
-			WP_CLI::error( "The 'type' field must be filled in." );
-		}
-
 		$term = term_exists( $assoc_args['type'], bp_get_email_tax_type() );
 
 		// Term already exists so don't do anything.
@@ -58,15 +49,6 @@ class BPCLI_Email extends BPCLI_Component {
 			}
 
 			WP_CLI::error( "Email type '{$assoc_args['type']}' already exists." );
-		}
-
-		// 'subject' is required.
-		if ( empty( $assoc_args['subject'] ) ) {
-			if ( true === $switched ) {
-				restore_current_blog();
-			}
-
-			WP_CLI::error( "The 'subject' field must be filled in." );
 		}
 
 		if ( ! empty( $args[0] ) ) {
@@ -79,15 +61,6 @@ class BPCLI_Email extends BPCLI_Component {
 			} else {
 				$assoc_args['content'] = $input;
 			}
-		}
-
-		// 'content' is required.
-		if ( empty( $assoc_args['content'] ) ) {
-			if ( true === $switched ) {
-				restore_current_blog();
-			}
-
-			WP_CLI::error( "The 'content' field must be filled in." );
 		}
 
 		$id = $assoc_args['type'];
