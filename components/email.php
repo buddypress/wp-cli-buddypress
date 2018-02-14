@@ -95,7 +95,7 @@ class BPCLI_Email extends BPCLI_Component {
 		);
 
 		// Email post content.
-		$post_id = wp_insert_post( bp_parse_args( $email, $defaults, 'install_email_' . $id ) );
+		$post_id = wp_insert_post( bp_parse_args( $email, $defaults, 'install_email_' . $id ), true );
 
 		// Save the situation.
 		if ( ! is_wp_error( $post_id ) ) {
@@ -119,7 +119,7 @@ class BPCLI_Email extends BPCLI_Component {
 				restore_current_blog();
 			}
 
-			WP_CLI::error( "There was a problem creating the email post for type '{$assoc_args['type']}'." );
+			WP_CLI::error( "There was a problem creating the email post for type '{$assoc_args['type']}' - " . $post_id->get_error_message() );
 		}
 	}
 
