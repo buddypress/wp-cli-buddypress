@@ -55,7 +55,7 @@ class BPCLI_Components extends BPCLI_Component {
 		bp_core_install( $active_components );
 		bp_core_add_page_mappings( $active_components );
 
-		WP_CLI::success( sprintf( 'The %s component has been activated.', ucfirst( $c ) ) );
+		WP_CLI::success( sprintf( 'The %s component has been activated.', ucfirst( $component ) ) );
 	}
 
 	/**
