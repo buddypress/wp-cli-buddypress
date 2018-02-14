@@ -232,7 +232,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-
 		// Check that group exists.
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
 		if ( ! $group_id ) {
@@ -271,7 +270,6 @@ class BPCLI_Group extends BPCLI_Component {
 	 *     Success: Group successfully deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-
 		// Check that group exists.
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
 		if ( ! $group_id ) {
@@ -377,8 +375,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-		$formatter = $this->get_formatter( $assoc_args );
-
+		$formatter  = $this->get_formatter( $assoc_args );
 		$query_args = wp_parse_args( $assoc_args, array(
 			'per_page'    => -1,
 			'show_hidden' => true,
@@ -399,7 +396,6 @@ class BPCLI_Group extends BPCLI_Component {
 		}
 
 		$groups = groups_get_groups( $query_args );
-
 		if ( empty( $groups['groups'] ) ) {
 			WP_CLI::error( 'No groups found.' );
 		}
@@ -435,9 +431,9 @@ class BPCLI_Group extends BPCLI_Component {
 	protected function random_group_status( $status ) {
 		$core_status = $this->group_status();
 
-		$status = ( 'mixed' === $status )
-			? $core_status[ array_rand( $core_status ) ]
-			: $status;
+		if ( 'mixed' === $status ) {
+			$status = $core_status[ array_rand( $core_status ) ];
+		}
 
 		return $status;
 	}

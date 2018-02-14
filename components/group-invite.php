@@ -164,7 +164,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		}
 
 		$group_id = isset( $assoc_args['group-id'] ) ? intval( $assoc_args['group-id'] ) : null;
-		$user_id = isset( $assoc_args['user-id'] ) ? intval( $assoc_args['user-id'] ) : null;
+		$user_id  = isset( $assoc_args['user-id'] ) ? intval( $assoc_args['user-id'] ) : null;
 
 		// Check that group exists.
 		if ( $group_id && ! $this->get_group_id_from_identifier( $group_id ) ) {
@@ -178,7 +178,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		if ( $group_id ) {
 			$invite_query = new BP_Group_Member_Query( array(
 				'is_confirmed' => false,
-				'group_id' => $group_id,
+				'group_id'     => $group_id,
 			) );
 
 			$invites = $invite_query->results;
@@ -186,11 +186,13 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			// Manually filter out user ID - this is not supported by the API.
 			if ( $user_id ) {
 				$user_invites = array();
+
 				foreach ( $invites as $invite ) {
 					if ( $user_id === $invite->user_id ) {
 						$user_invites[] = $invite;
 					}
 				}
+
 				$invites = $user_invites;
 			}
 
@@ -216,7 +218,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			$formatter->display_items( $invites );
 		} else {
 			$invite_query = groups_get_invites_for_user( $user_id );
-			$invites = $invite_query['groups'];
+			$invites      = $invite_query['groups'];
 
 			if ( empty( $assoc_args['fields'] ) ) {
 				$fields = array(

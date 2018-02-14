@@ -41,15 +41,17 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	public function set( $args, $assoc_args ) {
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$field_id = $this->get_field_id( $assoc_args['field-id'] );
-
 		$field    = new BP_XProfile_Field( $field_id );
+
 		if ( empty( $field->name ) ) {
 			WP_CLI::error( 'XProfile field not found.' );
 		}
 
-		$value = ( 'checkbox' === $field->type )
-			? explode( ',', $assoc_args['value'] )
-			: $assoc_args['value'];
+		$value = $assoc_args['value'];
+
+		if ( 'checkbox' === $field->type ) {
+			$value = explode( ',', $assoc_args['value'] );
+		}
 
 		$updated = xprofile_set_field_data( $field->id, $user->ID, $value );
 
@@ -112,9 +114,9 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 			$data = xprofile_get_field_data( $assoc_args['field-id'], $user->ID, $assoc_args['multi-format'] );
 			WP_CLI::print_value( $data, $assoc_args );
 		} else {
-			$data = BP_XProfile_ProfileData::get_all_for_user( $user->ID );
-
+			$data           = BP_XProfile_ProfileData::get_all_for_user( $user->ID );
 			$formatted_data = array();
+
 			foreach ( $data as $field_name => $field_data ) {
 				// Omit WP core fields.
 				if ( ! is_array( $field_data ) ) {
@@ -131,7 +133,7 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 				);
 			}
 
-			$format_args = $assoc_args;
+			$format_args           = $assoc_args;
 			$format_args['fields'] = array(
 				'field_id',
 				'field_name',

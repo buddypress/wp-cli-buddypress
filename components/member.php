@@ -41,8 +41,7 @@ class BPCLI_Member extends BPCLI_Component {
 	 * @param int $user_id User ID.
 	 */
 	public static function update_user_last_activity_random( $user_id ) {
-		$time = rand( 0, time() );
-		$time = date( 'Y-m-d H:i:s', $time );
+		$time = date( 'Y-m-d H:i:s', rand( 0, time() ) );
 		bp_update_user_last_activity( $user_id, $time );
 	}
 }

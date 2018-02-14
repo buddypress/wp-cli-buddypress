@@ -52,25 +52,29 @@ class BPCLI_Signup extends BPCLI_Component {
 			'meta' => '',
 		);
 
+		$signup_args['user_login']     = $this->get_random_login();
+		$signup_args['user_email']     = $this->get_random_login() . '@example.com';
+		$signup_args['activation_key'] = wp_generate_password( 32, false );
+
 		// Add a random user login if none is provided.
-		$signup_args['user_login'] = ( isset( $assoc_args['user-login'] ) )
-			? $assoc_args['user-login']
-			: $this->get_random_login();
+		if ( isset( $assoc_args['user-login'] ) ) {
+			$signup_args['user_login'] = $assoc_args['user-login'];
+		}
 
 		// Sanitize login (random or not).
 		$signup_args['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $signup_args['user_login'], true ) );
 
 		// Add a random email if none is provided.
-		$signup_args['user_email'] = ( isset( $assoc_args['user-email'] ) )
-			? $assoc_args['user-email']
-			: $this->get_random_login() . '@example.com';
+		if ( isset( $assoc_args['user-email'] ) ) {
+			$signup_args['user_email'] = $assoc_args['user-email'];
+		}
 
 		// Sanitize email (random or not).
 		$signup_args['user_email'] = sanitize_email( $signup_args['user_email'] );
 
-		$signup_args['activation_key'] = ( isset( $assoc_args['activation-key'] ) )
-			? $assoc_args['activation-key']
-			: wp_generate_password( 32, false );
+		if ( isset( $assoc_args['activation-key'] ) ) {
+			$signup_args['activation_key'] = $assoc_args['activation-key'];
+		}
 
 		$id = BP_Signup::add( $signup_args );
 
@@ -130,8 +134,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     $ wp bp signup get 123 --match-field=id
 	 */
 	public function get( $args, $assoc_args ) {
-		$id = $args[0];
-
+		$id          = $args[0];
 		$signup_args = array(
 			'number' => 1,
 		);
@@ -189,7 +192,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     Success: Signup activated, new user (ID #545).
 	 */
 	public function activate( $args, $assoc_args ) {
-		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
+		$signup  = $this->get_signup_by_identifier( $args[0], $assoc_args );
 		$user_id = bp_core_activate_signup( $signup->activation_key );
 
 		if ( $user_id ) {
@@ -245,9 +248,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 */
 	public function resend( $args, $assoc_args ) {
 		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
-
-		// Send email.
-		$send = BP_Signup::resend( array( $signup->signup_id ) );
+		$send   = BP_Signup::resend( array( $signup->signup_id ) );
 
 		// Add feedback message.
 		if ( ! empty( $send['errors'] ) ) {
@@ -291,8 +292,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $_, $assoc_args ) {
-		$formatter = $this->get_formatter( $assoc_args );
-
+		$formatter  = $this->get_formatter( $assoc_args );
 		$assoc_args = wp_parse_args( $assoc_args, array(
 			'number' => 20,
 			'fields' => 'all',
@@ -349,8 +349,8 @@ class BPCLI_Signup extends BPCLI_Component {
 		}
 
 		$signups = BP_Signup::get( $signup_args );
+		$signup  = null;
 
-		$signup = null;
 		if ( ! empty( $signups['signups'] ) ) {
 			$signup = reset( $signups['signups'] );
 		}

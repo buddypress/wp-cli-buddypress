@@ -41,9 +41,9 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	 */
 	protected function get_group_id_from_identifier( $group_id ) {
 		// Group ID or slug.
-		$group_id = ( ! is_numeric( $group_id ) )
-			? groups_get_id( $group_id )
-			: $group_id;
+		if ( ! is_numeric( $group_id ) ) {
+			$group_id = groups_get_id( $group_id );
+		}
 
 		// Get group object.
 		$group_obj = groups_get_group( array(
@@ -121,9 +121,11 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 	 * @return int
 	 */
 	protected function get_field_id( $field_id ) {
-		return ( ! is_numeric( $field_id ) )
-			? xprofile_get_field_id_from_name( $field_id )
-			: absint( $field_id );
+		if ( ! is_numeric( $field_id ) ) {
+			return xprofile_get_field_id_from_name( $field_id );
+		}
+
+		return absint( $field_id );
 	}
 
 	/**

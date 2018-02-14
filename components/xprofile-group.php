@@ -72,7 +72,7 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $group_id );
 		} else {
-			$group = new BP_XProfile_Group( $group_id );
+			$group   = new BP_XProfile_Group( $group_id );
 			$success = sprintf(
 				'Created XProfile field group "%s" (ID %d).',
 				$group->name,
@@ -121,13 +121,11 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 		}
 
 		$object = xprofile_get_field_group( $field_group_id );
-
 		if ( ! is_object( $object ) && empty( $object->id ) ) {
 			WP_CLI::error( 'No XProfile field group found.' );
 		}
 
 		$object_arr = get_object_vars( $object );
-
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}
@@ -155,7 +153,6 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 	 */
 	public function delete( $args, $assoc_args ) {
 		$field_group_id = $args[0];
-
 		WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
 
 		parent::_delete( array( $field_group_id ), $assoc_args, function( $field_group_id ) {

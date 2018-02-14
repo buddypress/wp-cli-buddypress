@@ -50,7 +50,6 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-
 		// Members.
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend    = $this->get_user_id_from_identifier( $args[1] );
@@ -237,7 +236,6 @@ class BPCLI_Friend extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-
 		$formatter = $this->get_formatter( $assoc_args );
 		$user      = $this->get_user_id_from_identifier( $args[0] );
 		$friends   = BP_Friends_Friendship::get_friendships( $user->ID );
@@ -286,7 +284,7 @@ class BPCLI_Friend extends BPCLI_Component {
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 
 			if ( isset( $assoc_args['initiator'] ) ) {
-				$user = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
+				$user   = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
 				$member = $user->ID;
 			} else {
 				$member = $this->get_random_user_id();

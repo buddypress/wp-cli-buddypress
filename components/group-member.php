@@ -120,8 +120,7 @@ class BPCLI_Group_Member extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
+		$user   = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$member = new BP_Groups_Member( $user->ID, $group_id );
 
 		// True on success.
@@ -257,8 +256,8 @@ class BPCLI_Group_Member extends BPCLI_Component {
 		}
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
 		$role = $assoc_args['role'];
+
 		if ( ! in_array( $role, $this->group_roles(), true ) ) {
 			WP_CLI::error( 'You need a valid role to promote the member.' );
 		}
@@ -299,8 +298,7 @@ class BPCLI_Group_Member extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
+		$user   = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$member = new BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->demote() ) {
@@ -337,8 +335,7 @@ class BPCLI_Group_Member extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
+		$user   = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$member = new BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->ban() ) {
@@ -375,8 +372,7 @@ class BPCLI_Group_Member extends BPCLI_Component {
 			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
+		$user   = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$member = new BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->unban() ) {

@@ -48,8 +48,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$activity_id = $args[0];
-
-		$activity = new BP_Activity_Activity( $activity_id );
+		$activity    = new BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -90,8 +89,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 */
 	public function remove( $args, $assoc_args ) {
 		$activity_id = $args[0];
-
-		$activity = new BP_Activity_Activity( $activity_id );
+		$activity    = new BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -141,9 +139,9 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 * @alias user_items
 	 */
 	public function _list( $args, $assoc_args ) {
-		$user = $this->get_user_id_from_identifier( $args[0] );
-
+		$user      = $this->get_user_id_from_identifier( $args[0] );
 		$favorites = bp_activity_get_user_favorites( $user->ID );
+
 		if ( ! $favorites ) {
 			WP_CLI::error( 'No favorite found for this user.' );
 		}

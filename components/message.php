@@ -189,8 +189,8 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$m = new BP_Messages_Message( $args[0] );
-		$message_arr = get_object_vars( $m );
+		$message     = new BP_Messages_Message( $args[0] );
+		$message_arr = get_object_vars( $message );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $message_arr );
@@ -247,10 +247,10 @@ class BPCLI_Message extends BPCLI_Component {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args( $assoc_args, array(
-			'box'          => 'sentbox',
-			'type'         => 'all',
-			'search'       => '',
-			'count'        => 10,
+			'box'    => 'sentbox',
+			'type'   => 'all',
+			'search' => '',
+			'count'  => 10,
 		) );
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -416,8 +416,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias star-thread
 	 */
 	public function star_thread( $args, $assoc_args ) {
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
+		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$thread_id = (int) $args[0];
 
 		// Check if it is a valid thread.
@@ -464,8 +463,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias unstar-thread
 	 */
 	public function unstar_thread( $args, $assoc_args ) {
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
+		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$thread_id = (int) $args[0];
 
 		// Check if it is a valid thread.
