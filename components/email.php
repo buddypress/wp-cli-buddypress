@@ -133,7 +133,7 @@ class BPCLI_Email extends BPCLI_Component {
 	 * ## EXAMPLE
 	 *
 	 *     # Output the post ID for the 'activity-at-message' email type
-	 *     $ wp bp email get activity-at-message --fields=ID
+	 *     $ wp bp email get-post activity-at-message --fields=ID
 	 *
 	 * @subcommand get-post
 	 */
