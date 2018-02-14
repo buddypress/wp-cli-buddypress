@@ -47,7 +47,6 @@ class BPCLI_Email extends BPCLI_Component {
 			}
 
 			WP_CLI::error( "The 'type' field must be filled in." );
-			return;
 		}
 
 		$term = term_exists( $assoc_args['type'], bp_get_email_tax_type() );
@@ -59,7 +58,6 @@ class BPCLI_Email extends BPCLI_Component {
 			}
 
 			WP_CLI::error( "Email type '{$assoc_args['type']}' already exists." );
-			return;
 		}
 
 		// 'subject' is required.
@@ -69,7 +67,6 @@ class BPCLI_Email extends BPCLI_Component {
 			}
 
 			WP_CLI::error( "The 'subject' field must be filled in." );
-			return;
 		}
 
 		if ( ! empty( $args[0] ) ) {
@@ -91,7 +88,6 @@ class BPCLI_Email extends BPCLI_Component {
 			}
 
 			WP_CLI::error( "The 'content' field must be filled in." );
-			return;
 		}
 
 		$id = $assoc_args['type'];
@@ -122,13 +118,17 @@ class BPCLI_Email extends BPCLI_Component {
 				) );
 			}
 
+			if ( true === $switched ) {
+				restore_current_blog();
+			}
+
 			WP_CLI::success( "Email post created for type '{$assoc_args['type']}'." );
 		} else {
-			WP_CLI::error( "There was a problem creating the email post for type '{$assoc_args['type']}'." );
-		}
+			if ( true === $switched ) {
+				restore_current_blog();
+			}
 
-		if ( true === $switched ) {
-			restore_current_blog();
+			WP_CLI::error( "There was a problem creating the email post for type '{$assoc_args['type']}'." );
 		}
 	}
 
