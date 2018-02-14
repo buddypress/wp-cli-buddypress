@@ -10,24 +10,24 @@ class BPCLI_Email extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--type]
-	 * : Required. Email type for the email (should be unique identifier, sanitized like a post slug).
+	 * --type=<type>
+	 * : Email type for the email (should be unique identifier, sanitized like a post slug).
 	 *
-	 * [--type_description]
+	 * [--type-description=<type-description>]
 	 * : Email type description.
 	 *
-	 * [--subject]
-	 * : Required. Email subject line. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
+	 * --subject=<subject>
+	 * : Email subject line. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
 	 *
-	 * [--content]
-	 * : Required. Email content. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
+	 * --content=<content>
+	 * : Email content. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
 	 *
-	 * [--plain_text_content]
+	 * [--plain-text-content=<plain-text-content>]
 	 * : Plain-text email content. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp email create --type=new-event --type_description="Send an email when a new event is created" --subject="[{{{site.name}}}] A new event was created" --content="<a href='{{{some.custom-token-url}}}'></a>A new event</a> was created" --plain_text_content="A new event was created"
+	 *     $ wp bp email create --type=new-event --type-description="Send an email when a new event is created" --subject="[{{{site.name}}}] A new event was created" --content="<a href='{{{some.custom-token-url}}}'></a>A new event</a> was created" --plain-text-content="A new event was created"
 	 *     Success: Email post created for type "new-event".
 	 *
 	 * @alias add
@@ -104,7 +104,7 @@ class BPCLI_Email extends BPCLI_Component {
 		$email = array(
 			'post_title'   => $assoc_args['subject'],
 			'post_content' => $assoc_args['content'],
-			'post_excerpt' => ! empty( $assoc_args['plaintext_content'] ) ? $assoc_args['plaintext_content'] :'',
+			'post_excerpt' => ! empty( $assoc_args['plain-text-content'] ) ? $assoc_args['plain-text-content'] :'',
 		);
 
 		// Email post content.
@@ -115,10 +115,10 @@ class BPCLI_Email extends BPCLI_Component {
 			$tt_ids = wp_set_object_terms( $post_id, $id, bp_get_email_tax_type() );
 
 			// Situation description.
-			if ( ! is_wp_error( $tt_ids ) && ! empty( $assoc_args['type_description'] ) ) {
+			if ( ! is_wp_error( $tt_ids ) && ! empty( $assoc_args['type-description'] ) ) {
 				$term = get_term_by( 'term_taxonomy_id', (int) $tt_ids[0], bp_get_email_tax_type() );
 				wp_update_term( (int) $term->term_id, bp_get_email_tax_type(), array(
-					'description' => $assoc_args['type_description'],
+					'description' => $assoc_args['type-description'],
 				) );
 			}
 
