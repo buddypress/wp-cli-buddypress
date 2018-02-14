@@ -31,23 +31,19 @@ class BPCLI_Components extends BPCLI_Component {
 	 *     Success: The Groups component has been activated.
 	 */
 	public function activate( $args, $assoc_args ) {
-		$c = $args[0];
+		$component = $args[0];
 
-		if ( bp_is_active( $c ) ) {
-			WP_CLI::error( sprintf( 'The %s component is already active.', ucfirst( $c ) ) );
+		if ( bp_is_active( $component ) ) {
+			WP_CLI::error( sprintf( 'The %s component is already active.', ucfirst( $component ) ) );
 		}
 
-		$acs =& buddypress()->active_components;
+		$active_components =& buddypress()->active_components;
 
 		// Set for the rest of the page load.
-		$acs[ $c ] = 1;
+		$active_components[ $component ] = 1;
 
 		// Save in the db.
-		bp_update_option( 'bp-active-components', $acs );
-
-		// Adds compatability with versions before 2.3, when the bp-core-schema.php
-		// was renamed into bp-core-admin-schema.php.
-		$admin = ( bp_get_version() >= 2.3 ) ? 'admin-' : '';
+		bp_update_option( 'bp-active-components', $active_components );
 
 		// Ensure that dbDelta() is defined.
 		if ( ! function_exists( 'dbDelta' ) ) {
@@ -55,9 +51,9 @@ class BPCLI_Components extends BPCLI_Component {
 		}
 
 		// Run the setup, in case tables have to be created.
-		require_once( BP_PLUGIN_DIR . 'bp-core/admin/bp-core-' . $admin . 'schema.php' );
-		bp_core_install( $acs );
-		bp_core_add_page_mappings( $acs );
+		require_once( BP_PLUGIN_DIR . 'bp-core/admin/bp-core-admin-schema.php' );
+		bp_core_install( $active_components );
+		bp_core_add_page_mappings( $active_components );
 
 		WP_CLI::success( sprintf( 'The %s component has been activated.', ucfirst( $c ) ) );
 	}
@@ -76,25 +72,25 @@ class BPCLI_Components extends BPCLI_Component {
 	 *     Success: The Groups component has been deactivated.
 	 */
 	public function deactivate( $args, $assoc_args ) {
-		$c = $args[0];
+		$component = $args[0];
 
-		if ( ! bp_is_active( $c ) ) {
-			WP_CLI::error( sprintf( 'The %s component is not active.', ucfirst( $c ) ) );
+		if ( ! bp_is_active( $component ) ) {
+			WP_CLI::error( sprintf( 'The %s component is not active.', ucfirst( $component ) ) );
 		}
 
-		if ( array_key_exists( $c, bp_core_get_components( 'required' ) ) ) {
+		if ( array_key_exists( $component, bp_core_get_components( 'required' ) ) ) {
 			WP_CLI::error( 'You cannot deactivate a required component.' );
 		}
 
-		$acs =& buddypress()->active_components;
+		$active_components =& buddypress()->active_components;
 
 		// Set for the rest of the page load.
-		unset( $acs[ $c ] );
+		unset( $active_components[ $component ] );
 
 		// Save in the db.
-		bp_update_option( 'bp-active-components', $acs );
+		bp_update_option( 'bp-active-components', $active_components );
 
-		WP_CLI::success( sprintf( 'The %s component has been deactivated.', ucfirst( $c ) ) );
+		WP_CLI::success( sprintf( 'The %s component has been deactivated.', ucfirst( $component ) ) );
 	}
 
 	/**
@@ -168,6 +164,7 @@ class BPCLI_Components extends BPCLI_Component {
 					);
 				}
 				break;
+
 			case 'active':
 				foreach ( $active_components as $name => $labels ) {
 					$current_components[] = array(
@@ -177,6 +174,7 @@ class BPCLI_Components extends BPCLI_Component {
 					);
 				}
 				break;
+
 			case 'inactive':
 				foreach ( $inactive_components as $name => $labels ) {
 					$current_components[] = array(
