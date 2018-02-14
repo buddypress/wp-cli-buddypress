@@ -13,7 +13,7 @@ class BPCLI_Email extends BPCLI_Component {
 	 * --type=<type>
 	 * : Email type for the email (should be unique identifier, sanitized like a post slug).
 	 *
-	 * [--type-description=<type-description>]
+	 * --type-description=<type-description>
 	 * : Email type description.
 	 *
 	 * --subject=<subject>
