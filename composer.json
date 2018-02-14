@@ -22,7 +22,7 @@
     },
     "require": {
         "php": ">=5.3",
-        "wp-cli/wp-cli": ">=0.25.0"
+        "wp-cli/wp-cli": ">=0.23.0"
     },
     "require-dev": {
         "behat/behat": "~2.5"
