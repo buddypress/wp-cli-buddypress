@@ -19,7 +19,7 @@ class BPCLI_Email extends BPCLI_Component {
 	 * --subject=<subject>
 	 * : Email subject line. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
 	 *
-	 * --content=<content>
+	 * [--content=<content>]
 	 * : Email content. Email tokens allowed. View https://codex.buddypress.org/emails/email-tokens/ for more info.
 	 *
 	 * [--plain-text-content=<plain-text-content>]
@@ -197,6 +197,22 @@ class BPCLI_Email extends BPCLI_Component {
 		} else {
 			WP_CLI::error( $result[1] );
 		}
+	}
+
+	/**
+	 * Helper method to use the '--edit' flag.
+	 *
+	 * Copied from Post_Command::_edit().
+	 *
+	 * @param  string $content Post content
+	 * @param  string $title   Post title
+	 * @return mixed
+	 */
+	protected function _edit( $content, $title ) {
+		$content = apply_filters( 'the_editor_content', $content );
+		$output = \WP_CLI\Utils\launch_editor_for_input( $content, $title );
+		return ( is_string( $output ) ) ?
+			apply_filters( 'content_save_pre', $output ) : $output;
 	}
 }
 
