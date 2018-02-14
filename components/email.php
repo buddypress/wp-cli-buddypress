@@ -160,7 +160,6 @@ class BPCLI_Email extends BPCLI_Component {
 
 		if ( is_wp_error( $email ) ) {
 			WP_CLI::error( "Email post for type '{$args[0]}' does not exist." );
-			return;
 		}
 
 		$post_arr = get_object_vars( $email->get_post_object() );
