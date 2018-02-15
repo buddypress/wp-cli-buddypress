@@ -900,7 +900,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 			case 'created_group':
 				if ( empty( $r['item-id'] ) ) {
-					$r['item-id'] = $this->get_random_group_id();
+					$r['item-id'] = BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
 				}
 
 				$group = groups_get_group( array(
@@ -926,7 +926,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 			case 'joined_group':
 				if ( empty( $r['item-id'] ) ) {
-					$r['item-id'] = $this->get_random_group_id();
+					$r['item-id'] = BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
 				}
 
 				$group = groups_get_group( array(
