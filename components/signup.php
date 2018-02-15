@@ -52,8 +52,13 @@ class BPCLI_Signup extends BPCLI_Component {
 			'meta' => '',
 		);
 
-		$signup_args['user_login']     = $this->get_random_login();
-		$signup_args['user_email']     = $this->get_random_login() . '@example.com';
+		// Use the email API to get a valid "from" domain.
+		$email_domain = new BP_Email( '' );
+		$email_domain = $email_domain->get_from()->get_address();
+		$temp_id      = $this->get_random_login();
+
+		$signup_args['user_login']     = $temp_id;
+		$signup_args['user_email']     = $temp_id . substr( $email_domain, strpos( $email_domain, '@' ) );
 		$signup_args['activation_key'] = wp_generate_password( 32, false );
 
 		// Add a random user login if none is provided.
