@@ -256,7 +256,7 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
 				'user-id'    => $this->get_random_user_id(),
-				'group-id'   => $this->get_random_group_id(),
+				'group-id'   => BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug,
 				'inviter-id' => $this->get_random_user_id(),
 				'silent',
 			) );
