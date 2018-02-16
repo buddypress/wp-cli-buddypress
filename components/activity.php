@@ -551,10 +551,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * <activity-id>
 	 * : ID of the activity to add the comment.
 	 *
-	 * [--user-id=<user>]
+	 * --user-id=<user>
 	 * : ID of the user. If none is provided, a user will be randomly selected.
 	 *
-	 * [--content=<content>]
+	 * --content=<content>
 	 * : Activity content text. If none is provided, default text will be generated.
 	 *
 	 * [--skip-notification]
@@ -572,24 +572,18 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *     Success: Successfully added a new activity comment (ID #494)
 	 */
 	public function comment( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'content' => $this->generate_random_text(),
-			'user-id' => $this->get_random_user_id(),
-		) );
-
 		$activity = new BP_Activity_Activity( $args[0] );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $r['user-id'] );
-
+		$user              = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$skip_notification = \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
 		// Add activity comment.
 		$id = bp_activity_new_comment( array(
-			'content'           => $r['content'],
+			'content'           => $assoc_args['content'],
 			'user_id'           => $user->ID,
 			'activity_id'       => $activity->id,
 			'skip_notification' => $skip_notification,
@@ -633,8 +627,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 */
 	public function delete_comment( $args, $assoc_args ) {
 		$activity_id = $args[0];
-
-		$activity = new BP_Activity_Activity( $activity_id );
+		$activity    = new BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
