@@ -26,13 +26,13 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--user-login=<user-login>]
-	 * : User login for the signup. If none is provided, a random one will be used.
+	 * : User login for the signup.
 	 *
 	 * [--user-email=<user-email>]
-	 * : User email for the signup. If none is provided, a random one will be used.
+	 * : User email for the signup.
 	 *
 	 * [--activation-key=<activation-key>]
-	 * : Activation key for the signup.
+	 * : Activation key for the signup. If none is provided, a random one will be used.
 	 *
 	 * [--silent]
 	 * : Whether to silent the signup creation.
@@ -48,38 +48,29 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
+		$r = wp_parse_args( $assoc_args, array(
+			'user-login'     => '',
+			'user-email'     => '',
+			'activation-key' => wp_generate_password( 32, false ),
+		) );
+
 		$signup_args = array(
 			'meta' => '',
 		);
 
-		// Use the email API to get a valid "from" domain.
-		$email_domain = new BP_Email( '' );
-		$email_domain = $email_domain->get_from()->get_address();
-		$temp_id      = $this->get_random_login();
-
-		$signup_args['user_login']     = $temp_id;
-		$signup_args['user_email']     = $temp_id . substr( $email_domain, strpos( $email_domain, '@' ) );
-		$signup_args['activation_key'] = wp_generate_password( 32, false );
-
-		// Add a random user login if none is provided.
-		if ( isset( $assoc_args['user-login'] ) ) {
-			$signup_args['user_login'] = $assoc_args['user-login'];
+		$user_login = $r['user-login'];
+		if ( ! empty( $user_login ) ) {
+			$user_login = preg_replace( '/\s+/', '', sanitize_user( $user_login, true ) );
 		}
 
-		// Sanitize login (random or not).
-		$signup_args['user_login'] = preg_replace( '/\s+/', '', sanitize_user( $signup_args['user_login'], true ) );
-
-		// Add a random email if none is provided.
-		if ( isset( $assoc_args['user-email'] ) ) {
-			$signup_args['user_email'] = $assoc_args['user-email'];
+		$user_email = $r['user-email'];
+		if ( ! empty( $user_email ) ) {
+			$user_email = sanitize_email( $user_email );
 		}
 
-		// Sanitize email (random or not).
-		$signup_args['user_email'] = sanitize_email( $signup_args['user_email'] );
-
-		if ( isset( $assoc_args['activation-key'] ) ) {
-			$signup_args['activation_key'] = $assoc_args['activation-key'];
-		}
+		$signup_args['user_login']     = $user_login;
+		$signup_args['user_email']     = $user_email;
+		$signup_args['activation_key'] = $r['activation-key'];
 
 		$id = BP_Signup::add( $signup_args );
 
@@ -225,8 +216,15 @@ class BPCLI_Signup extends BPCLI_Component {
 	public function generate( $args, $assoc_args ) {
 		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $assoc_args['count'] );
 
+		// Use the email API to get a valid "from" domain.
+		$email_domain = new BP_Email( '' );
+		$email_domain = $email_domain->get_from()->get_address();
+		$random_login = $this->get_random_login();
+
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->add( array(), array(
+			$this->create( array(), array(
+				'user-login' => $random_login,
+				'user-email' => $random_login . substr( $email_domain, strpos( $email_domain, '@' ) ),
 				'silent',
 			) );
 
