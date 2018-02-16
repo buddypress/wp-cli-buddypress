@@ -503,10 +503,10 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--user-id=<user>]
+	 * --user-id=<user>
 	 * : ID of the user. If none is provided, a user will be randomly selected.
 	 *
-	 * [--content=<content>]
+	 * --content=<content>
 	 * : Activity content text. If none is provided, default text will be generated.
 	 *
 	 * [--porcelain]
@@ -521,16 +521,11 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *     Success: Successfully updated with a new activity item (ID #4548)
 	 */
 	public function post_update( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'content' => $this->generate_random_text(),
-			'user-id' => $this->get_random_user_id(),
-		) );
-
-		$user = $this->get_user_id_from_identifier( $r['user-id'] );
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		// Post the activity update.
 		$id = bp_activity_post_update( array(
-			'content' => $r['content'],
+			'content' => $assoc_args['content'],
 			'user_id' => $user->ID,
 		) );
 
