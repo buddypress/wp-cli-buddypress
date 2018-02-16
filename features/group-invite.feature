@@ -60,21 +60,3 @@ Feature: Manage BuddyPress Group Invites
 
     When I try `wp bp group invite list`
     Then the return code should be 1
-
-    When I run `wp bp group invite list --group-id={GROUP_ONE_ID}`
-    Then STDOUT should be a table containing rows:
-      | user_id         | inviter_id      | invite_sent | date_modified       |
-      | {MEMBER_ONE_ID} | {MEMBER_TWO_ID} | 1           | 0000-00-00 00:00:00 |
-
-    When I run `wp bp group invite list --group-id={GROUP_ONE_ID} --user-id={MEMBER_ONE_ID}`
-    Then STDOUT should be a table containing rows:
-      | inviter_id      | invite_sent | date_modified       |
-      | {MEMBER_TWO_ID} | 1           | 0000-00-00 00:00:00 |
-
-    When I try `wp bp group invite list --group-id={GROUP_ONE_ID} --user-id={MEMBER_TWO_ID}`
-    Then the return code should be 1
-
-    When I run `wp bp group invite list --user-id={MEMBER_ONE_ID}`
-    Then STDOUT should be a table containing rows:
-      | id             | name      | slug   |
-      | {GROUP_ONE_ID} | Group 1   | group1 |
