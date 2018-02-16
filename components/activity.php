@@ -519,6 +519,8 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *
 	 *     $ wp bp activity post_update --user-id=140
 	 *     Success: Successfully updated with a new activity item (ID #4548)
+	 *
+	 * @alias post-update
 	 */
 	public function post_update( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );

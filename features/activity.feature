@@ -63,7 +63,7 @@ Feature: Manage BuddyPress Activities
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp activity post_update --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp activity post-update --user-id={MEMBER_ID} --content="Random Content" --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 
