@@ -232,12 +232,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		// Check that group exists.
-		$group_id = $this->get_group_id_from_identifier( $args[0] );
-		if ( ! $group_id ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
+		$group_id         = $this->get_group_id_from_identifier( $args[0] );
 		$group            = groups_get_group( $group_id );
 		$group_arr        = get_object_vars( $group );
 		$group_arr['url'] = bp_get_group_permalink( $group );
@@ -270,11 +265,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *     Success: Group successfully deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-		// Check that group exists.
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
-		if ( ! $group_id ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
 
 		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
 
@@ -292,7 +283,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <group-id>
+	 * <group-id>...
 	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
 	 *
 	 * [--<field>=<value>]
@@ -305,15 +296,8 @@ class BPCLI_Group extends BPCLI_Component {
 	public function update( $args, $assoc_args ) {
 		$clean_group_ids = array();
 
-		foreach ( $args as $group_identifier ) {
-
-			// Check that group exists.
-			$group_id = $this->get_group_id_from_identifier( $group_identifier );
-			if ( ! $group_id ) {
-				WP_CLI::error( 'No group found by that slug or ID.' );
-			}
-
-			$clean_group_ids[] = $group_id;
+		foreach ( $args as $group_id ) {
+			$clean_group_ids[] = $this->get_group_id_from_identifier( $group_id );
 		}
 
 		parent::_update( $clean_group_ids, $assoc_args, function( $params ) {

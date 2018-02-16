@@ -39,7 +39,7 @@ class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
 		) );
 
 		if ( empty( $group_obj->id ) ) {
-			return false;
+			WP_CLI::error( 'No group found by that slug or ID.' );
 		}
 
 		return intval( $group_obj->id );

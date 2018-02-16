@@ -59,16 +59,9 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 			'is-confirmed'  => 0,
 		) );
 
-		// Group ID.
-		$group_id = $r['group-id'];
-
-		// Check that group exists.
-		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user    = $this->get_user_id_from_identifier( $r['user-id'] );
-		$inviter = $this->get_user_id_from_identifier( $r['inviter-id'] );
+		$group_id = $this->get_group_id_from_identifier( $r['group-id'] );
+		$user     = $this->get_user_id_from_identifier( $r['user-id'] );
+		$inviter  = $this->get_user_id_from_identifier( $r['inviter-id'] );
 
 		$invite = groups_invite_user( array(
 			'user_id'       => $user->ID,
@@ -80,11 +73,11 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 
 		groups_send_invites( $inviter->ID, $group_id );
 
-		if ( $invite ) {
-			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
-				return;
-			}
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
 
+		if ( $invite ) {
 			WP_CLI::success( 'Member invited to the group.' );
 		} else {
 			WP_CLI::error( 'Could not invite the member.' );
@@ -113,14 +106,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * @alias uninvite
 	 */
 	public function remove( $args, $assoc_args ) {
-		$group_id = $assoc_args['group-id'];
-
-		// Check that group exists.
-		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( groups_uninvite_user( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'User uninvited from the group.' );
@@ -134,10 +121,10 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--group-id=<group>]
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * [--user-id=<user>]
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--format=<format>]
@@ -159,21 +146,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * @subcommand list
 	 */
 	public function _list( $args, $assoc_args ) {
-		if ( ! isset( $assoc_args['group-id'] ) && ! isset( $assoc_args['user-id'] ) ) {
-			WP_CLI::error( 'You must provide either a group-id or a user-id parameter.' );
-		}
-
-		$group_id = isset( $assoc_args['group-id'] ) ? intval( $assoc_args['group-id'] ) : null;
-		$user_id  = isset( $assoc_args['user-id'] ) ? intval( $assoc_args['user-id'] ) : null;
-
-		// Check that group exists.
-		if ( $group_id && ! $this->get_group_id_from_identifier( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		if ( $user_id ) {
-			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		}
+		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( $group_id ) {
 			$invite_query = new BP_Group_Member_Query( array(
@@ -287,14 +261,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *     Success: User is now a "member" of the group.
 	 */
 	public function accept( $args, $assoc_args ) {
-		$group_id = $assoc_args['group-id'];
-
-		// Check that group exists.
-		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( groups_accept_invite( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'User is now a "member" of the group.' );
@@ -323,14 +291,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 *     Success: Member invitation rejected.
 	 */
 	public function reject( $args, $assoc_args ) {
-		$group_id = $assoc_args['group-id'];
-
-		// Check that group exists.
-		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( groups_reject_invite( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'Member invitation rejected.' );
@@ -361,14 +323,8 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
-		$group_id = $assoc_args['group-id'];
-
-		// Check that group exists.
-		if ( ! $this->get_group_id_from_identifier( $group_id ) ) {
-			WP_CLI::error( 'No group found by that slug or ID.' );
-		}
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( groups_delete_invite( $user->ID, $group_id ) ) {
 			WP_CLI::success( 'Member invitation deleted from the group.' );
