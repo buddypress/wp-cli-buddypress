@@ -153,7 +153,7 @@ class BPCLI_Email extends BPCLI_Component {
 	 *     # Output the post ID for the 'activity-at-message' email type
 	 *     $ wp bp email get-post activity-at-message --fields=ID
 	 *
-	 * @subcommand get-post
+	 * @alias get-post
 	 */
 	public function get_post( $args, $assoc_args ) {
 		$email = bp_get_email( $args[0] );
