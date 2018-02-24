@@ -365,5 +365,3 @@ class BPCLI_Signup extends BPCLI_Component {
 		return $signup;
 	}
 }
-
-WP_CLI::add_command( 'bp signup', 'BPCLI_Signup' );

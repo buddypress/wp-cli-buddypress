@@ -159,11 +159,3 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 		$formatter->display_items( $activities['activities'] );
 	}
 }
-
-WP_CLI::add_command( 'bp activity favorite', 'BPCLI_Activity_Favorite', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'activity' ) ) {
-			WP_CLI::error( 'The Activity component is not active.' );
-		}
-	},
-) );

@@ -168,11 +168,3 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 		} );
 	}
 }
-
-WP_CLI::add_command( 'bp xprofile group', 'BPCLI_XProfile_Group', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'xprofile' ) ) {
-			WP_CLI::error( 'The XProfile component is not active.' );
-		}
-	},
-) );

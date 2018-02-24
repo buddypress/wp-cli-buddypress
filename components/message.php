@@ -546,12 +546,3 @@ class BPCLI_Message extends BPCLI_Component {
 		return array( 'notices', 'sentbox', 'inbox' );
 	}
 }
-
-WP_CLI::add_command( 'bp message', 'BPCLI_Message', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'messages' ) ) {
-			WP_CLI::error( 'The Message component is not active.' );
-		}
-	},
-) );
-

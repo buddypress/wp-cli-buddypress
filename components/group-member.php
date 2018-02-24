@@ -352,11 +352,3 @@ class BPCLI_Group_Member extends BPCLI_Component {
 		return array( 'member', 'mod', 'admin' );
 	}
 }
-
-WP_CLI::add_command( 'bp group member', 'BPCLI_Group_Member', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'groups' ) ) {
-			WP_CLI::error( 'The Groups component is not active.' );
-		}
-	},
-) );

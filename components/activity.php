@@ -976,11 +976,3 @@ class BPCLI_Activity extends BPCLI_Component {
 		return $r;
 	}
 }
-
-WP_CLI::add_command( 'bp activity', 'BPCLI_Activity', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'activity' ) ) {
-			WP_CLI::error( 'The Activity component is not active.' );
-		}
-	},
-) );

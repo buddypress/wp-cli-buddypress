@@ -71,9 +71,3 @@ class BPCLI_Tool extends BPCLI_Component {
 		}
 	}
 }
-
-WP_CLI::add_command( 'bp tool', 'BPCLI_Tool', array(
-	'before_invoke' => function() {
-		require_once( buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-tools.php' );
-	},
-) );

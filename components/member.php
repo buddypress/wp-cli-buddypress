@@ -45,5 +45,3 @@ class BPCLI_Member extends BPCLI_Component {
 		bp_update_user_last_activity( $user_id, $time );
 	}
 }
-
-WP_CLI::add_command( 'bp member', 'BPCLI_Member' );

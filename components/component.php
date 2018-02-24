@@ -220,5 +220,3 @@ class BPCLI_Components extends BPCLI_Component {
 		return array( 'all', 'active', 'inactive' );
 	}
 }
-
-WP_CLI::add_command( 'bp component', 'BPCLI_Components' );

@@ -194,11 +194,3 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 		}
 	}
 }
-
-WP_CLI::add_command( 'bp xprofile data', 'BPCLI_XProfile_Data', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'xprofile' ) ) {
-			WP_CLI::error( 'The XProfile component is not active.' );
-		}
-	},
-) );

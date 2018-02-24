@@ -333,11 +333,3 @@ class BPCLI_Group_Invite extends BPCLI_Component {
 		}
 	}
 }
-
-WP_CLI::add_command( 'bp group invite', 'BPCLI_Group_Invite', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'groups' ) ) {
-			WP_CLI::error( 'The Groups component is not active.' );
-		}
-	},
-) );
