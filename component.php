@@ -2,6 +2,7 @@
 namespace Buddypress\CLI\Command;
 
 use WP_CLI;
+use WP_CLI\CommandWithDBObject;
 
 /**
  * Base component class.
