@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.6.0
  */
-class Friend extends BuddypressCommand{
+class Friend extends BuddypressCommand {
 
 	/**
 	 * Object fields.

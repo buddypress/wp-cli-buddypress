@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Group extends BuddypressCommand{
+class Group extends BuddypressCommand {
 
 	/**
 	 * Object fields.

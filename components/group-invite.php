@@ -1,4 +1,4 @@
-§<?php
+<?php
 namespace Buddypress\CLI\Command;
 
 /**
@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Group_Invite extends BuddypressCommand{
+class Group_Invite extends BuddypressCommand {
 
 	/**
 	 * Group ID Object Key

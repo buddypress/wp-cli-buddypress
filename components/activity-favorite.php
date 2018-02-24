@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Activity_Favorite extends BuddypressCommand{
+class Activity_Favorite extends BuddypressCommand {
 
 	/**
 	 * Object fields.

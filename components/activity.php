@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Activity extends BuddypressCommand{
+class Activity extends BuddypressCommand {
 
 	/**
 	 * Object fields.

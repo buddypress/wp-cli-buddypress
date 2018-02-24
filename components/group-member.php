@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Group_Member extends BuddypressCommand{
+class Group_Member extends BuddypressCommand {
 
 	/**
 	 * Group ID Object Key

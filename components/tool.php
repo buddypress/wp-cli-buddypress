@@ -6,7 +6,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Tool extends BuddypressCommand{
+class Tool extends BuddypressCommand {
 
 	/**
 	 * Repair.
