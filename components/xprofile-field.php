@@ -6,7 +6,7 @@ namespace BuddyPress\CLI\Command;
  *
  * @since 1.5.0
  */
-class XProfile_Field extends Component {
+class XProfile_Field extends BuddypressCommand{
 
 	/**
 	 * XProfile object fields.

@@ -6,7 +6,7 @@ namespace BuddyPress\CLI\Command;
  *
  * @since 1.6.0
  */
-class Message extends Component {
+class Message extends BuddypressCommand{
 
 	/**
 	 * Object fields.

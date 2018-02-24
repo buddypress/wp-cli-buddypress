@@ -6,7 +6,7 @@ namespace BuddyPress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Signup extends Component {
+class Signup extends BuddypressCommand{
 
 	/**
 	 * Signup object fields.

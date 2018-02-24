@@ -6,7 +6,7 @@ namespace BuddyPress\CLI\Command;
  *
  * @since 1.5.0
  */
-class Group_Invite extends Component {
+class Group_Invite extends BuddypressCommand{
 
 	/**
 	 * Group ID Object Key

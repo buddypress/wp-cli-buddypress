@@ -11,7 +11,7 @@ if ( ! class_exists( 'User_Command' ) ) {
  *
  * @since 1.0.0
  */
-class Member extends Component {
+class Member extends BuddypressCommand{
 
 	/**
 	 * Generate BuddyPress members. See documentation for `wp_user_generate`.

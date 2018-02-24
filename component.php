@@ -8,7 +8,7 @@ use WP_CLI\CommandWithDBObject;
  *
  * @since 1.0
  */
-class Component extends CommandWithDBObject {
+abstract class BuddypressCommand extends CommandWithDBObject {
 
 	/**
 	 * Get a random user id.
