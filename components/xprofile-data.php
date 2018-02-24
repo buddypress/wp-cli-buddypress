@@ -1,5 +1,5 @@
 <?php
-namespace BuddyPress\CLI\Command;
+namespace Buddypress\CLI\Command;
 
 /**
  * Manage XProfile data.
