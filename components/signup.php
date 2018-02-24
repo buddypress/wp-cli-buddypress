@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress Signups.
  *
  * @since 1.5.0
  */
-class BPCLI_Signup extends BPCLI_Component {
+class Signup extends Component {
 
 	/**
 	 * Signup object fields.

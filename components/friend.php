@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress Friends.
  *
  * @since 1.6.0
  */
-class BPCLI_Friend extends BPCLI_Component {
+class Friend extends Component {
 
 	/**
 	 * Object fields.

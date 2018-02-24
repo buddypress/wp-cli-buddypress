@@ -1,10 +1,12 @@
-<?php
+§<?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress group invites.
  *
  * @since 1.5.0
  */
-class BPCLI_Group_Invite extends BPCLI_Component {
+class Group_Invite extends Component {
 
 	/**
 	 * Group ID Object Key

@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress Tools.
  *
  * @since 1.5.0
  */
-class BPCLI_Tool extends BPCLI_Component {
+class Tool extends Component {
 
 	/**
 	 * Repair.

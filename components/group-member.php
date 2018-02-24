@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress group members.
  *
  * @since 1.5.0
  */
-class BPCLI_Group_Member extends BPCLI_Component {
+class Group_Member extends Component {
 
 	/**
 	 * Group ID Object Key

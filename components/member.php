@@ -1,4 +1,6 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 
 if ( ! class_exists( 'User_Command' ) ) {
 	require_once( WP_CLI_ROOT . '/php/commands/user.php' );
@@ -9,7 +11,7 @@ if ( ! class_exists( 'User_Command' ) ) {
  *
  * @since 1.0.0
  */
-class BPCLI_Member extends BPCLI_Component {
+class Member extends Component {
 
 	/**
 	 * Generate BuddyPress members. See documentation for `wp_user_generate`.

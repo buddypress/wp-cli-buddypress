@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage XProfile fields.
  *
  * @since 1.5.0
  */
-class BPCLI_XProfile_Field extends BPCLI_Component {
+class XProfile_Field extends Component {
 
 	/**
 	 * XProfile object fields.

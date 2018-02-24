@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress activity favorite.
  *
  * @since 1.5.0
  */
-class BPCLI_Activity_Favorite extends BPCLI_Component {
+class Activity_Favorite extends Component {
 
 	/**
 	 * Object fields.

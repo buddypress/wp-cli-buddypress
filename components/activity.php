@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress activity items.
  *
  * @since 1.5.0
  */
-class BPCLI_Activity extends BPCLI_Component {
+class Activity extends Component {
 
 	/**
 	 * Object fields.

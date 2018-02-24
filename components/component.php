@@ -1,10 +1,12 @@
 <?php
+namespace BuddyPress\CLI\Command;
+
 /**
  * Manage BuddyPress components.
  *
  * @since 1.6.0
  */
-class BPCLI_Components extends BPCLI_Component {
+class Components extends Component {
 
 	/**
 	 * Object fields.
