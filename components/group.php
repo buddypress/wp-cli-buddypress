@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage BuddyPress groups.
  *
@@ -131,7 +133,7 @@ class Group extends BuddypressCommand {
 		) );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -141,7 +143,7 @@ class Group extends BuddypressCommand {
 
 		groups_update_groupmeta( $group_id, 'total_member_count', 1 );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $group_id );
 		} else {
 			$group = groups_get_group( array(
@@ -188,7 +190,7 @@ class Group extends BuddypressCommand {
 	 *     $ wp bp group generate --count=10 --status=hidden --creator-id=30
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(

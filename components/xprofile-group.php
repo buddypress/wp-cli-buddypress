@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage XProfile groups.
  *
@@ -71,10 +73,10 @@ class XProfile_Group extends BuddypressCommand {
 			WP_CLI::error( 'Could not create field group.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $group_id );
 		} else {
-			$group   = new BP_XProfile_Group( $group_id );
+			$group   = new \BP_XProfile_Group( $group_id );
 			$success = sprintf(
 				'Created XProfile field group "%s" (ID %d).',
 				$group->name,

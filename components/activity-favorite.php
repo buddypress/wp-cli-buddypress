@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage BuddyPress activity favorite.
  *
@@ -50,7 +52,7 @@ class Activity_Favorite extends BuddypressCommand {
 	 */
 	public function create( $args, $assoc_args ) {
 		$activity_id = $args[0];
-		$activity    = new BP_Activity_Activity( $activity_id );
+		$activity    = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -91,7 +93,7 @@ class Activity_Favorite extends BuddypressCommand {
 	 */
 	public function remove( $args, $assoc_args ) {
 		$activity_id = $args[0];
-		$activity    = new BP_Activity_Activity( $activity_id );
+		$activity    = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -117,7 +119,7 @@ class Activity_Favorite extends BuddypressCommand {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass to BP_Activity_Activity::get()
+	 * : One or more parameters to pass to \BP_Activity_Activity::get()
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.

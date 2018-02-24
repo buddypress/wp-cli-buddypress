@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage XProfile fields.
  *
@@ -105,10 +107,10 @@ class XProfile_Field extends BuddypressCommand {
 			WP_CLI::error( 'Could not create XProfile field.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $field_id );
 		} else {
-			$field   = new BP_XProfile_Field( $field_id );
+			$field   = new \BP_XProfile_Field( $field_id );
 			$success = sprintf(
 				'Created XProfile field "%s" (ID %d).',
 				$field->name,
@@ -200,7 +202,7 @@ class XProfile_Field extends BuddypressCommand {
 		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
 		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
-			$field   = new BP_XProfile_Field( $field_id );
+			$field   = new \BP_XProfile_Field( $field_id );
 			$name    = $field->name;
 			$id      = $field->id;
 			$deleted = $field->delete( $r['delete_data'] );

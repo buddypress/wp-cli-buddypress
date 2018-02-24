@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage BuddyPress Messages.
  *
@@ -98,7 +100,7 @@ class Message extends BuddypressCommand {
 		) );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -106,7 +108,7 @@ class Message extends BuddypressCommand {
 			WP_CLI::error( 'Could not add a message.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $thread_id );
 		} else {
 			WP_CLI::success( 'Message successfully created.' );
@@ -191,7 +193,7 @@ class Message extends BuddypressCommand {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$message     = new BP_Messages_Message( $args[0] );
+		$message     = new \BP_Messages_Message( $args[0] );
 		$message_arr = get_object_vars( $message );
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -211,7 +213,7 @@ class Message extends BuddypressCommand {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See BP_Messages_Box_Template()
+	 * : One or more parameters to pass. See \BP_Messages_Box_Template()
 	 *
 	 * [--fields=<fields>]
 	 * : Fields to display.
@@ -259,7 +261,7 @@ class Message extends BuddypressCommand {
 		$type = ( ! in_array( $r['type'], $this->message_types(), true ) ) ? 'all' : $r['type'];
 		$box  = ( ! in_array( $r['box'], $this->message_boxes(), true ) ) ? 'sentbox' : $r['box'];
 
-		$inbox = new BP_Messages_Box_Template( array(
+		$inbox = new \BP_Messages_Box_Template( array(
 			'user_id'      => $user->ID,
 			'box'          => $box,
 			'type'         => $type,
@@ -305,7 +307,7 @@ class Message extends BuddypressCommand {
 	 *     $ wp bp message generate --count=100
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating messages', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating messages', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
@@ -512,7 +514,7 @@ class Message extends BuddypressCommand {
 	 * @alias send-notice
 	 */
 	public function send_notice( $args, $assoc_args ) {
-		$notice            = new BP_Messages_Notice();
+		$notice            = new \BP_Messages_Notice();
 		$notice->subject   = $assoc_args['subject'];
 		$notice->message   = $assoc_args['content'];
 		$notice->date_sent = bp_core_current_time();

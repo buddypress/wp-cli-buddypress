@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage BuddyPress group invites.
  *
@@ -75,7 +77,7 @@ class Group_Invite extends BuddypressCommand {
 
 		groups_send_invites( $inviter->ID, $group_id );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -152,7 +154,7 @@ class Group_Invite extends BuddypressCommand {
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( $group_id ) {
-			$invite_query = new BP_Group_Member_Query( array(
+			$invite_query = new \BP_Group_Member_Query( array(
 				'is_confirmed' => false,
 				'group_id'     => $group_id,
 			) );
@@ -227,12 +229,12 @@ class Group_Invite extends BuddypressCommand {
 	 *     $ wp bp group invite generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating random group invitations', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating random group invitations', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->add( array(), array(
 				'user-id'    => $this->get_random_user_id(),
-				'group-id'   => BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug,
+				'group-id'   => \BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug,
 				'inviter-id' => $this->get_random_user_id(),
 				'silent',
 			) );

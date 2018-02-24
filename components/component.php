@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage BuddyPress components.
  *
@@ -53,7 +55,7 @@ class Components extends BuddypressCommand {
 		}
 
 		// Run the setup, in case tables have to be created.
-		require_once( BP_PLUGIN_DIR . 'bp-core/admin/bp-core-admin-schema.php' );
+		require_once( \BP_PLUGIN_DIR . 'bp-core/admin/bp-core-admin-schema.php' );
 		bp_core_install( $active_components );
 		bp_core_add_page_mappings( $active_components );
 

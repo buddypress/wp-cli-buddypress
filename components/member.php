@@ -1,7 +1,6 @@
 <?php
 namespace Buddypress\CLI\Command;
 
-
 if ( ! class_exists( 'User_Command' ) ) {
 	require_once( WP_CLI_ROOT . '/php/commands/user.php' );
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Buddypress\CLI\Command;
 
+use WP_CLI;
+
 /**
  * Manage BuddyPress group members.
  *
@@ -70,7 +72,7 @@ class Group_Member extends BuddypressCommand {
 			WP_CLI::error( 'Could not add user to the group.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $user->ID );
 		} else {
 			if ( 'member' !== $role ) {
@@ -111,7 +113,7 @@ class Group_Member extends BuddypressCommand {
 	public function remove( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new BP_Groups_Member( $user->ID, $group_id );
+		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
 		// True on success.
 		if ( $member->remove() ) {
@@ -241,7 +243,7 @@ class Group_Member extends BuddypressCommand {
 			WP_CLI::error( 'You need a valid role to promote the member.' );
 		}
 
-		$member = new BP_Groups_Member( $user->ID, $group_id );
+		$member = new \BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->promote( $role ) ) {
 			WP_CLI::success( 'Member promoted to new role successfully.' );
@@ -272,7 +274,7 @@ class Group_Member extends BuddypressCommand {
 	public function demote( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new BP_Groups_Member( $user->ID, $group_id );
+		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->demote() ) {
 			WP_CLI::success( 'User demoted to the "member" status.' );
@@ -303,7 +305,7 @@ class Group_Member extends BuddypressCommand {
 	public function ban( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new BP_Groups_Member( $user->ID, $group_id );
+		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->ban() ) {
 			WP_CLI::success( 'Member banned from the group.' );
@@ -334,7 +336,7 @@ class Group_Member extends BuddypressCommand {
 	public function unban( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new BP_Groups_Member( $user->ID, $group_id );
+		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
 		if ( $member->unban() ) {
 			WP_CLI::success( 'Member unbanned from the group.' );
