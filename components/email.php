@@ -5,6 +5,7 @@
  * @since 1.6.0
  */
 class BPCLI_Email extends BPCLI_Component {
+
 	/**
 	 * Create a new email post connected to an email type.
 	 *
@@ -61,7 +62,7 @@ class BPCLI_Email extends BPCLI_Component {
 		$term = term_exists( $assoc_args['type'], bp_get_email_tax_type() );
 
 		// Term already exists so don't do anything.
-		if ( $term !== 0 && $term !== null ) {
+		if ( 0 !== $term && null !== $term ) {
 			if ( true === $switched ) {
 				restore_current_blog();
 			}
@@ -72,9 +73,12 @@ class BPCLI_Email extends BPCLI_Component {
 		if ( ! empty( $args[0] ) ) {
 			$assoc_args['content'] = $this->read_from_file_or_stdin( $args[0] );
 		}
+
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'edit' ) ) {
-			$input = \WP_CLI\Utils\get_flag_value( $assoc_args, 'content', '' );
-			if ( $output = $this->_edit( $input, 'WP-CLI: New BP Email Content' ) ) {
+			$input  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'content', '' );
+			$output = $this->_edit( $input, 'WP-CLI: New BP Email Content' );
+
+			if ( $output ) {
 				$assoc_args['content'] = $output;
 			} else {
 				$assoc_args['content'] = $input;
@@ -91,7 +95,7 @@ class BPCLI_Email extends BPCLI_Component {
 		$email = array(
 			'post_title'   => $assoc_args['subject'],
 			'post_content' => $assoc_args['content'],
-			'post_excerpt' => ! empty( $assoc_args['plain-text-content'] ) ? $assoc_args['plain-text-content'] :'',
+			'post_excerpt' => ! empty( $assoc_args['plain-text-content'] ) ? $assoc_args['plain-text-content'] : '',
 		);
 
 		// Email post content.
@@ -154,6 +158,7 @@ class BPCLI_Email extends BPCLI_Component {
 	 *     $ wp bp email get-post activity-at-message --fields=ID
 	 *
 	 * @alias get-post
+	 * @alias see
 	 */
 	public function get_post( $args, $assoc_args ) {
 		$email = bp_get_email( $args[0] );
@@ -204,15 +209,17 @@ class BPCLI_Email extends BPCLI_Component {
 	 *
 	 * Copied from Post_Command::_edit().
 	 *
-	 * @param  string $content Post content
-	 * @param  string $title   Post title
+	 * @param  string $content Post content.
+	 * @param  string $title   Post title.
 	 * @return mixed
 	 */
 	protected function _edit( $content, $title ) {
 		$content = apply_filters( 'the_editor_content', $content );
 		$output = \WP_CLI\Utils\launch_editor_for_input( $content, $title );
+
 		return ( is_string( $output ) ) ?
-			apply_filters( 'content_save_pre', $output ) : $output;
+			apply_filters( 'content_save_pre', $output )
+			: $output;
 	}
 }
 
