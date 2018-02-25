@@ -24,8 +24,11 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/components/xprofile-data.php' );
 	require_once( __DIR__ . '/components/tool.php' );
 	require_once( __DIR__ . '/components/message.php' );
+  require_once( __DIR__ . '/components/email.php' );
 
 	WP_CLI::add_command( 'bp signup', __NAMESPACE__ . '\\Command\\Signup' );
+  
+  WP_CLI::add_command( 'bp email', __NAMESPACE__ . '\\Command\\Email' );
 
 	WP_CLI::add_command( 'bp activity', __NAMESPACE__ . '\\Command\\Activity', array(
 		'before_invoke' => function() {
