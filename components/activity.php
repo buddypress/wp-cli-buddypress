@@ -684,38 +684,21 @@ class BPCLI_Activity extends BPCLI_Component {
 	}
 
 	/**
-	 * Get a list of activity components and actions
-	 *
-	 * @todo Add filter for plugins (when merged on BP core)
+	 * Get a list of activity components and actions.
 	 *
 	 * @since 1.1
 	 *
 	 * @return array
 	 */
 	protected function get_components_and_actions() {
-		return array(
-			'activity' => array(
-				'activity_update',
-				'activity_comment',
-			),
-			'blogs' => array(
-				'new_blog',
-				'new_blog_post',
-				'new_blog_comment',
-			),
-			'friends' => array(
-				'friendship_created',
-			),
-			'groups' => array(
-				'joined_group',
-				'created_group',
-			),
-			'profile' => array(
-				'new_avatar',
-				'new_member',
-				'updated_profile',
-			),
+		$actions = array_map(
+			function( $component ) {
+				return array_keys( (array) $component );
+			},
+			(array) bp_activity_get_actions()
 		);
+
+		return $actions;
 	}
 
 	/**
