@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage XProfile groups.
  *
  * @since 1.5.0
  */
-class BPCLI_XProfile_Group extends BPCLI_Component {
+class XProfile_Group extends BuddypressCommand {
 
 	/**
 	 * XProfile object fields.
@@ -69,10 +73,10 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 			WP_CLI::error( 'Could not create field group.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $group_id );
 		} else {
-			$group   = new BP_XProfile_Group( $group_id );
+			$group   = new \BP_XProfile_Group( $group_id );
 			$success = sprintf(
 				'Created XProfile field group "%s" (ID %d).',
 				$group->name,
@@ -168,11 +172,3 @@ class BPCLI_XProfile_Group extends BPCLI_Component {
 		} );
 	}
 }
-
-WP_CLI::add_command( 'bp xprofile group', 'BPCLI_XProfile_Group', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'xprofile' ) ) {
-			WP_CLI::error( 'The XProfile component is not active.' );
-		}
-	},
-) );

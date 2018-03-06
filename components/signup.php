@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Signups.
  *
  * @since 1.5.0
  */
-class BPCLI_Signup extends BPCLI_Component {
+class Signup extends BuddypressCommand {
 
 	/**
 	 * Signup object fields.
@@ -72,10 +76,10 @@ class BPCLI_Signup extends BPCLI_Component {
 		$signup_args['user_email']     = $user_email;
 		$signup_args['activation_key'] = $r['activation-key'];
 
-		$id = BP_Signup::add( $signup_args );
+		$id = \BP_Signup::add( $signup_args );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -83,7 +87,7 @@ class BPCLI_Signup extends BPCLI_Component {
 			WP_CLI::error( 'Could not add user signup.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
@@ -166,7 +170,7 @@ class BPCLI_Signup extends BPCLI_Component {
 		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
 
 		parent::_delete( array( $signup_id ), $assoc_args, function( $signup_id ) {
-			if ( BP_Signup::delete( array( $signup_id ) ) ) {
+			if ( \BP_Signup::delete( array( $signup_id ) ) ) {
 				return array( 'success', 'Signup deleted.' );
 			} else {
 				return array( 'error', 'Could not delete signup.' );
@@ -214,10 +218,10 @@ class BPCLI_Signup extends BPCLI_Component {
 	 *     $ wp bp signup generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating signups', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating signups', $assoc_args['count'] );
 
 		// Use the email API to get a valid "from" domain.
-		$email_domain = new BP_Email( '' );
+		$email_domain = new \BP_Email( '' );
 		$email_domain = $email_domain->get_from()->get_address();
 		$random_login = $this->get_random_login();
 
@@ -251,7 +255,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 */
 	public function resend( $args, $assoc_args ) {
 		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
-		$send   = BP_Signup::resend( array( $signup->signup_id ) );
+		$send   = \BP_Signup::resend( array( $signup->signup_id ) );
 
 		// Add feedback message.
 		if ( ! empty( $send['errors'] ) ) {
@@ -267,7 +271,7 @@ class BPCLI_Signup extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See BP_Signup::get()
+	 * : One or more parameters to pass. See \BP_Signup::get()
 	 *
 	 * [--<number>=<number>]
 	 * : How many signups to list.
@@ -305,7 +309,7 @@ class BPCLI_Signup extends BPCLI_Component {
 			$assoc_args['fields'] = 'ids';
 		}
 
-		$signups = BP_Signup::get( $assoc_args );
+		$signups = \BP_Signup::get( $assoc_args );
 
 		if ( empty( $signups['signups'] ) ) {
 			WP_CLI::error( 'No signups found.' );
@@ -351,7 +355,7 @@ class BPCLI_Signup extends BPCLI_Component {
 			}
 		}
 
-		$signups = BP_Signup::get( $signup_args );
+		$signups = \BP_Signup::get( $signup_args );
 		$signup  = null;
 
 		if ( ! empty( $signups['signups'] ) ) {
@@ -365,5 +369,3 @@ class BPCLI_Signup extends BPCLI_Component {
 		return $signup;
 	}
 }
-
-WP_CLI::add_command( 'bp signup', 'BPCLI_Signup' );

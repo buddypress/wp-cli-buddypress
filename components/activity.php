@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress activity items.
  *
  * @since 1.5.0
  */
-class BPCLI_Activity extends BPCLI_Component {
+class Activity extends BuddypressCommand {
 
 	/**
 	 * Object fields.
@@ -157,7 +161,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		) );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -165,7 +169,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'Could not create activity item.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
@@ -178,7 +182,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass to BP_Activity_Activity::get()
+	 * : One or more parameters to pass to \BP_Activity_Activity::get()
 	 *
 	 * [--user-id=<user>]
 	 * : Limit activities to a specific user id. Accepts a numeric ID.
@@ -320,7 +324,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			$type = 'activity_update';
 		}
 
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating activity items', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating activity items', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
@@ -365,7 +369,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	public function get( $args, $assoc_args ) {
 		$activity_id = $args[0];
 
-		$activity = new BP_Activity_Activity( $activity_id );
+		$activity = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -421,7 +425,7 @@ class BPCLI_Activity extends BPCLI_Component {
 		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
 
 		parent::_delete( array( $activity_id ), $assoc_args, function( $activity_id ) {
-			$activity = new BP_Activity_Activity( $activity_id );
+			$activity = new \BP_Activity_Activity( $activity_id );
 
 			if ( empty( $activity->id ) ) {
 				WP_CLI::error( 'No activity found by that ID.' );
@@ -458,7 +462,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * @alias unham
 	 */
 	public function spam( $args, $assoc_args ) {
-		$activity = new BP_Activity_Activity( $args[0] );
+		$activity = new \BP_Activity_Activity( $args[0] );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -493,7 +497,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 * @alias unspam
 	 */
 	public function ham( $args, $assoc_args ) {
-		$activity = new BP_Activity_Activity( $args[0] );
+		$activity = new \BP_Activity_Activity( $args[0] );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -547,7 +551,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'Could not post the activity update.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
@@ -583,14 +587,14 @@ class BPCLI_Activity extends BPCLI_Component {
 	 *     Success: Successfully added a new activity comment (ID #494)
 	 */
 	public function comment( $args, $assoc_args ) {
-		$activity = new BP_Activity_Activity( $args[0] );
+		$activity = new \BP_Activity_Activity( $args[0] );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
 		}
 
 		$user              = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$skip_notification = \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
+		$skip_notification = WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
 		// Add activity comment.
 		$id = bp_activity_new_comment( array(
@@ -605,7 +609,7 @@ class BPCLI_Activity extends BPCLI_Component {
 			WP_CLI::error( 'Could not post a new activity comment.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
@@ -638,7 +642,7 @@ class BPCLI_Activity extends BPCLI_Component {
 	 */
 	public function delete_comment( $args, $assoc_args ) {
 		$activity_id = $args[0];
-		$activity    = new BP_Activity_Activity( $activity_id );
+		$activity    = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -884,7 +888,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 			case 'created_group':
 				if ( empty( $r['item-id'] ) ) {
-					$r['item-id'] = BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
+					$r['item-id'] = \BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
 				}
 
 				$group = groups_get_group( array(
@@ -910,7 +914,7 @@ class BPCLI_Activity extends BPCLI_Component {
 
 			case 'joined_group':
 				if ( empty( $r['item-id'] ) ) {
-					$r['item-id'] = BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
+					$r['item-id'] = \BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
 				}
 
 				$group = groups_get_group( array(
@@ -959,11 +963,3 @@ class BPCLI_Activity extends BPCLI_Component {
 		return $r;
 	}
 }
-
-WP_CLI::add_command( 'bp activity', 'BPCLI_Activity', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'activity' ) ) {
-			WP_CLI::error( 'The Activity component is not active.' );
-		}
-	},
-) );

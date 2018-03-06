@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage XProfile data.
  *
  * @since 1.5.0
  */
-class BPCLI_XProfile_Data extends BPCLI_Component {
+class XProfile_Data extends BuddypressCommand {
 
 	/**
 	 * XProfile object fields.
@@ -41,7 +45,7 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 	public function set( $args, $assoc_args ) {
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$field_id = $this->get_field_id( $assoc_args['field-id'] );
-		$field    = new BP_XProfile_Field( $field_id );
+		$field    = new \BP_XProfile_Field( $field_id );
 
 		if ( empty( $field->name ) ) {
 			WP_CLI::error( 'XProfile field not found.' );
@@ -114,7 +118,7 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 			$data = xprofile_get_field_data( $assoc_args['field-id'], $user->ID, $assoc_args['multi-format'] );
 			WP_CLI::print_value( $data, $assoc_args );
 		} else {
-			$data           = BP_XProfile_ProfileData::get_all_for_user( $user->ID );
+			$data           = \BP_XProfile_ProfileData::get_all_for_user( $user->ID );
 			$formatted_data = array();
 
 			foreach ( $data as $field_name => $field_data ) {
@@ -194,11 +198,3 @@ class BPCLI_XProfile_Data extends BPCLI_Component {
 		}
 	}
 }
-
-WP_CLI::add_command( 'bp xprofile data', 'BPCLI_XProfile_Data', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'xprofile' ) ) {
-			WP_CLI::error( 'The XProfile component is not active.' );
-		}
-	},
-) );

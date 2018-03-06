@@ -1,7 +1,10 @@
 <?php
+namespace Buddypress\CLI;
+
+use WP_CLI;
 
 // Bail if WP-CLI is not present.
-if ( ! defined( 'WP_CLI' ) ) {
+if ( ! defined( '\WP_CLI' ) ) {
 	return;
 }
 
@@ -21,5 +24,99 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/components/xprofile-data.php' );
 	require_once( __DIR__ . '/components/tool.php' );
 	require_once( __DIR__ . '/components/message.php' );
-	require_once( __DIR__ . '/components/email.php' );
+  require_once( __DIR__ . '/components/email.php' );
+
+	WP_CLI::add_command( 'bp signup', __NAMESPACE__ . '\\Command\\Signup' );
+  
+  WP_CLI::add_command( 'bp email', __NAMESPACE__ . '\\Command\\Email' );
+
+	WP_CLI::add_command( 'bp activity', __NAMESPACE__ . '\\Command\\Activity', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'activity' ) ) {
+				WP_CLI::error( 'The Activity component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp activity favorite', __NAMESPACE__ . '\\Command\\Activity_Favorite', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'activity' ) ) {
+				WP_CLI::error( 'The Activity component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp component', __NAMESPACE__ . '\\Command\\Components' );
+
+	WP_CLI::add_command( 'bp group', __NAMESPACE__ . '\\Command\\Group', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'groups' ) ) {
+				WP_CLI::error( 'The Groups component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp group member', __NAMESPACE__ . '\\Command\\Group_Member', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'groups' ) ) {
+				WP_CLI::error( 'The Groups component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp group invite', __NAMESPACE__ . '\\Command\\Group_Invite', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'groups' ) ) {
+				WP_CLI::error( 'The Groups component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp member', __NAMESPACE__ . '\\Command\\Member' );
+
+	WP_CLI::add_command( 'bp friend', __NAMESPACE__ . '\\Command\\Friend', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'friends' ) ) {
+				WP_CLI::error( 'The Friends component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp xprofile group', __NAMESPACE__ . '\\Command\\XProfile_Group', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'xprofile' ) ) {
+				WP_CLI::error( 'The XProfile component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp xprofile field', __NAMESPACE__ . '\\Command\\XProfile_Field', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'xprofile' ) ) {
+				WP_CLI::error( 'The XProfile component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp xprofile data', __NAMESPACE__ . '\\Command\\XProfile_Data', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'xprofile' ) ) {
+				WP_CLI::error( 'The XProfile component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp tool', __NAMESPACE__ . '\\Command\\Tool', array(
+		'before_invoke' => function() {
+			require_once( buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-tools.php' );
+		},
+	) );
+
+	WP_CLI::add_command( 'bp message', __NAMESPACE__ . '\\Command\\Message', array(
+		'before_invoke' => function() {
+			if ( ! bp_is_active( 'messages' ) ) {
+				WP_CLI::error( 'The Message component is not active.' );
+			}
+		},
+	) );
 } );

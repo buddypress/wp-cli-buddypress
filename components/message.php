@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Messages.
  *
  * @since 1.6.0
  */
-class BPCLI_Message extends BPCLI_Component {
+class Message extends BuddypressCommand {
 
 	/**
 	 * Object fields.
@@ -96,7 +100,7 @@ class BPCLI_Message extends BPCLI_Component {
 		) );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -104,7 +108,7 @@ class BPCLI_Message extends BPCLI_Component {
 			WP_CLI::error( 'Could not add a message.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $thread_id );
 		} else {
 			WP_CLI::success( 'Message successfully created.' );
@@ -189,7 +193,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$message     = new BP_Messages_Message( $args[0] );
+		$message     = new \BP_Messages_Message( $args[0] );
 		$message_arr = get_object_vars( $message );
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -209,7 +213,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See BP_Messages_Box_Template()
+	 * : One or more parameters to pass. See \BP_Messages_Box_Template()
 	 *
 	 * [--fields=<fields>]
 	 * : Fields to display.
@@ -257,7 +261,7 @@ class BPCLI_Message extends BPCLI_Component {
 		$type = ( ! in_array( $r['type'], $this->message_types(), true ) ) ? 'all' : $r['type'];
 		$box  = ( ! in_array( $r['box'], $this->message_boxes(), true ) ) ? 'sentbox' : $r['box'];
 
-		$inbox = new BP_Messages_Box_Template( array(
+		$inbox = new \BP_Messages_Box_Template( array(
 			'user_id'      => $user->ID,
 			'box'          => $box,
 			'type'         => $type,
@@ -303,7 +307,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 *     $ wp bp message generate --count=100
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating messages', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating messages', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
@@ -510,7 +514,7 @@ class BPCLI_Message extends BPCLI_Component {
 	 * @alias send-notice
 	 */
 	public function send_notice( $args, $assoc_args ) {
-		$notice            = new BP_Messages_Notice();
+		$notice            = new \BP_Messages_Notice();
 		$notice->subject   = $assoc_args['subject'];
 		$notice->message   = $assoc_args['content'];
 		$notice->date_sent = bp_core_current_time();
@@ -546,12 +550,3 @@ class BPCLI_Message extends BPCLI_Component {
 		return array( 'notices', 'sentbox', 'inbox' );
 	}
 }
-
-WP_CLI::add_command( 'bp message', 'BPCLI_Message', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'messages' ) ) {
-			WP_CLI::error( 'The Message component is not active.' );
-		}
-	},
-) );
-

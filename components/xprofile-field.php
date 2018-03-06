@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage XProfile fields.
  *
  * @since 1.5.0
  */
-class BPCLI_XProfile_Field extends BPCLI_Component {
+class XProfile_Field extends BuddypressCommand {
 
 	/**
 	 * XProfile object fields.
@@ -103,10 +107,10 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 			WP_CLI::error( 'Could not create XProfile field.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $field_id );
 		} else {
-			$field   = new BP_XProfile_Field( $field_id );
+			$field   = new \BP_XProfile_Field( $field_id );
 			$success = sprintf(
 				'Created XProfile field "%s" (ID %d).',
 				$field->name,
@@ -198,7 +202,7 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
 		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
-			$field   = new BP_XProfile_Field( $field_id );
+			$field   = new \BP_XProfile_Field( $field_id );
 			$name    = $field->name;
 			$id      = $field->id;
 			$deleted = $field->delete( $r['delete_data'] );
@@ -211,11 +215,3 @@ class BPCLI_XProfile_Field extends BPCLI_Component {
 		} );
 	}
 }
-
-WP_CLI::add_command( 'bp xprofile field', 'BPCLI_XProfile_Field', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'xprofile' ) ) {
-			WP_CLI::error( 'The XProfile component is not active.' );
-		}
-	},
-) );

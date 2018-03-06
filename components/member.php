@@ -1,4 +1,5 @@
 <?php
+namespace Buddypress\CLI\Command;
 
 if ( ! class_exists( 'User_Command' ) ) {
 	require_once( WP_CLI_ROOT . '/php/commands/user.php' );
@@ -9,7 +10,7 @@ if ( ! class_exists( 'User_Command' ) ) {
  *
  * @since 1.0.0
  */
-class BPCLI_Member extends BPCLI_Component {
+class Member extends BuddypressCommand {
 
 	/**
 	 * Generate BuddyPress members. See documentation for `wp_user_generate`.
@@ -45,5 +46,3 @@ class BPCLI_Member extends BPCLI_Component {
 		bp_update_user_last_activity( $user_id, $time );
 	}
 }
-
-WP_CLI::add_command( 'bp member', 'BPCLI_Member' );

@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Friends.
  *
  * @since 1.6.0
  */
-class BPCLI_Friend extends BPCLI_Component {
+class Friend extends BuddypressCommand {
 
 	/**
 	 * Object fields.
@@ -55,7 +59,7 @@ class BPCLI_Friend extends BPCLI_Component {
 		$friend    = $this->get_user_id_from_identifier( $args[1] );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -64,14 +68,14 @@ class BPCLI_Friend extends BPCLI_Component {
 			WP_CLI::error( 'These users are already friends.' );
 		}
 
-		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
+		$force = WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
 
 		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::line( \BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
 		} else {
 			if ( $force ) {
 				WP_CLI::success( 'Friendship successfully created.' );
@@ -238,7 +242,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	public function _list( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
 		$user      = $this->get_user_id_from_identifier( $args[0] );
-		$friends   = BP_Friends_Friendship::get_friendships( $user->ID );
+		$friends   = \BP_Friends_Friendship::get_friendships( $user->ID );
 
 		if ( empty( $friends ) ) {
 			WP_CLI::error( 'This member has no friends.' );
@@ -279,7 +283,7 @@ class BPCLI_Friend extends BPCLI_Component {
 	 *     $ wp bp friend generate --initiator=121 --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating friendships', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating friendships', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 
@@ -308,11 +312,3 @@ class BPCLI_Friend extends BPCLI_Component {
 		$notify->finish();
 	}
 }
-
-WP_CLI::add_command( 'bp friend', 'BPCLI_Friend', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'friends' ) ) {
-			WP_CLI::error( 'The Friends component is not active.' );
-		}
-	},
-) );

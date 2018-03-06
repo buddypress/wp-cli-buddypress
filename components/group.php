@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress groups.
  *
  * @since 1.5.0
  */
-class BPCLI_Group extends BPCLI_Component {
+class Group extends BuddypressCommand {
 
 	/**
 	 * Object fields.
@@ -129,7 +133,7 @@ class BPCLI_Group extends BPCLI_Component {
 		) );
 
 		// Silent it before it errors.
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
@@ -139,7 +143,7 @@ class BPCLI_Group extends BPCLI_Component {
 
 		groups_update_groupmeta( $group_id, 'total_member_count', 1 );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::line( $group_id );
 		} else {
 			$group = groups_get_group( array(
@@ -186,7 +190,7 @@ class BPCLI_Group extends BPCLI_Component {
 	 *     $ wp bp group generate --count=10 --status=hidden --creator-id=30
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
@@ -422,11 +426,3 @@ class BPCLI_Group extends BPCLI_Component {
 		return $status;
 	}
 }
-
-WP_CLI::add_command( 'bp group', 'BPCLI_Group', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'groups' ) ) {
-			WP_CLI::error( 'The Groups component is not active.' );
-		}
-	},
-) );

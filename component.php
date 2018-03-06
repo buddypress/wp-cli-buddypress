@@ -1,11 +1,15 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+use WP_CLI\CommandWithDBObject;
 
 /**
  * Base component class.
  *
  * @since 1.0
  */
-class BPCLI_Component extends \WP_CLI\CommandWithDBObject {
+abstract class BuddypressCommand extends CommandWithDBObject {
 
 	/**
 	 * Get a random user id.

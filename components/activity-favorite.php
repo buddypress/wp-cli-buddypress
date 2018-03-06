@@ -1,10 +1,14 @@
 <?php
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress activity favorite.
  *
  * @since 1.5.0
  */
-class BPCLI_Activity_Favorite extends BPCLI_Component {
+class Activity_Favorite extends BuddypressCommand {
 
 	/**
 	 * Object fields.
@@ -48,7 +52,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 */
 	public function create( $args, $assoc_args ) {
 		$activity_id = $args[0];
-		$activity    = new BP_Activity_Activity( $activity_id );
+		$activity    = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -89,7 +93,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 */
 	public function remove( $args, $assoc_args ) {
 		$activity_id = $args[0];
-		$activity    = new BP_Activity_Activity( $activity_id );
+		$activity    = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			WP_CLI::error( 'No activity found by that ID.' );
@@ -115,7 +119,7 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--<field>=<value>]
-	 * : One or more parameters to pass to BP_Activity_Activity::get()
+	 * : One or more parameters to pass to \BP_Activity_Activity::get()
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -159,11 +163,3 @@ class BPCLI_Activity_Favorite extends BPCLI_Component {
 		$formatter->display_items( $activities['activities'] );
 	}
 }
-
-WP_CLI::add_command( 'bp activity favorite', 'BPCLI_Activity_Favorite', array(
-	'before_invoke' => function() {
-		if ( ! bp_is_active( 'activity' ) ) {
-			WP_CLI::error( 'The Activity component is not active.' );
-		}
-	},
-) );
