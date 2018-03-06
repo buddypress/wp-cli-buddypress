@@ -223,7 +223,7 @@ class Signup extends BuddypressCommand {
 		// Use the email API to get a valid "from" domain.
 		$email_domain = new \BP_Email( '' );
 		$email_domain = $email_domain->get_from()->get_address();
-		$random_login = $this->get_random_login();
+		$random_login = wp_generate_password( 12, false ); // Generate random user login.
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
