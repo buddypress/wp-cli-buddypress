@@ -258,10 +258,10 @@ class Signup extends BuddypressCommand {
 		$send   = \BP_Signup::resend( array( $signup->signup_id ) );
 
 		// Add feedback message.
-		if ( ! empty( $send['errors'] ) ) {
-			WP_CLI::error( 'This account is already activated.' );
-		} else {
+		if ( empty( $send['errors'] ) ) {
 			WP_CLI::success( 'Email sent successfully.' );
+		} else {
+			WP_CLI::error( 'This account is already activated.' );
 		}
 	}
 
