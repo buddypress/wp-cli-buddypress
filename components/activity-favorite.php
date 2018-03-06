@@ -134,6 +134,12 @@ class Activity_Favorite extends BuddypressCommand {
 	 *   - yaml
 	 * ---
 	 *
+	 * [--count=<number>]
+	 * : How many activity favorites to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity favorite list 315
@@ -152,6 +158,7 @@ class Activity_Favorite extends BuddypressCommand {
 
 		$activities = bp_activity_get_specific( array(
 			'activity_ids' => $favorites,
+			'per_page'     => $assoc_args['count'],
 		) );
 
 		// Sanity check.
