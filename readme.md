@@ -10,8 +10,8 @@ Please use and provide feedback!
 
 ## System Requirements
 
-* PHP >=5.3
-* wp-cli >=0.23.0
+* PHP >= 5.3
+* wp-cli >= 0.23.0
 * BuddyPress trunk (development version).
 
 ## Setup
@@ -21,6 +21,11 @@ Please use and provide feedback!
 * Inside of a WP installation, type `wp bp`. You should see a list of available commands.
 
 ## Changelog
+
+### 1.6.0
+
+* `bp email` commands introduced
+* With PSR-4 support for the classes
 
 ### 1.5.0
 

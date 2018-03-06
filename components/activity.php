@@ -200,7 +200,7 @@ class Activity extends BuddypressCommand {
 	 * : Secondary object ID to filter the activities. Ex.: a post_id.
 	 *
 	 * [--count=<number>]
-	 * : How many activity items to list.
+	 * : How many activities to list.
 	 * ---
 	 * default: 50
 	 * ---
@@ -286,19 +286,21 @@ class Activity extends BuddypressCommand {
 
 		$r = self::process_csv_arguments_to_arrays( $r );
 
-		if ( 'ids' === $formatter->format ) {
+		// If count or ids, no need for activity objects.
+		if ( in_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
 			$r['fields'] = 'ids';
-			$activities  = bp_activity_get( $r );
+		}
 
+		$activities = bp_activity_get( $r );
+		if ( empty( $activities['activities'] ) ) {
+			WP_CLI::error( 'No activities found.' );
+		}
+
+		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', $activities['activities'] ); // WPCS: XSS ok.
 		} elseif ( 'count' === $formatter->format ) {
-			$r['fields']      = 'ids';
-			$r['count_total'] = true;
-			$activities       = bp_activity_get( $r );
-
-			$formatter->display_items( $activities['activities'] );
+			$formatter->display_items( $activities['total'] );
 		} else {
-			$activities = bp_activity_get( $r );
 			$formatter->display_items( $activities['activities'] );
 		}
 	}
@@ -385,8 +387,8 @@ class Activity extends BuddypressCommand {
 		}
 
 		$activity = bp_activity_get_specific( array(
-			'activity_ids' => $activity_id,
-			'spam' => null,
+			'activity_ids'     => $activity_id,
+			'spam'             => null,
 			'display_comments' => true,
 		) );
 

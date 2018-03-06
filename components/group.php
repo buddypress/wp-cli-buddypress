@@ -352,6 +352,12 @@ class Group extends BuddypressCommand {
 	 *   - count
 	 *   - haml
 	 * ---
+	 *
+	 * [--count=<number>]
+	 * : How many group items to list.
+	 * ---
+	 * default: 50
+	 * ---
 
 	 * ## EXAMPLES
 	 *
@@ -365,11 +371,14 @@ class Group extends BuddypressCommand {
 	public function _list( $args, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$query_args = wp_parse_args( $assoc_args, array(
-			'per_page'    => -1,
+			'count'       => 50,
 			'show_hidden' => true,
 			'orderby'     => $assoc_args['orderby'],
 			'order'       => $assoc_args['order'],
 		) );
+
+		// Groups to list.
+		$r['per_page'] = $r['count'];
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
