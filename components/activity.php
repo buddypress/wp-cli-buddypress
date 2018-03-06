@@ -199,6 +199,12 @@ class Activity extends BuddypressCommand {
 	 * [--secondary-id=<secondary-id>]
 	 * : Secondary object ID to filter the activities. Ex.: a post_id.
 	 *
+	 * [--count=<number>]
+	 * : How many activity items to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 *  ---
@@ -249,11 +255,14 @@ class Activity extends BuddypressCommand {
 
 		$r = wp_parse_args( $assoc_args, array(
 			'page'        => 1,
-			'per_page'    => -1,
+			'count'       => 50,
 			'count_total' => false,
 			'show_hidden' => true,
 			'filter'      => false,
 		) );
+
+		// Activities to list.
+		$r['per_page'] = $r['count'];
 
 		if ( isset( $assoc_args['user-id'] ) && is_numeric( $assoc_args['user-id'] ) ) {
 			$r['filter']['user_id'] = $assoc_args['user-id'];
