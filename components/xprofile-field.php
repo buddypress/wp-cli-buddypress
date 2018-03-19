@@ -4,7 +4,7 @@ namespace Buddypress\CLI\Command;
 use WP_CLI;
 
 /**
- * Manage XProfile fields.
+ * Manage XProfile Fields.
  *
  * @since 1.5.0
  */

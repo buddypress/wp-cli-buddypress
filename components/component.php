@@ -4,7 +4,7 @@ namespace Buddypress\CLI\Command;
 use WP_CLI;
 
 /**
- * Manage BuddyPress components.
+ * Manage BuddyPress Components.
  *
  * @since 1.6.0
  */
@@ -173,8 +173,8 @@ class Components extends BuddypressCommand {
 				foreach ( $active_components as $name => $labels ) {
 					$current_components[] = array(
 						'id'          => $name,
-						'title'       => $labels['title'],
-						'description' => $labels['description'],
+						'title'       => '',
+						'description' => '',
 					);
 				}
 				break;
@@ -182,9 +182,9 @@ class Components extends BuddypressCommand {
 			case 'inactive':
 				foreach ( $inactive_components as $name => $labels ) {
 					$current_components[] = array(
-						'id'          => $name,
-						'title'       => $labels['title'],
-						'description' => $labels['description'],
+						'id'          => $labels,
+						'title'       => '',
+						'description' => '',
 					);
 				}
 				break;
