@@ -233,9 +233,11 @@ class Group_Invite extends BuddypressCommand {
 		$notify = WP_CLI\Utils\make_progress_bar( 'Generating random group invitations', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
+
+			$random_group = \BP_Groups_Group::get_random( 1, 1 );
 			$this->add( array(), array(
 				'user-id'    => $this->get_random_user_id(),
-				'group-id'   => \BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug,
+				'group-id'   => $random_group['groups'][0]->slug,
 				'inviter-id' => $this->get_random_user_id(),
 				'silent',
 			) );
