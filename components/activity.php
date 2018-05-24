@@ -899,7 +899,8 @@ class Activity extends BuddypressCommand {
 
 			case 'created_group':
 				if ( empty( $r['item-id'] ) ) {
-					$r['item-id'] = \BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
+					$random_group = \BP_Groups_Group::get_random( 1, 1 );
+					$r['item-id'] = $random_group['groups'][0]->slug;
 				}
 
 				$group = groups_get_group( array(
@@ -925,7 +926,8 @@ class Activity extends BuddypressCommand {
 
 			case 'joined_group':
 				if ( empty( $r['item-id'] ) ) {
-					$r['item-id'] = \BP_Groups_Group::get_random( 1, 1 )['groups'][0]->slug;
+					$random_group = \BP_Groups_Group::get_random( 1, 1 );
+					$r['item-id'] = $random_group['groups'][0]->slug;
 				}
 
 				$group = groups_get_group( array(
