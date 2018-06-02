@@ -22,6 +22,11 @@ Please use and provide feedback!
 
 ## Changelog
 
+### 1.7.0
+
+* Updated `bp` and `bp xprofile` commands PHPDoc informations
+* Fixed `component list` commands output
+
 ### 1.6.0
 
 * `bp email` commands introduced
