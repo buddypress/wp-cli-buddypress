@@ -60,6 +60,10 @@ class Components extends BuddypressCommand {
 	public function activate( $args, $assoc_args ) {
 		$component = $args[0];
 
+		if ( ! $this->component_exists( $component ) ) {
+			WP_CLI::error( sprintf( '%s is not a valid component.', ucfirst( $component ) ) );
+		}
+
 		if ( bp_is_active( $component ) ) {
 			WP_CLI::error( sprintf( 'The %s component is already active.', ucfirst( $component ) ) );
 		}
@@ -100,6 +104,10 @@ class Components extends BuddypressCommand {
 	 */
 	public function deactivate( $args, $assoc_args ) {
 		$component = $args[0];
+
+		if ( ! $this->component_exists( $component ) ) {
+			WP_CLI::error( sprintf( '%s is not a valid component.', ucfirst( $component ) ) );
+		}
 
 		if ( ! bp_is_active( $component ) ) {
 			WP_CLI::error( sprintf( 'The %s component is not active.', ucfirst( $component ) ) );
@@ -248,6 +256,19 @@ class Components extends BuddypressCommand {
 		} else {
 			$formatter->display_items( $current_components );
 		}
+	}
+
+	/**
+	 * Does the component exist?
+	 *
+	 * @param  string $component Component.
+	 *
+	 * @return bool
+	 */
+	protected function component_exists( $component ) {
+		$keys = array_keys( bp_core_get_components() );
+
+		return in_array( $component, $keys, true );
 	}
 
 	/**
