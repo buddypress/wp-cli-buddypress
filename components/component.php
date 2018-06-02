@@ -6,6 +6,27 @@ use WP_CLI;
 /**
  * Manage BuddyPress Components.
  *
+ * ## EXAMPLES
+ *
+ *     # Activate a component.
+ *     $ wp bp component activate groups
+ *     Success: The Groups component has been activated.
+ *
+ *     # Deactive a component.
+ *     $ wp bp component deactivate groups
+ *     Success: The Groups component has been deactivated.
+ *
+ *     # List components.
+ *     $ wp bp component list --type=required
+ *     +--------+---------+--------+------------------------+--------------------------------------------+
+ *     | number | id      | status | title                  | description                                |
+ *     +--------+---------+--------+------------------------------------------+--------------------------+
+ *     | 1      | core    | Active | Núcleo do BuddyPress   | É o que torna <del>viajar no tempo</del> o |
+ *     |        |         |        |                        | BuddyPress possível!                       |
+ *     | 2      | members | Active | Membros da Comunidade  | Tudo em uma comunidade BuddyPress gira em  |
+ *     |        |         |        |                        | torno de seus membros.                     |
+ *     +--------+---------+--------+------------------------------------------+--------------------------+
+ *
  * @since 1.6.0
  */
 class Components extends BuddypressCommand {
