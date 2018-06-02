@@ -49,4 +49,16 @@ class Tool extends BuddypressCommand {
 			WP_CLI::error( $result[1] );
 		}
 	}
+
+	/**
+	 * Display BuddyPress version currently installed.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp tool version
+	 *     BuddyPress: 3.0.0
+	 */
+	public function version() {
+		WP_CLI::line( 'BuddyPress: ' . bp_get_version() );
+	}
 }

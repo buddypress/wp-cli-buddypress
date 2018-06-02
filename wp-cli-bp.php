@@ -10,6 +10,7 @@ if ( ! defined( '\WP_CLI' ) ) {
 
 WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/component.php' );
+	require_once( __DIR__ . '/components/buddypress.php' );
 	require_once( __DIR__ . '/components/signup.php' );
 	require_once( __DIR__ . '/components/activity.php' );
 	require_once( __DIR__ . '/components/activity-favorite.php' );
@@ -19,12 +20,21 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/components/group-invite.php' );
 	require_once( __DIR__ . '/components/member.php' );
 	require_once( __DIR__ . '/components/friend.php' );
+	require_once( __DIR__ . '/components/xprofile.php' );
 	require_once( __DIR__ . '/components/xprofile-group.php' );
 	require_once( __DIR__ . '/components/xprofile-field.php' );
 	require_once( __DIR__ . '/components/xprofile-data.php' );
 	require_once( __DIR__ . '/components/tool.php' );
 	require_once( __DIR__ . '/components/message.php' );
 	require_once( __DIR__ . '/components/email.php' );
+
+	WP_CLI::add_command( 'bp', __NAMESPACE__ . '\\Command\\Buddypress', array(
+		'before_invoke' => function() {
+			if ( ! class_exists( 'Buddypress' ) ) {
+				WP_CLI::error( 'The BuddyPress plugin is not active.' );
+			}
+		},
+	) );
 
 	WP_CLI::add_command( 'bp signup', __NAMESPACE__ . '\\Command\\Signup', array(
 		'before_invoke' => function() {
@@ -126,6 +136,18 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 
 			if ( ! bp_is_active( 'friends' ) ) {
 				WP_CLI::error( 'The Friends component is not active.' );
+			}
+		},
+	) );
+
+	WP_CLI::add_command( 'bp xprofile', __NAMESPACE__ . '\\Command\\XProfile', array(
+		'before_invoke' => function() {
+			if ( ! class_exists( 'Buddypress' ) ) {
+				WP_CLI::error( 'The BuddyPress plugin is not active.' );
+			}
+
+			if ( ! bp_is_active( 'xprofile' ) ) {
+				WP_CLI::error( 'The XProfile component is not active.' );
 			}
 		},
 	) );
