@@ -24,8 +24,9 @@ Please use and provide feedback!
 
 ### 1.7.0
 
-* Updated `bp` and `bp xprofile` commands PHPDoc informations
+* Updated `bp` and `bp xprofile` commands PHPDoc info
 * Fixed `component list` commands output
+* Check if the `component` exists first before using it
 
 ### 1.6.0
 
