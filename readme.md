@@ -27,6 +27,8 @@ Please use and provide feedback!
 * Updated `bp` and `bp xprofile` commands PHPDoc info
 * Fixed `component list` commands output
 * Check if the `component` exists first before using it
+* Fixed `component` Behat tests
+* Removed PHP 5.3 support from Travis
 
 ### 1.6.0
 
