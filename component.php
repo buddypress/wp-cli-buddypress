@@ -77,6 +77,8 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 * Generate random text
 	 *
 	 * @since 1.1
+	 *
+	 * @return string
 	 */
 	protected function generate_random_text() {
 		return 'Here is some random text';
