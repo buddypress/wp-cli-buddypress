@@ -21,25 +21,21 @@ class Notification extends BuddypressCommand {
 	 * active components.
 	 *
 	 * [--action=<action>]
-	 * : Action text (eg "Joe created a new group Foo"). If none is
-	 * provided, one will be generated automatically based on other params.
+	 * : Action text (eg "Joe created a new group Foo").
 	 *
 	 * [--user-id=<user>]
-	 * : ID of the user associated with the new notification. If none is provided,
-	 * a user will be randomly selected.
+	 * : ID of the user associated with the new notification.
 	 *
 	 * [--item-id=<item-id>]
-	 * : ID of the associated notification. If none is provided, one will be
-	 * generated automatically.
+	 * : ID of the associated notification.
 	 *
 	 * [--secondary-item-id=<secondary-item-id>]
-	 * : ID of the secondary associated notification. If none is provided, one will
-	 * be generated automatically.
+	 * : ID of the secondary associated notification.
 	 *
 	 * [--date-notified=<date-notified>]
 	 * : GMT timestamp, in Y-m-d h:i:s format.
 	 * ---
-	 * Default: Current time
+	 * default: Current time
 	 * ---
 	 *
 	 * [--silent]
@@ -88,7 +84,7 @@ class Notification extends BuddypressCommand {
 		}
 
 		if ( ! is_numeric( $id ) ) {
-			WP_CLI::error( 'Could not create notification item.' );
+			WP_CLI::error( 'Could not create notification.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
@@ -98,4 +94,52 @@ class Notification extends BuddypressCommand {
 		}
 	}
 
+	/**
+	 * Fetch specific notification.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <notification-id>
+	 * : Identifier for the notification.
+	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 *   - haml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp notification get 500
+	 *     $ wp bp notification get 56 --format=json
+	 *
+	 * @alias see
+	 */
+	public function get( $args, $assoc_args ) {
+		$notification = bp_notifications_get_notification( $args[0] );
+
+		if ( empty( $notification->id ) ) {
+			WP_CLI::error( 'No notification found by that ID.' );
+		}
+
+		if ( ! is_object( $notification ) ) {
+			WP_CLI::error( 'Could not find the notification.' );
+		}
+
+		$notification_arr = get_object_vars( $notification );
+
+		if ( empty( $assoc_args['fields'] ) ) {
+			$assoc_args['fields'] = array_keys( $notification_arr );
+		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $notification_arr );
+	}
 }
