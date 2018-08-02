@@ -20,8 +20,9 @@ class Notification extends BuddypressCommand {
 	 * none is provided, a component will be randomly selected from the
 	 * active components.
 	 *
-	 * [--action=<action>]
-	 * : Action text (eg "Joe created a new group Foo").
+	 * [--content=<content>]
+	 * : Content (eg "Joe created a new group Foo"). If none is provided, random content
+	 * will be added.
 	 *
 	 * [--user-id=<user>]
 	 * : ID of the user associated with the new notification.
@@ -57,21 +58,26 @@ class Notification extends BuddypressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'component'         => '',
-			'action'            => '',
+			'content'           => '',
 			'user-id'           => '',
 			'item-id'           => '',
 			'secondary-item-id' => '',
 			'date-notified'     => bp_core_current_time(),
 		) );
 
-		// Fill in any missing information.
+		// Fill in the component.
 		if ( empty( $r['component'] ) ) {
 			$r['component'] = $this->get_random_component();
 		}
 
+		// Fill in the content.
+		if ( empty( $r['content'] ) ) {
+			$r['content'] = $this->generate_random_text();
+		}
+
 		$id = bp_notifications_add_notification( array(
 			'component_name'    => $r['component'],
-			'component_action'  => $r['action'],
+			'component_action'  => $r['content'],
 			'user_id'           => $r['user-id'],
 			'item_id'           => $r['item-id'],
 			'secondary_item_id' => $r['secondary-item-id'],
@@ -184,5 +190,35 @@ class Notification extends BuddypressCommand {
 				return array( 'error', 'Could not delete notification.' );
 			}
 		} );
+	}
+
+	/**
+	 * Generate random notifications.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many notifications to generate.
+	 * ---
+	 * default: 100
+	 * ---
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp notification generate --count=50
+	 */
+	public function generate( $args, $assoc_args ) {
+		$notify = WP_CLI\Utils\make_progress_bar( 'Generating notifications', $assoc_args['count'] );
+
+		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
+			$this->create( array(), array(
+				'user-id' => $this->get_random_user_id(),
+				'silent',
+			) );
+
+			$notify->tick();
+		}
+
+		$notify->finish();
 	}
 }
