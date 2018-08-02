@@ -11,7 +11,23 @@ use WP_CLI;
 class Notification extends BuddypressCommand {
 
 	/**
-	 * Create an notification item.
+	 * Object fields.
+	 *
+	 * @var array
+	 */
+	protected $obj_fields = array(
+		'id',
+		'user_id',
+		'item_id',
+		'component_name',
+		'component_action',
+		'secondary_item_id',
+		'date_notified',
+		'is_new',
+	);
+
+	/**
+	 * Create a notification item.
 	 *
 	 * ## OPTIONS
 	 *
@@ -59,9 +75,9 @@ class Notification extends BuddypressCommand {
 		$r = wp_parse_args( $assoc_args, array(
 			'component'         => '',
 			'content'           => '',
-			'user-id'           => '',
-			'item-id'           => '',
-			'secondary-item-id' => '',
+			'user-id'           => 0,
+			'item-id'           => 0,
+			'secondary-item-id' => 0,
 			'date-notified'     => bp_core_current_time(),
 		) );
 
@@ -101,7 +117,7 @@ class Notification extends BuddypressCommand {
 	}
 
 	/**
-	 * Fetch specific notification.
+	 * Get specific notification.
 	 *
 	 * ## OPTIONS
 	 *
@@ -220,5 +236,77 @@ class Notification extends BuddypressCommand {
 		}
 
 		$notify->finish();
+	}
+
+	/**
+	 * Get a list of notifications.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass.
+	 *
+	 * [--fields=<fields>]
+	 * : Fields to display.
+	 *
+	 * [--user-id=<user>]
+	 * : Limit results to a specific member. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - ids
+	 *   - csv
+	 *   - count
+	 *   - haml
+	 * ---
+	 *
+	 * [--count=<number>]
+	 * : How many notification items to list.
+	 * ---
+	 * default: 50
+	 * ---
+
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp notification list --format=ids
+	 *     $ wp bp notification list --format=count
+	 *     $ wp bp notification list --user-id=123
+	 *     $ wp bp notification list --user-id=user_login --format=ids
+	 *
+	 * @subcommand list
+	 */
+	public function _list( $args, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
+
+		$query_args = wp_parse_args( $assoc_args, array(
+			'count' => 50,
+		) );
+
+		if ( isset( $assoc_args['user-id'] ) ) {
+			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			$query_args['user_id'] = $user->ID;
+		}
+
+		$query_args['per_page'] = $query_args['count'];
+
+		$query_args = self::process_csv_arguments_to_arrays( $query_args );
+
+		$notifications = \BP_Notifications_Notification::get( $query_args );
+
+		if ( empty( $notifications ) ) {
+			WP_CLI::error( 'No notifications found.' );
+		}
+
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', wp_list_pluck( $notifications, 'id' ) ); // WPCS: XSS ok.
+		} elseif ( 'count' === $formatter->format ) {
+			$formatter->display_items( $notifications );
+		} else {
+			$formatter->display_items( $notifications );
+		}
 	}
 }
