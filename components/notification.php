@@ -184,7 +184,7 @@ class Notification extends BuddypressCommand {
 				WP_CLI::error( 'No notification found by that ID.' );
 			}
 
-			if ( BP_Notifications_Notification::delete( array( 'id' => $notification_id ) ) ) {
+			if ( \BP_Notifications_Notification::delete( array( 'id' => $notification_id ) ) ) {
 				return array( 'success', 'Notification deleted.' );
 			} else {
 				return array( 'error', 'Could not delete notification.' );
