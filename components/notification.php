@@ -111,8 +111,11 @@ class Notification extends BuddypressCommand {
 	 * default: table
 	 * options:
 	 *   - table
+	 *   - csv
+	 *   - ids
 	 *   - json
-	 *   - haml
+	 *   - count
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -141,5 +144,45 @@ class Notification extends BuddypressCommand {
 
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_item( $notification_arr );
+	}
+
+	/**
+	 * Delete a notification.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <notification-id>...
+	 * : ID or IDs of notification.
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp bp notification delete 520
+	 *     Success: Notification deleted.
+	 *
+	 *     $ wp bp notification delete 55654 54564 --yes
+	 *     Success: Notification deleted.
+	 */
+	public function delete( $args, $assoc_args ) {
+		$notification_id = $args[0];
+
+		WP_CLI::confirm( 'Are you sure you want to delete this notification?', $assoc_args );
+
+		parent::_delete( array( $notification_id ), $assoc_args, function( $notification_id ) {
+
+			$notification = bp_notifications_get_notification( $notification_id );
+
+			if ( empty( $notification->id ) ) {
+				WP_CLI::error( 'No notification found by that ID.' );
+			}
+
+			if ( BP_Notifications_Notification::delete( array( 'id' => $notification_id ) ) ) {
+				return array( 'success', 'Notification deleted.' );
+			} else {
+				return array( 'error', 'Could not delete notification.' );
+			}
+		} );
 	}
 }

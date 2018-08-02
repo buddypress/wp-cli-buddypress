@@ -10,3 +10,9 @@ Feature: Manage BuddyPress Notifications
     When I run `wp bp notification create --component=groups --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {NOTIFICATION_ID}
+
+    When I run `wp bp notification delete {NOTIFICATION_ID} --yes`
+    Then STDOUT should contain:
+      """
+      Success: Notification deleted.
+      """
