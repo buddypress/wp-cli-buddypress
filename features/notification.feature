@@ -17,7 +17,6 @@ Feature: Manage BuddyPress Notifications
     When I run `wp bp notification get {NOTIFICATION_ID} --fields=user_id,component_name`
     Then STDOUT should be a table containing rows:
       | Field           | Value                 |
-      | id              | {NOTIFICATION_ID}     |
       | user_id         | {MEMBER_ID}           |
       | component_name  | groups                |
 
