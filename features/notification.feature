@@ -49,12 +49,6 @@ Feature: Manage BuddyPress Notifications
     Then STDOUT should be a number
     And save STDOUT as {NOTIFICATION_TWO_ID}
 
-    When I run `wp bp notification list --fields=id,user_id`
-    Then STDOUT should be a table containing rows:
-      | Field             | Value             |
-      | user_id           | {MEMBER_TWO_ID}   |
-      | component_name    | groups            |
-
     When I run `wp bp notification list --fields=id --user-id={MEMBER_ONE_ID}`
     Then STDOUT should be a table containing rows:
       | id                    |

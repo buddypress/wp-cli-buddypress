@@ -197,7 +197,7 @@ class Components extends BuddypressCommand {
 		// Inactive components.
 		$inactive_components = array_diff( array_keys( $components ), array_keys( $active_components ) );
 
-		$current_components  = array();
+		$current_components = array();
 		switch ( $status ) {
 			case 'all':
 				$index = 0;
@@ -219,6 +219,7 @@ class Components extends BuddypressCommand {
 					$index++;
 
 					$info = $components[ $component ];
+
 					$current_components[] = array(
 						'number'      => $index,
 						'id'          => $component,
@@ -235,6 +236,7 @@ class Components extends BuddypressCommand {
 					$index++;
 
 					$info = $components[ $component ];
+
 					$current_components[] = array(
 						'number'      => $index,
 						'id'          => $component,

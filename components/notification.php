@@ -6,6 +6,16 @@ use WP_CLI;
 /**
  * Manage BuddyPress Notifications.
  *
+ * ## EXAMPLES
+ *
+ *     # Create notification item.
+ *     $ wp bp notification create
+ *     Success: Successfully created new notification. (ID #5464)
+ *
+ *     # Delete a notification item.
+ *     $ wp bp notification delete 520
+ *     Success: Notification deleted.
+ *
  * @since 1.8.0
  */
 class Notification extends BuddypressCommand {
@@ -49,7 +59,7 @@ class Notification extends BuddypressCommand {
 	 * [--secondary-item-id=<secondary-item-id>]
 	 * : ID of the secondary associated notification.
 	 *
-	 * [--date-notified=<date-notified>]
+	 * [--date=<date>]
 	 * : GMT timestamp, in Y-m-d h:i:s format.
 	 * ---
 	 * default: Current time
@@ -78,7 +88,7 @@ class Notification extends BuddypressCommand {
 			'user-id'           => 0,
 			'item-id'           => 0,
 			'secondary-item-id' => 0,
-			'date-notified'     => bp_core_current_time(),
+			'date'              => bp_core_current_time(),
 		) );
 
 		// Fill in the component.
@@ -97,7 +107,7 @@ class Notification extends BuddypressCommand {
 			'user_id'           => $r['user-id'],
 			'item_id'           => $r['item-id'],
 			'secondary_item_id' => $r['secondary-item-id'],
-			'date_notified'     => $r['date-notified'],
+			'date_notified'     => $r['date'],
 		) );
 
 		// Silent it before it errors.
@@ -186,6 +196,8 @@ class Notification extends BuddypressCommand {
 	 *
 	 *     $ wp bp notification delete 55654 54564 --yes
 	 *     Success: Notification deleted.
+	 *
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
 		$notification_id = $args[0];
@@ -198,6 +210,10 @@ class Notification extends BuddypressCommand {
 
 			if ( empty( $notification->id ) ) {
 				WP_CLI::error( 'No notification found by that ID.' );
+			}
+
+			if ( ! is_object( $notification ) ) {
+				WP_CLI::error( 'Could not find the notification.' );
 			}
 
 			if ( \BP_Notifications_Notification::delete( array( 'id' => $notification_id ) ) ) {
@@ -252,6 +268,12 @@ class Notification extends BuddypressCommand {
 	 * [--user-id=<user>]
 	 * : Limit results to a specific member. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--count=<number>]
+	 * : How many notification items to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -262,12 +284,6 @@ class Notification extends BuddypressCommand {
 	 *   - csv
 	 *   - count
 	 *   - haml
-	 * ---
-	 *
-	 * [--count=<number>]
-	 * : How many notification items to list.
-	 * ---
-	 * default: 50
 	 * ---
 
 	 * ## EXAMPLES
@@ -298,7 +314,7 @@ class Notification extends BuddypressCommand {
 		$notifications = \BP_Notifications_Notification::get( $query_args );
 
 		if ( empty( $notifications ) ) {
-			WP_CLI::error( 'No notifications found.' );
+			WP_CLI::error( 'No notification items found.' );
 		}
 
 		if ( 'ids' === $formatter->format ) {
