@@ -29,9 +29,9 @@ class Notification extends BuddypressCommand {
 		'id',
 		'user_id',
 		'item_id',
+		'secondary_item_id',
 		'component_name',
 		'component_action',
-		'secondary_item_id',
 		'date_notified',
 		'is_new',
 	);
@@ -46,17 +46,16 @@ class Notification extends BuddypressCommand {
 	 * none is provided, a component will be randomly selected from the
 	 * active components.
 	 *
-	 * [--content=<content>]
-	 * : Content (eg "Joe created a new group Foo"). If none is provided, random content
-	 * will be added.
+	 * [--action=<action>]
+	 * : Name of the action to associate the notification. (comment_reply, update_reply, etc).
 	 *
 	 * [--user-id=<user>]
 	 * : ID of the user associated with the new notification.
 	 *
-	 * [--item-id=<item-id>]
+	 * [--item-id=<item>]
 	 * : ID of the associated notification.
 	 *
-	 * [--secondary-item-id=<secondary-item-id>]
+	 * [--secondary-item-id=<item>]
 	 * : ID of the secondary associated notification.
 	 *
 	 * [--date=<date>]
@@ -73,10 +72,10 @@ class Notification extends BuddypressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp notification create
+	 *     $ wp bp notification create --component=messages --action=update_reply --user-id=523
 	 *     Success: Successfully created new notification. (ID #5464)
 	 *
-	 *     $ wp bp notification add --component=groups --user-id=10
+	 *     $ wp bp notification add --component=groups --action=comment_reply --user-id=10
 	 *     Success: Successfully created new notification (ID #48949)
 	 *
 	 * @alias add
@@ -84,7 +83,7 @@ class Notification extends BuddypressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
 			'component'         => '',
-			'content'           => '',
+			'action'            => '',
 			'user-id'           => 0,
 			'item-id'           => 0,
 			'secondary-item-id' => 0,
@@ -96,17 +95,12 @@ class Notification extends BuddypressCommand {
 			$r['component'] = $this->get_random_component();
 		}
 
-		// Fill in the content.
-		if ( empty( $r['content'] ) ) {
-			$r['content'] = $this->generate_random_text();
-		}
-
 		$id = bp_notifications_add_notification( array(
-			'component_name'    => $r['component'],
-			'component_action'  => $r['content'],
 			'user_id'           => $r['user-id'],
 			'item_id'           => $r['item-id'],
 			'secondary_item_id' => $r['secondary-item-id'],
+			'component_name'    => $r['component'],
+			'component_action'  => $r['action'],
 			'date_notified'     => $r['date'],
 		) );
 
@@ -184,7 +178,7 @@ class Notification extends BuddypressCommand {
 	 * ## OPTIONS
 	 *
 	 * <notification-id>...
-	 * : ID or IDs of notification.
+	 * : ID or IDs of notification to delete.
 	 *
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
@@ -229,6 +223,18 @@ class Notification extends BuddypressCommand {
 	 *
 	 * ## OPTIONS
 	 *
+	 * [--action=<action>]
+	 * : Name of the action to associate the notification. (comment_reply, update_reply, etc).
+	 * ---
+	 * default: comment_reply
+	 * ---
+	 *
+	 * [--component=<component>]
+	 * : The component for the notification item (groups, activity, etc).
+	 * ---
+	 * default: groups
+	 * ---
+	 *
 	 * [--count=<number>]
 	 * : How many notifications to generate.
 	 * ---
@@ -244,7 +250,9 @@ class Notification extends BuddypressCommand {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create( array(), array(
-				'user-id' => $this->get_random_user_id(),
+				'user-id'   => $this->get_random_user_id(),
+				'component' => $assoc_args['component'],
+				'action'    => $assoc_args['action'],
 				'silent',
 			) );
 
@@ -267,6 +275,12 @@ class Notification extends BuddypressCommand {
 	 *
 	 * [--user-id=<user>]
 	 * : Limit results to a specific member. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--component=<component>]
+	 * : The component to fetch notifications (groups, activity, etc).
+	 *
+	 * [--action=<action>]
+	 * : Name of the action to fetch notifications. (comment_reply, update_reply, etc).
 	 *
 	 * [--count=<number>]
 	 * : How many notification items to list.
@@ -305,6 +319,14 @@ class Notification extends BuddypressCommand {
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 			$query_args['user_id'] = $user->ID;
+		}
+
+		if ( isset( $assoc_args['action'] ) ) {
+			$query_args['component_action'] = $assoc_args['action'];
+		}
+
+		if ( isset( $assoc_args['component'] ) ) {
+			$query_args['component_name'] = $assoc_args['component'];
 		}
 
 		$query_args['per_page'] = $query_args['count'];

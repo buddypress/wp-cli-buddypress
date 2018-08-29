@@ -7,27 +7,34 @@ Feature: Manage BuddyPress Notifications
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp notification create --component=groups --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp notification create --component=activity --action=comment_reply --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {NOTIFICATION_ID}
 
-    When I try `wp bp notification get i-do-not-exist`
-    Then the return code should be 1
-
-    When I run `wp bp notification get {NOTIFICATION_ID} --fields=user_id,component_name`
+    When I run `wp bp notification get {NOTIFICATION_ID} --fields=user_id,component_name,component_action`
     Then STDOUT should be a table containing rows:
-      | Field           | Value                 |
-      | user_id         | {MEMBER_ID}           |
-      | component_name  | groups                |
+      | Field            | Value                 |
+      | user_id          | {MEMBER_ID}           |
+      | component_name   | activity              |
+      | component_action | comment_reply         |
+
+    When I run `wp bp notification list --fields=id,user_id`
+    Then STDOUT should be a table containing rows:
+      | id                | user_id     |
+      | {NOTIFICATION_ID} | {MEMBER_ID} |
+
+    When I run `wp bp notification get {NOTIFICATION_ID}`
+    Then STDOUT should be a table containing rows:
+      | Field            | Value                 |
+      | user_id          | {MEMBER_ID}           |
+      | component_name   | activity              |
+      | component_action | comment_reply         |
 
     When I run `wp bp notification delete {NOTIFICATION_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Notification deleted.
       """
-
-    When I try `wp bp notification get {NOTIFICATION_ID}`
-    Then the return code should be 1
 
   Scenario: Notification list
     Given a BP install
@@ -44,11 +51,18 @@ Feature: Manage BuddyPress Notifications
     Then STDOUT should be a number
     And save STDOUT as {NOTIFICATION_ONE_ID}
 
-    When I run `wp bp notification create --component=groups --user-id={MEMBER_TWO_ID} --porcelain`
+    When I run `wp bp notification create --component=activity --user-id={MEMBER_TWO_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {NOTIFICATION_TWO_ID}
 
-    When I run `wp bp notification list --fields=id --user-id={MEMBER_ONE_ID}`
+    When I run `wp bp notification list --fields=id,user_id`
     Then STDOUT should be a table containing rows:
-      | id                    |
-      | {NOTIFICATION_ONE_ID} |
+      | id                    | user_id         |
+      | {NOTIFICATION_ONE_ID} | {MEMBER_ONE_ID} |
+      | {NOTIFICATION_TWO_ID} | {MEMBER_TWO_ID} |
+
+    When I run `wp bp notification delete {NOTIFICATION_ONE_ID} --yes`
+    Then STDOUT should contain:
+      """
+      Success: Notification deleted.
+      """
