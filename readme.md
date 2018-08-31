@@ -22,9 +22,10 @@ Please use and provide feedback!
 
 ## Changelog
 
-### 1.7.1
+### 1.8.0
 
 * `wp-cli-buddypress` requires PHP 5.4
+* `bp notification` commands introduced
 
 ### 1.7.0
 
