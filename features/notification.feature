@@ -33,7 +33,7 @@ Feature: Manage BuddyPress Notifications
     When I run `wp bp notification delete {NOTIFICATION_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Notification deleted.
+      Success: Deleted notification {NOTIFICATION_ID}.
       """
 
   Scenario: Notification list
@@ -61,8 +61,9 @@ Feature: Manage BuddyPress Notifications
       | {NOTIFICATION_ONE_ID} | {MEMBER_ONE_ID} |
       | {NOTIFICATION_TWO_ID} | {MEMBER_TWO_ID} |
 
-    When I run `wp bp notification delete {NOTIFICATION_ONE_ID} --yes`
+    When I run `wp bp notification delete {NOTIFICATION_ONE_ID} {NOTIFICATION_TWO_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Notification deleted.
+      Success: Deleted notification {NOTIFICATION_ONE_ID}.
+      Success: Deleted notification {NOTIFICATION_TWO_ID}.
       """
