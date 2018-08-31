@@ -130,13 +130,13 @@ class Friend extends BuddypressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp friend accept_invitation 2161
+	 *     $ wp bp friend accept-invitation 2161
 	 *     Success: Friendship successfully accepted.
 	 *
 	 *     $ wp bp friend accept 2161
 	 *     Success: Friendship successfully accepted.
 	 *
-	 * @alias accept_invitation
+	 * @alias accept-invitation
 	 */
 	public function accept( $args, $assoc_args ) {
 		foreach ( $args as $friendship_id ) {
@@ -158,13 +158,13 @@ class Friend extends BuddypressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp friend reject_invitation 2161
+	 *     $ wp bp friend reject-invitation 2161
 	 *     Success: Friendship successfully accepted.
 	 *
 	 *     $ wp bp friend reject 2161 151 2121
 	 *     Success: Friendship successfully accepted.
 	 *
-	 * @alias reject_invitation
+	 * @alias reject-invitation
 	 */
 	public function reject( $args, $assoc_args ) {
 		foreach ( $args as $friendship_id ) {
