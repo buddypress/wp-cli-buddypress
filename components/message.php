@@ -148,20 +148,24 @@ class Message extends BuddypressCommand {
 
 		WP_CLI::confirm( 'Are you sure you want to delete this thread(s)?', $assoc_args );
 
-		parent::_delete( array( $thread_id ), $assoc_args, function( $thread_id ) {
+		parent::_delete(
+			array( $thread_id ),
+			$assoc_args,
+			function( $thread_id ) use ( $user ) {
 
-			// Check if it is a valid thread before deleting.
-			if ( ! messages_is_valid_thread( $thread_id ) ) {
-				WP_CLI::error( 'This is not a valid thread ID.' );
-			}
+				// Check if it is a valid thread before deleting.
+				if ( ! messages_is_valid_thread( $thread_id ) ) {
+					WP_CLI::error( 'This is not a valid thread ID.' );
+				}
 
-			// Actually, delete it.
-			if ( messages_delete_thread( $thread_id, $user->ID ) ) {
-				return array( 'success', 'Thread successfully deleted.' );
-			} else {
-				return array( 'error', 'Could not delete the thread.' );
+				// Actually, delete it.
+				if ( messages_delete_thread( $thread_id, $user->ID ) ) {
+					return array( 'success', 'Thread successfully deleted.' );
+				} else {
+					return array( 'error', 'Could not delete the thread.' );
+				}
 			}
-		} );
+		);
 	}
 
 	/**
@@ -247,27 +251,32 @@ class Message extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $_, $assoc_args ) {
+	public function _list( $_, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
-		$r = wp_parse_args( $assoc_args, array(
-			'box'    => 'sentbox',
-			'type'   => 'all',
-			'search' => '',
-			'count'  => 10,
-		) );
+		$r = wp_parse_args(
+			$assoc_args,
+			array(
+				'box'    => 'sentbox',
+				'type'   => 'all',
+				'search' => '',
+				'count'  => 10,
+			)
+		);
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$type = ( ! in_array( $r['type'], $this->message_types(), true ) ) ? 'all' : $r['type'];
 		$box  = ( ! in_array( $r['box'], $this->message_boxes(), true ) ) ? 'sentbox' : $r['box'];
 
-		$inbox = new \BP_Messages_Box_Template( array(
-			'user_id'      => $user->ID,
-			'box'          => $box,
-			'type'         => $type,
-			'max'          => $r['count'],
-			'search_terms' => $r['search'],
-		) );
+		$inbox = new \BP_Messages_Box_Template(
+			array(
+				'user_id'      => $user->ID,
+				'box'          => $box,
+				'type'         => $type,
+				'max'          => $r['count'],
+				'search_terms' => $r['search'],
+			)
+		);
 
 		if ( ! $inbox->has_threads() ) {
 			WP_CLI::error( 'No messages found.' );
@@ -276,9 +285,7 @@ class Message extends BuddypressCommand {
 		$messages = $inbox->threads[0]->messages;
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $messages, 'id' ) ); // WPCS: XSS ok.
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $messages );
+			echo implode( ' ', wp_list_pluck( $messages, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
 			$formatter->display_items( $messages );
 		}

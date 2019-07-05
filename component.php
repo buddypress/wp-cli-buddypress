@@ -20,7 +20,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 */
 	protected function get_random_user_id() {
 		global $wpdb;
-		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" );
+		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" ); // phpcs:ignore
 	}
 
 	/**
@@ -38,9 +38,11 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 		}
 
 		// Get group object.
-		$group_obj = groups_get_group( array(
-			'group_id' => $group_id,
-		) );
+		$group_obj = groups_get_group(
+			array(
+				'group_id' => $group_id,
+			)
+		);
 
 		if ( empty( $group_obj->id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
@@ -55,7 +57,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 * @since 1.2.0
 	 *
 	 * @param mixed $i User ID, email or login.
-	 * @return WP_User|false
+	 * @return WP_User|bool
 	 */
 	protected function get_user_id_from_identifier( $i ) {
 		if ( is_numeric( $i ) ) {
@@ -90,7 +92,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 * @since 1.5.0
 	 *
 	 * @param  int $field_id Field ID.
-	 * @return int
+	 * @return int Field ID.
 	 */
 	protected function get_field_id( $field_id ) {
 		if ( ! is_numeric( $field_id ) ) {

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards for wp-cli-buddypress">
+
+	<!-- Set a description for this ruleset. -->
+	<description>Coding standards that will be run on the wp-cli-buddypress plugin.</description>
+
+	<config name="encoding" value="utf-8"/>
+
+	<!-- Load WordPress Coding standards -->
+	<rule ref="WordPress"/>
+
+	<!-- What to scan -->
+	 <file>components</file>
+
+	<!-- What to exclude -->
+	<exclude-pattern>*/features/*</exclude-pattern>
+	<exclude-pattern>*/utils/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<!-- Enable colors in report -->
+	<arg name="colors"/>
+
+	<!-- Add source codes in the report -->
+	<arg value="s"/>
+
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="strict_class_file_names" value="false"/>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FileComment.Missing">
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FunctionComment.MissingParamTag">
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="PEAR.Functions.FunctionCallSignature.MultipleArguments">
+		<severity>0</severity>
+	</rule>
+
+</ruleset>

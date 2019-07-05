@@ -733,7 +733,7 @@ class Activity extends BuddypressCommand {
 					}
 
 					// stolen from groups_join_group.
-					$r['action']  = sprintf( __( '%1$s posted an update in the group %2$s', 'buddypress'), bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
+					$r['action']  = sprintf( __( '%1$s posted an update in the group %2$s', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
 				} else {
 					// old way, for some other kind of update.
 					$r['action'] = sprintf( __( '%s posted an update', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
@@ -754,14 +754,14 @@ class Activity extends BuddypressCommand {
 				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" );
 
 				if ( 'activity_comment' === $parent_item->type ) {
-					$r['item-id'] = $parent_item->id;
+					$r['item-id']           = $parent_item->id;
 					$r['secondary-item-id'] = $parent_item->secondary_item_id;
 				} else {
 					$r['item-id'] = $parent_item->id;
 				}
 
-				$r['action'] = sprintf( __( '%s posted a new activity comment', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
-				$r['content'] = $this->generate_random_text();
+				$r['action']       = sprintf( __( '%s posted a new activity comment', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ) );
+				$r['content']      = $this->generate_random_text();
 				$r['primary-link'] = bp_core_get_userlink( $r['user-id'] );
 
 				break;
@@ -899,7 +899,7 @@ class Activity extends BuddypressCommand {
 				$group_permalink = bp_get_group_permalink( $group );
 
 				if ( empty( $r['action'] ) ) {
-					$r['action'] = sprintf( __( '%1$s created the group %2$s', 'buddypress'), bp_core_get_userlink( $r['user-id'] ), '<a href="' . $group_permalink . '">' . esc_attr( $group->name ) . '</a>' );
+					$r['action'] = sprintf( __( '%1$s created the group %2$s', 'buddypress' ), bp_core_get_userlink( $r['user-id'] ), '<a href="' . $group_permalink . '">' . esc_attr( $group->name ) . '</a>' );
 				}
 
 				if ( empty( $r['primary-link'] ) ) {

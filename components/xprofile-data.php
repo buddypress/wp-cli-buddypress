@@ -143,6 +143,7 @@ class XProfile_Data extends BuddypressCommand {
 				'field_name',
 				'value',
 			);
+
 			$formatter = $this->get_formatter( $format_args );
 			$formatter->display_items( $formatted_data );
 		}
