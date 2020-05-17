@@ -32,8 +32,10 @@
   },
   "scripts": {
     "behat": "run-behat-tests",
+    "behat-rerun": "rerun-behat-tests",
     "lint": "run-linter-tests",
     "phpcs": "run-phpcs-tests",
+    "prepare-tests": "install-package-tests",
     "test": [
       "@lint",
       "@phpcs",

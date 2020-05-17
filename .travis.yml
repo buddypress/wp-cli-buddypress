@@ -40,17 +40,19 @@ before_install:
 
 install:
   - composer install
+  - composer prepare-tests
   - export BP_SRC_DIR=/tmp/bp-src/
   - svn co --ignore-externals https://buddypress.svn.wordpress.org/trunk/src $BP_SRC_DIR
 
 script:
-  - composer test
+  - composer behat || composer behat-rerun
 
 jobs:
   include:
     - stage: sniff
       script:
-        - composer test
+        - composer lint
+        - composer phpcs
       env: BUILD=sniff
     - stage: test
       php: 7.4
