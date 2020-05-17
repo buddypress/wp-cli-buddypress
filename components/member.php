@@ -31,7 +31,9 @@ class Member extends BuddypressCommand {
 	 */
 	public function generate( $args, $assoc_args ) {
 		add_action( 'user_register', array( __CLASS__, 'update_user_last_activity_random' ) );
-		\User_Command::generate( $args, $assoc_args );
+
+		$command_class = new \User_Command();
+		$command_class->generate( $args, $assoc_args );
 	}
 
 	/**
