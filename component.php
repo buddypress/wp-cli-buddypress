@@ -1,8 +1,9 @@
 <?php
+
 namespace Buddypress\CLI\Command;
 
-use WP_CLI;
 use WP_CLI\CommandWithDBObject;
+use WP_CLI;
 
 /**
  * Base component class.
@@ -10,6 +11,16 @@ use WP_CLI\CommandWithDBObject;
  * @since 1.0
  */
 abstract class BuddypressCommand extends CommandWithDBObject {
+
+	/**
+	 * Get Formatter object based on supplied parameters.
+	 *
+	 * @param array $assoc_args Parameters passed to command. Determines formatting.
+	 * @return \WP_CLI\Formatter
+	 */
+	protected function get_formatter( &$assoc_args ) {
+		return new WP_CLI\Formatter( $assoc_args, $this->obj_fields );
+	}
 
 	/**
 	 * Get a random user id.
@@ -20,7 +31,9 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 */
 	protected function get_random_user_id() {
 		global $wpdb;
-		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" ); // phpcs:ignore
+		return $wpdb->get_var(
+			$wpdb->prepare( 'SELECT blog_id FROM %s ORDER BY RAND() LIMIT 1', $wpdb->users )
+		);
 	}
 
 	/**
@@ -56,20 +69,20 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param mixed $i User ID, email or login.
-	 * @return WP_User|bool
+	 * @param mixed $identifier User ID, email or login.
+	 * @return WP_User
 	 */
-	protected function get_user_id_from_identifier( $i ) {
-		if ( is_numeric( $i ) ) {
-			$user = get_user_by( 'id', $i );
-		} elseif ( is_email( $i ) ) {
-			$user = get_user_by( 'email', $i );
+	protected function get_user_id_from_identifier( $identifier ) {
+		if ( is_numeric( $identifier ) ) {
+			$user = get_user_by( 'id', $identifier );
+		} elseif ( is_email( $identifier ) ) {
+			$user = get_user_by( 'email', $identifier );
 		} else {
-			$user = get_user_by( 'login', $i );
+			$user = get_user_by( 'login', $identifier );
 		}
 
 		if ( ! $user ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $i ) );
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $identifier ) );
 		}
 
 		return $user;
@@ -91,7 +104,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param  int $field_id Field ID.
+	 * @param int $field_id Field ID.
 	 * @return int Field ID.
 	 */
 	protected function get_field_id( $field_id ) {
@@ -103,7 +116,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	}
 
 	/**
-	 * String Sanitization.
+	 * String sanitization.
 	 *
 	 * @since 1.5.0
 	 *

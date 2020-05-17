@@ -38,15 +38,17 @@ class XProfile_Field extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $_, $assoc_args ) {
-		$args = array_merge( $assoc_args, array(
-			'fields'       => 'id,name',
-			'fetch_fields' => true,
-		) );
+	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+		$args = array_merge(
+			$assoc_args,
+			array(
+				'fields'       => 'id,name',
+				'fetch_fields' => true,
+			)
+		);
 
-		$fields    = array();
-		$formatter = $this->get_formatter( $assoc_args );
-		$groups    = bp_xprofile_get_groups( $args );
+		$fields = array();
+		$groups = bp_xprofile_get_groups( $args );
 
 		// Reformat so that field_group_id is a property of fields.
 		foreach ( $groups as $group ) {
@@ -57,7 +59,7 @@ class XProfile_Field extends BuddypressCommand {
 
 		ksort( $fields );
 
-		$formatter->display_items( $fields );
+		$this->get_formatter( $assoc_args )->display_items( $fields );
 	}
 
 	/**
@@ -108,15 +110,17 @@ class XProfile_Field extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $field_id );
+			WP_CLI::log( $field_id );
 		} else {
-			$field   = new \BP_XProfile_Field( $field_id );
-			$success = sprintf(
-				'Created XProfile field "%s" (ID %d).',
-				$field->name,
-				$field->id
+			$field = new \BP_XProfile_Field( $field_id );
+
+			WP_CLI::success(
+				sprintf(
+					'Created XProfile field "%s" (ID %d).',
+					$field->name,
+					$field->id
+				)
 			);
-			WP_CLI::success( $success );
 		}
 	}
 
@@ -130,9 +134,6 @@ class XProfile_Field extends BuddypressCommand {
 	 *
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields.
-	 * ---
-	 * Default: All fields.
-	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -165,8 +166,7 @@ class XProfile_Field extends BuddypressCommand {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $object_arr );
+		$this->get_formatter( $assoc_args )->display_item( $object_arr );
 	}
 
 	/**
@@ -179,9 +179,6 @@ class XProfile_Field extends BuddypressCommand {
 	 *
 	 * [--delete-data]
 	 * : Delete user data for the field as well.
-	 * ---
-	 * default: false
-	 * ---
 	 *
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
@@ -197,15 +194,16 @@ class XProfile_Field extends BuddypressCommand {
 	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
-		$field_id = $this->get_field_id( $args[0] );
+		$field_id    = $this->get_field_id( $args[0] );
+		$delete_data = WP_CLI\Utils\get_flag_value( $assoc_args, 'delete-data' );
 
 		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
-		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $r ) {
+		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $delete_data ) {
 			$field   = new \BP_XProfile_Field( $field_id );
 			$name    = $field->name;
 			$id      = $field->id;
-			$deleted = $field->delete( $r['delete_data'] );
+			$deleted = $field->delete( $delete_data );
 
 			if ( $deleted ) {
 				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );

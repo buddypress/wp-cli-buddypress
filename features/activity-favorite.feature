@@ -6,7 +6,11 @@ Feature: Manage BuddyPress Activity Favorites
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp activity create --component=groups --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp group create --name="Totally Cool Group" --slug=totally-cool-group --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ID}
+
+    When I run `wp bp activity create --component=groups --item-id={GROUP_ID} --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 

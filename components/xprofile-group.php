@@ -44,7 +44,7 @@ class XProfile_Group extends BuddypressCommand {
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted.
 	 * ---
-	 * Default: true.
+	 * default: true.
 	 * ---
 	 *
 	 * [--porcelain]
@@ -61,11 +61,14 @@ class XProfile_Group extends BuddypressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'name'        => '',
-			'description' => '',
-			'can_delete'  => true,
-		) );
+		$r = wp_parse_args(
+			$assoc_args,
+			array(
+				'name'        => '',
+				'description' => '',
+				'can_delete'  => true,
+			)
+		);
 
 		$group_id = xprofile_insert_field_group( $r );
 
@@ -74,7 +77,7 @@ class XProfile_Group extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $group_id );
+			WP_CLI::log( $group_id );
 		} else {
 			$group   = new \BP_XProfile_Group( $group_id );
 			$success = sprintf(
@@ -96,9 +99,6 @@ class XProfile_Group extends BuddypressCommand {
 	 *
 	 * [--fields=<fields>]
 	 * : Limit the output to specific fields.
-	 * ---
-	 * Default: All fields.
-	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -134,8 +134,7 @@ class XProfile_Group extends BuddypressCommand {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $object_arr );
+		$this->get_formatter( $assoc_args )->display_item( $object_arr );
 	}
 
 	/**
@@ -157,6 +156,7 @@ class XProfile_Group extends BuddypressCommand {
 	 */
 	public function delete( $args, $assoc_args ) {
 		$field_group_id = $args[0];
+
 		WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
 
 		parent::_delete( array( $field_group_id ), $assoc_args, function( $field_group_id ) {

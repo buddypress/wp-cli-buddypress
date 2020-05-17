@@ -1,35 +1,36 @@
 <?php
+
 namespace Buddypress\CLI;
 
-use WP_CLI;
-
 // Bail if WP-CLI is not present.
-if ( ! defined( '\WP_CLI' ) ) {
+if ( ! class_exists( 'WP_CLI' ) ) {
 	return;
 }
+
+use WP_CLI;
 
 WP_CLI::add_hook(
 	'before_wp_load',
 	function() {
-		require_once( __DIR__ . '/component.php' );
-		require_once( __DIR__ . '/components/buddypress.php' );
-		require_once( __DIR__ . '/components/signup.php' );
-		require_once( __DIR__ . '/components/activity.php' );
-		require_once( __DIR__ . '/components/activity-favorite.php' );
-		require_once( __DIR__ . '/components/component.php' );
-		require_once( __DIR__ . '/components/group.php' );
-		require_once( __DIR__ . '/components/group-member.php' );
-		require_once( __DIR__ . '/components/group-invite.php' );
-		require_once( __DIR__ . '/components/member.php' );
-		require_once( __DIR__ . '/components/friend.php' );
-		require_once( __DIR__ . '/components/xprofile.php' );
-		require_once( __DIR__ . '/components/xprofile-group.php' );
-		require_once( __DIR__ . '/components/xprofile-field.php' );
-		require_once( __DIR__ . '/components/xprofile-data.php' );
-		require_once( __DIR__ . '/components/tool.php' );
-		require_once( __DIR__ . '/components/message.php' );
-		require_once( __DIR__ . '/components/notification.php' );
-		require_once( __DIR__ . '/components/email.php' );
+		require_once __DIR__ . '/component.php';
+		require_once __DIR__ . '/components/buddypress.php';
+		require_once __DIR__ . '/components/signup.php';
+		require_once __DIR__ . '/components/activity.php';
+		require_once __DIR__ . '/components/activity-favorite.php';
+		require_once __DIR__ . '/components/component.php';
+		require_once __DIR__ . '/components/group.php';
+		require_once __DIR__ . '/components/group-member.php';
+		require_once __DIR__ . '/components/group-invite.php';
+		require_once __DIR__ . '/components/member.php';
+		require_once __DIR__ . '/components/friend.php';
+		require_once __DIR__ . '/components/xprofile.php';
+		require_once __DIR__ . '/components/xprofile-group.php';
+		require_once __DIR__ . '/components/xprofile-field.php';
+		require_once __DIR__ . '/components/xprofile-data.php';
+		require_once __DIR__ . '/components/tool.php';
+		require_once __DIR__ . '/components/message.php';
+		require_once __DIR__ . '/components/notification.php';
+		require_once __DIR__ . '/components/email.php';
 
 		WP_CLI::add_command(
 			'bp',
@@ -225,7 +226,7 @@ WP_CLI::add_hook(
 					WP_CLI::error( 'The BuddyPress plugin is not active.' );
 				}
 
-				require_once( buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-tools.php' );
+				require_once buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-tools.php';
 			},
 		) );
 

@@ -6,6 +6,14 @@ use WP_CLI;
 /**
  * Manage BuddyPress activity favorite.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp activity favorite add 100 500
+ *     Success: Activity item added as a favorite for the user.
+ *
+ *     $ wp bp activity favorite create 100 user_test
+ *     Success: Activity item added as a favorite for the user.
+ *
  * @since 1.5.0
  */
 class Activity_Favorite extends BuddypressCommand {
@@ -40,7 +48,7 @@ class Activity_Favorite extends BuddypressCommand {
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp activity favorite add 100 500
 	 *     Success: Activity item added as a favorite for the user.
@@ -148,7 +156,7 @@ class Activity_Favorite extends BuddypressCommand {
 	 * @alias items
 	 * @alias user_items
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$user      = $this->get_user_id_from_identifier( $args[0] );
 		$favorites = bp_activity_get_user_favorites( $user->ID );
 
@@ -166,7 +174,6 @@ class Activity_Favorite extends BuddypressCommand {
 			WP_CLI::error( 'No favorite found for this user.' );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_items( $activities['activities'] );
+		$this->get_formatter( $assoc_args )->display_items( $activities['activities'] );
 	}
 }

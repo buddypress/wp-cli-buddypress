@@ -41,6 +41,7 @@ class Tool extends BuddypressCommand {
 			WP_CLI::error( 'There is no repair tool with that name.' );
 		}
 
+		// Run the callable repair function.
 		$result = $repair();
 
 		if ( 0 === $result[0] ) {
@@ -59,6 +60,6 @@ class Tool extends BuddypressCommand {
 	 *     BuddyPress: 3.0.0
 	 */
 	public function version() {
-		WP_CLI::line( 'BuddyPress: ' . bp_get_version() );
+		WP_CLI::log( 'BuddyPress: ' . bp_get_version() );
 	}
 }

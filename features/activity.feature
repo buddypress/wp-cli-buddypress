@@ -7,7 +7,11 @@ Feature: Manage BuddyPress Activities
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp activity create --component=groups --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp group create --name="ZZZ Group 1" --slug=group1 --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {GROUP_ID}
+
+    When I run `wp bp activity create --component=groups --item-id={GROUP_ID} --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 
@@ -20,8 +24,8 @@ Feature: Manage BuddyPress Activities
 
     When I run `wp bp activity list --fields=id,user_id,component`
     Then STDOUT should be a table containing rows:
-      | id            | user_id      | component |
-      | {ACTIVITY_ID} | {MEMBER_ID}  | groups    |
+      | id            | user_id     | component |
+      | {ACTIVITY_ID} | {MEMBER_ID} | groups    |
 
     When I run `wp bp activity spam {ACTIVITY_ID}`
     Then STDOUT should contain:
@@ -31,9 +35,9 @@ Feature: Manage BuddyPress Activities
 
     When I run `wp bp activity get {ACTIVITY_ID} --fields=id,is_spam`
     Then STDOUT should be a table containing rows:
-      | Field     | Value         |
-      | id        | {ACTIVITY_ID} |
-      | is_spam   | 1             |
+      | Field   | Value         |
+      | id      | {ACTIVITY_ID} |
+      | is_spam | 1             |
 
     When I run `wp bp activity ham {ACTIVITY_ID}`
     Then STDOUT should contain:
@@ -43,9 +47,9 @@ Feature: Manage BuddyPress Activities
 
     When I run `wp bp activity get {ACTIVITY_ID} --fields=id,is_spam`
     Then STDOUT should be a table containing rows:
-      | Field     | Value         |
-      | id        | {ACTIVITY_ID} |
-      | is_spam   | 0             |
+      | Field   | Value         |
+      | id      | {ACTIVITY_ID} |
+      | is_spam | 0             |
 
     When I run `wp bp activity delete {ACTIVITY_ID} --yes`
     Then STDOUT should contain:
@@ -69,8 +73,8 @@ Feature: Manage BuddyPress Activities
 
     When I run `wp bp activity list --fields=id,user_id,component`
     Then STDOUT should be a table containing rows:
-      | id            | user_id       | component   |
-      | {ACTIVITY_ID} | {MEMBER_ID}   | activity    |
+      | id            | user_id     | component |
+      | {ACTIVITY_ID} | {MEMBER_ID} | activity  |
 
     When I run `wp bp activity comment {ACTIVITY_ID} --user-id={MEMBER_ID} --content="Activity Comment" --skip-notification --porcelain`
     Then STDOUT should be a number

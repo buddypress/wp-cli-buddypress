@@ -29,8 +29,6 @@ class Group_Member extends BuddypressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * ## OPTIONS
-	 *
 	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
@@ -40,7 +38,7 @@ class Group_Member extends BuddypressCommand {
 	 * [--role=<role>]
 	 * : Group member role (member, mod, admin).
 	 * ---
-	 * Default: member
+	 * default: member
 	 * ---
 	 *
 	 * [--porcelain]
@@ -73,7 +71,7 @@ class Group_Member extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $user->ID );
+			WP_CLI::log( $user->ID );
 		} else {
 			if ( 'member' !== $role ) {
 				groups_promote_member( $user->ID, $group_id, $role );
@@ -160,7 +158,7 @@ class Group_Member extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
 
 		$roles = array( 'members' );
@@ -173,11 +171,14 @@ class Group_Member extends BuddypressCommand {
 		}
 
 		// Get our members.
-		$members_query = groups_get_group_members( array(
-			'group_id'            => $group_id,
-			'exclude_admins_mods' => false,
-			'group_role'          => $roles,
-		) );
+		$members_query = groups_get_group_members(
+			array(
+				'group_id'            => $group_id,
+				'exclude_admins_mods' => false,
+				'group_role'          => $roles,
+			)
+		);
+
 		$members = $members_query['members'];
 
 		// Make 'role' human-readable.

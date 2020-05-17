@@ -21,10 +21,10 @@ use WP_CLI;
  *     +--------+---------+--------+------------------------+--------------------------------------------+
  *     | number | id      | status | title                  | description                                |
  *     +--------+---------+--------+------------------------------------------+--------------------------+
- *     | 1      | core    | Active | Núcleo do BuddyPress   | É o que torna <del>viajar no tempo</del> o |
- *     |        |         |        |                        | BuddyPress possível!                       |
- *     | 2      | members | Active | Membros da Comunidade  | Tudo em uma comunidade BuddyPress gira em  |
- *     |        |         |        |                        | torno de seus membros.                     |
+ *     | 1      | core    | Active | BuddyPress Core        | It's what makes <del>time travel</del>     |
+ *     |        |         |        |                        | BuddyPress possible!                       |
+ *     | 2      | members | Active | Community Members      | Everything in a BuddyPress community       |
+ *     |        |         |        |                        | revolves around its members.               |
  *     +--------+---------+--------+------------------------------------------+--------------------------+
  *
  * @since 1.6.0
@@ -78,11 +78,11 @@ class Components extends BuddypressCommand {
 
 		// Ensure that dbDelta() is defined.
 		if ( ! function_exists( 'dbDelta' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		}
 
 		// Run the setup, in case tables have to be created.
-		require_once( buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-schema.php' );
+		require_once buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-schema.php';
 		bp_core_install( $active_components );
 		bp_core_add_page_mappings( $active_components );
 
@@ -169,7 +169,7 @@ class Components extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
 		// Sanitize type.
@@ -263,8 +263,7 @@ class Components extends BuddypressCommand {
 	/**
 	 * Does the component exist?
 	 *
-	 * @param  string $component Component.
-	 *
+	 * @param string $component Component.
 	 * @return bool
 	 */
 	protected function component_exists( $component ) {
@@ -279,7 +278,6 @@ class Components extends BuddypressCommand {
 	 * @since 1.7.0
 	 *
 	 * @param string $id Component id.
-	 *
 	 * @return string
 	 */
 	protected function verify_component_status( $id ) {

@@ -109,7 +109,7 @@ class Notification extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
+			WP_CLI::log( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully created new notification (ID #%d)', $id ) );
 		}

@@ -1,8 +1,6 @@
 <?php
 namespace Buddypress\CLI\Command;
 
-use WP_CLI;
-
 /**
  * Manage BuddyPress XProfile.
  *
@@ -44,5 +42,4 @@ class XProfile extends BuddypressCommand {
 
 		return $dump;
 	}
-
 }

@@ -50,14 +50,11 @@ class Group extends BuddypressCommand {
 	 *
 	 * [--description=<description>]
 	 * : Group description.
-	 * ---
-	 * Default: 'Description for group "[name]"'
-	 * ---
 	 *
 	 * [--creator-id=<creator-id>]
 	 * : ID of the group creator.
 	 * ---
-	 * Default: 1
+	 * default: 1
 	 * ---
 	 *
 	 * [--slug=<slug>]
@@ -66,20 +63,14 @@ class Group extends BuddypressCommand {
 	 * [--status=<status>]
 	 * : Group status (public, private, hidden).
 	 * ---
-	 * Default: public
+	 * default: public
 	 * ---
 	 *
 	 * [--enable-forum=<enable-forum>]
 	 * : Whether to enable legacy bbPress forums.
-	 * ---
-	 * Default: 0
-	 * ---
 	 *
 	 * [--date-created=<date-created>]
 	 * : MySQL-formatted date.
-	 * ---
-	 * Default: current date.
-	 * ---
 	 *
 	 * [--silent]
 	 * : Whether to silent the group creation.
@@ -144,7 +135,7 @@ class Group extends BuddypressCommand {
 		groups_update_groupmeta( $group_id, 'total_member_count', 1 );
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $group_id );
+			WP_CLI::log( $group_id );
 		} else {
 			$group = groups_get_group( array(
 				'group_id' => $group_id,
@@ -216,7 +207,7 @@ class Group extends BuddypressCommand {
 	 * : Identifier for the group. Can be a numeric ID or the group slug.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields.
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -368,7 +359,7 @@ class Group extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter  = $this->get_formatter( $assoc_args );
 		$query_args = wp_parse_args( $assoc_args, array(
 			'count'       => 50,
@@ -396,7 +387,7 @@ class Group extends BuddypressCommand {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $groups['groups'] ); // WPCS: XSS ok.
+			echo implode( ' ', $groups['groups'] );
 		} elseif ( 'count' === $formatter->format ) {
 			$formatter->display_items( $groups['total'] );
 		} else {

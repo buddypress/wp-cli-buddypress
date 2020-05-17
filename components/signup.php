@@ -88,7 +88,7 @@ class Signup extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
+			WP_CLI::log( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
 		}
@@ -270,16 +270,16 @@ class Signup extends BuddypressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--<field>=<value>]
+	 * [--fields=<value>]
 	 * : One or more parameters to pass. See \BP_Signup::get()
 	 *
-	 * [--<number>=<number>]
+	 * [--number=<value>]
 	 * : How many signups to list.
 	 * ---
 	 * default: 20
 	 * ---
 	 *
-	 * [--format=<format>]
+	 * [--format=<value>]
 	 * : Render output in a particular format.
 	 * ---
 	 * default: table
@@ -298,7 +298,7 @@ class Signup extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $_, $assoc_args ) {
+	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter  = $this->get_formatter( $assoc_args );
 		$assoc_args = wp_parse_args( $assoc_args, array(
 			'number' => 20,
@@ -316,9 +316,9 @@ class Signup extends BuddypressCommand {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $signups['signups'] ); // WPCS: XSS ok.
+			echo implode( ' ', $signups['signups'] );
 		} elseif ( 'count' === $formatter->format ) {
-			WP_CLI::line( $signups['total'] );
+			WP_CLI::log( $signups['total'] );
 		} else {
 			$formatter->display_items( $signups['signups'] );
 		}
