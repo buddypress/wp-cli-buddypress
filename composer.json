@@ -11,17 +11,16 @@
     "wordpress",
     "bp"
   ],
-  "authors": [
-    {
-      "name": "The BuddPress Contributors",
-      "homepage": "https://buddypress.org/"
-    }
-  ],
+  "authors": [{
+    "name": "The BuddPress Contributors",
+    "homepage": "https://buddypress.org/"
+  }],
   "support": {
     "issues": "https://github.com/buddypress/wp-cli-buddypress/issues",
     "source": "https://github.com/buddypress/wp-cli-buddypress"
   },
   "require": {
+    "php": ">=5.6",
     "wp-cli/wp-cli": "^2"
   },
   "require-dev": {
@@ -50,6 +49,9 @@
     ]
   },
   "config": {
+    "platform": {
+      "php": "5.6"
+    },
     "process-timeout": 1800,
     "sort-packages": true
   },
