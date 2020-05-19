@@ -1,17 +1,17 @@
 Feature: Manage BuddyPress Activities
 
-  Scenario: Activity CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp component activate activity`
+
+  Scenario: Activity CRUD
 
     When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp group create --name="ZZZ Group 1" --slug=group1 --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {GROUP_ID}
-
-    When I run `wp bp activity create --component=groups --item-id={GROUP_ID} --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp activity create --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 
@@ -20,12 +20,12 @@ Feature: Manage BuddyPress Activities
       | Field     | Value         |
       | id        | {ACTIVITY_ID} |
       | user_id   | {MEMBER_ID}   |
-      | component | groups        |
+      | component | activity      |
 
     When I run `wp bp activity list --fields=id,user_id,component`
     Then STDOUT should be a table containing rows:
       | id            | user_id     | component |
-      | {ACTIVITY_ID} | {MEMBER_ID} | groups    |
+      | {ACTIVITY_ID} | {MEMBER_ID} | activity  |
 
     When I run `wp bp activity spam {ACTIVITY_ID}`
     Then STDOUT should contain:
@@ -60,8 +60,7 @@ Feature: Manage BuddyPress Activities
     When I try `wp bp activity get {ACTIVITY_ID}`
     Then the return code should be 1
 
-  Scenario: Activity Comment Operations
-    Given a BP install
+  Scenario: Activity Comment
 
     When I run `wp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=subscriber --porcelain`
     Then STDOUT should be a number

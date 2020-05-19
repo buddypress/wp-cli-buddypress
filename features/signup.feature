@@ -1,7 +1,11 @@
 Feature: Manage BuddyPress Signups
 
-  Scenario: Signup CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp tool signup 1`
+
+  Scenario: Signups CRUD
 
     When I run `wp bp signup add --user-login=test_user --user-email=test@example.com --porcelain`
     Then STDOUT should be a number
@@ -19,7 +23,6 @@ Feature: Manage BuddyPress Signups
       """
 
   Scenario: Signup fetching by identifier
-    Given a BP install
 
     When I run `wp bp signup add --user-login=signup1 --user-email=signup1@example.com --porcelain`
     Then STDOUT should be a number
@@ -51,7 +54,6 @@ Feature: Manage BuddyPress Signups
       | user_email | signup2@example.com |
 
   Scenario: Signup activation
-    Given a BP install
 
     When I run `wp bp signup add --user-login=test_user --user-email=test@example.com --porcelain`
     Then STDOUT should be a number
@@ -70,7 +72,6 @@ Feature: Manage BuddyPress Signups
       """
 
   Scenario: Signup resending
-    Given a BP install
 
     When I run `wp bp signup add --user-login=test_user --user-email=test@example.com --porcelain`
     Then STDOUT should be a number

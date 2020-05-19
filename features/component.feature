@@ -1,7 +1,10 @@
 Feature: Manage BuddyPress Components
 
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+
   Scenario: Component CRUD Operations
-    Given a BP install
 
     When I run `wp bp component list --format=count`
     Then STDOUT should be:
@@ -26,6 +29,19 @@ Feature: Manage BuddyPress Components
       | id      |
       | core    |
       | members |
+
+    When I run `wp bp component activate groups`
+    Then STDOUT should contain:
+      """
+      Success: The Groups component has been activated.
+      """
+
+    When I run `wp bp component list --fields=id`
+    Then STDOUT should be a table containing rows:
+      | id      |
+      | core    |
+      | members |
+      | groups  |
 
     When I run `wp bp component deactivate groups`
     Then STDOUT should contain:

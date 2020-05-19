@@ -1,7 +1,11 @@
 Feature: Manage BuddyPress Messages
 
-  Scenario: Message CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp component activate messages`
+
+  Scenario: Message CRUD
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number
@@ -40,7 +44,6 @@ Feature: Manage BuddyPress Messages
       """
 
   Scenario: Message list
-    Given a BP install
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     And save STDOUT as {BOB_ID}
@@ -78,10 +81,10 @@ Feature: Manage BuddyPress Messages
 
     When I run `wp bp message list --user-id={SALLY_ID} --fields=thread_id,sender_id,subject,message`
     Then STDOUT should be a table containing rows:
-      | thread_id   | sender_id  | subject         | message        |
-      | {THREAD_ID} | {BOB_ID}   | Test Thread     | Message one    |
-      | {THREAD_ID} | {SALLY_ID} | Test Answer     | Message two    |
-      | {THREAD_ID} | {BOB_ID}   | Another Answer  | Message three  |
+      | thread_id   | sender_id  | subject        | message       |
+      | {THREAD_ID} | {BOB_ID}   | Test Thread    | Message one   |
+      | {THREAD_ID} | {SALLY_ID} | Test Answer    | Message two   |
+      | {THREAD_ID} | {BOB_ID}   | Another Answer | Message three |
 
     When I run `wp user create testuser4 testuser4@example.com --porcelain`
     And save STDOUT as {JOHN_ID}
@@ -101,5 +104,5 @@ Feature: Manage BuddyPress Messages
 
     When I run `wp bp message list --user-id={JOHN_ID} --fields=thread_id,sender_id,subject,message`
     Then STDOUT should be a table containing rows:
-      | thread_id           | sender_id  | subject        | message      |
-      | {ANOTHER_THREAD_ID} | {JOHN_ID}  | Second Thread  | Message four |
+      | thread_id           | sender_id | subject       | message      |
+      | {ANOTHER_THREAD_ID} | {JOHN_ID} | Second Thread | Message four |

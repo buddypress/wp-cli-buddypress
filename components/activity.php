@@ -240,7 +240,7 @@ class Activity extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args(
@@ -746,14 +746,16 @@ class Activity extends BuddypressCommand {
 				}
 
 				$parent_item = $wpdb->get_row(
-					$wpdb->prepare( 'SELECT * FROM %s ORDER BY RAND() LIMIT 1', $bp->activity->table_name )
+					$wpdb->prepare( 'SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1' )
 				);
 
-				if ( 'activity_comment' === $parent_item->type ) {
-					$r['item-id']           = $parent_item->id;
-					$r['secondary-item-id'] = $parent_item->secondary_item_id;
-				} else {
-					$r['item-id'] = $parent_item->id;
+				if ( \is_object( $parent_item ) ) {
+					if ( 'activity_comment' === $parent_item->type ) {
+						$r['item-id']           = $parent_item->id;
+						$r['secondary-item-id'] = $parent_item->secondary_item_id;
+					} else {
+						$r['item-id'] = $parent_item->id;
+					}
 				}
 
 				$r['action']       = sprintf( '%s posted a new activity comment', bp_core_get_userlink( $r['user-id'] ) );
@@ -771,7 +773,7 @@ class Activity extends BuddypressCommand {
 
 				if ( is_multisite() ) {
 					$r['item-id'] = $wpdb->get_var(
-						$wpdb->prepare( 'SELECT blog_id FROM %s ORDER BY RAND() LIMIT 1', $wpdb->blogs )
+						$wpdb->prepare( 'SELECT blog_id FROM {$wpdb->blogs} ORDER BY RAND() LIMIT 1' )
 					);
 				} else {
 					$r['item-id'] = 1;
@@ -785,7 +787,7 @@ class Activity extends BuddypressCommand {
 					}
 
 					$comment_info = $wpdb->get_results(
-						$wpdb->prepare( 'SELECT comment_id, comment_post_id FROM %s ORDER BY RAND() LIMIT 1', $wpdb->comments )
+						$wpdb->prepare( 'SELECT comment_id, comment_post_id FROM {$wpdb->comments} ORDER BY RAND() LIMIT 1' )
 					);
 
 					$comment_id = $comment_info[0]->comment_id;

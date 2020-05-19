@@ -1,7 +1,11 @@
 Feature: Manage BuddyPress Friends
 
-  Scenario: Friends CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp component activate friends`
+
+  Scenario: Friends CRUD
 
     When I try `wp user get bogus-user`
     Then the return code should be 1

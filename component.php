@@ -32,7 +32,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	protected function get_random_user_id() {
 		global $wpdb;
 		return $wpdb->get_var(
-			$wpdb->prepare( 'SELECT blog_id FROM %s ORDER BY RAND() LIMIT 1', $wpdb->users )
+			$wpdb->prepare( 'SELECT blog_id FROM {$wpdb->users} ORDER BY RAND() LIMIT 1' )
 		);
 	}
 

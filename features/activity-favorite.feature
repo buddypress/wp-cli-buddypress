@@ -1,23 +1,23 @@
 Feature: Manage BuddyPress Activity Favorites
 
-  Scenario: Activity Favorite CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp component activate activity`
+
+  Scenario: Activity Favorite CRUD
 
     When I run `wp user create testuser2 testuser2@example.com --porcelain`
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp group create --name="Totally Cool Group" --slug=totally-cool-group --porcelain`
-    Then STDOUT should be a number
-    And save STDOUT as {GROUP_ID}
-
-    When I run `wp bp activity create --component=groups --item-id={GROUP_ID} --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp activity create --user-id={MEMBER_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 
     When I run `wp bp activity list --fields=id,user_id,component`
     Then STDOUT should be a table containing rows:
-      | id            | user_id      | component |
-      | {ACTIVITY_ID} | {MEMBER_ID}  | groups    |
+      | id            | user_id     | component |
+      | {ACTIVITY_ID} | {MEMBER_ID} | activity  |
 
     When I run `wp user create testuser3 testuser3@example.com --porcelain`
     And save STDOUT as {SEC_MEMBER_ID}

@@ -1,7 +1,10 @@
 Feature: Manage BuddyPress Emails
 
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+
   Scenario: BuddyPress reinstall emails
-    Given a BP install
 
     When I run `wp bp email reinstall --yes`
     Then STDOUT should contain:

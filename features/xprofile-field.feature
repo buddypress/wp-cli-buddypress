@@ -1,7 +1,11 @@
 Feature: Manage BuddyPress XProfile Fields
 
-  Scenario: XProfile Field CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp component activate xprofile`
+
+  Scenario: XProfile Field CRUD
 
     When I run `wp bp xprofile group create --name="Group Name" --description="Group Description" --porcelain`
     Then STDOUT should be a number
@@ -13,11 +17,11 @@ Feature: Manage BuddyPress XProfile Fields
 
     When I run `wp bp xprofile field get {FIELD_ID}`
     Then STDOUT should be a table containing rows:
-        | Field        | Value             |
-        | id           | {FIELD_ID}        |
-        | group_id     | {GROUP_ID}        |
-        | name         | Field Name        |
-        | type         | checkbox          |
+      | Field    | Value      |
+      | id       | {FIELD_ID} |
+      | group_id | {GROUP_ID} |
+      | name     | Field Name |
+      | type     | checkbox   |
 
     When I run `wp bp xprofile field delete {FIELD_ID} --yes`
     Then STDOUT should contain:

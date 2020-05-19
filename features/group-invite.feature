@@ -1,9 +1,11 @@
 Feature: Manage BuddyPress Group Invites
 
   Background:
-    Given a BP install
+    Given a WP install
+    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And I run `wp bp component activate groups`
 
-  Scenario: Group Invite CRUD Operations
+  Scenario: Group Invite CRUD
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number

@@ -52,6 +52,16 @@ WP_CLI::add_hook(
 					if ( ! class_exists( 'Buddypress' ) ) {
 						WP_CLI::error( 'The BuddyPress plugin is not active.' );
 					}
+
+					if ( ! bp_get_signup_allowed() ) {
+						WP_CLI::error( 'The BuddyPress signup feature needs to be allowed.' );
+					}
+
+					// Fixes a bug in case the signups tables were not properly created.
+					require_once buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-schema.php';
+					require_once buddypress()->plugin_dir . 'bp-core/bp-core-update.php';
+
+					bp_core_maybe_install_signups();
 				},
 			)
 		);
