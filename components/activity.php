@@ -747,7 +747,7 @@ class Activity extends BuddypressCommand {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
-				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" );
+				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 				if ( \is_object( $parent_item ) ) {
 					if ( 'activity_comment' === $parent_item->type ) {
@@ -772,9 +772,7 @@ class Activity extends BuddypressCommand {
 				}
 
 				if ( is_multisite() ) {
-					$r['item-id'] = $wpdb->get_var(
-						$wpdb->prepare( 'SELECT blog_id FROM {$wpdb->blogs} ORDER BY RAND() LIMIT 1' )
-					);
+					$r['item-id'] = $wpdb->get_var( "SELECT blog_id FROM {$wpdb->blogs} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				} else {
 					$r['item-id'] = 1;
 				}
@@ -786,12 +784,9 @@ class Activity extends BuddypressCommand {
 						switch_to_blog( $r['item-id'] );
 					}
 
-					$comment_info = $wpdb->get_results(
-						$wpdb->prepare( 'SELECT comment_id, comment_post_id FROM {$wpdb->comments} ORDER BY RAND() LIMIT 1' )
-					);
-
-					$comment_id = $comment_info[0]->comment_id;
-					$comment = get_comment( $comment_id );
+					$comment_info = $wpdb->get_results( "SELECT comment_id, comment_post_id FROM {$wpdb->comments} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					$comment_id   = $comment_info[0]->comment_id;
+					$comment      = get_comment( $comment_id );
 
 					$post_id = $comment_info[0]->comment_post_id;
 					$post = get_post( $post_id );
