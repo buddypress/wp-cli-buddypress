@@ -1,7 +1,9 @@
 Feature: Manage BuddyPress Groups
 
-  Scenario: Group CRUD Operations
+  Background:
     Given a BP install
+
+  Scenario: Group CRUD
 
     When I run `wp bp group create --name="Totally Cool Group" --slug=totally-cool-group --porcelain`
     Then STDOUT should be a number
@@ -9,15 +11,15 @@ Feature: Manage BuddyPress Groups
 
     When I run `wp bp group get {GROUP_ID}`
     Then STDOUT should be a table containing rows:
-      | Field   | Value              |
-      | id      | {GROUP_ID}         |
-      | name    | Totally Cool Group |
+      | Field | Value              |
+      | id    | {GROUP_ID}         |
+      | name  | Totally Cool Group |
 
     When I run `wp bp group get totally-cool-group`
     Then STDOUT should be a table containing rows:
-      | Field   | Value              |
-      | id      | {GROUP_ID}         |
-      | name    | Totally Cool Group |
+      | Field | Value              |
+      | id    | {GROUP_ID}         |
+      | name  | Totally Cool Group |
 
     When I try `wp bp group get i-do-not-exist`
     Then the return code should be 1
@@ -43,7 +45,6 @@ Feature: Manage BuddyPress Groups
     Then the return code should be 1
 
   Scenario: Group list
-    Given a BP install
 
     When I run `wp bp group create --name="ZZZ Group 1" --slug=group1 --porcelain`
     Then STDOUT should be a number

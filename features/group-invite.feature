@@ -3,7 +3,7 @@ Feature: Manage BuddyPress Group Invites
   Background:
     Given a BP install
 
-  Scenario: Group Invite CRUD Operations
+  Scenario: Group Invite CRUD
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number

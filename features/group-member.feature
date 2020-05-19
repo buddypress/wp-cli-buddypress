@@ -1,7 +1,9 @@
 Feature: Manage BuddyPress Group Members
 
-  Scenario: Group Member CRUD Operations
+  Background:
     Given a BP install
+
+  Scenario: Group Member CRUD
 
     When I run `wp user create testuser1 testuser1@example.com --porcelain`
     Then STDOUT should be a number
@@ -35,8 +37,8 @@ Feature: Manage BuddyPress Group Members
 
     When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=mod`
     Then STDOUT should be a table containing rows:
-      | user_id      |
-      | {MEMBER_ID}  |
+      | user_id     |
+      | {MEMBER_ID} |
 
     When I run `wp bp group member demote --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
@@ -55,8 +57,8 @@ Feature: Manage BuddyPress Group Members
 
     When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=banned`
     Then STDOUT should be a table containing rows:
-      | user_id      |
-      | {MEMBER_ID}  |
+      | user_id     |
+      | {MEMBER_ID} |
 
     When I run `wp bp group member unban --group-id={GROUP_ID} --user-id={MEMBER_ID}`
     Then STDOUT should contain:
@@ -75,5 +77,5 @@ Feature: Manage BuddyPress Group Members
 
     When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=member,admin,mod,banned`
     Then STDOUT should be a table containing rows:
-      | user_id       |
-      | {CREATOR_ID}  |
+      | user_id      |
+      | {CREATOR_ID} |

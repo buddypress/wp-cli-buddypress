@@ -18,7 +18,9 @@ WP_CLI::add_hook(
 		require_once __DIR__ . '/components/activity.php';
 		require_once __DIR__ . '/components/activity-favorite.php';
 		require_once __DIR__ . '/components/component.php';
+		require_once __DIR__ . '/components/fetchers/group.php';
 		require_once __DIR__ . '/components/group.php';
+		require_once __DIR__ . '/components/group-meta.php';
 		require_once __DIR__ . '/components/group-member.php';
 		require_once __DIR__ . '/components/group-invite.php';
 		require_once __DIR__ . '/components/member.php';
@@ -117,6 +119,18 @@ WP_CLI::add_hook(
 		) );
 
 		WP_CLI::add_command( 'bp group', __NAMESPACE__ . '\\Command\\Group', array(
+			'before_invoke' => function() {
+				if ( ! class_exists( 'Buddypress' ) ) {
+					WP_CLI::error( 'The BuddyPress plugin is not active.' );
+				}
+
+				if ( ! bp_is_active( 'groups' ) ) {
+					WP_CLI::error( 'The Groups component is not active.' );
+				}
+			},
+		) );
+
+		WP_CLI::add_command( 'bp group meta', __NAMESPACE__ . '\\Command\\Group_Meta', array(
 			'before_invoke' => function() {
 				if ( ! class_exists( 'Buddypress' ) ) {
 					WP_CLI::error( 'The BuddyPress plugin is not active.' );
