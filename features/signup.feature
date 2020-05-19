@@ -2,7 +2,10 @@ Feature: Manage BuddyPress Signups
 
   Background:
     Given a WP install
-    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And these installed and active plugins:
+      """
+      https://github.com/buddypress/BuddyPress/archive/master.zip
+      """
     And I run `wp bp tool signup 1`
 
   Scenario: Signups CRUD

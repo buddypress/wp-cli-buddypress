@@ -2,25 +2,25 @@ Feature: Manage BuddyPress Activity Favorites
 
   Background:
     Given a WP install
-    And I run `wp plugin install https://github.com/buddypress/BuddyPress/archive/master.zip --activate`
+    And these installed and active plugins:
+      """
+      https://github.com/buddypress/BuddyPress/archive/master.zip
+      """
     And I run `wp bp component activate activity`
 
   Scenario: Activity Favorite CRUD
 
-    When I run `wp user create testuser2 testuser2@example.com --porcelain`
-    And save STDOUT as {MEMBER_ID}
+    When I run `wp user create testuser1 testuser1@example.com --first_name=testuser1 --last_name=user --role=subscriber --porcelain`
+    And save STDOUT as {SEC_MEMBER_ID}
 
-    When I run `wp bp activity create --user-id={MEMBER_ID} --porcelain`
+    When I run `wp bp activity create --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 
-    When I run `wp bp activity list --fields=id,user_id,component`
+    When I run `wp bp activity list --fields=id,component,type`
     Then STDOUT should be a table containing rows:
-      | id            | user_id     | component |
-      | {ACTIVITY_ID} | {MEMBER_ID} | activity  |
-
-    When I run `wp user create testuser3 testuser3@example.com --porcelain`
-    And save STDOUT as {SEC_MEMBER_ID}
+      | id            | component | type            |
+      | {ACTIVITY_ID} | activity  | activity_update |
 
     When I run `wp bp activity favorite create {ACTIVITY_ID} {SEC_MEMBER_ID}`
     Then STDOUT should contain:
@@ -28,10 +28,10 @@ Feature: Manage BuddyPress Activity Favorites
       Success: Activity item added as a favorite for the user.
       """
 
-    When I run `wp bp activity favorite list {SEC_MEMBER_ID} --fields=id`
+    When I run `wp bp activity favorite list {SEC_MEMBER_ID} --fields=id,user_id,component`
     Then STDOUT should be a table containing rows:
-      | id            |
-      | {ACTIVITY_ID} |
+      | id            | user_id         | component |
+      | {ACTIVITY_ID} | {SEC_MEMBER_ID} | activity  |
 
     When I run `wp bp activity favorite remove {ACTIVITY_ID} {SEC_MEMBER_ID} --yes`
     Then STDOUT should contain:

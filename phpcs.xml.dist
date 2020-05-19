@@ -2,7 +2,9 @@
 <ruleset name="WP-CLI-buddypress">
 
 	<!-- What to scan. -->
-	<file>.</file>
+	<file>components</file>
+	<file>wp-cli-bp.php</file>
+	<file>component.php</file>
 
 	<!-- Show progress. -->
 	<arg value="psn"/>
@@ -27,6 +29,7 @@
 			<property name="prefixes" type="array">
 				<element value="Buddypress\CLI\Command"/><!-- Namespaces. -->
 				<element value="wpcli_buddypress"/><!-- Global variables and such. -->
+				<element value="wpcli_bp"/><!-- Global variables and such. -->
 			</property>
 		</properties>
 	</rule>
