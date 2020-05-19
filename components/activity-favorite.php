@@ -58,17 +58,24 @@ class Activity_Favorite extends BuddypressCommand {
 	 *
 	 * @alias add
 	 */
-	public function create( $args, $assoc_args ) {
-		$activity_id = $args[0];
-		$activity    = new \BP_Activity_Activity( $activity_id );
+	public function create( $args ) {
+		$activity = bp_activity_get_specific(
+			array(
+				'activity_ids'     => $args[0],
+				'spam'             => null,
+				'display_comments' => true,
+			)
+		);
 
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
+		$activity = $activity['activities'][0];
+
+		if ( ! is_object( $activity ) ) {
+			WP_CLI::error( 'Could not find the activity.' );
 		}
 
 		$user = $this->get_user_id_from_identifier( $args[1] );
 
-		if ( bp_activity_add_user_favorite( $activity_id, $user->ID ) ) {
+		if ( bp_activity_add_user_favorite( $activity->id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item added as a favorite for the user.' );
 		} else {
 			WP_CLI::error( 'Could not add the activity item.' );
@@ -100,18 +107,25 @@ class Activity_Favorite extends BuddypressCommand {
 	 * @alias delete
 	 */
 	public function remove( $args, $assoc_args ) {
-		$activity_id = $args[0];
-		$activity    = new \BP_Activity_Activity( $activity_id );
+		$activity = bp_activity_get_specific(
+			array(
+				'activity_ids'     => $args[0],
+				'spam'             => null,
+				'display_comments' => true,
+			)
+		);
 
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
+		$activity = $activity['activities'][0];
+
+		if ( ! is_object( $activity ) ) {
+			WP_CLI::error( 'Could not find the activity.' );
 		}
 
 		$user = $this->get_user_id_from_identifier( $args[1] );
 
 		WP_CLI::confirm( 'Are you sure you want to remove this activity item?', $assoc_args );
 
-		if ( bp_activity_remove_user_favorite( $activity_id, $user->ID ) ) {
+		if ( bp_activity_remove_user_favorite( $activity->id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item removed as a favorite for the user.' );
 		} else {
 			WP_CLI::error( 'Could not remove the activity item.' );

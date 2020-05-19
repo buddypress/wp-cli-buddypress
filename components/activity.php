@@ -102,19 +102,21 @@ class Activity extends BuddypressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'component'         => '',
-			'type'              => '',
-			'action'            => '',
-			'content'           => '',
-			'primary-link'      => '',
-			'user-id'           => '',
-			'item-id'           => '',
-			'secondary-item-id' => '',
-			'date-recorded'     => bp_core_current_time(),
-			'hide-sitewide'     => 0,
-			'is-spam'           => 0,
-		) );
+		$r = wp_parse_args( $assoc_args,
+			array(
+				'component'         => '',
+				'type'              => '',
+				'action'            => '',
+				'content'           => '',
+				'primary-link'      => '',
+				'user-id'           => '',
+				'item-id'           => '',
+				'secondary-item-id' => '',
+				'date-recorded'     => bp_core_current_time(),
+				'hide-sitewide'     => 0,
+				'is-spam'           => 0,
+			)
+		);
 
 		// Fill in any missing information.
 		if ( empty( $r['component'] ) ) {
@@ -401,8 +403,7 @@ class Activity extends BuddypressCommand {
 			$assoc_args['fields'] = array_keys( $activity_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $activity_arr );
+		$this->get_formatter( $assoc_args )->display_item( $activity_arr );
 	}
 
 	/**
