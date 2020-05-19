@@ -700,7 +700,9 @@ class Activity extends BuddypressCommand {
 	 * @since 1.1
 	 */
 	protected function generate_item_details( $r ) {
-		global $wpdb, $bp;
+		global $wpdb;
+
+		$bp = buddypress();
 
 		switch ( $r['type'] ) {
 			case 'activity_update':
@@ -745,9 +747,7 @@ class Activity extends BuddypressCommand {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
-				$parent_item = $wpdb->get_row(
-					$wpdb->prepare( 'SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1' )
-				);
+				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" );
 
 				if ( \is_object( $parent_item ) ) {
 					if ( 'activity_comment' === $parent_item->type ) {
