@@ -17,11 +17,6 @@ Feature: Manage BuddyPress Activity Favorites
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 
-    When I run `wp bp activity list --fields=id,component,type`
-    Then STDOUT should be a table containing rows:
-      | id            | component | type            |
-      | {ACTIVITY_ID} | activity  | activity_update |
-
     When I run `wp bp activity favorite create {ACTIVITY_ID} {SEC_MEMBER_ID}`
     Then STDOUT should contain:
       """
