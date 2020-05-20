@@ -1,14 +1,19 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress group members.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp group member add --group-id=3 --user-id=10
+ *     Success: Added user #3 to group #3 as member.
+ *
+ *     $ wp bp group member create --group-id=bar --user-id=20 --role=mod
+ *     Success: Added user #20 to group #45 as mod.
+ *
  * @since 1.5.0
  */
-class Group_Member extends BuddypressCommand {
+class BP_Group_Member_Command extends BuddyPressBase {
 
 	/**
 	 * Group ID Object Key
@@ -39,6 +44,10 @@ class Group_Member extends BuddypressCommand {
 	 * : Group member role (member, mod, admin).
 	 * ---
 	 * default: member
+	 * options:
+	 *   - member
+	 *   - mod
+	 *   - admin
 	 * ---
 	 *
 	 * [--porcelain]
@@ -57,14 +66,8 @@ class Group_Member extends BuddypressCommand {
 	public function create( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		// Sanitize role.
-		$role = $assoc_args['role'];
-		if ( empty( $role ) || ! in_array( $role, $this->group_roles(), true ) ) {
-			$role = 'member';
-		}
-
-		$joined = groups_join_group( $group_id, $user->ID );
+		$role     = $assoc_args['role'];
+		$joined   = groups_join_group( $group_id, $user->ID );
 
 		if ( ! $joined ) {
 			WP_CLI::error( 'Could not add user to the group.' );
@@ -77,13 +80,14 @@ class Group_Member extends BuddypressCommand {
 				groups_promote_member( $user->ID, $group_id, $role );
 			}
 
-			$success = sprintf(
-				'Added user #%d to group #%d as %s.',
-				$user->ID,
-				$group_id,
-				$role
+			WP_CLI::success(
+				sprintf(
+					'Added user #%d to group #%d as %s.',
+					$user->ID,
+					$group_id,
+					$role
+				)
 			);
-			WP_CLI::success( $success );
 		}
 	}
 
@@ -158,7 +162,7 @@ class Group_Member extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
 
 		$roles = array( 'members' );
@@ -198,19 +202,16 @@ class Group_Member extends BuddypressCommand {
 		}
 
 		if ( empty( $assoc_args['fields'] ) ) {
-			$fields = array(
+			$assoc_args['fields'] = array(
 				'user_id',
 				'user_login',
 				'fullname',
 				'date_modified',
 				'role',
 			);
-
-			$assoc_args['fields'] = $fields;
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_items( $members );
+		$this->get_formatter( $assoc_args )->display_items( $members );
 	}
 
 	/**
@@ -225,7 +226,12 @@ class Group_Member extends BuddypressCommand {
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
 	 * --role=<role>
-	 * : Group role to promote the member (mod, admin).
+	 * : Group role to promote the member.
+	 * ---
+	 * options:
+	 *   - mod
+	 *   - admin
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
@@ -238,15 +244,9 @@ class Group_Member extends BuddypressCommand {
 	public function promote( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$role     = $assoc_args['role'];
+		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
-		if ( ! in_array( $role, $this->group_roles(), true ) ) {
-			WP_CLI::error( 'You need a valid role to promote the member.' );
-		}
-
-		$member = new \BP_Groups_Member( $user->ID, $group_id );
-
-		if ( $member->promote( $role ) ) {
+		if ( $member->promote( $assoc_args['role'] ) ) {
 			WP_CLI::success( 'Member promoted to new role successfully.' );
 		} else {
 			WP_CLI::error( 'Could not promote the member.' );
@@ -344,16 +344,5 @@ class Group_Member extends BuddypressCommand {
 		} else {
 			WP_CLI::error( 'Could not unban the member.' );
 		}
-	}
-
-	/**
-	 * Group Roles.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return array An array of group roles.
-	 */
-	protected function group_roles() {
-		return array( 'member', 'mod', 'admin' );
 	}
 }

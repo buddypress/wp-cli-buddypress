@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Messages.
@@ -16,7 +13,18 @@ use WP_CLI;
  *
  * @since 1.6.0
  */
-class Message extends BuddypressCommand {
+class BP_Message_Command extends BuddyPressBase {
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'messages' ) ) {
+			WP_CLI::error( 'The Message component is not active.' );
+		}
+	}
 
 	/**
 	 * Object fields.
@@ -254,7 +262,7 @@ class Message extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args(

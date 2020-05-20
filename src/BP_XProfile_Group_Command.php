@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage XProfile Groups.
  *
  * @since 1.5.0
  */
-class XProfile_Group extends BuddypressCommand {
+class BP_XProfile_Group_Command extends BuddyPressBase {
 
 	/**
 	 * XProfile object fields.
@@ -44,7 +41,7 @@ class XProfile_Group extends BuddypressCommand {
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted.
 	 * ---
-	 * default: true.
+	 * default: 1
 	 * ---
 	 *
 	 * [--porcelain]
@@ -66,7 +63,6 @@ class XProfile_Group extends BuddypressCommand {
 			array(
 				'name'        => '',
 				'description' => '',
-				'can_delete'  => true,
 			)
 		);
 

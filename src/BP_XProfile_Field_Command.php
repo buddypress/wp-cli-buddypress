@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage XProfile Fields.
  *
  * @since 1.5.0
  */
-class XProfile_Field extends BuddypressCommand {
+class BP_XProfile_Field_Command extends BuddyPressBase {
 
 	/**
 	 * XProfile object fields.
@@ -38,7 +35,7 @@ class XProfile_Field extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$args = array_merge(
 			$assoc_args,
 			array(

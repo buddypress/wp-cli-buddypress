@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Components.
@@ -29,7 +26,7 @@ use WP_CLI;
  *
  * @since 1.6.0
  */
-class Components extends BuddypressCommand {
+class BP_Components_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -57,7 +54,7 @@ class Components extends BuddypressCommand {
 	 *     $ wp bp component activate groups
 	 *     Success: The Groups component has been activated.
 	 */
-	public function activate( $args, $assoc_args ) {
+	public function activate( $args ) {
 		$component = $args[0];
 
 		if ( ! $this->component_exists( $component ) ) {
@@ -102,7 +99,7 @@ class Components extends BuddypressCommand {
 	 *     $ wp bp component deactivate groups
 	 *     Success: The Groups component has been deactivated.
 	 */
-	public function deactivate( $args, $assoc_args ) {
+	public function deactivate( $args ) {
 		$component = $args[0];
 
 		if ( ! $this->component_exists( $component ) ) {
@@ -137,12 +134,21 @@ class Components extends BuddypressCommand {
 	 * : Type of the component (all, optional, retired, required).
 	 * ---
 	 * default: all
+	 * options:
+	 *   - all
+	 *   - optional
+	 *   - retired
+	 *   - required
 	 * ---
 	 *
 	 * [--status=<status>]
 	 * : Status of the component (all, active, inactive).
 	 * ---
 	 * default: all
+	 * options:
+	 *   - all
+	 *   - active
+	 *   - inactive
 	 * ---
 	 *
 	 * [--fields=<fields>]
@@ -169,21 +175,13 @@ class Components extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
-		// Sanitize type.
+		// Get type.
 		$type = $assoc_args['type'];
-		if ( empty( $type ) || ! in_array( $type, $this->component_types(), true ) ) {
-			$type = 'all';
-		}
 
-		// Sanitize status.
-		$status = $assoc_args['status'];
-		if ( empty( $status ) || ! in_array( $status, $this->component_status(), true ) ) {
-			$status = 'all';
-		}
-
+		// Get components.
 		$components = bp_core_get_components( $type );
 
 		// Active components.
@@ -191,14 +189,20 @@ class Components extends BuddypressCommand {
 
 		// Core component is always active.
 		if ( 'optional' !== $type ) {
-			$active_components['core'] = $components['core'];
+			if ( ! isset( $active_components['core'] ) ) {
+				$active_components = [
+					'core' => $components['core'],
+				];
+			} else {
+				$active_components['core'] = $components['core'];
+			}
 		}
 
 		// Inactive components.
 		$inactive_components = array_diff( array_keys( $components ), array_keys( $active_components ) );
 
 		$current_components = array();
-		switch ( $status ) {
+		switch ( $assoc_args['status'] ) {
 			case 'all':
 				$index = 0;
 				foreach ( $components as $name => $labels ) {
@@ -253,11 +257,7 @@ class Components extends BuddypressCommand {
 			WP_CLI::error( 'There is no component available.' );
 		}
 
-		if ( 'count' === $formatter->format ) {
-			$formatter->display_items( $current_components );
-		} else {
-			$formatter->display_items( $current_components );
-		}
+		$formatter->display_items( $current_components );
 	}
 
 	/**
@@ -287,28 +287,6 @@ class Components extends BuddypressCommand {
 			return $active;
 		}
 
-		return ( bp_is_active( $id ) ) ? $active : 'Inactive';
-	}
-
-	/**
-	 * Component Types.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @return array An array of valid component types.
-	 */
-	protected function component_types() {
-		return array( 'all', 'optional', 'retired', 'required' );
-	}
-
-	/**
-	 * Component Status.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @return array An array of valid component status.
-	 */
-	protected function component_status() {
-		return array( 'all', 'active', 'inactive' );
+		return bp_is_active( $id ) ? $active : 'Inactive';
 	}
 }

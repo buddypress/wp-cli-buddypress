@@ -11,17 +11,16 @@
     "wordpress",
     "bp"
   ],
-  "authors": [
-    {
-      "name": "The BuddPress Contributors",
-      "homepage": "https://buddypress.org/"
-    }
-  ],
+  "authors": [{
+    "name": "The BuddPress Contributors",
+    "homepage": "https://buddypress.org/"
+  }],
   "support": {
     "issues": "https://github.com/buddypress/wp-cli-buddypress/issues",
     "source": "https://github.com/buddypress/wp-cli-buddypress"
   },
   "require": {
+    "php": "^5.6 || ^7.0",
     "wp-cli/wp-cli": "^2"
   },
   "require-dev": {
@@ -45,11 +44,17 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "autoload": {
+    "psr-4": {
+      "": "src/"
+    },
     "files": [
       "wp-cli-bp.php"
     ]
   },
   "config": {
+    "platform": {
+      "php": "5.6"
+    },
     "process-timeout": 1800,
     "sort-packages": true
   },
@@ -60,6 +65,9 @@
       "bp activity",
       "bp activity favorite",
       "bp group",
+      "bp group meta",
+      "bp group member",
+      "bp group invite",
       "bp message",
       "bp email",
       "bp component",
@@ -67,8 +75,6 @@
       "bp notification",
       "bp tool",
       "bp signup",
-      "bp group member",
-      "bp group invite",
       "bp xprofile",
       "bp xprofile field",
       "bp xprofile group",

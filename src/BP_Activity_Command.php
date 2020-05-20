@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Activities.
@@ -16,7 +13,7 @@ use WP_CLI;
  *
  * @since 1.5.0
  */
-class Activity extends BuddypressCommand {
+class BP_Activity_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -36,6 +33,17 @@ class Activity extends BuddypressCommand {
 		'hide_sitewide',
 		'is_spam',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'activity' ) ) {
+			WP_CLI::error( 'The Activity component is not active.' );
+		}
+	}
 
 	/**
 	 * Create an activity item.
@@ -102,19 +110,21 @@ class Activity extends BuddypressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'component'         => '',
-			'type'              => '',
-			'action'            => '',
-			'content'           => '',
-			'primary-link'      => '',
-			'user-id'           => '',
-			'item-id'           => '',
-			'secondary-item-id' => '',
-			'date-recorded'     => bp_core_current_time(),
-			'hide-sitewide'     => 0,
-			'is-spam'           => 0,
-		) );
+		$r = wp_parse_args( $assoc_args,
+			array(
+				'component'         => '',
+				'type'              => '',
+				'action'            => '',
+				'content'           => '',
+				'primary-link'      => '',
+				'user-id'           => '',
+				'item-id'           => '',
+				'secondary-item-id' => '',
+				'date-recorded'     => bp_core_current_time(),
+				'hide-sitewide'     => 0,
+				'is-spam'           => 0,
+			)
+		);
 
 		// Fill in any missing information.
 		if ( empty( $r['component'] ) ) {
@@ -240,7 +250,7 @@ class Activity extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args(
@@ -401,8 +411,7 @@ class Activity extends BuddypressCommand {
 			$assoc_args['fields'] = array_keys( $activity_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $activity_arr );
+		$this->get_formatter( $assoc_args )->display_item( $activity_arr );
 	}
 
 	/**
@@ -679,28 +688,14 @@ class Activity extends BuddypressCommand {
 	}
 
 	/**
-	 * Get a list of activity components and actions.
-	 *
-	 * @since 1.1
-	 *
-	 * @return array
-	 */
-	protected function get_components_and_actions() {
-		return array_map(
-			function( $component ) {
-				return array_keys( (array) $component );
-			},
-			(array) bp_activity_get_actions()
-		);
-	}
-
-	/**
 	 * Generate item details.
 	 *
 	 * @since 1.1
 	 */
 	protected function generate_item_details( $r ) {
-		global $wpdb, $bp;
+		global $wpdb;
+
+		$bp = buddypress();
 
 		switch ( $r['type'] ) {
 			case 'activity_update':
@@ -745,15 +740,15 @@ class Activity extends BuddypressCommand {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
-				$parent_item = $wpdb->get_row(
-					$wpdb->prepare( 'SELECT * FROM %s ORDER BY RAND() LIMIT 1', $bp->activity->table_name )
-				);
+				$parent_item = $wpdb->get_row( "SELECT * FROM {$bp->activity->table_name} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-				if ( 'activity_comment' === $parent_item->type ) {
-					$r['item-id']           = $parent_item->id;
-					$r['secondary-item-id'] = $parent_item->secondary_item_id;
-				} else {
-					$r['item-id'] = $parent_item->id;
+				if ( \is_object( $parent_item ) ) {
+					if ( 'activity_comment' === $parent_item->type ) {
+						$r['item-id']           = $parent_item->id;
+						$r['secondary-item-id'] = $parent_item->secondary_item_id;
+					} else {
+						$r['item-id'] = $parent_item->id;
+					}
 				}
 
 				$r['action']       = sprintf( '%s posted a new activity comment', bp_core_get_userlink( $r['user-id'] ) );
@@ -770,9 +765,7 @@ class Activity extends BuddypressCommand {
 				}
 
 				if ( is_multisite() ) {
-					$r['item-id'] = $wpdb->get_var(
-						$wpdb->prepare( 'SELECT blog_id FROM %s ORDER BY RAND() LIMIT 1', $wpdb->blogs )
-					);
+					$r['item-id'] = $wpdb->get_var( "SELECT blog_id FROM {$wpdb->blogs} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				} else {
 					$r['item-id'] = 1;
 				}
@@ -784,12 +777,9 @@ class Activity extends BuddypressCommand {
 						switch_to_blog( $r['item-id'] );
 					}
 
-					$comment_info = $wpdb->get_results(
-						$wpdb->prepare( 'SELECT comment_id, comment_post_id FROM %s ORDER BY RAND() LIMIT 1', $wpdb->comments )
-					);
-
-					$comment_id = $comment_info[0]->comment_id;
-					$comment = get_comment( $comment_id );
+					$comment_info = $wpdb->get_results( "SELECT comment_id, comment_post_id FROM {$wpdb->comments} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					$comment_id   = $comment_info[0]->comment_id;
+					$comment      = get_comment( $comment_id );
 
 					$post_id = $comment_info[0]->comment_post_id;
 					$post = get_post( $post_id );

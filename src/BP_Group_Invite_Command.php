@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress group invites.
@@ -16,7 +13,7 @@ use WP_CLI;
  *
  * @since 1.5.0
  */
-class Group_Invite extends BuddypressCommand {
+class BP_Group_Invite_Command extends BuddyPressBase {
 
 	/**
 	 * Group ID Object Key
@@ -159,7 +156,7 @@ class Group_Invite extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id  = $user->ID;

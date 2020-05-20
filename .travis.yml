@@ -2,7 +2,7 @@ os: linux
 dist: xenial
 
 language: php
-php: 7.4
+php: 7.2
 
 services:
   - mysql
@@ -41,8 +41,6 @@ before_install:
 install:
   - composer install
   - composer prepare-tests
-  - export BP_SRC_DIR=/tmp/bp-src/
-  - svn co --ignore-externals https://buddypress.svn.wordpress.org/trunk/src $BP_SRC_DIR
 
 script:
   - composer behat || composer behat-rerun

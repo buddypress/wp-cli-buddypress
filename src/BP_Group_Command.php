@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Groups.
  *
  * @since 1.5.0
  */
-class Group extends BuddypressCommand {
+class BP_Group_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -22,6 +19,17 @@ class Group extends BuddypressCommand {
 		'status',
 		'date_created',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'groups' ) ) {
+			WP_CLI::error( 'The Groups component is not active.' );
+		}
+	}
 
 	/**
 	 * Group ID Object Key
@@ -64,6 +72,10 @@ class Group extends BuddypressCommand {
 	 * : Group status (public, private, hidden).
 	 * ---
 	 * default: public
+	 * options:
+	 *   - public
+	 *   - private
+	 *   - hidden
 	 * ---
 	 *
 	 * [--enable-forum=<enable-forum>]
@@ -89,15 +101,17 @@ class Group extends BuddypressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'name'         => '',
-			'slug'         => '',
-			'description'  => '',
-			'creator-id'   => 1,
-			'status'       => 'public',
-			'enable-forum' => 0,
-			'date-created' => bp_core_current_time(),
-		) );
+		$r = wp_parse_args(
+			$assoc_args,
+			array(
+				'name'         => '',
+				'slug'         => '',
+				'description'  => '',
+				'creator-id'   => 1,
+				'enable-forum' => 0,
+				'date-created' => bp_core_current_time(),
+			)
+		);
 
 		// Auto-generate some stuff.
 		if ( empty( $r['slug'] ) ) {
@@ -108,20 +122,17 @@ class Group extends BuddypressCommand {
 			$r['description'] = sprintf( 'Description for group "%s"', $r['name'] );
 		}
 
-		// Fallback for group status.
-		if ( ! in_array( $r['status'], $this->group_status(), true ) ) {
-			$r['status'] = 'public';
-		}
-
-		$group_id = groups_create_group( array(
-			'name'         => $r['name'],
-			'slug'         => $r['slug'],
-			'description'  => $r['description'],
-			'creator_id'   => $r['creator-id'],
-			'status'       => $r['status'],
-			'enable_forum' => $r['enable-forum'],
-			'date_created' => $r['date-created'],
-		) );
+		$group_id = groups_create_group(
+			array(
+				'name'         => $r['name'],
+				'slug'         => $r['slug'],
+				'description'  => $r['description'],
+				'creator_id'   => $r['creator-id'],
+				'status'       => $r['status'],
+				'enable_forum' => $r['enable-forum'],
+				'date_created' => $r['date-created'],
+			)
+		);
 
 		// Silent it before it errors.
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
@@ -157,9 +168,14 @@ class Group extends BuddypressCommand {
 	 * ---
 	 *
 	 * [--status=<status>]
-	 * : The status of the generated groups. Specify public, private, hidden, or mixed.
+	 * : The status of the generated groups. (public, private, hidden, or mixed).
 	 * ---
-	 * default: public
+	 * default: mixed
+	 * options:
+	 *   - public
+	 *   - private
+	 *   - hidden
+	 *   - mixed
 	 * ---
 	 *
 	 * [--creator-id=<creator-id>]
@@ -184,13 +200,16 @@ class Group extends BuddypressCommand {
 		$notify = WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->create( array(), array(
-				'name'         => sprintf( 'Group - #%d', $i ),
-				'creator-id'   => $assoc_args['creator-id'],
-				'status'       => $this->random_group_status( $assoc_args['status'] ),
-				'enable-forum' => $assoc_args['enable-forum'],
-				'silent',
-			) );
+			$this->create(
+				array(),
+				array(
+					'name'         => sprintf( 'Group - #%d', $i ),
+					'creator-id'   => $assoc_args['creator-id'],
+					'status'       => $this->random_group_status( $assoc_args['status'] ),
+					'enable-forum' => $assoc_args['enable-forum'],
+					'silent',
+				)
+			);
 
 			$notify->tick();
 		}
@@ -236,8 +255,7 @@ class Group extends BuddypressCommand {
 			$assoc_args['fields'] = array_keys( $group_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $group_arr );
+		$this->get_formatter( $assoc_args )->display_item( $group_arr );
 	}
 
 	/**
@@ -359,15 +377,18 @@ class Group extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter  = $this->get_formatter( $assoc_args );
-		$query_args = wp_parse_args( $assoc_args, array(
-			'count'       => 50,
-			'show_hidden' => true,
-			'orderby'     => $assoc_args['orderby'],
-			'order'       => $assoc_args['order'],
-			'per_page'    => $assoc_args['count'],
-		) );
+		$query_args = wp_parse_args(
+			$assoc_args,
+			array(
+				'count'       => 50,
+				'show_hidden' => true,
+				'orderby'     => $assoc_args['orderby'],
+				'order'       => $assoc_args['order'],
+				'per_page'    => $assoc_args['count'],
+			)
+		);
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -396,17 +417,6 @@ class Group extends BuddypressCommand {
 	}
 
 	/**
-	 * Group Status
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return array An array of gruop status.
-	 */
-	protected function group_status() {
-		return array( 'public', 'private', 'hidden' );
-	}
-
-	/**
 	 * Gets a randon group status.
 	 *
 	 * @since 1.5.0
@@ -415,7 +425,7 @@ class Group extends BuddypressCommand {
 	 * @return string Group Status.
 	 */
 	protected function random_group_status( $status ) {
-		$core_status = $this->group_status();
+		$core_status = array( 'public', 'private', 'hidden' );
 
 		if ( 'mixed' === $status ) {
 			$status = $core_status[ array_rand( $core_status ) ];
