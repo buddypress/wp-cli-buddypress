@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Groups.
  *
  * @since 1.5.0
  */
-class Group extends BuddypressCommand {
+class BP_Group_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -22,6 +19,17 @@ class Group extends BuddypressCommand {
 		'status',
 		'date_created',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'groups' ) ) {
+			WP_CLI::error( 'The Groups component is not active.' );
+		}
+	}
 
 	/**
 	 * Group ID Object Key

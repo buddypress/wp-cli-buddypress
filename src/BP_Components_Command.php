@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Components.
@@ -29,7 +26,7 @@ use WP_CLI;
  *
  * @since 1.6.0
  */
-class Components extends BuddypressCommand {
+class BP_Components_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -57,7 +54,7 @@ class Components extends BuddypressCommand {
 	 *     $ wp bp component activate groups
 	 *     Success: The Groups component has been activated.
 	 */
-	public function activate( $args, $assoc_args ) {
+	public function activate( $args ) {
 		$component = $args[0];
 
 		if ( ! $this->component_exists( $component ) ) {
@@ -102,7 +99,7 @@ class Components extends BuddypressCommand {
 	 *     $ wp bp component deactivate groups
 	 *     Success: The Groups component has been deactivated.
 	 */
-	public function deactivate( $args, $assoc_args ) {
+	public function deactivate( $args ) {
 		$component = $args[0];
 
 		if ( ! $this->component_exists( $component ) ) {
@@ -290,6 +287,6 @@ class Components extends BuddypressCommand {
 			return $active;
 		}
 
-		return ( bp_is_active( $id ) ) ? $active : 'Inactive';
+		return bp_is_active( $id ) ? $active : 'Inactive';
 	}
 }

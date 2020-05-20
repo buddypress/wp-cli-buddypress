@@ -1,9 +1,5 @@
 <?php
 
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
-
 /**
  * Manage BuddyPress Signups.
  *
@@ -14,7 +10,7 @@ use WP_CLI;
  *
  * @since 1.5.0
  */
-class Signup extends BuddypressCommand {
+class BP_Signup_Command extends BuddyPressBase {
 
 	/**
 	 * Signup object fields.
@@ -29,6 +25,23 @@ class Signup extends BuddypressCommand {
 		'activation_key',
 		'registered',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_get_signup_allowed() ) {
+			WP_CLI::error( 'The BuddyPress signup feature needs to be allowed.' );
+		}
+
+		// Fixes a bug in case the signups tables were not properly created.
+		require_once buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-schema.php';
+		require_once buddypress()->plugin_dir . 'bp-core/bp-core-update.php';
+
+		bp_core_maybe_install_signups();
+	}
 
 	/**
 	 * Add a signup.

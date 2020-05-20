@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Activities.
@@ -16,7 +13,7 @@ use WP_CLI;
  *
  * @since 1.5.0
  */
-class Activity extends BuddypressCommand {
+class BP_Activity_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -36,6 +33,17 @@ class Activity extends BuddypressCommand {
 		'hide_sitewide',
 		'is_spam',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'activity' ) ) {
+			WP_CLI::error( 'The Activity component is not active.' );
+		}
+	}
 
 	/**
 	 * Create an activity item.
@@ -677,22 +685,6 @@ class Activity extends BuddypressCommand {
 	protected function get_random_type_from_component( $component ) {
 		$ca = $this->get_components_and_actions();
 		return array_rand( array_flip( $ca[ $component ] ) );
-	}
-
-	/**
-	 * Get a list of activity components and actions.
-	 *
-	 * @since 1.1
-	 *
-	 * @return array
-	 */
-	protected function get_components_and_actions() {
-		return array_map(
-			function( $component ) {
-				return array_keys( (array) $component );
-			},
-			(array) bp_activity_get_actions()
-		);
 	}
 
 	/**

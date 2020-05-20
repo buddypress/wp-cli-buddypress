@@ -1,5 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
 
 /**
  * Manage BuddyPress Members
@@ -11,7 +10,7 @@ namespace Buddypress\CLI\Command;
  *
  * @since 1.0.0
  */
-class Member extends BuddypressCommand {
+class BP_Member_Command extends BuddyPressBase {
 
 	/**
 	 * Generate BuddyPress members. See documentation for `wp_user_generate`.

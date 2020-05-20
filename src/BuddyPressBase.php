@@ -1,16 +1,22 @@
 <?php
 
-namespace Buddypress\CLI\Command;
-
 use WP_CLI\CommandWithDBObject;
-use WP_CLI;
 
 /**
  * Base component class.
  *
  * @since 1.0
  */
-abstract class BuddypressCommand extends CommandWithDBObject {
+abstract class BuddyPressBase extends CommandWithDBObject {
+
+	/**
+	 * Default dependency check for a BuddyPress CLI command.
+	 */
+	public static function check_dependencies() {
+		if ( ! class_exists( 'Buddypress' ) ) {
+			WP_CLI::error( 'The BuddyPress plugin is not active.' );
+		}
+	}
 
 	/**
 	 * Get Formatter object based on supplied parameters.
@@ -98,11 +104,11 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	}
 
 	/**
-	 * Get field ID.
+	 * Get field from an ID.
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param int $field_id Field ID.
+	 * @param int|string $field_id Field ID or Field name.
 	 * @return int Field ID.
 	 */
 	protected function get_field_id( $field_id ) {
@@ -137,5 +143,21 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 		$ca = $this->get_components_and_actions();
 
 		return array_rand( array_flip( array_intersect( array_keys( $c ), array_keys( $ca ) ) ) );
+	}
+
+	/**
+	 * Get a list of activity components and actions.
+	 *
+	 * @since 1.1
+	 *
+	 * @return array
+	 */
+	protected function get_components_and_actions() {
+		return array_map(
+			function( $component ) {
+				return array_keys( (array) $component );
+			},
+			(array) bp_activity_get_actions()
+		);
 	}
 }

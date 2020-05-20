@@ -1,5 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
 
 /**
  * Manage BuddyPress XProfile.
@@ -17,7 +16,18 @@ namespace Buddypress\CLI\Command;
  *     # List xprofile fields.
  *     $ wp bp xprofile field list
  */
-class XProfile extends BuddypressCommand {
+class BP_XProfile_Command extends BuddyPressBase {
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'xprofile' ) ) {
+			WP_CLI::error( 'The XProfile component is not active.' );
+		}
+	}
 
 	/**
 	 * Adds description and subcomands to the DOC.
