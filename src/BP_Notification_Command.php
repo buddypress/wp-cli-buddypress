@@ -68,9 +68,6 @@ class BP_Notification_Command extends BuddyPressBase {
 	 *
 	 * [--date=<date>]
 	 * : GMT timestamp, in Y-m-d h:i:s format.
-	 * ---
-	 * default: Current time
-	 * ---
 	 *
 	 * [--silent]
 	 * : Whether to silent the notification creation.
@@ -253,12 +250,15 @@ class BP_Notification_Command extends BuddyPressBase {
 
 			$component = $this->get_random_component();
 
-			$this->create( array(), array(
-				'user-id'   => $this->get_random_user_id(),
-				'component' => $component,
-				'action'    => $this->get_random_action( $component ),
-				'silent',
-			) );
+			$this->create(
+				array(),
+				array(
+					'user-id'   => $this->get_random_user_id(),
+					'component' => $component,
+					'action'    => $this->get_random_action( $component ),
+					'silent',
+				)
+			);
 
 			$notify->tick();
 		}
@@ -322,9 +322,12 @@ class BP_Notification_Command extends BuddyPressBase {
 	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
-		$query_args = wp_parse_args( $assoc_args, array(
-			'count' => 50,
-		) );
+		$query_args = wp_parse_args(
+			$assoc_args,
+			array(
+				'count' => 50,
+			)
+		);
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -362,7 +365,6 @@ class BP_Notification_Command extends BuddyPressBase {
 	 * @since 1.8.0
 	 *
 	 * @param string $component BuddyPress Component.
-	 *
 	 * @return string
 	 */
 	protected function get_random_action( $component ) {
@@ -381,7 +383,14 @@ class BP_Notification_Command extends BuddyPressBase {
 
 		// Groups.
 		if ( $bp->groups->id === $component ) {
-			$actions = [ 'new_membership_request', 'membership_request_accepted', 'membership_request_rejected', 'member_promoted_to_admin', 'member_promoted_to_mod', 'group_invite' ];
+			$actions = [
+				'new_membership_request',
+				'membership_request_accepted',
+				'membership_request_rejected',
+				'member_promoted_to_admin',
+				'member_promoted_to_mod',
+				'group_invite'
+			];
 		}
 
 		// Messages.

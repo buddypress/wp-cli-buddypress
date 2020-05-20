@@ -44,7 +44,7 @@ class BP_Tool_Command extends BuddyPressBase {
 	 *
 	 * @alias fix
 	 */
-	public function repair( $args, $assoc_args ) {
+	public function repair( $args ) {
 		$repair = 'bp_admin_repair_' . $this->sanitize_string( $args[0] );
 
 		if ( ! function_exists( $repair ) ) {
