@@ -15,7 +15,7 @@ To install the latest version of this package, run:
 
 ## Using
 
-This package implements several commands, depending on the current activated BuddyPress component:
+This package implements several commands, depending on the current activated BuddyPress component. Here are a few examples:
 
 ### wp bp activity
 
@@ -34,6 +34,24 @@ wp bp activity
     # Create Group Activity
     $ wp bp activity add --component=groups --item-id=2 --user-id=10
     Success: Successfully created new activity item (ID #48949)
+
+### wp bp group
+
+Manage BuddyPress Groups.
+
+~~~
+wp bp group
+~~~
+
+**EXAMPLES**
+
+	# Create Group
+	$ wp bp group create --name="Totally Cool Group"
+	Success: Group (ID 5465) created: http://example.com/groups/totally-cool-group/
+
+	# Delete a Group
+	$ wp bp group delete group-slug --yes
+	Success: Group successfully deleted.
 
 ## Support
 

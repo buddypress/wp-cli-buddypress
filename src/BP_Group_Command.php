@@ -3,6 +3,14 @@
 /**
  * Manage BuddyPress Groups.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp group create --name="Totally Cool Group"
+ *     Success: Group (ID 5465) created: http://example.com/groups/totally-cool-group/
+ *
+ *     $ wp bp group create --name="Another Cool Group" --description="Cool Group" --creator-id=54 --status=private
+ *     Success: Group (ID 6454)6 created: http://example.com/groups/another-cool-group/
+ *
  * @since 1.5.0
  */
 class BP_Group_Command extends BuddyPressBase {
