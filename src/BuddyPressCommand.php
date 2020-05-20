@@ -1,5 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
 
 /**
  * Manage BuddyPress through the command-line.
@@ -17,7 +16,7 @@ namespace Buddypress\CLI\Command;
  *     # List xprofile fields.
  *     $ wp bp xprofile field list
  */
-class BuddyPress extends BuddypressCommand {
+class BuddyPressCommand extends BuddyPressBase {
 
 	/**
 	 * Adds description and subcomands to the DOC.

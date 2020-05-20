@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress group members.
  *
  * @since 1.5.0
  */
-class Group_Member extends BuddypressCommand {
+class BP_Group_Member_Command extends BuddyPressBase {
 
 	/**
 	 * Group ID Object Key

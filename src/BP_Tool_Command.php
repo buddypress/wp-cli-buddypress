@@ -1,14 +1,25 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Tools.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp tool repair friend-count
+ *     Success: Counting the number of friends for each user. Complete!
+ *
  * @since 1.5.0
  */
-class Tool extends BuddypressCommand {
+class BP_Tool_Command extends BuddyPressBase {
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		require_once buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-tools.php';
+	}
 
 	/**
 	 * Repair.

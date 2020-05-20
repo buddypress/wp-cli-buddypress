@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Notifications.
@@ -18,7 +15,7 @@ use WP_CLI;
  *
  * @since 1.8.0
  */
-class Notification extends BuddypressCommand {
+class BP_Notification_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -35,6 +32,17 @@ class Notification extends BuddypressCommand {
 		'date_notified',
 		'is_new',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'notifications' ) ) {
+			WP_CLI::error( 'The Notification component is not active.' );
+		}
+	}
 
 	/**
 	 * Create a notification item.

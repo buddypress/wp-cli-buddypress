@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress activity favorite.
@@ -16,7 +13,7 @@ use WP_CLI;
  *
  * @since 1.5.0
  */
-class Activity_Favorite extends BuddypressCommand {
+class BP_Activity_Favorite_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.

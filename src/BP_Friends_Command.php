@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Friends.
@@ -16,7 +13,7 @@ use WP_CLI;
  *
  * @since 1.6.0
  */
-class Friend extends BuddypressCommand {
+class BP_Friends_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -30,6 +27,17 @@ class Friend extends BuddypressCommand {
 		'is_confirmed',
 		'is_limited',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'friends' ) ) {
+			WP_CLI::error( 'The Friends component is not active.' );
+		}
+	}
 
 	/**
 	 * Create a new friendship.
