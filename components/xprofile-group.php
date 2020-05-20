@@ -44,7 +44,7 @@ class XProfile_Group extends BuddypressCommand {
 	 * [--can-delete=<can-delete>]
 	 * : Whether the group can be deleted.
 	 * ---
-	 * default: true.
+	 * default: 1
 	 * ---
 	 *
 	 * [--porcelain]
@@ -66,7 +66,6 @@ class XProfile_Group extends BuddypressCommand {
 			array(
 				'name'        => '',
 				'description' => '',
-				'can_delete'  => true,
 			)
 		);
 
