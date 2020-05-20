@@ -24,22 +24,8 @@ Feature: Manage BuddyPress Activity Favorites
       Success: Activity item added as a favorite for the user.
       """
 
-    When I run `wp bp activity favorite items {MEMBER_ID} --fields=id,user_id,component`
-    Then STDOUT should be a table containing rows:
-      | id            | user_id     | component |
-      | {ACTIVITY_ID} | {MEMBER_ID} | activity  |
-
-    When I try `wp bp activity favorite list {MEMBER_ID} --format=count`
-    Then STDOUT should be:
-      """
-      1
-      """
-
     When I run `wp bp activity favorite remove {ACTIVITY_ID} {MEMBER_ID} --yes`
     Then STDOUT should contain:
       """
       Success: Activity item removed as a favorite for the user.
       """
-
-    When I try `wp bp activity favorite user_items {MEMBER_ID} --fields=id`
-    Then the return code should be 1
