@@ -5,9 +5,9 @@ if ( ! class_exists( 'WP_CLI' ) ) {
 	return;
 }
 
-$wpcli_entity_autoloader = dirname( __FILE__ ) . '/vendor/autoload.php';
-if ( file_exists( $wpcli_entity_autoloader ) ) {
-	require_once $wpcli_entity_autoloader;
+$wpcli_autoloader = dirname( __FILE__ ) . '/vendor/autoload.php';
+if ( file_exists( $wpcli_autoloader ) ) {
+	require_once $wpcli_autoloader;
 }
 
 WP_CLI::add_command(
