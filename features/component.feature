@@ -51,3 +51,9 @@ Feature: Manage BuddyPress Components
       """
       Success: The Groups component has been deactivated.
       """
+
+    When I run `wp bp component list --fields=id`
+    Then STDOUT should be a table containing rows:
+      | id      |
+      | core    |
+      | members |

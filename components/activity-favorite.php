@@ -174,13 +174,13 @@ class Activity_Favorite extends BuddypressCommand {
 		$user      = $this->get_user_id_from_identifier( $args[0] );
 		$favorites = bp_activity_get_user_favorites( $user->ID );
 
-		if ( ! $favorites ) {
+		if ( empty( $favorites ) ) {
 			WP_CLI::error( 'No favorite found for this user.' );
 		}
 
 		$activities = bp_activity_get_specific(
 			array(
-				'activity_ids' => $favorites,
+				'activity_ids' => (array) $favorites,
 				'per_page'     => $assoc_args['count'],
 			)
 		);

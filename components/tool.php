@@ -44,7 +44,7 @@ class Tool extends BuddypressCommand {
 		$result = $repair();
 
 		if ( empty( $repair ) ) {
-			WP_CLI::error( 'The component of the tool is not active..' );
+			WP_CLI::error( 'The component of the tool is not active.' );
 		}
 
 		if ( 0 === $result[0] ) {
