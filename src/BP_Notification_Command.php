@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Notifications.
@@ -18,7 +15,7 @@ use WP_CLI;
  *
  * @since 1.8.0
  */
-class Notification extends BuddypressCommand {
+class BP_Notification_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -35,6 +32,17 @@ class Notification extends BuddypressCommand {
 		'date_notified',
 		'is_new',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'notifications' ) ) {
+			WP_CLI::error( 'The Notification component is not active.' );
+		}
+	}
 
 	/**
 	 * Create a notification item.
@@ -60,9 +68,6 @@ class Notification extends BuddypressCommand {
 	 *
 	 * [--date=<date>]
 	 * : GMT timestamp, in Y-m-d h:i:s format.
-	 * ---
-	 * default: Current time
-	 * ---
 	 *
 	 * [--silent]
 	 * : Whether to silent the notification creation.
@@ -109,7 +114,7 @@ class Notification extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
+			WP_CLI::log( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully created new notification (ID #%d)', $id ) );
 		}
@@ -245,12 +250,15 @@ class Notification extends BuddypressCommand {
 
 			$component = $this->get_random_component();
 
-			$this->create( array(), array(
-				'user-id'   => $this->get_random_user_id(),
-				'component' => $component,
-				'action'    => $this->get_random_action( $component ),
-				'silent',
-			) );
+			$this->create(
+				array(),
+				array(
+					'user-id'   => $this->get_random_user_id(),
+					'component' => $component,
+					'action'    => $this->get_random_action( $component ),
+					'silent',
+				)
+			);
 
 			$notify->tick();
 		}
@@ -311,12 +319,15 @@ class Notification extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 
-		$query_args = wp_parse_args( $assoc_args, array(
-			'count' => 50,
-		) );
+		$query_args = wp_parse_args(
+			$assoc_args,
+			array(
+				'count' => 50,
+			)
+		);
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -342,9 +353,7 @@ class Notification extends BuddypressCommand {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $notifications, 'id' ) ); // WPCS: XSS ok.
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $notifications );
+			echo implode( ' ', wp_list_pluck( $notifications, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
 			$formatter->display_items( $notifications );
 		}
@@ -356,7 +365,6 @@ class Notification extends BuddypressCommand {
 	 * @since 1.8.0
 	 *
 	 * @param string $component BuddyPress Component.
-	 *
 	 * @return string
 	 */
 	protected function get_random_action( $component ) {
@@ -370,12 +378,22 @@ class Notification extends BuddypressCommand {
 
 		// Friendship.
 		if ( $bp->friends->id === $component ) {
-			$actions = [ 'friendship_request', 'friendship_accepted' ];
+			$actions = [
+				'friendship_request',
+				'friendship_accepted',
+			];
 		}
 
 		// Groups.
 		if ( $bp->groups->id === $component ) {
-			$actions = [ 'new_membership_request', 'membership_request_accepted', 'membership_request_rejected', 'member_promoted_to_admin', 'member_promoted_to_mod', 'group_invite' ];
+			$actions = [
+				'new_membership_request',
+				'membership_request_accepted',
+				'membership_request_rejected',
+				'member_promoted_to_admin',
+				'member_promoted_to_mod',
+				'group_invite',
+			];
 		}
 
 		// Messages.

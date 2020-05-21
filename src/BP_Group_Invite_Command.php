@@ -1,14 +1,19 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress group invites.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp group invite add --group-id=40 --user-id=10 --inviter-id=1331
+ *     Success: Member invited to the group.
+ *
+ *     $ wp bp group invite create --group-id=40 --user-id=user_slug --inviter-id=804
+ *     Success: Member invited to the group.
+ *
  * @since 1.5.0
  */
-class Group_Invite extends BuddypressCommand {
+class BP_Group_Invite_Command extends BuddyPressBase {
 
 	/**
 	 * Group ID Object Key
@@ -29,17 +34,17 @@ class Group_Invite extends BuddypressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--group-id=<group>]
+	 * --group-id=<group>
 	 * : Identifier for the group. Accepts either a slug or a numeric ID.
 	 *
-	 * [--user-id=<user>]
+	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--inviter-id=<user>]
+	 * --inviter-id=<user>
 	 * : Identifier for the inviter. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See groups_invite_user()
+	 * [--message=<value>]
+	 * : Message to send with the invitation.
 	 *
 	 * [--silent]
 	 * : Whether to silent the invite creation.
@@ -49,19 +54,23 @@ class Group_Invite extends BuddypressCommand {
 	 *     $ wp bp group invite add --group-id=40 --user-id=10 --inviter-id=1331
 	 *     Success: Member invited to the group.
 	 *
-	 *     $ wp bp group invite create --group-id=40 --user-id=admin --inviter-id=804
+	 *     $ wp bp group invite create --group-id=40 --user-id=user_slug --inviter-id=804
 	 *     Success: Member invited to the group.
 	 *
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args, array(
-			'user-id'       => '',
-			'group-id'      => '',
-			'inviter-id'    => '',
+			'user-id'       => false,
+			'group-id'      => false,
+			'inviter-id'    => false,
+			'message'       => '',
 			'date-modified' => bp_core_current_time(),
-			'is-confirmed'  => 0,
 		) );
+
+		if ( $r['user-id'] === $r['inviter-id'] ) {
+			return;
+		}
 
 		$group_id = $this->get_group_id_from_identifier( $r['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $r['user-id'] );
@@ -71,11 +80,9 @@ class Group_Invite extends BuddypressCommand {
 			'user_id'       => $user->ID,
 			'group_id'      => $group_id,
 			'inviter_id'    => $inviter->ID,
-			'date_modified' => $assoc_args['date-modified'],
-			'is_confirmed'  => $assoc_args['is-confirmed'],
+			'date_modified' => $r['date-modified'],
+			'content'       => $r['message'],
 		) );
-
-		groups_send_invites( $inviter->ID, $group_id );
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
@@ -104,7 +111,7 @@ class Group_Invite extends BuddypressCommand {
 	 *     $ wp bp group invite remove --group-id=3 --user-id=10
 	 *     Success: User uninvited from the group.
 	 *
-	 *     $ wp bp group invite remove --group-id=foo --user-id=admin
+	 *     $ wp bp group invite uninvite --group-id=foo --user-id=admin
 	 *     Success: User uninvited from the group.
 	 *
 	 * @alias uninvite
@@ -149,7 +156,7 @@ class Group_Invite extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id  = $user->ID;

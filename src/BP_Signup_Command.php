@@ -1,14 +1,16 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Signups.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
+ *     Success: Successfully added new user signup (ID #345).
+ *
  * @since 1.5.0
  */
-class Signup extends BuddypressCommand {
+class BP_Signup_Command extends BuddyPressBase {
 
 	/**
 	 * Signup object fields.
@@ -23,6 +25,23 @@ class Signup extends BuddypressCommand {
 		'activation_key',
 		'registered',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_get_signup_allowed() ) {
+			WP_CLI::error( 'The BuddyPress signup feature needs to be allowed.' );
+		}
+
+		// Fixes a bug in case the signups tables were not properly created.
+		require_once buddypress()->plugin_dir . 'bp-core/admin/bp-core-admin-schema.php';
+		require_once buddypress()->plugin_dir . 'bp-core/bp-core-update.php';
+
+		bp_core_maybe_install_signups();
+	}
 
 	/**
 	 * Add a signup.
@@ -52,15 +71,16 @@ class Signup extends BuddypressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'user-login'     => '',
-			'user-email'     => '',
-			'activation-key' => wp_generate_password( 32, false ),
-		) );
-
-		$signup_args = array(
-			'meta' => '',
+		$r = wp_parse_args(
+			$assoc_args,
+			array(
+				'user-login'     => '',
+				'user-email'     => '',
+				'activation-key' => wp_generate_password( 32, false ),
+			)
 		);
+
+		$signup_args = array( 'meta' => '' );
 
 		$user_login = $r['user-login'];
 		if ( ! empty( $user_login ) ) {
@@ -78,7 +98,7 @@ class Signup extends BuddypressCommand {
 
 		$id = \BP_Signup::add( $signup_args );
 
-		// Silent it before it errors.
+		// Silent it.
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
@@ -88,7 +108,7 @@ class Signup extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $id );
+			WP_CLI::log( $id );
 		} else {
 			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
 		}
@@ -134,15 +154,9 @@ class Signup extends BuddypressCommand {
 	 *     $ wp bp signup get 123 --match-field=id
 	 */
 	public function get( $args, $assoc_args ) {
-		$id          = $args[0];
-		$signup_args = array(
-			'number' => 1,
-		);
+		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
 
-		$signup = $this->get_signup_by_identifier( $id, $assoc_args );
-
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $signup );
+		$this->get_formatter( $assoc_args )->display_item( $signup );
 	}
 
 	/**
@@ -270,16 +284,16 @@ class Signup extends BuddypressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--<field>=<value>]
+	 * [--fields=<value>]
 	 * : One or more parameters to pass. See \BP_Signup::get()
 	 *
-	 * [--<number>=<number>]
+	 * [--number=<value>]
 	 * : How many signups to list.
 	 * ---
 	 * default: 20
 	 * ---
 	 *
-	 * [--format=<format>]
+	 * [--format=<value>]
 	 * : Render output in a particular format.
 	 * ---
 	 * default: table
@@ -298,12 +312,15 @@ class Signup extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $_, $assoc_args ) {
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter  = $this->get_formatter( $assoc_args );
-		$assoc_args = wp_parse_args( $assoc_args, array(
-			'number' => 20,
-			'fields' => 'all',
-		) );
+		$assoc_args = wp_parse_args(
+			$assoc_args,
+			array(
+				'number' => 20,
+				'fields' => 'all',
+			)
+		);
 
 		if ( 'ids' === $formatter->format ) {
 			$assoc_args['fields'] = 'ids';
@@ -316,9 +333,9 @@ class Signup extends BuddypressCommand {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $signups['signups'] ); // WPCS: XSS ok.
+			echo implode( ' ', $signups['signups'] );
 		} elseif ( 'count' === $formatter->format ) {
-			WP_CLI::line( $signups['total'] );
+			$formatter->display_items( $signups['total'] );
 		} else {
 			$formatter->display_items( $signups['signups'] );
 		}
@@ -328,6 +345,8 @@ class Signup extends BuddypressCommand {
 	 * Look up a signup by the provided identifier.
 	 *
 	 * @since 1.5.0
+	 *
+	 * @return mixed
 	 */
 	protected function get_signup_by_identifier( $identifier, $assoc_args ) {
 		if ( isset( $assoc_args['match-field'] ) ) {

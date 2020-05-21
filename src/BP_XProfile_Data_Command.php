@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage XProfile Data.
  *
  * @since 1.5.0
  */
-class XProfile_Data extends BuddypressCommand {
+class BP_XProfile_Data_Command extends BuddyPressBase {
 
 	/**
 	 * XProfile object fields.
@@ -63,15 +60,16 @@ class XProfile_Data extends BuddypressCommand {
 			WP_CLI::error( 'Could not set profile data.' );
 		}
 
-		$success = sprintf(
-			'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d).',
-			$field->name,
-			$field->id,
-			$assoc_args['value'],
-			$user->user_nicename,
-			$user->ID
+		WP_CLI::success(
+			sprintf(
+				'Updated XProfile field "%s" (ID %d) with value "%s" for user %s (ID %d).',
+				$field->name,
+				$field->id,
+				$assoc_args['value'],
+				$user->user_nicename,
+				$user->ID
+			)
 		);
-		WP_CLI::success( $success );
 	}
 
 	/**
@@ -87,7 +85,7 @@ class XProfile_Data extends BuddypressCommand {
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
-	 *  ---
+	 * ---
 	 * default: table
 	 * options:
 	 *   - table
@@ -95,9 +93,9 @@ class XProfile_Data extends BuddypressCommand {
 	 *   - haml
 	 * ---
 	 *
-	 * [--multi-format=<multi-format>]
-	 * : The format for array data.
-	 *  ---
+	 * [--multi-format=<value>]
+	 * : The format for the array data.
+	 * ---
 	 * default: array
 	 * options:
 	 *   - array
@@ -127,13 +125,10 @@ class XProfile_Data extends BuddypressCommand {
 					continue;
 				}
 
-				$_field_data = maybe_unserialize( $field_data['field_data'] );
-				$_field_data = wp_json_encode( $_field_data );
-
 				$formatted_data[] = array(
 					'field_id'   => $field_data['field_id'],
 					'field_name' => $field_name,
-					'value'      => $_field_data,
+					'value'      => wp_json_encode( maybe_unserialize( $field_data['field_data'] ) ),
 				);
 			}
 
@@ -143,8 +138,8 @@ class XProfile_Data extends BuddypressCommand {
 				'field_name',
 				'value',
 			);
-			$formatter = $this->get_formatter( $format_args );
-			$formatter->display_items( $formatted_data );
+
+			$this->get_formatter( $format_args )->display_items( $formatted_data );
 		}
 	}
 

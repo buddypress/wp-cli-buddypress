@@ -6,8 +6,13 @@
 .travis.yml
 behat.yml
 circle.yml
+phpcs.xml.dist
+phpunit.xml.dist
 bin/
 features/
 utils/
 *.zip
 *.tar.gz
+*.swp
+*.txt
+*.log

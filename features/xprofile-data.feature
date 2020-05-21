@@ -1,7 +1,14 @@
 Feature: Manage BuddyPress XProfile Data
 
-  Scenario: XProfile Data CRUD Operations
-    Given a BP install
+  Background:
+    Given a WP install
+    And these installed and active plugins:
+      """
+      https://github.com/buddypress/BuddyPress/archive/master.zip
+      """
+    And I run `wp bp component activate xprofile`
+
+  Scenario: XProfile Data CRUD
 
     When I run `wp bp xprofile group create --name="Group Name" --description="Group Description" --porcelain`
     Then STDOUT should be a number
@@ -18,32 +25,32 @@ Feature: Manage BuddyPress XProfile Data
     When I run `wp bp xprofile data set --field-id={FIELD_ID} --user-id={USER_ID} --value=foo`
     Then STDOUT should contain:
       """
-	    Updated
-	    """
+      Updated
+      """
 
     When I run `wp bp xprofile data get --user-id={USER_ID} --field-id={FIELD_ID}`
     Then STDOUT should be:
       """
-	    foo
-	    """
+      foo
+      """
 
     When I run `wp bp xprofile data get --user-id={USER_ID}`
     Then STDOUT should be a table containing rows:
       | field_id   | field_name | value |
-	    | {FIELD_ID} | Field Name | "foo" |
+      | {FIELD_ID} | Field Name | "foo" |
 
     When I try `wp bp xprofile data delete --user-id={USER_ID} --yes`
     Then the return code should be 1
     Then STDERR should contain:
       """
-	    Either --field-id or --delete-all must be provided
-	    """
+      Either --field-id or --delete-all must be provided
+      """
 
     When I run `wp bp xprofile data delete --user-id={USER_ID} --field-id={FIELD_ID} --yes`
     Then STDOUT should contain:
       """
-	    XProfile data removed
-	    """
+      XProfile data removed
+      """
 
     When I run `wp bp xprofile data get --user-id={USER_ID} --field-id={FIELD_ID}`
     Then STDOUT should not contain:

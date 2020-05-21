@@ -1,14 +1,19 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Friends.
  *
+ * ## EXAMPLES
+ *
+ *     $ wp bp friend create user1 another_use
+ *     Success: Friendship successfully created.
+ *
+ *     $ wp bp friend create user1 another_use --force-accept
+ *     Success: Friendship successfully created.
+ *
  * @since 1.6.0
  */
-class Friend extends BuddypressCommand {
+class BP_Friends_Command extends BuddyPressBase {
 
 	/**
 	 * Object fields.
@@ -22,6 +27,17 @@ class Friend extends BuddypressCommand {
 		'is_confirmed',
 		'is_limited',
 	);
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'friends' ) ) {
+			WP_CLI::error( 'The Friends component is not active.' );
+		}
+	}
 
 	/**
 	 * Create a new friendship.
@@ -75,7 +91,7 @@ class Friend extends BuddypressCommand {
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( \BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
+			WP_CLI::log( \BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
 		} else {
 			if ( $force ) {
 				WP_CLI::success( 'Friendship successfully created.' );
@@ -239,7 +255,7 @@ class Friend extends BuddypressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function _list( $args, $assoc_args ) {
+	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$formatter = $this->get_formatter( $assoc_args );
 		$user      = $this->get_user_id_from_identifier( $args[0] );
 		$friends   = \BP_Friends_Friendship::get_friendships( $user->ID );
@@ -249,7 +265,7 @@ class Friend extends BuddypressCommand {
 		}
 
 		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $friends, 'friend_user_id' ) ); // WPCS: XSS ok.
+			echo implode( ' ', wp_list_pluck( $friends, 'friend_user_id' ) );
 		} elseif ( 'count' === $formatter->format ) {
 			$formatter->display_items( $friends );
 		} else {
@@ -301,10 +317,13 @@ class Friend extends BuddypressCommand {
 				$friend = $this->get_random_user_id();
 			}
 
-			$this->create( array( $member, $friend ), array(
-				'silent',
-				'force-accept',
-			) );
+			$this->create(
+				array( $member, $friend ),
+				array(
+					'silent',
+					'force-accept',
+				)
+			);
 
 			$notify->tick();
 		}

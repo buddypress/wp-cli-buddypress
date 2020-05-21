@@ -1,21 +1,19 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-if ( ! class_exists( '\User_Command' ) ) {
-	require_once( WP_CLI_ROOT . '/php/commands/user.php' );
-}
 
 /**
  * Manage BuddyPress Members
  *
+ * ## EXAMPLES
+ *
+ *   $ wp bp member generate
+ *   $ wp bp member generate --count=50
+ *
  * @since 1.0.0
  */
-class Member extends BuddypressCommand {
+class BP_Member_Command extends BuddyPressBase {
 
 	/**
 	 * Generate BuddyPress members. See documentation for `wp_user_generate`.
-	 *
-	 * This is a kludge workaround for setting last activity. Should fix.
 	 *
 	 * ## OPTIONS
 	 *
@@ -25,12 +23,14 @@ class Member extends BuddypressCommand {
 	 * default: 100
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
-	 *     $ wp bp member generate --count=50
+	 *   $ wp bp member generate
+	 *   $ wp bp member generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
 		add_action( 'user_register', array( __CLASS__, 'update_user_last_activity_random' ) );
+
 		$command_class = new \User_Command();
 		$command_class->generate( $args, $assoc_args );
 	}
@@ -43,7 +43,9 @@ class Member extends BuddypressCommand {
 	 * @param int $user_id User ID.
 	 */
 	public static function update_user_last_activity_random( $user_id ) {
-		$time = date( 'Y-m-d H:i:s', rand( 0, time() ) );
-		bp_update_user_last_activity( $user_id, $time );
+		bp_update_user_last_activity(
+			$user_id,
+			gmdate( 'Y-m-d H:i:s', wp_rand( 0, time() ) )
+		);
 	}
 }

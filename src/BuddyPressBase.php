@@ -1,7 +1,5 @@
 <?php
-namespace Buddypress\CLI\Command;
 
-use WP_CLI;
 use WP_CLI\CommandWithDBObject;
 
 /**
@@ -9,7 +7,26 @@ use WP_CLI\CommandWithDBObject;
  *
  * @since 1.0
  */
-abstract class BuddypressCommand extends CommandWithDBObject {
+abstract class BuddyPressBase extends CommandWithDBObject {
+
+	/**
+	 * Default dependency check for a BuddyPress CLI command.
+	 */
+	public static function check_dependencies() {
+		if ( ! class_exists( 'Buddypress' ) ) {
+			WP_CLI::error( 'The BuddyPress plugin is not active.' );
+		}
+	}
+
+	/**
+	 * Get Formatter object based on supplied parameters.
+	 *
+	 * @param array $assoc_args Parameters passed to command. Determines formatting.
+	 * @return \WP_CLI\Formatter
+	 */
+	protected function get_formatter( &$assoc_args ) {
+		return new WP_CLI\Formatter( $assoc_args, $this->obj_fields );
+	}
 
 	/**
 	 * Get a random user id.
@@ -20,7 +37,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 */
 	protected function get_random_user_id() {
 		global $wpdb;
-		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" );
+		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -38,9 +55,11 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 		}
 
 		// Get group object.
-		$group_obj = groups_get_group( array(
-			'group_id' => $group_id,
-		) );
+		$group_obj = groups_get_group(
+			array(
+				'group_id' => $group_id,
+			)
+		);
 
 		if ( empty( $group_obj->id ) ) {
 			WP_CLI::error( 'No group found by that slug or ID.' );
@@ -54,20 +73,20 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param mixed $i User ID, email or login.
-	 * @return WP_User|false
+	 * @param mixed $identifier User ID, email or login.
+	 * @return WP_User
 	 */
-	protected function get_user_id_from_identifier( $i ) {
-		if ( is_numeric( $i ) ) {
-			$user = get_user_by( 'id', $i );
-		} elseif ( is_email( $i ) ) {
-			$user = get_user_by( 'email', $i );
+	protected function get_user_id_from_identifier( $identifier ) {
+		if ( is_numeric( $identifier ) ) {
+			$user = get_user_by( 'id', $identifier );
+		} elseif ( is_email( $identifier ) ) {
+			$user = get_user_by( 'email', $identifier );
 		} else {
-			$user = get_user_by( 'login', $i );
+			$user = get_user_by( 'login', $identifier );
 		}
 
 		if ( ! $user ) {
-			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $i ) );
+			WP_CLI::error( sprintf( 'No user found by that username or ID (%s).', $identifier ) );
 		}
 
 		return $user;
@@ -85,12 +104,12 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	}
 
 	/**
-	 * Get field ID.
+	 * Get field from an ID.
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param  int $field_id Field ID.
-	 * @return int
+	 * @param int|string $field_id Field ID or Field name.
+	 * @return int Field ID.
 	 */
 	protected function get_field_id( $field_id ) {
 		if ( ! is_numeric( $field_id ) ) {
@@ -101,7 +120,7 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 	}
 
 	/**
-	 * String Sanitization.
+	 * String sanitization.
 	 *
 	 * @since 1.5.0
 	 *
@@ -124,5 +143,21 @@ abstract class BuddypressCommand extends CommandWithDBObject {
 		$ca = $this->get_components_and_actions();
 
 		return array_rand( array_flip( array_intersect( array_keys( $c ), array_keys( $ca ) ) ) );
+	}
+
+	/**
+	 * Get a list of activity components and actions.
+	 *
+	 * @since 1.1
+	 *
+	 * @return array
+	 */
+	protected function get_components_and_actions() {
+		return array_map(
+			function( $component ) {
+				return array_keys( (array) $component );
+			},
+			(array) bp_activity_get_actions()
+		);
 	}
 }

@@ -1,14 +1,11 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress Email Post Types.
  *
  * @since 1.6.0
  */
-class Email extends BuddypressCommand {
+class BP_Email_Command extends BuddyPressBase {
 
 	/**
 	 * Create a new email post connected to an email type.
@@ -143,7 +140,7 @@ class Email extends BuddypressCommand {
 	 * : Instead of returning the whole post, returns the value of a single field.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields.
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -177,8 +174,7 @@ class Email extends BuddypressCommand {
 			$assoc_args['fields'] = array_keys( $post_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $email->get_post_object() );
+		$this->get_formatter( $assoc_args )->display_item( $email->get_post_object() );
 	}
 
 	/**

@@ -1,82 +1,58 @@
-# buddypress/wp-cli-buddypress
+buddypress/wp-cli-buddypress
+===============================
 
-WP-CLI commands for use with BuddyPress.
+Manage BuddyPress through the command-line.
 
 [![Build Status](https://travis-ci.org/buddypress/wp-cli-buddypress.svg?branch=master)](https://travis-ci.org/buddypress/wp-cli-buddypress)
 
-These commands may be in flux, as we work toward a potential merge into BuddyPress. See https://buddypress.trac.wordpress.org/ticket/7604.
+Quick links: [Installing](#installing) | [Support](#support)
 
-Please use and provide feedback!
+## Installing
 
-## System Requirements
+To install the latest version of this package, run:
 
-* PHP >= 5.4
-* wp-cli >= 0.23.0
-* BuddyPress trunk (development version).
+    wp package install git@github.com:buddypress/wp-cli-buddypress.git
 
-## Setup
+## Using
 
-* Install [wp-cli](https://wp-cli.org)
-* Install wp-cli-buddypress. Manuall installation is recommended, though Composer installation should work too. See https://wp-cli.org/package-index/ for information.
-* Inside of a WP installation, type `wp bp`. You should see a list of available commands.
+This package implements several commands, depending on the current activated BuddyPress component. Here are a few examples:
 
-## Changelog
+### wp bp activity
 
-### 1.8.0
+Manage BuddyPress Activities.
 
-* `wp-cli-buddypress` requires PHP 5.4
-* `bp notification` commands introduced
+~~~
+wp bp activity
+~~~
 
-### 1.7.0
+**EXAMPLES**
 
-* Updated `bp` and `bp xprofile` commands PHPDoc info
-* Fixed `component list` commands output
-* Check if the `component` exists first before using it
-* Fixed `component` Behat tests
-* Removed PHP 5.3 support from Travis
+    # Create Activity
+	$ wp bp activity create
+    Success: Successfully created new activity item (ID #5464).
 
-### 1.6.0
+    # Create Group Activity
+    $ wp bp activity add --component=groups --item-id=2 --user-id=10
+    Success: Successfully created new activity item (ID #48949)
 
-* `bp email` commands introduced
-* With PSR-4 support for the classes
+### wp bp group
 
-### 1.5.0
+Manage BuddyPress Groups.
 
-* CRUD commands introduced to the main BuddyPress components
-* Behat tests added for all commands
-* Codebase fixed for WPCS
+~~~
+wp bp group
+~~~
 
-### 1.4.0
+**EXAMPLES**
 
-* New commands: `bp xprofile list_fields`, `bp xprofile delete_field`
-* Added the ability to pass multiple comma-separated values when updating xprofile fields
-* Fixed bug in component activation
+	# Create Group
+	$ wp bp group create --name="Totally Cool Group"
+	Success: Group (ID 5465) created: http://example.com/groups/totally-cool-group/
 
-### 1.3.1
+	# Delete a Group
+	$ wp bp group delete group-slug --yes
+	Success: Group successfully deleted.
 
-* Improved logic for user-id parsing
+## Support
 
-### 1.3.0
-
-* New commands: `bp group get_members`, `bp group update`
-* Ability to pass 'content' when using `bp activity generate`
-* When using `bp activity generate` with type=activity_update and component=groups, format the activity action properly
-
-### 1.2.0
-
-* Use wp-cli's new fourth-level commands
-* New commands: xprofile create_group, xprofile create_field, xprofile set_data
-
-### 1.1.1
-
-* Ensure that components have their install routine run after activation
-
-### 1.1
-
-* New commands: activate, deactivate, activity_create, activity_generate
-* Improved documentation
-* Added support for installation via Composer
-
-### 1.0
-
-* Initial release
+Github issues aren't for general support questions, but there are other venues you can try: https://buddypress.org/support

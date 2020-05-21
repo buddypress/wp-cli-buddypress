@@ -1,7 +1,4 @@
 <?php
-namespace Buddypress\CLI\Command;
-
-use WP_CLI;
 
 /**
  * Manage BuddyPress through the command-line.
@@ -19,13 +16,13 @@ use WP_CLI;
  *     # List xprofile fields.
  *     $ wp bp xprofile field list
  */
-class BuddyPress extends BuddypressCommand {
+class BuddyPressCommand extends BuddyPressBase {
 
 	/**
 	 * Adds description and subcomands to the DOC.
 	 *
-	 * @param  string $command Command.
-	 * @return string
+	 * @param  object $command Command.
+	 * @return array
 	 */
 	private function command_to_array( $command ) {
 		$dump = array(
@@ -44,5 +41,4 @@ class BuddyPress extends BuddypressCommand {
 
 		return $dump;
 	}
-
 }
