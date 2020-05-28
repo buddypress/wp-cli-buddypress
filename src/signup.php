@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Signups.
  *
@@ -10,7 +14,7 @@
  *
  * @since 1.5.0
  */
-class BP_Signup_Command extends BuddyPressBase {
+class Signup extends BuddyPressCommand {
 
 	/**
 	 * Signup object fields.

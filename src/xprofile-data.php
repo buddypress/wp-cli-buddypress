@@ -1,11 +1,15 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage XProfile Data.
  *
  * @since 1.5.0
  */
-class BP_XProfile_Data_Command extends BuddyPressBase {
+class XProfile_Data extends BuddyPressCommand {
 
 	/**
 	 * XProfile object fields.

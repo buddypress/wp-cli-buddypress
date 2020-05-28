@@ -1,11 +1,15 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Email Post Types.
  *
  * @since 1.6.0
  */
-class BP_Email_Command extends BuddyPressBase {
+class Email extends BuddyPressCommand {
 
 	/**
 	 * Create a new email post connected to an email type.

@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Tools.
  *
@@ -10,7 +14,7 @@
  *
  * @since 1.5.0
  */
-class BP_Tool_Command extends BuddyPressBase {
+class Tool extends BuddyPressCommand {
 
 	/**
 	 * Dependency check for this CLI command.

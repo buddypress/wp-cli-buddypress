@@ -1,5 +1,7 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
 use WP_CLI\CommandWithMeta;
 
 /**
@@ -23,7 +25,7 @@ use WP_CLI\CommandWithMeta;
  *     $ wp group meta delete 123 description
  *     Success: Deleted custom field.
  */
-class BP_Group_Meta_Command extends CommandWithMeta {
+class Group_Meta extends CommandWithMeta {
 	protected $meta_type = 'group';
 
 	/**
@@ -103,10 +105,11 @@ class BP_Group_Meta_Command extends CommandWithMeta {
 	/**
 	 * Check that the group ID exists.
 	 *
-	 * @param int
+	 * @param int $object_id Object ID.
+	 * @return int
 	 */
 	protected function check_object_id( $object_id ) {
-		$fetcher = new BP_Group_Fetcher();
+		$fetcher = new Group_Fetcher();
 		$group   = $fetcher->get_check( $object_id );
 
 		return $group->id;

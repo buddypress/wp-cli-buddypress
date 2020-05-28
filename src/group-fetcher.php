@@ -1,11 +1,13 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
 use WP_CLI\Fetchers\Base;
 
 /**
  * Fetch a BuddyPress group based on one of its attributes.
  */
-class BP_Group_Fetcher extends Base {
+class Group_Fetcher extends Base {
 
 	/**
 	 * @var string $msg Error message to use when invalid data is provided.
