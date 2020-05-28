@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Friends.
  *
@@ -13,7 +17,7 @@
  *
  * @since 1.6.0
  */
-class BP_Friends_Command extends BuddyPressBase {
+class Friends extends BuddyPressCommand {
 
 	/**
 	 * Object fields.
@@ -70,7 +74,6 @@ class BP_Friends_Command extends BuddyPressBase {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		// Members.
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend    = $this->get_user_id_from_identifier( $args[1] );
 
@@ -155,13 +158,13 @@ class BP_Friends_Command extends BuddyPressBase {
 	 * @alias accept-invitation
 	 */
 	public function accept( $args, $assoc_args ) {
-		foreach ( $args as $friendship_id ) {
+		parent::_update( $args, $assoc_args, function( $friendship_id ) {
 			if ( friends_accept_friendship( (int) $friendship_id ) ) {
-				WP_CLI::success( 'Friendship successfully accepted.' );
+				return array( 'success', 'Friendship successfully accepted.' );
 			} else {
-				WP_CLI::error( 'There was a problem accepting the friendship.' );
+				return array( 'error', 'There was a problem accepting the friendship.' );
 			}
-		}
+		} );
 	}
 
 	/**
@@ -183,13 +186,13 @@ class BP_Friends_Command extends BuddyPressBase {
 	 * @alias reject-invitation
 	 */
 	public function reject( $args, $assoc_args ) {
-		foreach ( $args as $friendship_id ) {
+		parent::_update( $args, $assoc_args, function( $friendship_id ) {
 			if ( friends_reject_friendship( (int) $friendship_id ) ) {
-				WP_CLI::success( 'Friendship successfully rejected.' );
+				return array( 'success', 'Friendship successfully rejected.' );
 			} else {
-				WP_CLI::error( 'There was a problem rejecting the friendship.' );
+				return array( 'error', 'There was a problem rejecting the friendship.' );
 			}
-		}
+		} );
 	}
 
 	/**
@@ -213,8 +216,7 @@ class BP_Friends_Command extends BuddyPressBase {
 	 *
 	 * @alias see
 	 */
-	public function check( $args, $assoc_args ) {
-		// Members.
+	public function check( $args ) {
 		$user   = $this->get_user_id_from_identifier( $args[0] );
 		$friend = $this->get_user_id_from_identifier( $args[1] );
 

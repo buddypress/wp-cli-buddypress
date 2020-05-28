@@ -1,5 +1,8 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
 use WP_CLI\CommandWithDBObject;
 
 /**
@@ -7,7 +10,7 @@ use WP_CLI\CommandWithDBObject;
  *
  * @since 1.0
  */
-abstract class BuddyPressBase extends CommandWithDBObject {
+abstract class BuddyPressCommand extends CommandWithDBObject {
 
 	/**
 	 * Default dependency check for a BuddyPress CLI command.

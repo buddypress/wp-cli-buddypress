@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Groups.
  *
@@ -13,7 +17,7 @@
  *
  * @since 1.5.0
  */
-class BP_Group_Command extends BuddyPressBase {
+class Group extends BuddyPressCommand {
 
 	/**
 	 * Object fields.
@@ -286,12 +290,10 @@ class BP_Group_Command extends BuddyPressBase {
 	 *     Success: Group successfully deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-		$group_id = $this->get_group_id_from_identifier( $args[0] );
-
 		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
 
-		parent::_delete( array( $group_id ), $assoc_args, function( $group_id ) {
-			if ( groups_delete_group( $group_id ) ) {
+		parent::_delete( $args, $assoc_args, function( $group_id ) {
+			if ( groups_delete_group( (int) $group_id ) ) {
 				return array( 'success', 'Group successfully deleted.' );
 			} else {
 				return array( 'error', 'Could not delete the group.' );
@@ -315,14 +317,14 @@ class BP_Group_Command extends BuddyPressBase {
 	 *     $ wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
 	 */
 	public function update( $args, $assoc_args ) {
-		$clean_group_ids = array();
+		parent::_update( $args, $assoc_args, function( $group_id, $fields = array() ) {
+			$fields['group_id'] = $group_id;
 
-		foreach ( $args as $group_id ) {
-			$clean_group_ids[] = $this->get_group_id_from_identifier( $group_id );
-		}
-
-		parent::_update( $clean_group_ids, $assoc_args, function( $params ) {
-			return groups_create_group( $params );
+			if ( groups_create_group( $fields ) ) {
+				return array( 'success', 'Group updated.' );
+			} else {
+				return array( 'error', 'Group could not be updated.' );
+			}
 		} );
 	}
 
@@ -345,10 +347,10 @@ class BP_Group_Command extends BuddyPressBase {
 	 * ---
 	 * default: name
 	 * options:
+	 *   - name
 	 *   - date_created
 	 *   - last_activity
 	 *   - total_member_count
-	 *   - name
 	 *
 	 * [--order=<order>]
 	 * : Whether to sort results ascending or descending.
@@ -371,7 +373,7 @@ class BP_Group_Command extends BuddyPressBase {
 	 * ---
 	 *
 	 * [--count=<number>]
-	 * : How many group items to list.
+	 * : Number of group items to list.
 	 * ---
 	 * default: 50
 	 * ---
@@ -429,8 +431,8 @@ class BP_Group_Command extends BuddyPressBase {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param  string $status Group status.
-	 * @return string Group Status.
+	 * @param string $status Group status.
+	 * @return string
 	 */
 	protected function random_group_status( $status ) {
 		$core_status = array( 'public', 'private', 'hidden' );

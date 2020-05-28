@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Activities.
  *
@@ -13,7 +17,7 @@
  *
  * @since 1.5.0
  */
-class BP_Activity_Command extends BuddyPressBase {
+class Activity extends BuddyPressCommand {
 
 	/**
 	 * Object fields.

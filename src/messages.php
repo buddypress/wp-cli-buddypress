@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Messages.
  *
@@ -13,7 +17,7 @@
  *
  * @since 1.6.0
  */
-class BP_Message_Command extends BuddyPressBase {
+class Messages extends BuddyPressCommand {
 
 	/**
 	 * Dependency check for this CLI command.

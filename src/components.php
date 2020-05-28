@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Components.
  *
@@ -26,7 +30,7 @@
  *
  * @since 1.6.0
  */
-class BP_Components_Command extends BuddyPressBase {
+class Components extends BuddyPressCommand {
 
 	/**
 	 * Object fields.

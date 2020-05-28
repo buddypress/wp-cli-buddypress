@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress Notifications.
  *
@@ -15,7 +19,7 @@
  *
  * @since 1.8.0
  */
-class BP_Notification_Command extends BuddyPressBase {
+class Notification extends BuddyPressCommand {
 
 	/**
 	 * Object fields.

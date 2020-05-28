@@ -11,10 +11,12 @@
     "wordpress",
     "bp"
   ],
-  "authors": [{
-    "name": "The BuddPress Contributors",
-    "homepage": "https://buddypress.org/"
-  }],
+  "authors": [
+    {
+      "name": "The BuddPress Contributors",
+      "homepage": "https://buddypress.org/"
+    }
+  ],
   "support": {
     "issues": "https://github.com/buddypress/wp-cli-buddypress/issues",
     "source": "https://github.com/buddypress/wp-cli-buddypress"
@@ -44,9 +46,6 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "autoload": {
-    "psr-4": {
-      "": "src/"
-    },
     "files": [
       "wp-cli-bp.php"
     ]

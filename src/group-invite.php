@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddypress\CLI\Command;
+
+use WP_CLI;
+
 /**
  * Manage BuddyPress group invites.
  *
@@ -13,7 +17,7 @@
  *
  * @since 1.5.0
  */
-class BP_Group_Invite_Command extends BuddyPressBase {
+class Group_Invite extends BuddyPressCommand {
 
 	/**
 	 * Group ID Object Key
@@ -242,12 +246,15 @@ class BP_Group_Invite_Command extends BuddyPressBase {
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 
 			$random_group = \BP_Groups_Group::get_random( 1, 1 );
-			$this->add( array(), array(
-				'user-id'    => $this->get_random_user_id(),
-				'group-id'   => $random_group['groups'][0]->slug,
-				'inviter-id' => $this->get_random_user_id(),
-				'silent',
-			) );
+			$this->create(
+				array(),
+				array(
+					'user-id'    => $this->get_random_user_id(),
+					'group-id'   => $random_group['groups'][0]->slug,
+					'inviter-id' => $this->get_random_user_id(),
+					'silent',
+				)
+			);
 
 			$notify->tick();
 		}
