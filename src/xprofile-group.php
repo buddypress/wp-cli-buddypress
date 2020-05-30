@@ -125,7 +125,7 @@ class XProfile_Group extends BuddyPressCommand {
 		}
 
 		$object = xprofile_get_field_group( $field_group_id );
-		if ( ! is_object( $object ) && empty( $object->id ) ) {
+		if ( empty( $object->id ) && ! is_object( $object ) ) {
 			WP_CLI::error( 'No XProfile field group found.' );
 		}
 
@@ -138,7 +138,7 @@ class XProfile_Group extends BuddyPressCommand {
 	}
 
 	/**
-	 * Delete a specific XProfile field group.
+	 * Delete specific XProfile field group(s).
 	 *
 	 * ## OPTIONS
 	 *
@@ -155,15 +155,9 @@ class XProfile_Group extends BuddyPressCommand {
 	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
-		$field_group_id = $args[0];
-
 		WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
 
-		parent::_delete( array( $field_group_id ), $assoc_args, function( $field_group_id ) {
-			if ( ! is_numeric( $field_group_id ) ) {
-				WP_CLI::error( 'This is not a valid field group ID.' );
-			}
-
+		parent::_delete( $args, $assoc_args, function( $field_group_id ) {
 			if ( xprofile_delete_field_group( $field_group_id ) ) {
 				return array( 'success', 'Field group deleted.' );
 			} else {

@@ -90,23 +90,28 @@ class Notification extends BuddyPressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'component'         => '',
-			'action'            => '',
-			'user-id'           => 0,
-			'item-id'           => 0,
-			'secondary-item-id' => 0,
-			'date'              => bp_core_current_time(),
-		) );
+		$r = wp_parse_args(
+			$assoc_args,
+			array(
+				'component'         => '',
+				'action'            => '',
+				'user-id'           => 0,
+				'item-id'           => 0,
+				'secondary-item-id' => 0,
+				'date'              => bp_core_current_time(),
+			)
+		);
 
-		$id = bp_notifications_add_notification( array(
-			'user_id'           => $r['user-id'],
-			'item_id'           => $r['item-id'],
-			'secondary_item_id' => $r['secondary-item-id'],
-			'component_name'    => $r['component'],
-			'component_action'  => $r['action'],
-			'date_notified'     => $r['date'],
-		) );
+		$id = bp_notifications_add_notification(
+			array(
+				'user_id'           => $r['user-id'],
+				'item_id'           => $r['item-id'],
+				'secondary_item_id' => $r['secondary-item-id'],
+				'component_name'    => $r['component'],
+				'component_action'  => $r['action'],
+				'date_notified'     => $r['date'],
+			)
+		);
 
 		// Silent it before it errors.
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
@@ -158,12 +163,8 @@ class Notification extends BuddyPressCommand {
 	public function get( $args, $assoc_args ) {
 		$notification = bp_notifications_get_notification( $args[0] );
 
-		if ( empty( $notification->id ) ) {
+		if ( empty( $notification->id ) || ! is_object( $notification ) ) {
 			WP_CLI::error( 'No notification found by that ID.' );
-		}
-
-		if ( ! is_object( $notification ) ) {
-			WP_CLI::error( 'Could not find the notification.' );
 		}
 
 		$notification_arr = get_object_vars( $notification );
@@ -172,8 +173,7 @@ class Notification extends BuddyPressCommand {
 			$assoc_args['fields'] = array_keys( $notification_arr );
 		}
 
-		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_item( $notification_arr );
+		$this->get_formatter( $assoc_args )->display_item( $notification_arr );
 	}
 
 	/**
@@ -213,17 +213,6 @@ class Notification extends BuddyPressCommand {
 		}
 
 		parent::_delete( $notifications, $assoc_args, function( $notification_id ) {
-
-			$notification = bp_notifications_get_notification( $notification_id );
-
-			if ( empty( $notification->id ) ) {
-				WP_CLI::error( sprintf( 'No notification found by ID %d.', $notification_id ) );
-			}
-
-			if ( ! is_object( $notification ) ) {
-				WP_CLI::error( sprintf( 'Could not find the notification %d.', $notification_id ) );
-			}
-
 			if ( \BP_Notifications_Notification::delete( array( 'id' => $notification_id ) ) ) {
 				return array( 'success', sprintf( 'Deleted notification %d.', $notification_id ) );
 			} else {

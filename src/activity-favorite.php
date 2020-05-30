@@ -5,7 +5,7 @@ namespace Buddypress\CLI\Command;
 use WP_CLI;
 
 /**
- * Manage BuddyPress activity favorite.
+ * Manage BuddyPress activity favorites.
  *
  * ## EXAMPLES
  *

@@ -157,31 +157,17 @@ class Messages extends BuddyPressCommand {
 	 * @alias remove-thread
 	 */
 	public function delete_thread( $args, $assoc_args ) {
-		$thread_id = $args[0];
-
-		// Check if we have a valid user.
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		WP_CLI::confirm( 'Are you sure you want to delete this thread(s)?', $assoc_args );
 
-		parent::_delete(
-			array( $thread_id ),
-			$assoc_args,
-			function( $thread_id ) use ( $user ) {
-
-				// Check if it is a valid thread before deleting.
-				if ( ! messages_is_valid_thread( $thread_id ) ) {
-					WP_CLI::error( 'This is not a valid thread ID.' );
-				}
-
-				// Actually, delete it.
-				if ( messages_delete_thread( $thread_id, $user->ID ) ) {
-					return array( 'success', 'Thread successfully deleted.' );
-				} else {
-					return array( 'error', 'Could not delete the thread.' );
-				}
+		parent::_delete( $args, $assoc_args, function( $thread_id ) use ( $user ) {
+			if ( messages_delete_thread( $thread_id, $user->ID ) ) {
+				return array( 'success', 'Thread successfully deleted.' );
+			} else {
+				return array( 'error', 'Could not delete the thread.' );
 			}
-		);
+		});
 	}
 
 	/**
@@ -243,6 +229,26 @@ class Messages extends BuddyPressCommand {
 	 * default: 10
 	 * ---
 	 *
+	 * [--box=<box>]
+	 * : Box of the message.
+	 * ---
+	 * default: sentbox
+	 * options:
+	 *   - sentbox
+	 *   - inbox
+	 *   - notices
+	 * ---
+	 *
+	 * [--type=<type>]
+	 * : Type of the message.
+	 * ---
+	 * default: all
+	 * options:
+	 *   - unread
+	 *   - read
+	 *   - all
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -272,22 +278,17 @@ class Messages extends BuddyPressCommand {
 		$r = wp_parse_args(
 			$assoc_args,
 			array(
-				'box'    => 'sentbox',
-				'type'   => 'all',
 				'search' => '',
-				'count'  => 10,
 			)
 		);
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$type = ( ! in_array( $r['type'], $this->message_types(), true ) ) ? 'all' : $r['type'];
-		$box  = ( ! in_array( $r['box'], $this->message_boxes(), true ) ) ? 'sentbox' : $r['box'];
 
 		$inbox = new \BP_Messages_Box_Template(
 			array(
 				'user_id'      => $user->ID,
-				'box'          => $box,
-				'type'         => $type,
+				'box'          => $r['box'],
+				'type'         => $r['type'],
 				'max'          => $r['count'],
 				'search_terms' => $r['search'],
 			)
@@ -314,7 +315,7 @@ class Messages extends BuddyPressCommand {
 	 * [--thread-id=<thread-id>]
 	 * : Thread ID to generate messages against.
 	 * ---
-	 * default: false
+	 * default: 0
 	 * ---
 	 *
 	 * [--count=<number>]
@@ -551,27 +552,5 @@ class Messages extends BuddyPressCommand {
 		} else {
 			WP_CLI::error( 'Notice was not sent.' );
 		}
-	}
-
-	/**
-	 * Message Types.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @return array An array of message types.
-	 */
-	protected function message_types() {
-		return array( 'all', 'read', 'unread' );
-	}
-
-	/**
-	 * Message Boxes.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @return array An array of message boxes.
-	 */
-	protected function message_boxes() {
-		return array( 'notices', 'sentbox', 'inbox' );
 	}
 }

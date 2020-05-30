@@ -122,8 +122,7 @@ class Friends extends BuddyPressCommand {
 	 *
 	 * @alias delete
 	 */
-	public function remove( $args, $assoc_args ) {
-		// Members.
+	public function remove( $args ) {
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend    = $this->get_user_id_from_identifier( $args[1] );
 

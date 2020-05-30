@@ -157,12 +157,11 @@ class XProfile_Field extends BuddyPressCommand {
 		$field_id = $this->get_field_id( $args[0] );
 		$object   = xprofile_get_field( $field_id );
 
-		if ( ! is_object( $object ) && empty( $object->id ) ) {
+		if ( empty( $object->id ) && ! is_object( $object ) ) {
 			WP_CLI::error( 'No XProfile field found.' );
 		}
 
 		$object_arr = get_object_vars( $object );
-
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}
@@ -195,18 +194,16 @@ class XProfile_Field extends BuddyPressCommand {
 	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
-		$field_id    = $this->get_field_id( $args[0] );
 		$delete_data = WP_CLI\Utils\get_flag_value( $assoc_args, 'delete-data' );
 
 		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
-		parent::_delete( array( $field_id ), $assoc_args, function( $field_id ) use ( $delete_data ) {
+		parent::_delete( $args, $assoc_args, function( $field_id ) use ( $delete_data ) {
 			$field   = new \BP_XProfile_Field( $field_id );
 			$name    = $field->name;
 			$id      = $field->id;
-			$deleted = $field->delete( $delete_data );
 
-			if ( $deleted ) {
+			if ( $field->delete( $delete_data ) ) {
 				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );
 			} else {
 				return array( 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) );

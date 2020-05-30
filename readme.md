@@ -9,13 +9,22 @@ Quick links: [Installing](#installing) | [Support](#support)
 
 ## Installing
 
-To install the latest version of this package, run:
+The `wp-bli-buddypress` comes installed by default with BuddyPress. To install this package or the latest version of this package, run:
 
-    wp package install git@github.com:buddypress/wp-cli-buddypress.git
+    wp package install buddypress
+	wp package install git@github.com:buddypress/wp-cli-buddypress.git
 
 ## Using
 
-This package implements several commands, depending on the current activated BuddyPress component. Here are a few examples:
+This package adds commands to all core BuddyPress components. The component used **needs** to be activated for it to be used. Here are a few examples:
+
+### wp bp
+
+Manage all BuddyPress commands.
+
+~~~
+wp bp
+~~~
 
 ### wp bp activity
 
@@ -52,6 +61,130 @@ wp bp group
 	# Delete a Group
 	$ wp bp group delete group-slug --yes
 	Success: Group successfully deleted.
+
+### wp bp messages
+
+Manage BuddyPress Messages.
+
+~~~
+wp bp messages
+~~~
+
+**EXAMPLES**
+
+	# Create message
+    wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
+    Success: Message successfully created.
+
+	# Delete thread
+    $ wp bp message delete-thread 456456 --user-id=user_logon --yes
+    Success: Thread successfully deleted.
+
+### wp bp notification
+
+Manage BuddyPress XProfile.
+
+~~~
+wp bp xprofile
+~~~
+
+**EXAMPLES**
+
+	# Create a xprofile group.
+    $ wp bp xprofile group create --name="Group Name" --description="Xprofile Group Description"
+    Success: Created XProfile field group "Group Name" (ID 123).
+
+	# List xprofile fields.
+    $ wp bp xprofile field list
+
+	# Save a xprofile data to a user with its field and value.
+    $ wp bp xprofile data set --user-id=45 --field-id=120 --value=teste
+    Success: Updated XProfile field "Field Name" (ID 120) with value  "teste" for user user_login (ID 45).
+
+### wp bp notification
+
+Manage BuddyPress Notifications.
+
+~~~
+wp bp notification
+~~~
+
+**EXAMPLES**
+
+    # Create notification item.
+    $ wp bp notification create
+    Success: Successfully created new notification. (ID #5464)
+
+    # Delete a notification item.
+    $ wp bp notification delete 520
+    Success: Notification deleted.
+
+### wp bp email
+
+Manage BuddyPress Emails
+
+~~~
+wp bp email
+~~~
+
+**EXAMPLES**
+
+   	# Create email
+	$ wp bp email create --type=new-event --type-description="Send an email when a new event is created" --subject="[{{{site.name}}}] A new event was created" --content="<a href='{{{some.custom-token-url}}}'></a>A new event</a> was created" --plain-text-content="A new event was created"
+ 	Success: Email post created for type "new-event".
+
+    # Create email with content from given file
+    $ wp bp email create ./email-content.txt --type=new-event --type-description="Send an email when a new event is created" --subject="[{{{site.name}}}] A new event was created" --plain-text-content="A new event was created"
+    Success: Email post created for type "new-event".
+
+### wp bp member
+
+Manage BuddyPress Members.
+
+~~~
+wp bp member
+~~~
+
+**EXAMPLES**
+
+    # Generate BuddyPress members.
+    $ wp bp member generate
+
+### wp bp signup
+
+Manage BuddyPress Signups
+
+~~~
+wp bp signup
+~~~
+
+**EXAMPLES**
+
+    # Create a signup
+	$ wp bp signup create --user-login=test_user --user-email=teste@site.com
+    Success: Successfully added new user signup (ID #345).
+
+	# Activate a signup
+	$ wp bp signup activate ee48ec319fef3nn4
+	Success: Signup activated, new user (ID #545).
+
+### wp bp tool
+
+Manage BuddyPress repairs tools.
+
+~~~
+wp bp tool
+~~~
+
+**EXAMPLES**
+
+    # Repairing friend-count
+	$ wp bp tool repair friend-count
+    Success: Counting the number of friends for each user. Complete!
+
+    # Activate signup
+    $ wp bp tool signup 1
+    Success: Signup tool updated.
 
 ## Support
 
