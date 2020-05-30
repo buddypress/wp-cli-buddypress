@@ -36,7 +36,7 @@ class XProfile extends BuddyPressCommand {
 	/**
 	 * Adds description and subcomands to the DOC.
 	 *
-	 * @param  object $command Command.
+	 * @param object $command Command.
 	 * @return array
 	 */
 	private function command_to_array( $command ) {

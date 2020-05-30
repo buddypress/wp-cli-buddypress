@@ -12,6 +12,9 @@ use WP_CLI;
  *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
  *     Success: Successfully added new user signup (ID #345).
  *
+ *     $ wp bp signup activate ee48ec319fef3nn4
+ *     Success: Signup activated, new user (ID #545).
+ *
  * @since 1.5.0
  */
 class Signup extends BuddyPressCommand {
@@ -183,11 +186,9 @@ class Signup extends BuddyPressCommand {
 	 *     Success: Signup deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
-		$signup_id = $args[0];
-
 		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
 
-		parent::_delete( array( $signup_id ), $assoc_args, function( $signup_id ) {
+		parent::_delete( $args, $assoc_args, function( $signup_id ) {
 			if ( \BP_Signup::delete( array( $signup_id ) ) ) {
 				return array( 'success', 'Signup deleted.' );
 			} else {

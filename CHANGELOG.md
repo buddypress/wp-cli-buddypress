@@ -1,16 +1,24 @@
 ## Changelog
 
-### 2.0.0 (WIP)
+### 2.0.0
 
-* Upgrading the package code base and structure with the current WP CLI package standards
-* Adding proper PSR-4 support
-* Abstracted how we are checking for the component to clean up a bit
-* Made sure that all Behat tests are all passing and working correcly
-* Fixed lots of bugs
-* Use the WP_CLI_CS/PHPCS from the wp-cli-tests package
-* Support to PHP 5.6 forward
-* Improving documentation
-* Adding new command `bp group meta`
+* The package was upgraded to follow WP-CLI best practices in code organization and structure
+* The `before_invoke` callable was abstracted into their component class
+* We made sure all Behat tests were passing correctly
+* We fixed several minor bugs in several commands
+* We are making the use of `wp-cli/wp-cli-tests` for all tests (phpcs, behat, etc).
+* Removed PHP 5.4 support from Travis
+* Support to PHP 5.6+ added
+* Improved the readme documentation
+* Updated to use the more up to date `WP_CLI::log()` instead of `WP_CLI::line()`
+* Forced the creation of the signups table when using the `wp bp signup` command and the tabled wasn't present.
+* Return proper success/error messages when using `parent::_delete` or `parent::_update`
+* Improved the commands PHPDocs, very useful when using the `help`
+* Updated to fetch and check values from PHPDoc instead of checking in PHP
+* Updated or removed the `default` values from several commands (most of them were wrong)
+* New commands:
+	* `wp bp group meta` - Used to manage Group Meta (custom fields).
+	* `wp bp tool signup 0` - Used to (de)activate the Signup feature.
 
 ### 1.8.0
 

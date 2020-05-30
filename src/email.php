@@ -5,7 +5,17 @@ namespace Buddypress\CLI\Command;
 use WP_CLI;
 
 /**
- * Manage BuddyPress Email Post Types.
+ * Manage BuddyPress Emails.
+ *
+ * ## EXAMPLES
+ *
+ *     # Create email post
+ *     $ wp bp email create --type=new-event --type-description="Send an email when a new event is created" --subject="[{{{site.name}}}] A new event was created" --content="<a href='{{{some.custom-token-url}}}'></a>A new event</a> was created" --plain-text-content="A new event was created"
+ *     Success: Email post created for type "new-event".
+ *
+ *     # Create email post with content from given file
+ *     $ wp bp email create ./email-content.txt --type=new-event --type-description="Send an email when a new event is created" --subject="[{{{site.name}}}] A new event was created" --plain-text-content="A new event was created"
+ *     Success: Email post created for type "new-event".
  *
  * @since 1.6.0
  */
@@ -75,7 +85,7 @@ class Email extends BuddyPressCommand {
 			WP_CLI::error( sprintf( 'Email type %s already exists.', $assoc_args['type'] ) );
 		}
 
-		if ( ! empty( $args[0] ) ) {
+		if ( ! empty( $args[0] ) && \method_exists( $this, 'read_from_file_or_stdin' ) ) {
 			$assoc_args['content'] = $this->read_from_file_or_stdin( $args[0] );
 		}
 

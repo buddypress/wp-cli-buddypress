@@ -90,10 +90,10 @@ class Tool extends BuddyPressCommand {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp bp tool signup 1
-	 *     Signup tool updated.
+	 *     Success: Signup tool updated.
 	 *
 	 *     $ wp bp tool signup 0
-	 *     Signup tool updated.
+	 *     Success: Signup tool updated.
 	 */
 	public function signup( $args ) {
 		bp_update_option( 'users_can_register', $args[0] );

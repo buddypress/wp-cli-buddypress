@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WP-CLI-buddypress">
+<ruleset name="wp-cli-buddypress">
 
 	<!-- What to scan. -->
 	<file>src</file>
@@ -20,19 +20,6 @@
 	<!-- For help understanding the `testVersion` configuration setting:
 		 https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
 	<config name="testVersion" value="5.6-"/>
-
-	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound">
-		<exclude-pattern>*/src/BP_(Activity|Activity_Favorite)_Command\.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_(Components|Email|Friends|Member)_Command\.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_Group_(Meta|Invite|Member)_Command\.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_Group_Command.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_(Message|Notification|Signup|Tool)_Command\.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_XProfile_(Data|Field|Group)_Command\.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_XProfile_Command.php$</exclude-pattern>
-		<exclude-pattern>*/src/BuddyPressCommand.php$</exclude-pattern>
-		<exclude-pattern>*/src/BuddyPressBase.php$</exclude-pattern>
-		<exclude-pattern>*/src/BP_(Group)_Fetcher.php$</exclude-pattern>
-	</rule>
 
 	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
 		<severity>0</severity>
