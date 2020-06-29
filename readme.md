@@ -9,7 +9,7 @@ Quick links: [Installing](#installing) | [Support](#support)
 
 ## Installing
 
-The `wp-bli-buddypress` comes installed by default with BuddyPress. To install this package or the latest version of this package, run:
+The `wp-cli-buddypress` comes installed by default with BuddyPress. To install this package or the latest version of this package, run:
 
     wp package install buddypress
 	wp package install git@github.com:buddypress/wp-cli-buddypress.git
