@@ -11,11 +11,15 @@ Quick links: [Installing](#installing) | [Support](#support)
 
 The `wp-cli-buddypress` comes installed by default with BuddyPress. So if you need to use the latest version, run:
 
-`wp package install git@github.com:buddypress/wp-cli-buddypress.git`
+~~~
+wp package install git@github.com:buddypress/wp-cli-buddypress.git
+~~~
 
 In many cases the default memory limit will not be enough to run composer so running the following instead is generally recommended:
 
-`php -d memory_limit=512M "$(which wp)" package install git@github.com:buddypress/wp-cli-buddypress.git`
+~~~
+php -d memory_limit=512M "$(which wp)" package install git@github.com:buddypress/wp-cli-buddypress.git
+~~~
 
 ## Using
 
