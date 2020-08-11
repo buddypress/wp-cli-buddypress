@@ -13,8 +13,10 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	require_once( __DIR__ . '/src/command.php' );
 	require_once( __DIR__ . '/src/buddypress.php' );
 	require_once( __DIR__ . '/src/signup.php' );
+	require_once( __DIR__ . '/src/activity-fetcher.php' );
 	require_once( __DIR__ . '/src/activity.php' );
 	require_once( __DIR__ . '/src/activity-favorite.php' );
+	require_once( __DIR__ . '/src/activity-meta.php' );
 	require_once( __DIR__ . '/src/components.php' );
 	require_once( __DIR__ . '/src/tool.php' );
 	require_once( __DIR__ . '/src/notification.php' );
@@ -95,6 +97,12 @@ WP_CLI::add_hook( 'before_wp_load', function() {
 	WP_CLI::add_command(
 		'bp activity favorite',
 		__NAMESPACE__ . '\\Command\\Activity_Favorite',
+		array( 'before_invoke' => __NAMESPACE__ . '\\Command\\Activity::check_dependencies' )
+	);
+
+	WP_CLI::add_command(
+		'bp activity meta',
+		__NAMESPACE__ . '\\Command\\Activity_Meta',
 		array( 'before_invoke' => __NAMESPACE__ . '\\Command\\Activity::check_dependencies' )
 	);
 

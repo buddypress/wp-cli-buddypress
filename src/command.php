@@ -44,6 +44,24 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	}
 
 	/**
+	 * Get an activity ID.
+	 *
+	 * @param int  $activity_id Activity ID.
+	 * @param bool $object      Return activity object.
+	 * @return int|BP_Activity_Activity
+	 */
+	protected function get_activity_id_from_identifier( $activity_id, $object = false ) {
+		$fetcher  = new Activity_Fetcher();
+		$activity = $fetcher->get_check( $activity_id );
+
+		if ( true === $object ) {
+			return $activity;
+		}
+
+		return $activity->id;
+	}
+
+	/**
 	 * Get a group ID from its identifier (ID or slug).
 	 *
 	 * @since 1.5.0

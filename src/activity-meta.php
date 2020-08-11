@@ -5,28 +5,28 @@ namespace Buddypress\CLI\Command;
 use WP_CLI\CommandWithMeta;
 
 /**
- * Adds, updates, deletes, and lists group custom fields.
+ * Adds, updates, deletes, and lists activity custom fields.
  *
  * ## EXAMPLES
  *
- *     # Set group meta
- *     $ wp bp group meta set 123 description "Mary is a Group user."
+ *     # Set activity meta
+ *     $ wp bp activity meta set 123 description "Mary is a activity user."
  *     Success: Updated custom field 'description'.
  *
- *     # Get group meta
- *     $ wp bp group meta get 123 description
- *     Mary is a Group user.
+ *     # Get activity meta
+ *     $ wp bp activity meta get 123 description
+ *     Mary is a Activity user.
  *
- *     # Update group meta
- *     $ wp bp group meta update 123 description "Mary is an awesome Group user."
+ *     # Update activity meta
+ *     $ wp bp activity meta update 123 description "Mary is an awesome activity user."
  *     Success: Updated custom field 'description'.
  *
- *     # Delete group meta
- *     $ wp bp group meta delete 123 description
+ *     # Delete activity meta
+ *     $ wp bp activity meta delete 123 description
  *     Success: Deleted custom field.
  */
-class Group_Meta extends CommandWithMeta {
-	protected $meta_type = 'group';
+class Activity_Meta extends CommandWithMeta {
+	protected $meta_type = 'activity';
 
 	/**
 	 * Wrapper method for add_metadata that can be overridden in sub classes.
@@ -44,7 +44,7 @@ class Group_Meta extends CommandWithMeta {
 	 * @return int|false The meta ID on success, false on failure.
 	 */
 	protected function add_metadata( $object_id, $meta_key, $meta_value, $unique = false ) {
-		return groups_add_groupmeta( $object_id, $meta_key, $meta_value );
+		return bp_activity_add_meta( $object_id, $meta_key, $meta_value );
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Group_Meta extends CommandWithMeta {
 	 *                  update, false on failure.
 	 */
 	protected function update_metadata( $object_id, $meta_key, $meta_value, $prev_value = '' ) {
-		return groups_update_groupmeta( $object_id, $meta_key, $meta_value, $prev_value );
+		return bp_activity_update_meta( $object_id, $meta_key, $meta_value, $prev_value );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Group_Meta extends CommandWithMeta {
 	 * @return mixed Single metadata value, or array of values.
 	 */
 	protected function get_metadata( $object_id, $meta_key = '', $single = true ) {
-		return groups_get_groupmeta( $object_id, $meta_key, $single );
+		return bp_activity_get_meta( $object_id, $meta_key, $single );
 	}
 
 	/**
@@ -99,19 +99,19 @@ class Group_Meta extends CommandWithMeta {
 	 * @return bool True on successful delete, false on failure.
 	 */
 	protected function delete_metadata( $object_id, $meta_key, $meta_value = '' ) {
-		return groups_delete_groupmeta( $object_id, $meta_key, $meta_value );
+		return bp_activity_delete_meta( $object_id, $meta_key, $meta_value );
 	}
 
 	/**
-	 * Check that the group ID exists.
+	 * Check that the activity ID exists.
 	 *
 	 * @param int $object_id Object ID.
 	 * @return int
 	 */
 	protected function check_object_id( $object_id ) {
-		$fetcher = new Group_Fetcher();
-		$group   = $fetcher->get_check( $object_id );
+		$fetcher  = new Activity_Fetcher();
+		$activity = $fetcher->get_check( $object_id );
 
-		return $group->id;
+		return $activity->id;
 	}
 }

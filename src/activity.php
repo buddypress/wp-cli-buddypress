@@ -388,16 +388,8 @@ class Activity extends BuddyPressCommand {
 	 *     $ wp bp activity get 56 --format=json
 	 */
 	public function get( $args, $assoc_args ) {
-		$activity_id = $args[0];
-
-		$activity = new \BP_Activity_Activity( $activity_id );
-
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
-		}
-
 		$activity = bp_activity_get_specific( array(
-			'activity_ids'     => $activity_id,
+			'activity_ids'     => $args[0],
 			'spam'             => null,
 			'display_comments' => true,
 		) );
@@ -408,8 +400,8 @@ class Activity extends BuddyPressCommand {
 			WP_CLI::error( 'Could not find the activity.' );
 		}
 
-		$activity_arr = get_object_vars( $activity );
-		$activity_arr['url'] = bp_activity_get_permalink( $activity_id );
+		$activity_arr        = get_object_vars( $activity );
+		$activity_arr['url'] = bp_activity_get_permalink( $activity->id );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $activity_arr );
@@ -440,22 +432,14 @@ class Activity extends BuddyPressCommand {
 	 * @alias remove
 	 */
 	public function delete( $args, $assoc_args ) {
-		$activity_id = $args[0];
-
 		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
 
-		parent::_delete( array( $activity_id ), $assoc_args, function( $activity_id ) {
-			$activity = new \BP_Activity_Activity( $activity_id );
+		parent::_delete( $args, $assoc_args, function( $activity_id ) {
+			$args = array(
+				'id' => $this->get_activity_id_from_identifier( $activity_id ),
+			);
 
-			if ( empty( $activity->id ) ) {
-				WP_CLI::error( 'No activity found by that ID.' );
-			}
-
-			$retval = bp_activity_delete( array(
-				'id' => $activity_id,
-			) );
-
-			if ( $retval ) {
+			if ( bp_activity_delete( $args ) ) {
 				return array( 'success', 'Activity deleted.' );
 			} else {
 				return array( 'error', 'Could not delete the activity.' );
@@ -481,12 +465,8 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * @alias unham
 	 */
-	public function spam( $args, $assoc_args ) {
-		$activity = new \BP_Activity_Activity( $args[0] );
-
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
-		}
+	public function spam( $args ) {
+		$activity = $this->get_activity_id_from_identifier( $args[0], true );
 
 		// Mark as spam.
 		bp_activity_mark_as_spam( $activity );
@@ -516,12 +496,8 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * @alias unspam
 	 */
-	public function ham( $args, $assoc_args ) {
-		$activity = new \BP_Activity_Activity( $args[0] );
-
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
-		}
+	public function ham( $args ) {
+		$activity = $this->get_activity_id_from_identifier( $args[0], true );
 
 		// Mark as ham.
 		bp_activity_mark_as_ham( $activity );
@@ -607,12 +583,7 @@ class Activity extends BuddyPressCommand {
 	 *     Success: Successfully added a new activity comment (ID #494)
 	 */
 	public function comment( $args, $assoc_args ) {
-		$activity = new \BP_Activity_Activity( $args[0] );
-
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
-		}
-
+		$activity_id       = $this->get_activity_id_from_identifier( $args[0] );
 		$user              = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$skip_notification = WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
@@ -620,7 +591,7 @@ class Activity extends BuddyPressCommand {
 		$id = bp_activity_new_comment( array(
 			'content'           => $assoc_args['content'],
 			'user_id'           => $user->ID,
-			'activity_id'       => $activity->id,
+			'activity_id'       => $activity_id,
 			'skip_notification' => $skip_notification,
 		) );
 
@@ -661,12 +632,7 @@ class Activity extends BuddyPressCommand {
 	 * @alias remove_comment
 	 */
 	public function delete_comment( $args, $assoc_args ) {
-		$activity_id = $args[0];
-		$activity    = new \BP_Activity_Activity( $activity_id );
-
-		if ( empty( $activity->id ) ) {
-			WP_CLI::error( 'No activity found by that ID.' );
-		}
+		$activity_id = $this->get_activity_id_from_identifier( $args[0] );
 
 		WP_CLI::confirm( 'Are you sure you want to delete this activity comment?', $assoc_args );
 
