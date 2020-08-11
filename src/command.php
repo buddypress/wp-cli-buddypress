@@ -14,6 +14,8 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 	/**
 	 * Default dependency check for a BuddyPress CLI command.
+	 *
+	 * @since 2.0
 	 */
 	public static function check_dependencies() {
 		if ( ! class_exists( 'Buddypress' ) ) {
@@ -23,6 +25,8 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 	/**
 	 * Get Formatter object based on supplied parameters.
+	 *
+	 * @since 2.0
 	 *
 	 * @param array $assoc_args Parameters passed to command. Determines formatting.
 	 * @return \WP_CLI\Formatter
@@ -45,6 +49,8 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 	/**
 	 * Get an activity ID.
+	 *
+	 * @since 2.0
 	 *
 	 * @param int  $activity_id Activity ID.
 	 * @param bool $object      Return activity object.

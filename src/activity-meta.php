@@ -24,6 +24,8 @@ use WP_CLI\CommandWithMeta;
  *     # Delete activity meta
  *     $ wp bp activity meta delete 123 description
  *     Success: Deleted custom field.
+ *
+ * @since 2.0.0
  */
 class Activity_Meta extends CommandWithMeta {
 	protected $meta_type = 'activity';

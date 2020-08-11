@@ -94,6 +94,8 @@ class Tool extends BuddyPressCommand {
 	 *
 	 *     $ wp bp tool signup 0
 	 *     Success: Signup tool updated.
+	 *
+	 * @since 2.0.0
 	 */
 	public function signup( $args ) {
 		bp_update_option( 'users_can_register', $args[0] );

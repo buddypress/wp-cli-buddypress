@@ -6,6 +6,8 @@ use WP_CLI\Fetchers\Base;
 
 /**
  * Fetch a BuddyPress activity based on one of its attributes.
+ *
+ * @since 2.0.0
  */
 class Activity_Fetcher extends Base {
 
@@ -17,11 +19,11 @@ class Activity_Fetcher extends Base {
 	/**
 	 * Get an activity ID.
 	 *
-	 * @param int $arg Activity ID.
+	 * @param int $activity_id Activity ID.
 	 * @return BP_Activity_Activity|bool
 	 */
-	public function get( $arg ) {
-		$activity = new \BP_Activity_Activity( $arg );
+	public function get( $activity_id ) {
+		$activity = new \BP_Activity_Activity( $activity_id );
 
 		if ( empty( $activity->id ) ) {
 			return false;

@@ -2,6 +2,7 @@
 
 ### 2.0.0
 
+* Abstracted activity ID fetching to the `Activity_Fetcher` helper class
 * The package was upgraded to follow WP-CLI best practices in code organization and structure
 * The `before_invoke` callable was abstracted into their component class
 * We made sure all Behat tests were passing correctly
@@ -18,7 +19,8 @@
 * Updated or removed the `default` values from several commands (most of them were wrong)
 * New commands:
 	* `wp bp group meta` - Used to manage Group Meta (custom fields).
-	* `wp bp tool signup 0` - Used to (de)activate the Signup feature.
+	* `wp bp activity meta` - Used to manage Activity Meta (custom fields).
+	* `wp bp tool signup false` - Used to (de)activate the Signup feature.
 
 ### 1.8.0
 

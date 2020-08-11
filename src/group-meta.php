@@ -24,6 +24,8 @@ use WP_CLI\CommandWithMeta;
  *     # Delete group meta
  *     $ wp bp group meta delete 123 description
  *     Success: Deleted custom field.
+ *
+ * @since 2.0.0
  */
 class Group_Meta extends CommandWithMeta {
 	protected $meta_type = 'group';
