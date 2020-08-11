@@ -14,6 +14,8 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 	/**
 	 * Default dependency check for a BuddyPress CLI command.
+	 *
+	 * @since 2.0
 	 */
 	public static function check_dependencies() {
 		if ( ! class_exists( 'Buddypress' ) ) {
@@ -23,6 +25,8 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 	/**
 	 * Get Formatter object based on supplied parameters.
+	 *
+	 * @since 2.0
 	 *
 	 * @param array $assoc_args Parameters passed to command. Determines formatting.
 	 * @return \WP_CLI\Formatter
@@ -41,6 +45,26 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	protected function get_random_user_id() {
 		global $wpdb;
 		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	}
+
+	/**
+	 * Get an activity ID.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int  $activity_id Activity ID.
+	 * @param bool $object      Return activity object.
+	 * @return int|BP_Activity_Activity
+	 */
+	protected function get_activity_id_from_identifier( $activity_id, $object = false ) {
+		$fetcher  = new Activity_Fetcher();
+		$activity = $fetcher->get_check( $activity_id );
+
+		if ( true === $object ) {
+			return $activity;
+		}
+
+		return $activity->id;
 	}
 
 	/**
