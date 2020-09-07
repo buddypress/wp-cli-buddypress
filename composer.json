@@ -9,7 +9,8 @@
     "buddypress",
     "community",
     "wordpress",
-    "bp"
+    "bp",
+    "wp"
   ],
   "authors": [
     {
@@ -60,24 +61,26 @@
   "extra": {
     "bundled": true,
     "commands": [
-      "bp",
-      "bp activity",
-      "bp activity favorite",
-      "bp group",
-      "bp group meta",
-      "bp group member",
-      "bp group invite",
-      "bp message",
-      "bp email",
-      "bp component",
-      "bp member",
-      "bp notification",
-      "bp tool",
-      "bp signup",
-      "bp xprofile",
-      "bp xprofile field",
-      "bp xprofile group",
-      "bp xprofile data"
+      "wp bp",
+      "wp bp activity",
+      "wp bp activity meta",
+      "wp bp activity favorite",
+      "wp bp group",
+      "wp bp group meta",
+      "wp bp group member",
+      "wp bp group invite",
+      "wp bp message",
+      "wp bp email",
+      "wp bp component",
+      "wp bp member",
+      "wp bp notification",
+      "wp bp tool",
+      "wp bp signup",
+      "wp bp xprofile",
+      "wp bp xprofile field",
+      "wp bp xprofile group",
+      "wp bp xprofile data",
+      "wp bp scaffold"
     ]
   }
 }

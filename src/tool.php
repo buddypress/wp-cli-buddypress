@@ -12,6 +12,9 @@ use WP_CLI;
  *     $ wp bp tool repair friend-count
  *     Success: Counting the number of friends for each user. Complete!
  *
+ *     $ wp bp tool version
+ *     BuddyPress: 6.0.0
+ *
  * @since 1.5.0
  */
 class Tool extends BuddyPressCommand {
@@ -41,7 +44,7 @@ class Tool extends BuddyPressCommand {
 	 *   - last-activity
 	 * ---
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *     $ wp bp tool repair friend-count
 	 *     Success: Counting the number of friends for each user. Complete!
@@ -94,8 +97,6 @@ class Tool extends BuddyPressCommand {
 	 *
 	 *     $ wp bp tool signup 0
 	 *     Success: Signup tool updated.
-	 *
-	 * @since 2.0.0
 	 */
 	public function signup( $args ) {
 		bp_update_option( 'users_can_register', $args[0] );

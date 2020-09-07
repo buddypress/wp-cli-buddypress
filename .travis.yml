@@ -1,51 +1,42 @@
-os: linux
+# Travis CI (MIT License) configuration file for the BP-REST
+# @link https://travis-ci.org/
+
+# Setting dist.
 dist: xenial
 
-language: php
-php: 7.4
+# Setting OS.
+os: linux
 
+# Declare project language.
+# @link http://about.travis-ci.org/docs/user/languages/php/
+language: php
+
+# Setting services.
 services:
   - mysql
-
-notifications:
-  email:
-    on_success: never
-    on_failure: change
 
 branches:
   only:
     - master
+    - main
 
 cache:
   directories:
+    - vendor
     - $HOME/.composer/cache
+
+# Git clone depth.
+git:
+  depth: 1
+  quiet: true
 
 env:
   global:
     - PATH="$TRAVIS_BUILD_DIR/vendor/bin:$PATH"
     - WP_CLI_BIN_DIR="$TRAVIS_BUILD_DIR/vendor/bin"
 
-before_install:
-  - |
-    # Remove Xdebug for a huge performance increase:
-    if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
-      phpenv config-rm xdebug.ini
-    else
-      echo "xdebug.ini does not exist"
-    fi
-  - |
-    # Raise PHP memory limit to 2048MB
-    echo 'memory_limit = 2048M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  - composer validate
-
-install:
-  - composer install
-  - composer prepare-tests
-
-script:
-  - composer behat || composer behat-rerun
-
 jobs:
+  fast_finish: true
   include:
     - stage: sniff
       script:
@@ -70,3 +61,28 @@ jobs:
     - stage: test
       php: 5.6
       env: WP_VERSION=latest
+
+before_install:
+  - |
+    # Turn off Xdebug. See https://core.trac.wordpress.org/changeset/40138.
+    phpenv config-rm xdebug.ini || echo "Xdebug not available"
+
+  - |
+    # Raise PHP memory limit to 2048MB
+    echo 'memory_limit = 2048M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
+  - |
+    # Validate composer
+    composer validate
+
+install:
+  - composer install
+  - composer prepare-tests
+
+script:
+  - composer behat || composer behat-rerun
+
+# Receive notifications for build results.
+# @link http://docs.travis-ci.com/user/notifications/#Email-notifications
+notifications:
+  email: false

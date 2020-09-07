@@ -18,8 +18,16 @@
 	<rule ref="WP_CLI_CS"/>
 
 	<!-- For help understanding the `testVersion` configuration setting:
-		 https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
+		https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
 	<config name="testVersion" value="5.6-"/>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>*/src/templates/bootstrap-buddypress.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound">
+		<exclude-pattern>*/src/templates/bootstrap-buddypress.php</exclude-pattern>
+	</rule>
 
 	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
 		<severity>0</severity>
