@@ -68,7 +68,7 @@ class XProfile_Field extends BuddyPressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --type=<type>
+	 * [--type=<type>]
 	 * : Field type.
 	 * ---
 	 * default: textbox
@@ -88,7 +88,7 @@ class XProfile_Field extends BuddyPressCommand {
 	 *     $ wp bp xprofile field create --type=checkbox --field-group-id=508 --name="Field Name"
 	 *     Success: Created XProfile field "Field Name" (ID 24564).
 	 *
-	 *     $ wp bp xprofile field add --type=checkbox --field-group-id=165 --name="Another Field"
+	 *     $ wp bp xprofile field add --field-group-id=165 --name="Another Field"
 	 *     Success: Created XProfile field "Another Field" (ID 5465).
 	 *
 	 * @alias add

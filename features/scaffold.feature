@@ -21,6 +21,9 @@ Feature: Scaffold BuddyPress tests
     And the {PLUGIN_DIR}/hello-world/tests directory should contain:
       """
       bootstrap.php
+      """
+    And the {PLUGIN_DIR}/hello-world/tests directory should contain:
+      """
       bootstrap-buddypress.php
       """
     And the {PLUGIN_DIR}/hello-world/tests/bootstrap-buddypress.php file should contain:

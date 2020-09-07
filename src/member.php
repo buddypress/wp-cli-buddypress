@@ -2,8 +2,6 @@
 
 namespace Buddypress\CLI\Command;
 
-use WP_CLI;
-
 /**
  * Manage BuddyPress Members
  *
@@ -15,15 +13,6 @@ use WP_CLI;
  * @since 1.0.0
  */
 class Member extends BuddyPressCommand {
-
-	/**
-	 * Default dependency check for a BuddyPress CLI command.
-	 */
-	public static function check_dependencies() {
-		if ( ! class_exists( 'Buddypress' ) ) {
-			WP_CLI::error( 'The BuddyPress plugin is not active.' );
-		}
-	}
 
 	/**
 	 * Generate BuddyPress members. See documentation for `wp_user_generate`.
