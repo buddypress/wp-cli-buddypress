@@ -2,11 +2,13 @@
 
 ### 2.0.0
 
+* Abstracted activity ID fetching to the `Activity_Fetcher` helper class
 * The package was upgraded to follow WP-CLI best practices in code organization and structure
 * The `before_invoke` callable was abstracted into their component class
 * We made sure all Behat tests were passing correctly
 * We fixed several minor bugs in several commands
 * We are making the use of `wp-cli/wp-cli-tests` for all tests (phpcs, behat, etc).
+* Improved .travis.yml config
 * Removed PHP 5.4 support from Travis
 * Support to PHP 5.6+ added
 * Improved the readme documentation
@@ -18,7 +20,9 @@
 * Updated or removed the `default` values from several commands (most of them were wrong)
 * New commands:
 	* `wp bp group meta` - Used to manage Group Meta (custom fields).
-	* `wp bp tool signup 0` - Used to (de)activate the Signup feature.
+	* `wp bp activity meta` - Used to manage Activity Meta (custom fields).
+	* `wp bp tool signup` - Used to (de)activate the Signup feature.
+	* `wp bp scaffold tests` - Used to scaffold BuddyPress specific testing code for plugins.
 
 ### 1.8.0
 

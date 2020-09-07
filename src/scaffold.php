@@ -6,13 +6,13 @@ use WP_CLI;
 use Scaffold_Command;
 
 /**
- * Generates BuddyPress plugin tests.
+ * Scaffold BuddyPress unit tests.
  *
  * ## EXAMPLE
  *
- *     # Generate a new BuddyPress plugin with unit tests.
- *     $ wp bp scaffold plugin sample-plugin
- *     Success: Created test files.
+ *     # Scaffold BuddyPress specific tests.
+ *     $ wp bp scaffold tests sample-plugin
+ *     Success: Created BuddyPress test files.
  *
  * @since 2.0
  */
@@ -35,18 +35,22 @@ class Scaffold extends Scaffold_Command {
 	 * <slug>
 	 * : The slug of the BuddyPress plugin.
 	 *
-	 * ## EXAMPLE
+	 * [--force]
+	 * : Whether to overwrite files.
 	 *
-	 *     $ wp bp scaffold plugin sample-test
-	 *     Success: Created test files.
+	 * ## EXAMPLES
 	 *
-	 * @subcommand plugin-tests
+	 *     $ wp bp scaffold tests sample-test
+	 *     Success: Created BuddyPress test files.
+	 *
+	 *     $ wp bp scaffold tests another-ssample-test
+	 *     Success: Created BuddyPress test files.
+	 *
+	 * @subcommand tests
 	 */
 	public function plugin( $args, $assoc_args ) {
 		$wp_filesystem = $this->init_wp_filesystem();
-
-		$slug       = $args[0];
-		$target_dir = WP_PLUGIN_DIR . "/{$slug}";
+		$target_dir    = WP_PLUGIN_DIR . "/{$args[0]}";
 
 		if ( ! is_dir( $target_dir ) ) {
 			WP_CLI::error( "Invalid plugin slug specified. No such target directory '{$target_dir}'." );
@@ -63,11 +67,14 @@ class Scaffold extends Scaffold_Command {
 		);
 
 		foreach ( $to_copy as $file => $dir ) {
-			$file_name         = "$dir/$file";
-			$force             = WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
-			$should_write_file = $this->prompt_if_files_will_be_overwritten( $file_name, $force );
+			$file_name = "$dir/$file";
 
-			if ( ! $should_write_file ) {
+			$prompt = WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+
+			// Prompt it.
+			$should_write_file = $this->prompt_if_files_will_be_overwritten( $file_name, $prompt );
+
+			if ( false === $should_write_file ) {
 				continue;
 			}
 
@@ -108,6 +115,12 @@ class Scaffold extends Scaffold_Command {
 		return null;
 	}
 
+	/**
+	 * Fix path.
+	 *
+	 * @param string $path Path.
+	 * @return string
+	 */
 	public static function canonicalize_path( $path ) {
 		if ( '' === $path || '/' === $path ) {
 			return $path;
@@ -135,7 +148,7 @@ class Scaffold extends Scaffold_Command {
 	 */
 	public static function get_template_path( $template ) {
 		$command_root  = WP_CLI\Utils\phar_safe_path( dirname( __DIR__ ) );
-		$template_path = "{$command_root}/templates/{$template}";
+		$template_path = "{$command_root}/src/templates/{$template}";
 
 		if ( ! file_exists( $template_path ) ) {
 			WP_CLI::error( "Couldn't find {$template}" );

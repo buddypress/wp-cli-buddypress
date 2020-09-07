@@ -9,10 +9,17 @@ Quick links: [Installing](#installing) | [Support](#support)
 
 ## Installing
 
-The `wp-bli-buddypress` comes installed by default with BuddyPress. To install this package or the latest version of this package, run:
+The `wp-cli-buddypress` comes installed by default with BuddyPress. So if you need to use the latest version, run:
 
-    wp package install buddypress
-	wp package install git@github.com:buddypress/wp-cli-buddypress.git
+~~~
+wp package install git@github.com:buddypress/wp-cli-buddypress.git
+~~~
+
+In many cases the default memory limit will not be enough to run composer so running the following instead is generally recommended:
+
+~~~
+php -d memory_limit=512M "$(which wp)" package install git@github.com:buddypress/wp-cli-buddypress.git
+~~~
 
 ## Using
 

@@ -8,13 +8,22 @@ Feature: Scaffold BuddyPress tests
       """
 
   Scenario: Scaffold plugin tests
-    When I run `wp bp scaffold plugin-tests hello-world`
+    When I run `wp plugin path`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I run `wp scaffold plugin hello-world`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/hello-world/hello-world.php file should exist
+    And the {PLUGIN_DIR}/hello-world/tests directory should exist
+
+    When I run `wp bp scaffold tests hello-world`
     Then STDOUT should not be empty
     And the {PLUGIN_DIR}/hello-world/tests directory should contain:
       """
       bootstrap.php
+      bootstrap-buddypress.php
       """
-    And the {PLUGIN_DIR}/hello-world/tests/bootstrap.php file should contain:
+    And the {PLUGIN_DIR}/hello-world/tests/bootstrap-buddypress.php file should contain:
       """
       require_once getenv( 'BP_TESTS_DIR' ) . '/includes/loader.php';
       """

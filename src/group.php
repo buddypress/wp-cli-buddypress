@@ -276,7 +276,7 @@ class Group extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * <group-id>...
-	 * : Identifier(s) for the group(s). Can be a numeric ID or the group slug.
+	 * : ID or IDs of group(s) to delete. Can be a numeric ID or the group slug.
 	 *
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
@@ -293,7 +293,7 @@ class Group extends BuddyPressCommand {
 		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
 
 		parent::_delete( $args, $assoc_args, function( $group_id ) {
-			if ( groups_delete_group( (int) $group_id ) ) {
+			if ( groups_delete_group( $group_id ) ) {
 				return array( 'success', 'Group successfully deleted.' );
 			} else {
 				return array( 'error', 'Could not delete the group.' );
