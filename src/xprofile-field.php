@@ -199,9 +199,9 @@ class XProfile_Field extends BuddyPressCommand {
 		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
 		parent::_delete( $args, $assoc_args, function( $field_id ) use ( $delete_data ) {
-			$field   = new \BP_XProfile_Field( $field_id );
-			$name    = $field->name;
-			$id      = $field->id;
+			$field = new \BP_XProfile_Field( $field_id );
+			$name  = $field->name;
+			$id    = $field->id;
 
 			if ( $field->delete( $delete_data ) ) {
 				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );

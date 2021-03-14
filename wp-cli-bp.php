@@ -12,33 +12,33 @@ use WP_CLI;
 WP_CLI::add_hook(
 	'before_wp_load',
 	function() {
-		require_once( __DIR__ . '/src/command.php' );
-		require_once( __DIR__ . '/src/buddypress.php' );
-		require_once( __DIR__ . '/src/signup.php' );
-		require_once( __DIR__ . '/src/activity-fetcher.php' );
-		require_once( __DIR__ . '/src/activity.php' );
-		require_once( __DIR__ . '/src/activity-favorite.php' );
-		require_once( __DIR__ . '/src/activity-meta.php' );
-		require_once( __DIR__ . '/src/components.php' );
-		require_once( __DIR__ . '/src/tool.php' );
-		require_once( __DIR__ . '/src/notification.php' );
-		require_once( __DIR__ . '/src/email.php' );
-		require_once( __DIR__ . '/src/member.php' );
-		require_once( __DIR__ . '/src/friends.php' );
-		require_once( __DIR__ . '/src/messages.php' );
-		require_once( __DIR__ . '/src/xprofile.php' );
-		require_once( __DIR__ . '/src/xprofile-group.php' );
-		require_once( __DIR__ . '/src/xprofile-field.php' );
-		require_once( __DIR__ . '/src/xprofile-data.php' );
-		require_once( __DIR__ . '/src/group-fetcher.php' );
-		require_once( __DIR__ . '/src/group.php' );
-		require_once( __DIR__ . '/src/group-member.php' );
-		require_once( __DIR__ . '/src/group-invite.php' );
-		require_once( __DIR__ . '/src/group-meta.php' );
+		require_once __DIR__ . '/src/command.php';
+		require_once __DIR__ . '/src/buddypress.php';
+		require_once __DIR__ . '/src/signup.php';
+		require_once __DIR__ . '/src/activity-fetcher.php';
+		require_once __DIR__ . '/src/activity.php';
+		require_once __DIR__ . '/src/activity-favorite.php';
+		require_once __DIR__ . '/src/activity-meta.php';
+		require_once __DIR__ . '/src/components.php';
+		require_once __DIR__ . '/src/tool.php';
+		require_once __DIR__ . '/src/notification.php';
+		require_once __DIR__ . '/src/email.php';
+		require_once __DIR__ . '/src/member.php';
+		require_once __DIR__ . '/src/friends.php';
+		require_once __DIR__ . '/src/messages.php';
+		require_once __DIR__ . '/src/xprofile.php';
+		require_once __DIR__ . '/src/xprofile-group.php';
+		require_once __DIR__ . '/src/xprofile-field.php';
+		require_once __DIR__ . '/src/xprofile-data.php';
+		require_once __DIR__ . '/src/group-fetcher.php';
+		require_once __DIR__ . '/src/group.php';
+		require_once __DIR__ . '/src/group-member.php';
+		require_once __DIR__ . '/src/group-invite.php';
+		require_once __DIR__ . '/src/group-meta.php';
 
 		// Load only if the Scaffold package is present.
 		if ( class_exists( 'Scaffold_Command' ) ) {
-			require_once( __DIR__ . '/src/scaffold.php' );
+			require_once __DIR__ . '/src/scaffold.php';
 
 			WP_CLI::add_command(
 				'bp scaffold',
