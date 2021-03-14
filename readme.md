@@ -36,10 +36,6 @@ wp bp
 
 Manage BuddyPress Activities.
 
-```bash
-wp bp activity
-```
-
 #### **EXAMPLES**
 
 ```bash
@@ -55,10 +51,6 @@ Success: Successfully created new activity item (ID #48949)
 ### wp bp group
 
 Manage BuddyPress Groups.
-
-```bash
-wp bp group
-```
 
 #### **EXAMPLES**
 
@@ -76,10 +68,6 @@ Success: Group successfully deleted.
 
 Manage BuddyPress Messages.
 
-```bash
-wp bp messages
-```
-
 #### **EXAMPLES**
 
 ```bash
@@ -92,13 +80,9 @@ $ wp bp message delete-thread 456456 --user-id=user_logon --yes
 Success: Thread successfully deleted.
 ```
 
-### wp bp notification
+### wp bp xprofile
 
 Manage BuddyPress XProfile.
-
-```bash
-wp bp xprofile
-```
 
 #### **EXAMPLES**
 
@@ -119,10 +103,6 @@ Success: Updated XProfile field "Field Name" (ID 120) with value  "teste" for us
 
 Manage BuddyPress Notifications.
 
-```bash
-wp bp notification
-```
-
 #### **EXAMPLES**
 
 ```bash
@@ -138,10 +118,6 @@ Success: Notification deleted.
 ### wp bp email
 
 Manage BuddyPress Emails
-
-```bash
-wp bp email
-```
 
 #### **EXAMPLES**
 
@@ -159,10 +135,6 @@ Success: Email post created for type "new-event".
 
 Manage BuddyPress Members.
 
-```bash
-wp bp member
-```
-
 #### **EXAMPLES**
 
 ```bash
@@ -173,10 +145,6 @@ $ wp bp member generate
 ### wp bp signup
 
 Manage BuddyPress Signups
-
-```bash
-wp bp signup
-```
 
 #### **EXAMPLES**
 
@@ -193,10 +161,6 @@ Success: Signup activated, new user (ID #545).
 ### wp bp tool
 
 Manage BuddyPress repairs tools.
-
-```bash
-wp bp tool
-```
 
 #### **EXAMPLES**
 
