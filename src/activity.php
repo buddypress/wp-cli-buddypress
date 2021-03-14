@@ -692,7 +692,7 @@ class Activity extends BuddyPressCommand {
 					}
 
 					// stolen from groups_join_group.
-					$r['action']  = sprintf( '%1$s posted an update in the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
+					$r['action'] = sprintf( '%1$s posted an update in the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
 				} else {
 					// old way, for some other kind of update.
 					$r['action'] = sprintf( '%s posted an update', bp_core_get_userlink( $r['user-id'] ) );
@@ -752,7 +752,7 @@ class Activity extends BuddyPressCommand {
 					$comment      = get_comment( $comment_id );
 
 					$post_id = $comment_info[0]->comment_post_id;
-					$post = get_post( $post_id );
+					$post    = get_post( $post_id );
 
 					if ( is_multisite() ) {
 						restore_current_blog();
@@ -799,7 +799,7 @@ class Activity extends BuddyPressCommand {
 				} else {
 					// groan - have to fake this.
 					if ( '' === $r['user-id'] ) {
-						$user = get_user_by( 'email', $comment->comment_author_email );
+						$user         = get_user_by( 'email', $comment->comment_author_email );
 						$r['user-id'] = ( empty( $user ) )
 							? $this->get_random_user_id()
 							: $user->ID;

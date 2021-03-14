@@ -227,7 +227,7 @@ class Email extends BuddyPressCommand {
 	 * @param  string $title   Post title.
 	 * @return mixed
 	 */
-	protected function _edit( $content, $title ) {
+	protected function _edit( $content, $title ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$content = apply_filters( 'the_editor_content', $content );
 		$output  = \WP_CLI\Utils\launch_editor_for_input( $content, $title );
 

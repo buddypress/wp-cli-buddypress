@@ -4,3 +4,6 @@ node_modules/
 vendor/
 *.zip
 *.tar.gz
+
+# Cache files
+.phpcs/*.json

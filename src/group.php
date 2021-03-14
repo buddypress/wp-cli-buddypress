@@ -160,7 +160,7 @@ class Group extends BuddyPressCommand {
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::log( $group_id );
 		} else {
-			$group = groups_get_group( array(
+			$group     = groups_get_group( array(
 				'group_id' => $group_id,
 			) );
 			$permalink = bp_get_group_permalink( $group );
@@ -401,7 +401,7 @@ class Group extends BuddyPressCommand {
 		);
 
 		if ( isset( $assoc_args['user-id'] ) ) {
-			$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 			$query_args['user_id'] = $user->ID;
 		}
 
