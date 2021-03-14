@@ -5,7 +5,6 @@
 * Load the `bp scaffold` command only if the Scaffold package is present
 * Updated PHPCS ruleset and fixed phpcs rules
 * Fix changelog.md markdown bugs
-* Test against the PHP 8.0 version
 
 ## 2.0.0
 
