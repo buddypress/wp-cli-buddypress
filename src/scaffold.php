@@ -145,6 +145,8 @@ class Scaffold extends Scaffold_Command {
 
 	/**
 	 * Gets the template path based on installation type.
+	 *
+	 * @return string Template path.
 	 */
 	public static function get_template_path( $template ) {
 		$command_root  = WP_CLI\Utils\phar_safe_path( dirname( __DIR__ ) );

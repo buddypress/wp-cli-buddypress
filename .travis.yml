@@ -73,7 +73,7 @@ before_install:
 
   - |
     # Validate composer
-    composer validate
+    composer validate --strict
 
 install:
   - composer install

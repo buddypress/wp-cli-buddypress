@@ -35,7 +35,17 @@ WP_CLI::add_hook(
 		require_once( __DIR__ . '/src/group-member.php' );
 		require_once( __DIR__ . '/src/group-invite.php' );
 		require_once( __DIR__ . '/src/group-meta.php' );
-		require_once( __DIR__ . '/src/scaffold.php' );
+
+		// Load only if the Scaffold package is present.
+		if ( class_exists( 'Scaffold_Command' ) ) {
+			require_once( __DIR__ . '/src/scaffold.php' );
+
+			WP_CLI::add_command(
+				'bp scaffold',
+				__NAMESPACE__ . '\\Command\\Scaffold',
+				array( 'before_invoke' => __NAMESPACE__ . '\\Command\\Scaffold::check_dependencies' )
+			);
+		}
 
 		WP_CLI::add_command(
 			'bp',
@@ -155,12 +165,6 @@ WP_CLI::add_hook(
 			'bp xprofile data',
 			__NAMESPACE__ . '\\Command\\XProfile_Data',
 			array( 'before_invoke' => __NAMESPACE__ . '\\Command\\XProfile::check_dependencies' )
-		);
-
-		WP_CLI::add_command(
-			'bp scaffold',
-			__NAMESPACE__ . '\\Command\\Scaffold',
-			array( 'before_invoke' => __NAMESPACE__ . '\\Command\\Scaffold::check_dependencies' )
 		);
 	}
 );
