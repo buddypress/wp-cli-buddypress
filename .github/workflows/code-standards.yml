@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   tests:
-    name: PHPCS and Lint
+    name: PHPCS
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +40,7 @@ jobs:
         with:
           composer-options: "--ignore-platform-reqs"
 
-      - name: Run Lint
+      - name: Run Linter
         run: composer lint
 
       - name: Run PHPCS
