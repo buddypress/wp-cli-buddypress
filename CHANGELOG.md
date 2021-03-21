@@ -5,6 +5,11 @@
 * Load the `bp scaffold` command only if the Scaffold package is present
 * Updated PHPCS ruleset and fixed phpcs rules
 * Fix changelog.md markdown bugs
+* Moved from Travis to Github Actions for CI tests
+* CI tests against PHP 8.0 now
+* Upgraded the wp-cli/wp-cli-tests package to latest
+* Upgraded the wp-cli/wp-cli package to latest
+* Added a new behat.yml file for the test setup
 
 ## 2.0.0
 

@@ -2,8 +2,6 @@
 
 Manage BuddyPress through the command-line.
 
-[![Build Status](https://travis-ci.org/buddypress/wp-cli-buddypress.svg?branch=master)](https://travis-ci.org/buddypress/wp-cli-buddypress)
-
 Quick links: [Installing](#installing) | [Support](#support)
 
 ## Installing
@@ -36,8 +34,6 @@ wp bp
 
 Manage BuddyPress Activities.
 
-#### **EXAMPLES**
-
 ```bash
 # Create Activity
 $ wp bp activity create
@@ -51,8 +47,6 @@ Success: Successfully created new activity item (ID #48949)
 ### wp bp group
 
 Manage BuddyPress Groups.
-
-#### **EXAMPLES**
 
 ```bash
 # Create Group
@@ -68,8 +62,6 @@ Success: Group successfully deleted.
 
 Manage BuddyPress Messages.
 
-#### **EXAMPLES**
-
 ```bash
 # Create message
 wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
@@ -83,8 +75,6 @@ Success: Thread successfully deleted.
 ### wp bp xprofile
 
 Manage BuddyPress XProfile.
-
-#### **EXAMPLES**
 
 ```bash
 # Create a xprofile group.
@@ -103,8 +93,6 @@ Success: Updated XProfile field "Field Name" (ID 120) with value  "teste" for us
 
 Manage BuddyPress Notifications.
 
-#### **EXAMPLES**
-
 ```bash
 # Create notification item.
 $ wp bp notification create
@@ -118,8 +106,6 @@ Success: Notification deleted.
 ### wp bp email
 
 Manage BuddyPress Emails
-
-#### **EXAMPLES**
 
 ```bash
 # Create email
@@ -135,8 +121,6 @@ Success: Email post created for type "new-event".
 
 Manage BuddyPress Members.
 
-#### **EXAMPLES**
-
 ```bash
 # Generate BuddyPress members.
 $ wp bp member generate
@@ -145,8 +129,6 @@ $ wp bp member generate
 ### wp bp signup
 
 Manage BuddyPress Signups
-
-#### **EXAMPLES**
 
 ```bash
 # Create a signup
@@ -161,8 +143,6 @@ Success: Signup activated, new user (ID #545).
 ### wp bp tool
 
 Manage BuddyPress repairs tools.
-
-#### **EXAMPLES**
 
 ```bash
 # Repairing friend-count
