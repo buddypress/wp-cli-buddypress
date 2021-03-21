@@ -10,6 +10,13 @@
 * Upgraded the wp-cli/wp-cli-tests package to latest
 * Upgraded the wp-cli/wp-cli package to latest
 * Added a new behat.yml file for the test setup
+* wp bp component:
+  * properly listing active components.
+  * status string updated from uppercase to lowercase.
+  * we are checking the component status correctly.
+  * we improved the behat tests.
+  * we are decidubg the component description.
+  * we are escaping the component title.
 
 ## 2.0.0
 

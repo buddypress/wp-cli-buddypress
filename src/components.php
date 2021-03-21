@@ -186,19 +186,15 @@ class Components extends BuddyPressCommand {
 		$type = $assoc_args['type'];
 
 		// Get components.
-		$components = bp_core_get_components( $type );
+		$components = (array) bp_core_get_components( $type );
 
 		// Active components.
-		$active_components = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components' ) );
+		$active_components = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components', array() ) );
 
 		// Core component is always active.
-		if ( 'optional' !== $type ) {
+		if ( 'optional' !== $type && isset( $components['core'] ) ) {
 			if ( ! isset( $active_components['core'] ) ) {
-				$active_components = [
-					'core' => $components['core'],
-				];
-			} else {
-				$active_components['core'] = $components['core'];
+				$active_components = array_merge( $active_components, [ 'core' => $components['core'] ] );
 			}
 		}
 
@@ -209,48 +205,42 @@ class Components extends BuddyPressCommand {
 		switch ( $assoc_args['status'] ) {
 			case 'all':
 				$index = 0;
-				foreach ( $components as $name => $labels ) {
+				foreach ( $components as $component_key => $component ) {
 					$index++;
 					$current_components[] = array(
 						'number'      => $index,
-						'id'          => $name,
-						'status'      => $this->verify_component_status( $name ),
-						'title'       => $labels['title'],
-						'description' => $labels['description'],
+						'id'          => $component_key,
+						'status'      => $this->verify_component_status( $component_key ),
+						'title'       => esc_html( $component['title'] ),
+						'description' => html_entity_decode( $component['description'] ),
 					);
 				}
 				break;
 
 			case 'active':
 				$index = 0;
-				foreach ( array_keys( $active_components ) as $component ) {
+				foreach ( array_keys( $active_components ) as $component_key ) {
 					$index++;
-
-					$info = $components[ $component ];
-
 					$current_components[] = array(
 						'number'      => $index,
-						'id'          => $component,
-						'status'      => 'Active',
-						'title'       => $info['title'],
-						'description' => $info['description'],
+						'id'          => $component_key,
+						'status'      => $this->verify_component_status( $component_key ),
+						'title'       => esc_html( $components[ $component_key ]['title'] ),
+						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
 					);
 				}
 				break;
 
 			case 'inactive':
 				$index = 0;
-				foreach ( $inactive_components as $component ) {
+				foreach ( $inactive_components as $component_key ) {
 					$index++;
-
-					$info = $components[ $component ];
-
 					$current_components[] = array(
 						'number'      => $index,
-						'id'          => $component,
-						'status'      => 'Inactive',
-						'title'       => $info['title'],
-						'description' => $info['description'],
+						'id'          => $component_key,
+						'status'      => $this->verify_component_status( $component_key ),
+						'title'       => esc_html( $components[ $component_key ]['title'] ),
+						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
 					);
 				}
 				break;
@@ -267,13 +257,15 @@ class Components extends BuddyPressCommand {
 	/**
 	 * Does the component exist?
 	 *
-	 * @param string $component Component.
+	 * @param string $component_key Component key.
 	 * @return bool
 	 */
-	protected function component_exists( $component ) {
-		$keys = array_keys( bp_core_get_components() );
-
-		return in_array( $component, $keys, true );
+	protected function component_exists( $component_key ) {
+		return in_array(
+			$component_key,
+			array_keys( bp_core_get_components() ),
+			true
+		);
 	}
 
 	/**
@@ -281,16 +273,16 @@ class Components extends BuddyPressCommand {
 	 *
 	 * @since 1.7.0
 	 *
-	 * @param string $id Component id.
+	 * @param string $component_key Component key.
 	 * @return string
 	 */
-	protected function verify_component_status( $id ) {
-		$active = 'Active';
+	protected function verify_component_status( $component_key ) {
+		$active = 'active';
 
-		if ( 'core' === $id ) {
+		if ( 'core' === $component_key ) {
 			return $active;
 		}
 
-		return bp_is_active( $id ) ? $active : 'Inactive';
+		return bp_is_active( $component_key ) ? $active : 'inactive';
 	}
 }
