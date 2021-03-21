@@ -1,0 +1,81 @@
+name: Testing
+
+on: pull_request
+
+jobs:
+  tests:
+    name: "WP: ${{ matrix.wp }} - PHP: ${{ matrix.php }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+        wp: ['latest']
+        mysql: ['8.0']
+
+    env:
+      WP_VERSION: ${{ matrix.wp }}
+
+    services:
+      mysql:
+        image: mysql:${{ matrix.mysql }}
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=wp_cli_test --entrypoint sh mysql:${{ matrix.mysql }} -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+
+    steps:
+      - name: Cancel previous runs of this workflow (pull requests only)
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: styfle/cancel-workflow-action@0.5.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Check out source code
+        uses: actions/checkout@v2
+
+      - name: Check Gitignored files
+        run: if [[ ! -z $(git ls-files -i --exclude-standard) ]]; then exit 1; fi
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysql, zip
+          coverage: none
+          tools: composer
+
+      - name: Log information
+        run: |
+          echo "$GITHUB_REF"
+          echo "$GITHUB_EVENT_NAME"
+          git --version
+          php --version
+          composer --version
+          mysql --version
+
+      - name: Validate Composer
+        run: composer validate --strict
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: "--ignore-platform-reqs"
+
+      - name: Start MySQL server
+        run: sudo systemctl start mysql
+
+      - name: Configure DB environment
+        run: |
+          export MYSQL_HOST=127.0.0.1
+          export MYSQL_TCP_PORT=${{ job.services.mysql.ports['3306'] }}
+          echo "WP_CLI_TEST_DBROOTUSER=root" >> $GITHUB_ENV
+          echo "WP_CLI_TEST_DBROOTPASS=root" >> $GITHUB_ENV
+          echo "WP_CLI_TEST_DBUSER=root" >> $GITHUB_ENV
+          echo "WP_CLI_TEST_DBPASS=root" >> $GITHUB_ENV
+          echo "WP_CLI_TEST_DBHOST=$MYSQL_HOST:$MYSQL_TCP_PORT" >> $GITHUB_ENV
+
+      - name: Prepare tests
+        run: composer prepare-tests
+
+      - name: Run Behat
+        run: composer behat || composer behat-rerun
