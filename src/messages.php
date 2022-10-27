@@ -102,7 +102,7 @@ class Messages extends BuddyPressCommand {
 		}
 
 		// Existing thread recipients will be assumed.
-		$recipient = ( ! empty( $r['thread-id'] ) ) ? array() : array( $recipient->ID );
+		$recipient = ! empty( $r['thread-id'] ) ? array() : array( $recipient->ID );
 
 		$thread_id = messages_new_message(
 			array(
@@ -312,6 +312,13 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## OPTIONS
 	 *
+	 * [--from=<user>]
+	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--to=<user>]
+	 * : Identifier for the recipient. To is not required when thread id is set.
+	 *  Accepts either a user_login or a numeric ID.
+	 *
 	 * [--thread-id=<thread-id>]
 	 * : Thread ID to generate messages against.
 	 * ---
@@ -326,6 +333,7 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     $ wp bp message generate --from=1 --to=2 --thread-id=6465 --count=30
 	 *     $ wp bp message generate --thread-id=6465 --count=10
 	 *     $ wp bp message generate --count=100
 	 */
@@ -336,10 +344,11 @@ class Messages extends BuddyPressCommand {
 			$this->create(
 				array(),
 				array(
-					'from'      => $this->get_random_user_id(),
-					'to'        => $this->get_random_user_id(),
+					'from'      => empty( $assoc_args['from'] ) ? $this->get_random_user_id() : $assoc_args['from'],
+					'to'        => empty( $assoc_args['to'] ) ? $this->get_random_user_id() : $assoc_args['to'],
 					'subject'   => sprintf( 'Message Subject - #%d', $i ),
-					'thread-id' => $assoc_args['thread-id'],
+					'content'   => $this->generate_random_text(),
+					'thread-id' => empty( $assoc_args['thread-id'] ) ? false : $assoc_args['thread-id'],
 					'silent',
 				)
 			);
