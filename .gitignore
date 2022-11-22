@@ -7,3 +7,4 @@ vendor/
 
 # Cache files
 .phpcs/*.json
+composer.lock

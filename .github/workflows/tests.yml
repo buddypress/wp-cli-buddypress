@@ -31,7 +31,7 @@ jobs:
           access_token: ${{ github.token }}
 
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Check Gitignored files
         run: if [[ ! -z $(git ls-files -i --exclude-standard) ]]; then exit 1; fi
@@ -44,20 +44,8 @@ jobs:
           coverage: none
           tools: composer
 
-      - name: Log information
-        run: |
-          echo "$GITHUB_REF"
-          echo "$GITHUB_EVENT_NAME"
-          git --version
-          php --version
-          composer --version
-          mysql --version
-
-      - name: Validate Composer
-        run: composer validate --strict
-
       - name: Install dependencies
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
         with:
           composer-options: "--ignore-platform-reqs"
 
