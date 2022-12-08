@@ -2,7 +2,7 @@
 
 Manage BuddyPress through the command-line.
 
-Quick links: [Installing](#installing) | [Support](#support)
+Quick links: [Installing](#installing) | [Using](#using) | [Support](#support)
 
 ## Installing
 
@@ -156,4 +156,4 @@ Success: Signup tool updated.
 
 ## Support
 
-Github issues aren't for general support questions, but there are other venues you can try: <https://buddypress.org/support>
+Github issues aren't for general support questions, there are other venues you can try: <https://buddypress.org/support>
