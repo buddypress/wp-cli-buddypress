@@ -9,9 +9,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1']
+        php: [7.4, 8.0, 8.1, 8.2]
         wp: ['latest']
-        mysql: ['8.0']
+        mysql: [8.0]
 
     env:
       WP_VERSION: ${{ matrix.wp }}
