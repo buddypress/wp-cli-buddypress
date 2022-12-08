@@ -47,6 +47,7 @@ jobs:
       - name: Install dependencies
         uses: ramsey/composer-install@v2
         with:
+          ignore-cache: "yes"
           composer-options: "--ignore-platform-reqs"
 
       - name: Start MySQL server
