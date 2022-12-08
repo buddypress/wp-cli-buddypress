@@ -2,7 +2,6 @@
 
 ## 2.0.2
 
-* Updated license from MIT to `GPL-2.0-or-later`
 * Github Actions: upgraded actions
 * Github Actions: decreased the number of legacy PHP versions to test against
 * Github Actions: Testing against the PHP 8.2 versions
