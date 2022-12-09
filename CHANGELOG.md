@@ -1,8 +1,17 @@
 # Changelog
 
+## 2.0.2
+
+* Github Actions: upgraded actions
+* Github Actions: decreased the number of legacy PHP versions to test against
+* Github Actions: Testing against the PHP 8.2 versions
+* Behat: fix a small bug
+* Updated `composer.json` packages
+* Removed hardcoded `composer.lock` file (let the PHP version decide which packages to install)
+
 ## 2.0.1
 
-* Load the `bp scaffold` command only if the Scaffold package is present
+* Load the `bp scaffold` command only if the composer Scaffold package is installed
 * Updated PHPCS ruleset and fixed phpcs rules
 * Fix changelog.md markdown bugs
 * Moved from Travis to Github Actions for CI tests

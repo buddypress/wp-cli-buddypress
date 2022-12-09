@@ -9,9 +9,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+        php: [7.4, 8.0, 8.1, 8.2]
         wp: ['latest']
-        mysql: ['8.0']
+        mysql: [8.0]
 
     env:
       WP_VERSION: ${{ matrix.wp }}
@@ -31,35 +31,27 @@ jobs:
           access_token: ${{ github.token }}
 
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Check Gitignored files
         run: if [[ ! -z $(git ls-files -i --exclude-standard) ]]; then exit 1; fi
+
+      - name: Check existence of composer.json & behat.yml files
+        id: check_files
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "composer.json, behat.yml"
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mysql, zip
+          extensions: gd, imagick, mysql, zip
           coverage: none
           tools: composer
 
-      - name: Log information
-        run: |
-          echo "$GITHUB_REF"
-          echo "$GITHUB_EVENT_NAME"
-          git --version
-          php --version
-          composer --version
-          mysql --version
-
-      - name: Validate Composer
-        run: composer validate --strict
-
-      - name: Install dependencies
-        uses: ramsey/composer-install@v1
-        with:
-          composer-options: "--ignore-platform-reqs"
+      - name: Install Composer dependencies & cache dependencies
+        uses: ramsey/composer-install@v2
 
       - name: Start MySQL server
         run: sudo systemctl start mysql
