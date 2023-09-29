@@ -226,7 +226,7 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * These fields will be displayed by default for each activity:
 	 *
-	 * * ID
+	 * * id
 	 * * user_id
 	 * * component
 	 * * type
