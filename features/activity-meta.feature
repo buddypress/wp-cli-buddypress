@@ -28,11 +28,11 @@ Feature: Manage BuddyPress Activity custom fields
       """
 
     When I try `wp bp activity meta get 999999 foo`
+    Then the return code should be 1
     Then STDERR should be:
       """
       Error: Could not find the activity with ID 999999.
       """
-    And the return code should be 1
 
     When I run `wp bp activity meta set {ACTIVITY_ID} foo '[ "1", "2" ]' --format=json`
     Then STDOUT should not be empty

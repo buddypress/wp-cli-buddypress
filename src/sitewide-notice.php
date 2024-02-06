@@ -84,17 +84,9 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args(
-			$assoc_args,
-			[
-				'subject' => '',
-				'message' => '',
-			]
-		);
-
 		$notice            = new BP_Messages_Notice();
-		$notice->subject   = $r['subject'];
-		$notice->message   = $r['message'];
+		$notice->subject   = $assoc_args['subject'];
+		$notice->message   = $assoc_args['message'];
 		$notice->date_sent = bp_core_current_time();
 		$notice->is_active = 1;
 		$retval            = $notice->save(); // Create it.
@@ -213,13 +205,71 @@ class Sitewide_Notice extends BuddyPressCommand {
 			function ( $notice_id ) {
 				$notice = new BP_Messages_Notice( $notice_id );
 
-				if ( $notice->delete() ) {
+				if ( ! empty( $notice->date_sent ) && $notice->delete() ) {
 					return [ 'success', sprintf( 'Sitewide notice deleted %d.', $notice_id ) ];
 				}
 
 				return [ 'error', sprintf( 'Could not delete sitewide notice %d.', $notice_id ) ];
 			}
 		);
+	}
+
+	/**
+	 * Activate a sitewide notice.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <notice-id>
+	 * : Identifier for the notice.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp notice activate 123
+	 *     Success: Sitewide notice activated.
+	 */
+	public function activate( $args ) {
+		$notice = new BP_Messages_Notice( $args[0] );
+
+		if ( ! $notice->date_sent ) {
+			WP_CLI::error( 'No sitewide notice found by that ID.' );
+		}
+
+		$notice->is_active = 1;
+
+		if ( ! $notice->save() ) {
+			WP_CLI::error( 'Could not activate sitewide notice.' );
+		}
+
+		WP_CLI::success( 'Sitewide notice activated.' );
+	}
+
+	/**
+	 * Deactivate a sitewide notice.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <notice-id>
+	 * : Identifier for the notice.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     $ wp bp notice deactivate 123
+	 *     Success: Sitewide notice has been deactivated.
+	 */
+	public function deactivate( $args ) {
+		$notice = new BP_Messages_Notice( $args[0] );
+
+		if ( ! $notice->date_sent ) {
+			WP_CLI::error( 'No sitewide notice found by that ID.' );
+		}
+
+		$notice->is_active = 0;
+
+		if ( ! $notice->save() ) {
+			WP_CLI::error( 'Could not deactivate sitewide notice.' );
+		}
+
+		WP_CLI::success( 'Sitewide notice has been deactivated.' );
 	}
 
 	/**

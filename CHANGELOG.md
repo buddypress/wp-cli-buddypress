@@ -16,6 +16,7 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Misc linting updates
 * Github Action: Testing against PHP 8.3
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
+* Activity: make tests more deterministic
 
 ## 2.0.2
 
