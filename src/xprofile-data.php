@@ -16,13 +16,13 @@ class XProfile_Data extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'field_id',
 		'user_id',
 		'value',
 		'last_updated',
-	);
+	];
 
 	/**
 	 * Set profile data for a user.
@@ -121,7 +121,7 @@ class XProfile_Data extends BuddyPressCommand {
 			WP_CLI::print_value( $data, $assoc_args );
 		} else {
 			$data           = \BP_XProfile_ProfileData::get_all_for_user( $user->ID );
-			$formatted_data = array();
+			$formatted_data = [];
 
 			foreach ( $data as $field_name => $field_data ) {
 				// Omit WP core fields.
@@ -129,19 +129,19 @@ class XProfile_Data extends BuddyPressCommand {
 					continue;
 				}
 
-				$formatted_data[] = array(
+				$formatted_data[] = [
 					'field_id'   => $field_data['field_id'],
 					'field_name' => $field_name,
 					'value'      => wp_json_encode( maybe_unserialize( $field_data['field_data'] ) ),
-				);
+				];
 			}
 
 			$format_args           = $assoc_args;
-			$format_args['fields'] = array(
+			$format_args['fields'] = [
 				'field_id',
 				'field_name',
 				'value',
-			);
+			];
 
 			$this->get_formatter( $format_args )->display_items( $formatted_data );
 		}

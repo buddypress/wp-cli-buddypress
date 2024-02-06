@@ -16,11 +16,11 @@ else
 fi
 
 # Create directory.
-mkdir -p $BP_DIR
+mkdir -p "$BP_DIR"
 
 # Install BuddyPress and test suite.
-if [ ! -d $BP_DIR/src ]; then
-  svn co --quiet $BP_SVN $BP_DIR
+if [ ! -d "$BP_DIR/src" ]; then
+  svn co --quiet "$BP_SVN" "$BP_DIR"
 fi
 
 # Edit WordPress testing files to load BuddyPress.

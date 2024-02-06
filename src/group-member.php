@@ -169,7 +169,7 @@ class Group_Member extends BuddyPressCommand {
 	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
 
-		$roles = array( 'members' );
+		$roles = [ 'members' ];
 		if ( isset( $assoc_args['role'] ) ) {
 			if ( is_string( $assoc_args['role'] ) ) {
 				$roles = explode( ',', $assoc_args['role'] );
@@ -180,11 +180,11 @@ class Group_Member extends BuddyPressCommand {
 
 		// Get our members.
 		$members_query = groups_get_group_members(
-			array(
+			[
 				'group_id'            => $group_id,
 				'exclude_admins_mods' => false,
 				'group_role'          => $roles,
-			)
+			]
 		);
 
 		$members = $members_query['members'];
@@ -206,13 +206,13 @@ class Group_Member extends BuddyPressCommand {
 		}
 
 		if ( empty( $assoc_args['fields'] ) ) {
-			$assoc_args['fields'] = array(
+			$assoc_args['fields'] = [
 				'user_id',
 				'user_login',
 				'fullname',
 				'date_modified',
 				'role',
-			);
+			];
 		}
 
 		$this->get_formatter( $assoc_args )->display_items( $members );

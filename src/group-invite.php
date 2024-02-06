@@ -64,13 +64,16 @@ class Group_Invite extends BuddyPressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args, array(
-			'user-id'       => false,
-			'group-id'      => false,
-			'inviter-id'    => false,
-			'message'       => '',
-			'date-modified' => bp_core_current_time(),
-		) );
+		$r = wp_parse_args(
+			$assoc_args,
+			[
+				'user-id'       => false,
+				'group-id'      => false,
+				'inviter-id'    => false,
+				'message'       => '',
+				'date-modified' => bp_core_current_time(),
+			]
+		);
 
 		if ( $r['user-id'] === $r['inviter-id'] ) {
 			return;
@@ -80,13 +83,13 @@ class Group_Invite extends BuddyPressCommand {
 		$user     = $this->get_user_id_from_identifier( $r['user-id'] );
 		$inviter  = $this->get_user_id_from_identifier( $r['inviter-id'] );
 
-		$invite = groups_invite_user( array(
+		$invite = groups_invite_user( [
 			'user_id'       => $user->ID,
 			'group_id'      => $group_id,
 			'inviter_id'    => $inviter->ID,
 			'date_modified' => $r['date-modified'],
 			'content'       => $r['message'],
-		) );
+		] );
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
@@ -166,16 +169,16 @@ class Group_Invite extends BuddyPressCommand {
 		$user_id  = $user->ID;
 
 		if ( $group_id ) {
-			$invite_query = new \BP_Group_Member_Query( array(
+			$invite_query = new \BP_Group_Member_Query( [
 				'is_confirmed' => false,
 				'group_id'     => $group_id,
-			) );
+			] );
 
 			$invites = $invite_query->results;
 
 			// Manually filter out user ID - this is not supported by the API.
 			if ( $user_id ) {
-				$user_invites = array();
+				$user_invites = [];
 
 				foreach ( $invites as $invite ) {
 					if ( $user_id === $invite->user_id ) {
@@ -191,7 +194,7 @@ class Group_Invite extends BuddyPressCommand {
 			}
 
 			if ( empty( $assoc_args['fields'] ) ) {
-				$fields = array();
+				$fields = [];
 
 				if ( ! $user_id ) {
 					$fields[] = 'user_id';
@@ -211,11 +214,11 @@ class Group_Invite extends BuddyPressCommand {
 			$invites      = $invite_query['groups'];
 
 			if ( empty( $assoc_args['fields'] ) ) {
-				$fields = array(
+				$fields = [
 					'id',
 					'name',
 					'slug',
-				);
+				];
 
 				$assoc_args['fields'] = $fields;
 			}
@@ -247,13 +250,13 @@ class Group_Invite extends BuddyPressCommand {
 
 			$random_group = \BP_Groups_Group::get_random( 1, 1 );
 			$this->create(
-				array(),
-				array(
+				[],
+				[
 					'user-id'    => $this->get_random_user_id(),
 					'group-id'   => $random_group['groups'][0]->slug,
 					'inviter-id' => $this->get_random_user_id(),
 					'silent',
-				)
+				]
 			);
 
 			$notify->tick();

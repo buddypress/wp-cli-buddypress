@@ -1,5 +1,17 @@
 # Changelog
 
+This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/).
+
+## Unreleased
+
+### Changed
+
+* Prefer short array syntax (This is different from WCS supports)
+* Composer: packages upgraded
+* Misc linting updates
+* Github Action: support for testing PHP 8.3
+* Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
+
 ## 2.0.2
 
 * Github Actions: upgraded actions

@@ -24,7 +24,7 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'user_id',
 		'component',
@@ -36,7 +36,7 @@ class Activity extends BuddyPressCommand {
 		'date_recorded',
 		'hide_sitewide',
 		'is_spam',
-	);
+	];
 
 	/**
 	 * Dependency check for this CLI command.
@@ -115,7 +115,7 @@ class Activity extends BuddyPressCommand {
 	 */
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args( $assoc_args,
-			array(
+			[
 				'component'         => '',
 				'type'              => '',
 				'action'            => '',
@@ -127,7 +127,7 @@ class Activity extends BuddyPressCommand {
 				'date-recorded'     => bp_core_current_time(),
 				'hide-sitewide'     => 0,
 				'is-spam'           => 0,
-			)
+			]
 		);
 
 		// Fill in any missing information.
@@ -149,7 +149,7 @@ class Activity extends BuddyPressCommand {
 		}
 
 		$id = bp_activity_add(
-			array(
+			[
 				'action'            => $r['action'],
 				'content'           => $r['content'],
 				'component'         => $r['component'],
@@ -161,7 +161,7 @@ class Activity extends BuddyPressCommand {
 				'date_recorded'     => $r['date-recorded'],
 				'hide_sitewide'     => (bool) $r['hide-sitewide'],
 				'is_spam'           => (bool) $r['is-spam'],
-			)
+			]
 		);
 
 		// Silent it before it errors.
@@ -259,13 +259,13 @@ class Activity extends BuddyPressCommand {
 
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'page'        => 1,
 				'count'       => 50,
 				'count_total' => false,
 				'show_hidden' => true,
 				'filter'      => false,
-			)
+			]
 		);
 
 		// Activities to list.
@@ -294,7 +294,7 @@ class Activity extends BuddyPressCommand {
 		$r = self::process_csv_arguments_to_arrays( $r );
 
 		// If count or ids, no need for activity objects.
-		if ( in_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
+		if ( in_array( $formatter->format, [ 'ids', 'count' ], true ) ) {
 			$r['fields'] = 'ids';
 		}
 
@@ -346,13 +346,13 @@ class Activity extends BuddyPressCommand {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create(
-				array(),
-				array(
+				[],
+				[
 					'component' => $component,
 					'type'      => $type,
 					'content'   => $this->generate_random_text(),
 					'silent',
-				)
+				]
 			);
 
 			$notify->tick();
@@ -388,11 +388,11 @@ class Activity extends BuddyPressCommand {
 	 *     $ wp bp activity get 56 --format=json
 	 */
 	public function get( $args, $assoc_args ) {
-		$activity = bp_activity_get_specific( array(
+		$activity = bp_activity_get_specific( [
 			'activity_ids'     => $args[0],
 			'spam'             => null,
 			'display_comments' => true,
-		) );
+		] );
 
 		$activity = $activity['activities'][0];
 
@@ -434,17 +434,21 @@ class Activity extends BuddyPressCommand {
 	public function delete( $args, $assoc_args ) {
 		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
 
-		parent::_delete( $args, $assoc_args, function( $activity_id ) {
-			$args = array(
-				'id' => $this->get_activity_id_from_identifier( $activity_id ),
-			);
+		parent::_delete(
+			$args,
+			$assoc_args,
+			function ( $activity_id ) {
+				$args = [
+					'id' => $this->get_activity_id_from_identifier( $activity_id ),
+				];
 
-			if ( bp_activity_delete( $args ) ) {
-				return array( 'success', 'Activity deleted.' );
-			} else {
-				return array( 'error', 'Could not delete the activity.' );
+				if ( bp_activity_delete( $args ) ) {
+					return [ 'success', 'Activity deleted.' ];
+				}
+
+				return [ 'error', 'Could not delete the activity.' ];
 			}
-		} );
+		);
 	}
 
 	/**
@@ -537,10 +541,10 @@ class Activity extends BuddyPressCommand {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		// Post the activity update.
-		$id = bp_activity_post_update( array(
+		$id = bp_activity_post_update( [
 			'content' => $assoc_args['content'],
 			'user_id' => $user->ID,
-		) );
+		] );
 
 		// Activity ID returned on success update.
 		if ( ! is_numeric( $id ) ) {
@@ -588,12 +592,12 @@ class Activity extends BuddyPressCommand {
 		$skip_notification = WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
 		// Add activity comment.
-		$id = bp_activity_new_comment( array(
+		$id = bp_activity_new_comment( [
 			'content'           => $assoc_args['content'],
 			'user_id'           => $user->ID,
 			'activity_id'       => $activity_id,
 			'skip_notification' => $skip_notification,
-		) );
+		] );
 
 		// Activity Comment ID returned on success.
 		if ( ! is_numeric( $id ) ) {
@@ -682,9 +686,9 @@ class Activity extends BuddyPressCommand {
 					}
 
 					// get the group.
-					$group_obj = groups_get_group( array(
+					$group_obj = groups_get_group( [
 						'group_id' => $r['item-id'],
-					) );
+					] );
 
 					// make sure such a group exists.
 					if ( empty( $group_obj->id ) ) {
@@ -692,7 +696,7 @@ class Activity extends BuddyPressCommand {
 					}
 
 					// stolen from groups_join_group.
-					$r['action'] = sprintf( '%1$s posted an update in the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
+					$r['action'] = sprintf( '%1$s posted an update in the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_url( $group_obj ) . '">' . esc_attr( $group_obj->name ) . '</a>' );
 				} else {
 					// old way, for some other kind of update.
 					$r['action'] = sprintf( '%s posted an update', bp_core_get_userlink( $r['user-id'] ) );
@@ -848,16 +852,16 @@ class Activity extends BuddyPressCommand {
 					$r['item-id'] = $random_group['groups'][0]->slug;
 				}
 
-				$group = groups_get_group( array(
+				$group = groups_get_group( [
 					'group_id' => $r['item-id'],
-				) );
+				] );
 
 				// @todo what if it's not a group? ugh
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $group->creator_id;
 				}
 
-				$group_permalink = bp_get_group_permalink( $group );
+				$group_permalink = bp_get_group_url( $group );
 
 				if ( empty( $r['action'] ) ) {
 					$r['action'] = sprintf( '%1$s created the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . $group_permalink . '">' . esc_attr( $group->name ) . '</a>' );
@@ -877,20 +881,20 @@ class Activity extends BuddyPressCommand {
 					}
 				}
 
-				$group = groups_get_group( array(
+				$group = groups_get_group( [
 					'group_id' => $r['item-id'],
-				) );
+				] );
 
 				if ( empty( $r['user-id'] ) ) {
 					$r['user-id'] = $this->get_random_user_id();
 				}
 
 				if ( empty( $r['action'] ) ) {
-					$r['action'] = sprintf( '%1$s joined the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_permalink( $group ) . '">' . esc_attr( $group->name ) . '</a>' );
+					$r['action'] = sprintf( '%1$s joined the group %2$s', bp_core_get_userlink( $r['user-id'] ), '<a href="' . bp_get_group_url( $group ) . '">' . esc_attr( $group->name ) . '</a>' );
 				}
 
 				if ( empty( $r['primary-link'] ) ) {
-					$r['primary-link'] = bp_get_group_permalink( $group );
+					$r['primary-link'] = bp_get_group_url( $group );
 				}
 
 				break;

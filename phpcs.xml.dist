@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="WP CLI BuddyPress" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
 
+	<!-- Load WP CLI Coding standards -->
+	<rule ref="WP_CLI_CS"/>
+
 	<!-- What to scan. -->
 	<file>src</file>
 	<file>wp-cli-bp.php</file>
-
-	<!-- Load WP CLI Coding standards -->
-	<rule ref="WP_CLI_CS"/>
 
 	<!--
 	Pass some flags to PHPCS:
@@ -31,7 +31,10 @@
 	<config name="testVersion" value="5.6-"/>
 
 	<!-- Check against minimum WP version. -->
-	<config name="minimum_supported_wp_version" value="4.9"/>
+	<config name="minimum_wp_version" value="4.9"/>
+
+	<!-- We prefer short array syntax. -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
 		<exclude-pattern>*/src/templates/bootstrap-buddypress.php</exclude-pattern>
@@ -42,10 +45,6 @@
 	</rule>
 
 	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
-		<severity>0</severity>
-	</rule>
-
-	<rule ref="PEAR.Functions.FunctionCallSignature.MultipleArguments">
 		<severity>0</severity>
 	</rule>
 

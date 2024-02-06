@@ -35,14 +35,14 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'subject',
 		'message',
 		'thread_id',
 		'sender_id',
 		'date_sent',
-	);
+	];
 
 	/**
 	 * Add a message.
@@ -87,11 +87,11 @@ class Messages extends BuddyPressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'to'        => '',
 				'thread-id' => false,
 				'date-sent' => bp_core_current_time(),
-			)
+			]
 		);
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['from'] );
@@ -102,17 +102,17 @@ class Messages extends BuddyPressCommand {
 		}
 
 		// Existing thread recipients will be assumed.
-		$recipient = ! empty( $r['thread-id'] ) ? array() : array( $recipient->ID );
+		$recipient = ! empty( $r['thread-id'] ) ? [] : [ $recipient->ID ];
 
 		$thread_id = messages_new_message(
-			array(
+			[
 				'sender_id'  => $user->ID,
 				'thread_id'  => $r['thread-id'],
 				'recipients' => $recipient,
 				'subject'    => $assoc_args['subject'],
 				'content'    => $assoc_args['content'],
 				'date_sent'  => $r['date-sent'],
-			)
+			]
 		);
 
 		// Silent it before it errors.
@@ -161,13 +161,17 @@ class Messages extends BuddyPressCommand {
 
 		WP_CLI::confirm( 'Are you sure you want to delete this thread(s)?', $assoc_args );
 
-		parent::_delete( $args, $assoc_args, function( $thread_id ) use ( $user ) {
-			if ( messages_delete_thread( $thread_id, $user->ID ) ) {
-				return array( 'success', 'Thread successfully deleted.' );
-			} else {
-				return array( 'error', 'Could not delete the thread.' );
+		parent::_delete(
+			$args,
+			$assoc_args,
+			function ( $thread_id ) use ( $user ) {
+				if ( messages_delete_thread( $thread_id, $user->ID ) ) {
+					return [ 'success', 'Thread successfully deleted.' ];
+				}
+
+				return [ 'error', 'Could not delete the thread.' ];
 			}
-		});
+		);
 	}
 
 	/**
@@ -277,21 +281,21 @@ class Messages extends BuddyPressCommand {
 
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'search' => '',
-			)
+			]
 		);
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		$inbox = new \BP_Messages_Box_Template(
-			array(
+			[
 				'user_id'      => $user->ID,
 				'box'          => $r['box'],
 				'type'         => $r['type'],
 				'max'          => $r['count'],
 				'search_terms' => $r['search'],
-			)
+			]
 		);
 
 		if ( ! $inbox->has_threads() ) {
@@ -342,15 +346,15 @@ class Messages extends BuddyPressCommand {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create(
-				array(),
-				array(
+				[],
+				[
 					'from'      => empty( $assoc_args['from'] ) ? $this->get_random_user_id() : $assoc_args['from'],
 					'to'        => empty( $assoc_args['to'] ) ? $this->get_random_user_id() : $assoc_args['to'],
 					'subject'   => sprintf( 'Message Subject - #%d', $i ),
 					'content'   => $this->generate_random_text(),
 					'thread-id' => empty( $assoc_args['thread-id'] ) ? false : $assoc_args['thread-id'],
 					'silent',
-				)
+				]
 			);
 
 			$notify->tick();
@@ -384,11 +388,11 @@ class Messages extends BuddyPressCommand {
 			WP_CLI::error( 'The message is already starred.' );
 		}
 
-		$star_args = array(
+		$star_args = [
 			'action'     => 'star',
 			'message_id' => $msg_id,
 			'user_id'    => $user_id,
-		);
+		];
 
 		if ( bp_messages_star_set_action( $star_args ) ) {
 			WP_CLI::success( 'Message was successfully starred.' );
@@ -423,11 +427,11 @@ class Messages extends BuddyPressCommand {
 			WP_CLI::error( 'You need to star a message first before unstarring it.' );
 		}
 
-		$star_args = array(
+		$star_args = [
 			'action'     => 'unstar',
 			'message_id' => $msg_id,
 			'user_id'    => $user_id,
-		);
+		];
 
 		if ( bp_messages_star_set_action( $star_args ) ) {
 			WP_CLI::success( 'Message was successfully unstarred.' );
@@ -469,12 +473,12 @@ class Messages extends BuddyPressCommand {
 			WP_CLI::error( 'User has no access to this thread.' );
 		}
 
-		$star_args = array(
+		$star_args = [
 			'action'    => 'star',
 			'thread_id' => $thread_id,
 			'user_id'   => $user->ID,
 			'bulk'      => true,
-		);
+		];
 
 		if ( bp_messages_star_set_action( $star_args ) ) {
 			WP_CLI::success( 'Thread was successfully starred.' );
@@ -516,12 +520,12 @@ class Messages extends BuddyPressCommand {
 			WP_CLI::error( 'User has no access to this thread.' );
 		}
 
-		$star_args = array(
+		$star_args = [
 			'action'    => 'unstar',
 			'thread_id' => $thread_id,
 			'user_id'   => $user->ID,
 			'bulk'      => true,
-		);
+		];
 
 		if ( bp_messages_star_set_action( $star_args ) ) {
 			WP_CLI::success( 'Thread was successfully unstarred.' );

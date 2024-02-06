@@ -24,14 +24,14 @@ class Signup extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'signup_id',
 		'user_login',
 		'user_name',
 		'meta',
 		'activation_key',
 		'registered',
-	);
+	];
 
 	/**
 	 * Dependency check for this CLI command.
@@ -80,14 +80,14 @@ class Signup extends BuddyPressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'user-login'     => '',
 				'user-email'     => '',
 				'activation-key' => wp_generate_password( 32, false ),
-			)
+			]
 		);
 
-		$signup_args = array( 'meta' => array() );
+		$signup_args = [ 'meta' => [] ];
 
 		$user_login = $r['user-login'];
 		if ( ! empty( $user_login ) ) {
@@ -188,13 +188,17 @@ class Signup extends BuddyPressCommand {
 	public function delete( $args, $assoc_args ) {
 		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
 
-		parent::_delete( $args, $assoc_args, function( $signup_id ) {
-			if ( \BP_Signup::delete( array( $signup_id ) ) ) {
-				return array( 'success', 'Signup deleted.' );
-			} else {
-				return array( 'error', 'Could not delete signup.' );
+		parent::_delete(
+			$args,
+			$assoc_args,
+			function ( $signup_id ) {
+				if ( \BP_Signup::delete( [ $signup_id ] ) ) {
+					return [ 'success', 'Signup deleted.' ];
+				}
+
+				return [ 'error', 'Could not delete signup.' ];
 			}
-		} );
+		);
 	}
 
 	/**
@@ -245,11 +249,14 @@ class Signup extends BuddyPressCommand {
 		$random_login = wp_generate_password( 12, false ); // Generate random user login.
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->create( array(), array(
-				'user-login' => $random_login,
-				'user-email' => $random_login . substr( $email_domain, strpos( $email_domain, '@' ) ),
-				'silent',
-			) );
+			$this->create(
+				[],
+				[
+					'user-login' => $random_login,
+					'user-email' => $random_login . substr( $email_domain, strpos( $email_domain, '@' ) ),
+					'silent'     => true,
+				]
+			);
 
 			$notify->tick();
 		}
@@ -274,7 +281,7 @@ class Signup extends BuddyPressCommand {
 	 */
 	public function resend( $args, $assoc_args ) {
 		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
-		$send   = \BP_Signup::resend( array( $signup->signup_id ) );
+		$send   = \BP_Signup::resend( [ $signup->signup_id ] );
 
 		// Add feedback message.
 		if ( empty( $send['errors'] ) ) {
@@ -321,10 +328,10 @@ class Signup extends BuddyPressCommand {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$assoc_args = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'number' => 20,
 				'fields' => 'all',
-			)
+			]
 		);
 
 		if ( 'ids' === $formatter->format ) {
@@ -357,7 +364,7 @@ class Signup extends BuddyPressCommand {
 		if ( isset( $assoc_args['match-field'] ) ) {
 			switch ( $assoc_args['match-field'] ) {
 				case 'signup_id':
-					$signup_args['include'] = array( $identifier );
+					$signup_args['include'] = [ $identifier ];
 					break;
 
 				case 'user_login':
@@ -369,14 +376,12 @@ class Signup extends BuddyPressCommand {
 					$signup_args['usersearch'] = $identifier;
 					break;
 			}
+		} elseif ( is_numeric( $identifier ) ) {
+				$signup_args['include'] = [ intval( $identifier ) ];
+		} elseif ( is_email( $identifier ) ) {
+			$signup_args['usersearch'] = $identifier;
 		} else {
-			if ( is_numeric( $identifier ) ) {
-				$signup_args['include'] = array( intval( $identifier ) );
-			} elseif ( is_email( $identifier ) ) {
-				$signup_args['usersearch'] = $identifier;
-			} else {
-				$signup_args['user_login'] = $identifier;
-			}
+			$signup_args['user_login'] = $identifier;
 		}
 
 		$signups = \BP_Signup::get( $signup_args );

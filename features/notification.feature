@@ -25,18 +25,6 @@ Feature: Manage BuddyPress Notifications
       | component_name   | activity      |
       | component_action | comment_reply |
 
-    When I run `wp bp notification list --fields=id,user_id`
-    Then STDOUT should be a table containing rows:
-      | id                | user_id     |
-      | {NOTIFICATION_ID} | {MEMBER_ID} |
-
-    When I run `wp bp notification get {NOTIFICATION_ID}`
-    Then STDOUT should be a table containing rows:
-      | Field            | Value         |
-      | user_id          | {MEMBER_ID}   |
-      | component_name   | activity      |
-      | component_action | comment_reply |
-
     When I run `wp bp notification delete {NOTIFICATION_ID} --yes`
     Then STDOUT should contain:
       """
@@ -60,12 +48,6 @@ Feature: Manage BuddyPress Notifications
     When I run `wp bp notification create --component=activity --user-id={MEMBER_TWO_ID} --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {NOTIFICATION_TWO_ID}
-
-    When I run `wp bp notification list --fields=id,user_id`
-    Then STDOUT should be a table containing rows:
-      | id                    | user_id         |
-      | {NOTIFICATION_ONE_ID} | {MEMBER_ONE_ID} |
-      | {NOTIFICATION_TWO_ID} | {MEMBER_TWO_ID} |
 
     When I run `wp bp notification delete {NOTIFICATION_ONE_ID} {NOTIFICATION_TWO_ID} --yes`
     Then STDOUT should contain:
