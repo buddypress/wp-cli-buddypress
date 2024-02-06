@@ -114,7 +114,8 @@ class Activity extends BuddyPressCommand {
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args( $assoc_args,
+		$r = wp_parse_args(
+			$assoc_args,
 			[
 				'component'         => '',
 				'type'              => '',
