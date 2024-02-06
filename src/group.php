@@ -24,13 +24,13 @@ class Group extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'name',
 		'slug',
 		'status',
 		'date_created',
-	);
+	];
 
 	/**
 	 * Dependency check for this CLI command.
@@ -115,14 +115,14 @@ class Group extends BuddyPressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'name'         => '',
 				'slug'         => '',
 				'description'  => '',
 				'creator-id'   => 1,
 				'enable-forum' => 0,
 				'date-created' => bp_core_current_time(),
-			)
+			]
 		);
 
 		// Auto-generate some stuff.
@@ -135,7 +135,7 @@ class Group extends BuddyPressCommand {
 		}
 
 		$group_id = groups_create_group(
-			array(
+			[
 				'name'         => $r['name'],
 				'slug'         => $r['slug'],
 				'description'  => $r['description'],
@@ -143,7 +143,7 @@ class Group extends BuddyPressCommand {
 				'status'       => $r['status'],
 				'enable_forum' => $r['enable-forum'],
 				'date_created' => $r['date-created'],
-			)
+			]
 		);
 
 		// Silent it before it errors.
@@ -160,10 +160,10 @@ class Group extends BuddyPressCommand {
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::log( $group_id );
 		} else {
-			$group     = groups_get_group( array(
+			$group     = groups_get_group( [
 				'group_id' => $group_id,
-			) );
-			$permalink = bp_get_group_permalink( $group );
+			] );
+			$permalink = bp_get_group_url( $group );
 			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $group_id, $permalink ) );
 		}
 	}
@@ -213,14 +213,14 @@ class Group extends BuddyPressCommand {
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
 			$this->create(
-				array(),
-				array(
+				[],
+				[
 					'name'         => sprintf( 'Group - #%d', $i ),
 					'creator-id'   => $assoc_args['creator-id'],
 					'status'       => $this->random_group_status( $assoc_args['status'] ),
 					'enable-forum' => $assoc_args['enable-forum'],
 					'silent',
-				)
+				]
 			);
 
 			$notify->tick();
@@ -261,7 +261,7 @@ class Group extends BuddyPressCommand {
 		$group_id         = $this->get_group_id_from_identifier( $args[0] );
 		$group            = groups_get_group( $group_id );
 		$group_arr        = get_object_vars( $group );
-		$group_arr['url'] = bp_get_group_permalink( $group );
+		$group_arr['url'] = bp_get_group_url( $group );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $group_arr );
@@ -292,13 +292,17 @@ class Group extends BuddyPressCommand {
 	public function delete( $args, $assoc_args ) {
 		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
 
-		parent::_delete( $args, $assoc_args, function( $group_id ) {
-			if ( groups_delete_group( $group_id ) ) {
-				return array( 'success', 'Group successfully deleted.' );
-			} else {
-				return array( 'error', 'Could not delete the group.' );
+		parent::_delete(
+			$args,
+			$assoc_args,
+			function ( $group_id ) {
+				if ( groups_delete_group( $group_id ) ) {
+					return [ 'success', 'Group successfully deleted.' ];
+				}
+
+				return [ 'error', 'Could not delete the group.' ];
 			}
-		} );
+		);
 	}
 
 	/**
@@ -312,20 +316,24 @@ class Group extends BuddyPressCommand {
 	 * [--<field>=<value>]
 	 * : One or more fields to update. See groups_create_group()
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     $ wp bp group update 35 --description="What a cool group!" --name="Group of Cool People"
 	 */
 	public function update( $args, $assoc_args ) {
-		parent::_update( $args, $assoc_args, function( $group_id, $fields = array() ) {
-			$fields['group_id'] = $group_id;
+		parent::_update(
+			$args,
+			$assoc_args,
+			function ( $group_id, $fields = [] ) {
+				$fields['group_id'] = $group_id;
 
-			if ( groups_create_group( $fields ) ) {
-				return array( 'success', 'Group updated.' );
-			} else {
-				return array( 'error', 'Group could not be updated.' );
+				if ( groups_create_group( $fields ) ) {
+					return [ 'success', 'Group updated.' ];
+				}
+
+				return [ 'error', 'Group could not be updated.' ];
 			}
-		} );
+		);
 	}
 
 	/**
@@ -391,13 +399,13 @@ class Group extends BuddyPressCommand {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$query_args = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'count'       => 50,
 				'show_hidden' => true,
 				'orderby'     => $assoc_args['orderby'],
 				'order'       => $assoc_args['order'],
 				'per_page'    => $assoc_args['count'],
-			)
+			]
 		);
 
 		if ( isset( $assoc_args['user-id'] ) ) {
@@ -408,7 +416,7 @@ class Group extends BuddyPressCommand {
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
 
 		// If count or ids, no need for group objects.
-		if ( in_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
+		if ( in_array( $formatter->format, [ 'ids', 'count' ], true ) ) {
 			$query_args['fields'] = 'ids';
 		}
 
@@ -435,7 +443,7 @@ class Group extends BuddyPressCommand {
 	 * @return string
 	 */
 	protected function random_group_status( $status ) {
-		$core_status = array( 'public', 'private', 'hidden' );
+		$core_status = [ 'public', 'private', 'hidden' ];
 
 		if ( 'mixed' === $status ) {
 			$status = $core_status[ array_rand( $core_status ) ];

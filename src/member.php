@@ -31,7 +31,7 @@ class Member extends BuddyPressCommand {
 	 *   $ wp bp member generate --count=50
 	 */
 	public function generate( $args, $assoc_args ) {
-		add_action( 'user_register', array( __CLASS__, 'update_user_last_activity_random' ) );
+		add_action( 'user_register', [ __CLASS__, 'update_user_last_activity_random' ] );
 
 		$command_class = new \User_Command();
 		$command_class->generate( $args, $assoc_args );

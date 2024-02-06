@@ -40,11 +40,11 @@ class XProfile extends BuddyPressCommand {
 	 * @return array
 	 */
 	private function command_to_array( $command ) {
-		$dump = array(
+		$dump = [
 			'name'        => $command->get_name(),
 			'description' => $command->get_shortdesc(),
 			'longdesc'    => $command->get_longdesc(),
-		);
+		];
 
 		foreach ( $command->get_subcommands() as $subcommand ) {
 			$dump['subcommands'][] = $this->command_to_array( $subcommand );

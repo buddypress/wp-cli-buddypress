@@ -24,7 +24,7 @@ class Activity_Favorite extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'user_id',
 		'component',
@@ -36,7 +36,7 @@ class Activity_Favorite extends BuddyPressCommand {
 		'date_recorded',
 		'hide_sitewide',
 		'is_spam',
-	);
+	];
 
 	/**
 	 * Add an activity item as a favorite for a user.
@@ -61,11 +61,11 @@ class Activity_Favorite extends BuddyPressCommand {
 	 */
 	public function create( $args ) {
 		$activity = bp_activity_get_specific(
-			array(
+			[
 				'activity_ids'     => $args[0],
 				'spam'             => null,
 				'display_comments' => true,
-			)
+			]
 		);
 
 		$activity = $activity['activities'][0];
@@ -109,11 +109,11 @@ class Activity_Favorite extends BuddyPressCommand {
 	 */
 	public function remove( $args, $assoc_args ) {
 		$activity = bp_activity_get_specific(
-			array(
+			[
 				'activity_ids'     => $args[0],
 				'spam'             => null,
 				'display_comments' => true,
-			)
+			]
 		);
 
 		$activity = $activity['activities'][0];
@@ -180,10 +180,10 @@ class Activity_Favorite extends BuddyPressCommand {
 		}
 
 		$activities = bp_activity_get_specific(
-			array(
+			[
 				'activity_ids' => (array) $favorites,
 				'per_page'     => $assoc_args['count'],
-			)
+			]
 		);
 
 		// Sanity check.

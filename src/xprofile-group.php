@@ -16,13 +16,13 @@ class XProfile_Group extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'name',
 		'description',
 		'group_order',
 		'can_delete',
-	);
+	];
 
 	/**
 	 * Object ID key.
@@ -64,10 +64,10 @@ class XProfile_Group extends BuddyPressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'name'        => '',
 				'description' => '',
-			)
+			]
 		);
 
 		$group_id = xprofile_insert_field_group( $r );
@@ -157,12 +157,16 @@ class XProfile_Group extends BuddyPressCommand {
 	public function delete( $args, $assoc_args ) {
 		WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
 
-		parent::_delete( $args, $assoc_args, function( $field_group_id ) {
-			if ( xprofile_delete_field_group( $field_group_id ) ) {
-				return array( 'success', 'Field group deleted.' );
-			} else {
-				return array( 'error', 'Could not delete the field group.' );
+		parent::_delete(
+			$args,
+			$assoc_args,
+			function ( $field_group_id ) {
+				if ( xprofile_delete_field_group( $field_group_id ) ) {
+					return [ 'success', 'Field group deleted.' ];
+				}
+
+				return [ 'error', 'Could not delete the field group.' ];
 			}
-		} );
+		);
 	}
 }

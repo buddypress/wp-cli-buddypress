@@ -26,7 +26,7 @@ class Notification extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'user_id',
 		'item_id',
@@ -35,7 +35,7 @@ class Notification extends BuddyPressCommand {
 		'component_action',
 		'date_notified',
 		'is_new',
-	);
+	];
 
 	/**
 	 * Dependency check for this CLI command.
@@ -92,25 +92,25 @@ class Notification extends BuddyPressCommand {
 	public function create( $args, $assoc_args ) {
 		$r = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'component'         => '',
 				'action'            => '',
 				'user-id'           => 0,
 				'item-id'           => 0,
 				'secondary-item-id' => 0,
 				'date'              => bp_core_current_time(),
-			)
+			]
 		);
 
 		$id = bp_notifications_add_notification(
-			array(
+			[
 				'user_id'           => $r['user-id'],
 				'item_id'           => $r['item-id'],
 				'secondary_item_id' => $r['secondary-item-id'],
 				'component_name'    => $r['component'],
 				'component_action'  => $r['action'],
 				'date_notified'     => $r['date'],
-			)
+			]
 		);
 
 		// Silent it before it errors.
@@ -196,11 +196,6 @@ class Notification extends BuddyPressCommand {
 	 *     Success: Deleted notification 55654.
 	 *     Success: Deleted notification 54564.
 	 *
-	 *     $ wp bp notification delete $(wp bp notification list --format=ids) --yes
-	 *     Success: Deleted notification 35456465.
-	 *     Success: Deleted notification 46546546.
-	 *     Success: Deleted notification 46465465.
-	 *
 	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
@@ -212,13 +207,17 @@ class Notification extends BuddyPressCommand {
 			WP_CLI::confirm( 'Are you sure you want to delete this notification?', $assoc_args );
 		}
 
-		parent::_delete( $notifications, $assoc_args, function( $notification_id ) {
-			if ( \BP_Notifications_Notification::delete( array( 'id' => $notification_id ) ) ) {
-				return array( 'success', sprintf( 'Deleted notification %d.', $notification_id ) );
-			} else {
-				return array( 'error', sprintf( 'Could not delete notification %d.', $notification_id ) );
+		parent::_delete(
+			$notifications,
+			$assoc_args,
+			function ( $notification_id ) {
+				if ( \BP_Notifications_Notification::delete( [ 'id' => $notification_id ] ) ) {
+					return [ 'success', sprintf( 'Deleted notification %d.', $notification_id ) ];
+				}
+
+				return [ 'error', sprintf( 'Could not delete notification %d.', $notification_id ) ];
 			}
-		} );
+		);
 	}
 
 	/**
@@ -244,13 +243,13 @@ class Notification extends BuddyPressCommand {
 			$component = $this->get_random_component();
 
 			$this->create(
-				array(),
-				array(
+				[],
+				[
 					'user-id'   => $this->get_random_user_id(),
 					'component' => $component,
 					'action'    => $this->get_random_action( $component ),
 					'silent',
-				)
+				]
 			);
 
 			$notify->tick();
@@ -313,14 +312,10 @@ class Notification extends BuddyPressCommand {
 	 * @subcommand list
 	 */
 	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
-		$formatter = $this->get_formatter( $assoc_args );
-
-		$query_args = wp_parse_args(
-			$assoc_args,
-			array(
-				'count' => 50,
-			)
-		);
+		$formatter  = $this->get_formatter( $assoc_args );
+		$query_args = [
+			'update_meta_cache' => false,
+		];
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -335,7 +330,10 @@ class Notification extends BuddyPressCommand {
 			$query_args['component_name'] = $assoc_args['component'];
 		}
 
-		$query_args['per_page'] = $query_args['count'];
+		$query_args['page']     = 1;
+		$query_args['per_page'] = (int) $assoc_args['count'];
+
+		unset( $query_args['count'] );
 
 		$query_args = self::process_csv_arguments_to_arrays( $query_args );
 

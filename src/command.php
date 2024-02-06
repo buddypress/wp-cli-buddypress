@@ -52,15 +52,15 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	 *
 	 * @since 2.0
 	 *
-	 * @param int  $activity_id Activity ID.
-	 * @param bool $object      Return activity object.
+	 * @param int  $activity_id     Activity ID.
+	 * @param bool $activity_object Return activity object.
 	 * @return int|BP_Activity_Activity
 	 */
-	protected function get_activity_id_from_identifier( $activity_id, $object = false ) {
+	protected function get_activity_id_from_identifier( $activity_id, $activity_object = false ) {
 		$fetcher  = new Activity_Fetcher();
 		$activity = $fetcher->get_check( $activity_id );
 
-		if ( true === $object ) {
+		if ( true === $activity_object ) {
 			return $activity;
 		}
 
@@ -83,9 +83,9 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 		// Get group object.
 		$group_obj = groups_get_group(
-			array(
+			[
 				'group_id' => $group_id,
-			)
+			]
 		);
 
 		if ( empty( $group_obj->id ) ) {
@@ -181,7 +181,7 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	 */
 	protected function get_components_and_actions() {
 		return array_map(
-			function( $component ) {
+			function ( $component ) {
 				return array_keys( (array) $component );
 			},
 			(array) bp_activity_get_actions()

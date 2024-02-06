@@ -37,13 +37,13 @@ class Components extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'number',
 		'id',
 		'status',
 		'title',
 		'description',
-	);
+	];
 
 	/**
 	 * Activate a component.
@@ -189,7 +189,7 @@ class Components extends BuddyPressCommand {
 		$components = (array) bp_core_get_components( $type );
 
 		// Active components.
-		$active_components = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components', array() ) );
+		$active_components = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components', [] ) );
 
 		// Core component is always active.
 		if ( 'optional' !== $type && isset( $components['core'] ) ) {
@@ -201,47 +201,59 @@ class Components extends BuddyPressCommand {
 		// Inactive components.
 		$inactive_components = array_diff( array_keys( $components ), array_keys( $active_components ) );
 
-		$current_components = array();
+		$current_components = [];
 		switch ( $assoc_args['status'] ) {
 			case 'all':
 				$index = 0;
 				foreach ( $components as $component_key => $component ) {
-					$index++;
-					$current_components[] = array(
+					++$index;
+					$current_components[] = [
 						'number'      => $index,
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $component['title'] ),
 						'description' => html_entity_decode( $component['description'] ),
-					);
+					];
 				}
 				break;
 
 			case 'active':
 				$index = 0;
 				foreach ( array_keys( $active_components ) as $component_key ) {
-					$index++;
-					$current_components[] = array(
+
+					// Skip if the component is not available.
+					if ( ! isset( $components[ $component_key ] ) ) {
+						continue;
+					}
+
+					++$index;
+					$current_components[] = [
 						'number'      => $index,
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $components[ $component_key ]['title'] ),
 						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
-					);
+					];
 				}
 				break;
 
 			case 'inactive':
 				$index = 0;
 				foreach ( $inactive_components as $component_key ) {
-					$index++;
-					$current_components[] = array(
+
+					// Skip if the component is not available.
+					if ( ! isset( $components[ $component_key ] ) ) {
+						continue;
+					}
+
+					++$index;
+					$current_components[] = [
 						'number'      => $index,
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $components[ $component_key ]['title'] ),
 						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
-					);
+					];
 				}
 				break;
 		}

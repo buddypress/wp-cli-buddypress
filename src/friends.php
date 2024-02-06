@@ -24,13 +24,13 @@ class Friends extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'initiator_user_id',
 		'friend_user_id',
 		'is_confirmed',
 		'is_limited',
-	);
+	];
 
 	/**
 	 * Dependency check for this CLI command.
@@ -95,12 +95,10 @@ class Friends extends BuddyPressCommand {
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::log( \BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
-		} else {
-			if ( $force ) {
+		} elseif ( $force ) {
 				WP_CLI::success( 'Friendship successfully created.' );
-			} else {
-				WP_CLI::success( 'Friendship successfully created but not accepted.' );
-			}
+		} else {
+			WP_CLI::success( 'Friendship successfully created but not accepted.' );
 		}
 	}
 
@@ -157,13 +155,17 @@ class Friends extends BuddyPressCommand {
 	 * @alias accept-invitation
 	 */
 	public function accept( $args, $assoc_args ) {
-		parent::_update( $args, $assoc_args, function( $friendship_id ) {
-			if ( friends_accept_friendship( (int) $friendship_id ) ) {
-				return array( 'success', 'Friendship successfully accepted.' );
-			} else {
-				return array( 'error', 'There was a problem accepting the friendship.' );
+		parent::_update(
+			$args,
+			$assoc_args,
+			function ( $friendship_id ) {
+				if ( friends_accept_friendship( (int) $friendship_id ) ) {
+					return [ 'success', 'Friendship successfully accepted.' ];
+				}
+
+				return [ 'error', 'There was a problem accepting the friendship.' ];
 			}
-		} );
+		);
 	}
 
 	/**
@@ -185,13 +187,17 @@ class Friends extends BuddyPressCommand {
 	 * @alias reject-invitation
 	 */
 	public function reject( $args, $assoc_args ) {
-		parent::_update( $args, $assoc_args, function( $friendship_id ) {
-			if ( friends_reject_friendship( (int) $friendship_id ) ) {
-				return array( 'success', 'Friendship successfully rejected.' );
-			} else {
-				return array( 'error', 'There was a problem rejecting the friendship.' );
+		parent::_update(
+			$args,
+			$assoc_args,
+			function ( $friendship_id ) {
+				if ( friends_reject_friendship( (int) $friendship_id ) ) {
+					return [ 'success', 'Friendship successfully rejected.' ];
+				} else {
+					return [ 'error', 'There was a problem rejecting the friendship.' ];
+				}
 			}
-		} );
+		);
 	}
 
 	/**
@@ -319,11 +325,11 @@ class Friends extends BuddyPressCommand {
 			}
 
 			$this->create(
-				array( $member, $friend ),
-				array(
+				[ $member, $friend ],
+				[
 					'silent',
 					'force-accept',
-				)
+				]
 			);
 
 			$notify->tick();

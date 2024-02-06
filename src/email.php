@@ -100,16 +100,16 @@ class Email extends BuddyPressCommand {
 			}
 		}
 
-		$defaults = array(
+		$defaults = [
 			'post_status' => 'publish',
 			'post_type'   => bp_get_email_post_type(),
-		);
+		];
 
-		$email = array(
+		$email = [
 			'post_title'   => $assoc_args['subject'],
 			'post_content' => $assoc_args['content'],
 			'post_excerpt' => ! empty( $assoc_args['plain-text-content'] ) ? $assoc_args['plain-text-content'] : '',
-		);
+		];
 
 		$id = $assoc_args['type'];
 
@@ -123,9 +123,14 @@ class Email extends BuddyPressCommand {
 			// Situation description.
 			if ( ! is_wp_error( $tt_ids ) && ! empty( $assoc_args['type-description'] ) ) {
 				$term = get_term_by( 'term_taxonomy_id', (int) $tt_ids[0], bp_get_email_tax_type() );
-				wp_update_term( (int) $term->term_id, bp_get_email_tax_type(), array(
-					'description' => $assoc_args['type-description'],
-				) );
+
+				wp_update_term(
+					(int) $term->term_id,
+					bp_get_email_tax_type(),
+					[
+						'description' => $assoc_args['type-description'],
+					]
+				);
 			}
 
 			if ( true === $switched ) {

@@ -21,6 +21,9 @@ use WP_CLI\CommandWithMeta;
  *     $ wp bp group meta update 123 description "Mary is an awesome Group user."
  *     Success: Updated custom field 'description'.
  *
+ *     # List group meta.
+ *     $ wp bp group meta list 123
+ *
  *     # Delete group meta
  *     $ wp bp group meta delete 123 description
  *     Success: Deleted custom field.

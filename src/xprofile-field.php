@@ -16,14 +16,14 @@ class XProfile_Field extends BuddyPressCommand {
 	 *
 	 * @var array
 	 */
-	protected $obj_fields = array(
+	protected $obj_fields = [
 		'id',
 		'name',
 		'description',
 		'type',
 		'group_id',
 		'is_required',
-	);
+	];
 
 	/**
 	 * Get a list of XProfile fields.
@@ -42,13 +42,13 @@ class XProfile_Field extends BuddyPressCommand {
 	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$args = array_merge(
 			$assoc_args,
-			array(
+			[
 				'fields'       => 'id,name',
 				'fetch_fields' => true,
-			)
+			]
 		);
 
-		$fields = array();
+		$fields = [];
 		$groups = bp_xprofile_get_groups( $args );
 
 		// Reformat so that field_group_id is a property of fields.
@@ -99,11 +99,11 @@ class XProfile_Field extends BuddyPressCommand {
 			WP_CLI::error( 'Not a valid field type.' );
 		}
 
-		$create_args = array(
+		$create_args = [
 			'type'           => $assoc_args['type'],
 			'name'           => $assoc_args['name'],
 			'field_group_id' => $assoc_args['field-group-id'],
-		);
+		];
 
 		$field_id = xprofile_insert_field( $create_args );
 		if ( ! $field_id ) {
@@ -198,16 +198,20 @@ class XProfile_Field extends BuddyPressCommand {
 
 		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
 
-		parent::_delete( $args, $assoc_args, function( $field_id ) use ( $delete_data ) {
-			$field = new \BP_XProfile_Field( $field_id );
-			$name  = $field->name;
-			$id    = $field->id;
+		parent::_delete(
+			$args,
+			$assoc_args,
+			function ( $field_id ) use ( $delete_data ) {
+				$field = new \BP_XProfile_Field( $field_id );
+				$name  = $field->name;
+				$id    = $field->id;
 
-			if ( $field->delete( $delete_data ) ) {
-				return array( 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) );
-			} else {
-				return array( 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) );
+				if ( $field->delete( $delete_data ) ) {
+					return [ 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) ];
+				}
+
+				return [ 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) ];
 			}
-		} );
+		);
 	}
 }
