@@ -24,7 +24,7 @@ Feature: Manage BuddyPress Site Notices
     When I run `wp bp notice delete {NOTICE_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Deleted sitewide notice {NOTICE_ID}.
+      Success: Sitewide notice deleted {NOTICE_ID}.
       """
 
   Scenario: Site Notices list
@@ -46,6 +46,6 @@ Feature: Manage BuddyPress Site Notices
     When I run `wp bp notice delete {NOTICE_ONE_ID} {NOTICE_TWO_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Deleted sitewide notice {NOTICE_ONE_ID}.
-      Success: Deleted sitewide notice {NOTICE_TWO_ID}.
+      Success: Sitewide notice deleted {NOTICE_ONE_ID}.
+      Success: Sitewide notice deleted {NOTICE_TWO_ID}.
       """

@@ -92,7 +92,7 @@ class Sitewide_Notice extends BuddyPressCommand {
 			]
 		);
 
-		$notice            = new BP_Messages_Notice;
+		$notice            = new BP_Messages_Notice();
 		$notice->subject   = $r['subject'];
 		$notice->message   = $r['message'];
 		$notice->date_sent = bp_core_current_time();
@@ -145,14 +145,14 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 *     # Get a sitewide notice.
 	 *     $ wp bp notice get 500
 	 *     +-----------+---------------------+
-     *     | Field     | Value               |
-     *     +-----------+---------------------+
-     *     | id        | 4                   |
-     *     | subject   | Important message   |
-     *     | message   | Let's talk!         |
-     *     | date_sent | 2023-01-11 12:47:00 |
-     *     | is_active | 1                   |
-     *     +-----------+---------------------+
+	 *     | Field     | Value               |
+	 *     +-----------+---------------------+
+	 *     | id        | 4                   |
+	 *     | subject   | Important message   |
+	 *     | message   | Let's talk!         |
+	 *     | date_sent | 2023-01-11 12:47:00 |
+	 *     | is_active | 1                   |
+	 *     +-----------+---------------------+
 	 *
 	 *     # Get a sitewide notice in JSON format.
 	 *     $ wp bp notice get 56 --format=json
@@ -199,7 +199,7 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		$notice_ids = $args;
+		$notice_ids = wp_parse_id_list( $args );
 
 		if ( count( $notice_ids ) > 1 ) {
 			WP_CLI::confirm( 'Are you sure want to delete these notices?', $assoc_args );
@@ -210,11 +210,11 @@ class Sitewide_Notice extends BuddyPressCommand {
 		parent::_delete(
 			$notice_ids,
 			$assoc_args,
-			function ( int $notice_id ) {
+			function ( $notice_id ) {
 				$notice = new BP_Messages_Notice( $notice_id );
 
 				if ( $notice->delete() ) {
-					return [ 'success', sprintf( 'Deleted sitewide notice %d.', $notice_id ) ];
+					return [ 'success', sprintf( 'Sitewide notice deleted %d.', $notice_id ) ];
 				}
 
 				return [ 'error', sprintf( 'Could not delete sitewide notice %d.', $notice_id ) ];

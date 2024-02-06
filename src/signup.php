@@ -193,10 +193,10 @@ class Signup extends BuddyPressCommand {
 			$assoc_args,
 			function ( $signup_id ) {
 				if ( \BP_Signup::delete( [ $signup_id ] ) ) {
-					return [ 'success', 'Signup deleted.' ];
+					return [ 'success', sprintf( 'Signup deleted %d.', $signup_id ) ];
 				}
 
-				return [ 'error', 'Could not delete signup.' ];
+				return [ 'error', sprintf( 'Could not delete signup %d.', $signup_id ) ];
 			}
 		);
 	}

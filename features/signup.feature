@@ -22,7 +22,7 @@ Feature: Manage BuddyPress Signups
     When I run `wp bp signup delete {SIGNUP_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Signup deleted.
+      Success: Signup deleted {SIGNUP_ID}.
       """
 
   Scenario: Signup fetching by identifier
