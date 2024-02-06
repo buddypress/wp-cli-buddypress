@@ -35,6 +35,7 @@ WP_CLI::add_hook(
 		require_once __DIR__ . '/src/group-member.php';
 		require_once __DIR__ . '/src/group-invite.php';
 		require_once __DIR__ . '/src/group-meta.php';
+		require_once __DIR__ . '/src/sitewide-notice.php';
 
 		// Load only if the Scaffold package is present.
 		if ( class_exists( 'Scaffold_Command' ) ) {
@@ -141,6 +142,12 @@ WP_CLI::add_hook(
 			'bp group invite',
 			__NAMESPACE__ . '\\Command\\Group_Invite',
 			[ 'before_invoke' => __NAMESPACE__ . '\\Command\\Group::check_dependencies' ]
+		);
+
+		WP_CLI::add_command(
+			'bp notice',
+			__NAMESPACE__ . '\\Command\\Sitewide_Notice',
+			[ 'before_invoke' => __NAMESPACE__ . '\\Command\\Sitewide_Notice::check_dependencies' ]
 		);
 
 		WP_CLI::add_command(
