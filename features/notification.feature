@@ -4,7 +4,7 @@ Feature: Manage BuddyPress Notifications
     Given a WP install
     And these installed and active plugins:
       """
-      buddypress
+      https://github.com/buddypress/BuddyPress/archive/master.zip
       """
     And I run `wp bp component activate notifications`
 

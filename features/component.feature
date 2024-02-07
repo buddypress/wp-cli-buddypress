@@ -4,7 +4,7 @@ Feature: Manage BuddyPress Components
     Given a WP install
     And these installed and active plugins:
       """
-      buddypress
+      https://github.com/buddypress/BuddyPress/archive/master.zip
       """
 
   Scenario: Component CRUD Operations
