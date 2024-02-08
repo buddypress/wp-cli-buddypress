@@ -4,13 +4,19 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 
 ## Unreleased
 
+## Added
+
+* New commands:
+  * `wp bp notice` - Used to manage Sitewide notices.
+
 ### Changed
 
 * Prefer short array syntax (This is different from WCS supports)
 * Composer: packages upgraded
 * Misc linting updates
-* Github Action: support for testing PHP 8.3
+* Github Action: Testing against PHP 8.3
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
+* Activity: make tests more deterministic
 
 ## 2.0.2
 

@@ -41,9 +41,9 @@ Feature: Manage BuddyPress XProfile Data
 
     When I try `wp bp xprofile data delete --user-id={USER_ID} --yes`
     Then the return code should be 1
-    Then STDERR should contain:
+    Then STDERR should be:
       """
-      Either --field-id or --delete-all must be provided
+      Error: Either --field-id or --delete-all must be provided.
       """
 
     When I run `wp bp xprofile data delete --user-id={USER_ID} --field-id={FIELD_ID} --yes`

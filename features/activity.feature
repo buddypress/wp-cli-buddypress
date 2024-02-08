@@ -14,7 +14,7 @@ Feature: Manage BuddyPress Activities
     Then STDOUT should be a number
     And save STDOUT as {MEMBER_ID}
 
-    When I run `wp bp activity create --porcelain`
+    When I run `wp bp activity create --component=activity --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {ACTIVITY_ID}
 

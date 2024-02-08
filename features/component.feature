@@ -51,11 +51,11 @@ Feature: Manage BuddyPress Components
       | core |
 
     When I try `wp bp component list --type=retired`
+    Then the return code should be 1
     Then STDERR should be:
       """
       Error: There is no component available.
       """
-    And the return code should be 1
 
     When I run `wp bp component activate groups`
     Then STDOUT should contain:
