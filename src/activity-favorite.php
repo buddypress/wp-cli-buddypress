@@ -9,9 +9,11 @@ use WP_CLI;
  *
  * ## EXAMPLES
  *
+ *     # Add an activity item as a favorite for a user.
  *     $ wp bp activity favorite add 100 500
  *     Success: Activity item added as a favorite for the user.
  *
+ *     # Add an activity item as a favorite for a user using user_login.
  *     $ wp bp activity favorite create 100 user_test
  *     Success: Activity item added as a favorite for the user.
  *
@@ -99,15 +101,18 @@ class Activity_Favorite extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Remove an activity item as a favorite for a user.
 	 *     $ wp bp activity favorite remove 100 500
 	 *     Success: Activity item removed as a favorite for the user.
 	 *
+	 *     # Remove an activity item as a favorite for a user.
 	 *     $ wp bp activity favorite delete 100 user_test --yes
 	 *     Success: Activity item removed as a favorite for the user.
 	 *
-	 * @alias delete
+	 * @alias remove
+	 * @alias trash
 	 */
-	public function remove( $args, $assoc_args ) {
+	public function delete( $args, $assoc_args ) {
 		$activity = bp_activity_get_specific(
 			[
 				'activity_ids'     => $args[0],

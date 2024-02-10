@@ -181,20 +181,23 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Delete a sitewide notice.
 	 *     $ wp bp notice delete 520 --yes
-	 *     Success: Deleted notice 520.
+	 *     Success: Sitewide notice deleted 520.
 	 *
+	 *     # Delete multiple sitewide notices.
 	 *     $ wp bp notice delete 55654 54564 --yes
-	 *     Success: Deleted notice 55654.
-	 *     Success: Deleted notice 54564.
+	 *     Success: Sitewide notice deleted 55654.
+	 *     Success: Sitewide notice deleted 54564.
 	 *
+	 * @alias remove
 	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
 		$notice_ids = wp_parse_id_list( $args );
 
 		if ( count( $notice_ids ) > 1 ) {
-			WP_CLI::confirm( 'Are you sure want to delete these notices?', $assoc_args );
+			WP_CLI::confirm( 'Are you sure you want to delete these notices?', $assoc_args );
 		} else {
 			WP_CLI::confirm( 'Are you sure you want to delete this notice?', $assoc_args );
 		}
@@ -323,6 +326,10 @@ class Sitewide_Notice extends BuddyPressCommand {
 			WP_CLI::error( 'No sitewide notices found.' );
 		}
 
-		$formatter->display_items( $notices );
+		if ( 'ids' === $formatter->format ) {
+			echo implode( ' ', wp_list_pluck( $notices, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			$formatter->display_items( $notices );
+		}
 	}
 }

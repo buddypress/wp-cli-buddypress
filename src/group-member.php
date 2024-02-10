@@ -108,15 +108,18 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Remove a member from a group.
 	 *     $ wp bp group member remove --group-id=3 --user-id=10
 	 *     Success: Member #10 removed from the group #3.
 	 *
+	 *     # Remove a member from a group.
 	 *     $ wp bp group member delete --group-id=foo --user-id=admin
 	 *     Success: Member #545 removed from the group #12.
 	 *
-	 * @alias delete
+	 * @alias remove
+	 * @alias trash
 	 */
-	public function remove( $args, $assoc_args ) {
+	public function delete( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$member   = new \BP_Groups_Member( $user->ID, $group_id );

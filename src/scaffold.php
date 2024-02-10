@@ -40,9 +40,11 @@ class Scaffold extends Scaffold_Command {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Scaffold BuddyPress specific tests.
 	 *     $ wp bp scaffold plugin sample-test
 	 *     Success: Created BuddyPress test files.
 	 *
+	 *     # Scaffold BuddyPress specific tests.
 	 *     $ wp bp scaffold tests another-sample-test
 	 *     Success: Created BuddyPress test files.
 	 *

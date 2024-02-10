@@ -166,7 +166,7 @@ class Components extends BuddyPressCommand {
 	 *   - table
 	 *   - count
 	 *   - csv
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES

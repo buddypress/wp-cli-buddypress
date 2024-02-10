@@ -206,6 +206,7 @@ class Email extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Reinstall BuddyPress default emails.
 	 *     $ wp bp email reinstall --yes
 	 *     Success: Emails have been successfully reinstalled.
 	 */

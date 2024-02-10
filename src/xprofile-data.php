@@ -94,7 +94,7 @@ class XProfile_Data extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * [--multi-format=<value>]
@@ -166,13 +166,16 @@ class XProfile_Data extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Delete a specific XProfile field data.
 	 *     $ wp bp xprofile data delete --user-id=45 --field-id=120 --yes
 	 *     Success: XProfile data removed.
 	 *
+	 *     # Delete all XProfile data for a user.
 	 *     $ wp bp xprofile data remove --user-id=user_test --delete-all --yes
 	 *     Success: XProfile data removed.
 	 *
 	 * @alias remove
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );

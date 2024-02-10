@@ -9,11 +9,17 @@ use WP_CLI;
  *
  * ## EXAMPLES
  *
+ *     # Repair the friend count.
  *     $ wp bp tool repair friend-count
  *     Success: Counting the number of friends for each user. Complete!
  *
+ *     # Display BuddyPress version.
  *     $ wp bp tool version
  *     BuddyPress: 6.0.0
+ *
+ *     # Reinstall BuddyPress default emails.
+ *     $ wp bp tool reinstall --yes
+ *     Success: Emails have been successfully reinstalled.
  *
  * @since 1.5.0
  */
@@ -46,6 +52,7 @@ class Tool extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Repair the friend count.
 	 *     $ wp bp tool repair friend-count
 	 *     Success: Counting the number of friends for each user. Complete!
 	 *
@@ -77,6 +84,7 @@ class Tool extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Display BuddyPress version.
 	 *     $ wp bp tool version
 	 *     BuddyPress: 6.0.0
 	 */
@@ -92,15 +100,40 @@ class Tool extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Activate the signup tool.
 	 *     $ wp bp tool signup 1
 	 *     Success: Signup tool updated.
 	 *
+	 *     # Deactivate the signup tool.
 	 *     $ wp bp tool signup 0
 	 *     Success: Signup tool updated.
 	 */
 	public function signup( $args ) {
-		bp_update_option( 'users_can_register', $args[0] );
+		$retval = bp_update_option( 'users_can_register', $args[0] );
+
+		if ( false === $retval ) {
+			WP_CLI::error( 'Could not update the signup tool.' );
+		}
 
 		WP_CLI::success( 'Signup tool updated.' );
+	}
+
+	/**
+	 * Reinstall BuddyPress default emails.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     # Reinstall BuddyPress default emails.
+	 *     $ wp bp tool reinstall --yes
+	 *     Success: Emails have been successfully reinstalled.
+	 */
+	public function reinstall( $args, $assoc_args ) {
+		$command_class = new Email();
+		$command_class->reinstall( $args, $assoc_args );
 	}
 }

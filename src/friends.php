@@ -115,12 +115,14 @@ class Friends extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp friend remove user1 another_user
+	 *     # Remove a friendship.
+	 *     $ wp bp friend remove user_1 user_2
 	 *     Success: Friendship successfully removed.
 	 *
-	 * @alias delete
+	 * @alias remove
+	 * @alias trash
 	 */
-	public function remove( $args ) {
+	public function delete( $args ) {
 		$initiator = $this->get_user_id_from_identifier( $args[0] );
 		$friend    = $this->get_user_id_from_identifier( $args[1] );
 
@@ -252,7 +254,7 @@ class Friends extends BuddyPressCommand {
 	 *   - ids
 	 *   - csv
 	 *   - count
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -273,8 +275,6 @@ class Friends extends BuddyPressCommand {
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', wp_list_pluck( $friends, 'friend_user_id' ) );
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $friends );
 		} else {
 			$formatter->display_items( $friends );
 		}

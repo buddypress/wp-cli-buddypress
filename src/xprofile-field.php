@@ -143,7 +143,7 @@ class XProfile_Field extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -185,21 +185,29 @@ class XProfile_Field extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Delete a field.
 	 *     $ wp bp xprofile field delete 500 --yes
 	 *     Success: Deleted XProfile field "Field Name" (ID 500).
 	 *
+	 *     # Delete a field and its data.
 	 *     $ wp bp xprofile field remove 458 --delete-data --yes
 	 *     Success: Deleted XProfile field "Another Field Name" (ID 458).
 	 *
 	 * @alias remove
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		$delete_data = WP_CLI\Utils\get_flag_value( $assoc_args, 'delete-data' );
+		$delete_data = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'delete-data' );
+		$field_ids   = wp_parse_id_list( $args );
 
-		WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
+		if ( count( $field_ids ) > 1 ) {
+			WP_CLI::confirm( 'Are you sure you want to delete these fields?', $assoc_args );
+		} else {
+			WP_CLI::confirm( 'Are you sure you want to delete this field?', $assoc_args );
+		}
 
 		parent::_delete(
-			$args,
+			$field_ids,
 			$assoc_args,
 			function ( $field_id ) use ( $delete_data ) {
 				$field = new \BP_XProfile_Field( $field_id );
@@ -210,7 +218,7 @@ class XProfile_Field extends BuddyPressCommand {
 					return [ 'success', sprintf( 'Deleted XProfile field "%s" (ID %d).', $name, $id ) ];
 				}
 
-				return [ 'error', sprintf( 'Failed deleting XProfile field (ID %d).', $field_id ) ];
+				return [ 'error', sprintf( 'Failed deleting XProfile field "%s" (ID %d).', $name, $id ) ];
 			}
 		);
 	}
