@@ -8,10 +8,22 @@ Feature: Manage BuddyPress Tools
       """
     And I run `wp bp component activate friends`
 
-  Scenario: BuddyPress repair
+  Scenario: BuddyPress tool
 
     When I run `wp bp tool repair friend-count`
     Then STDOUT should contain:
       """
       Complete!
+      """
+
+    When I run `wp bp tool signup 1`
+    Then STDOUT should contain:
+      """
+      Success: Signup tool updated.
+      """
+
+    When I run `wp bp tool reinstall --yes`
+    Then STDOUT should contain:
+      """
+      Success: Emails have been successfully reinstalled.
       """

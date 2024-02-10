@@ -333,7 +333,13 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp activity generate --count=50
+	 *     # Generate 5 activity items.
+	 *     $ wp bp activity generate --count=5
+	 *     Success: Successfully created new activity item (ID #57)
+	 *     Success: Successfully created new activity item (ID #58)
+	 *     Success: Successfully created new activity item (ID #59)
+	 *     Success: Successfully created new activity item (ID #60)
+	 *     Success: Successfully created new activity item (ID #61)
 	 */
 	public function generate( $args, $assoc_args ) {
 		$component = $this->get_random_component();
@@ -352,7 +358,7 @@ class Activity extends BuddyPressCommand {
 					'component' => $component,
 					'type'      => $type,
 					'content'   => $this->generate_random_text(),
-					'silent',
+					'silent'    => true,
 				]
 			);
 
@@ -380,13 +386,39 @@ class Activity extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
-	 *   - haml
+	 *   - csv
+	 *   - yaml
 	 * ---
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
-	 *     $ wp bp activity get 500
-	 *     $ wp bp activity get 56 --format=json
+	 *     # Get activity by ID.
+	 *     $ wp bp activity get 58
+	 *     +-------------------+----------------------------------------------------------------------------------------------+
+	 *     | Field             | Value                                                                                        |
+	 *     +-------------------+----------------------------------------------------------------------------------------------+
+	 *     | id                | 58                                                                                           |
+	 *     | user_id           | 7                                                                                            |
+	 *     | component         | xprofile                                                                                     |
+	 *     | type              | updated_profile                                                                              |
+	 *     | action            | <a href="https://wp.test/members/user_1_4/profile/">User 4</a>&#039;s profile was updated |
+	 *     | content           | Here is some random text                                                                     |
+	 *     | primary_link      |                                                                                              |
+	 *     | item_id           | 0                                                                                            |
+	 *     | secondary_item_id | 0                                                                                            |
+	 *     | date_recorded     | 2024-02-08 01:53:59                                                                          |
+	 *     | hide_sitewide     | 0                                                                                            |
+	 *     | mptt_left         | 0                                                                                            |
+	 *     | mptt_right        | 0                                                                                            |
+	 *     | is_spam           | 0                                                                                            |
+	 *     | user_email        |                                                                                              |
+	 *     | user_nicename     | user_1_4                                                                                     |
+	 *     | user_login        | user_1_4                                                                                     |
+	 *     | display_name      | User 4                                                                                       |
+	 *     | user_fullname     | User 4                                                                                       |
+	 *     | children          | []                                                                                           |
+	 *     | url               | https://wp.test/activity/p/58/                                                            |
+	 *     +-------------------+----------------------------------------------------------------------------------------------+
 	 */
 	public function get( $args, $assoc_args ) {
 		$activity = bp_activity_get_specific( [
@@ -424,30 +456,42 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp activity delete 958695
-	 *     Success: Activity deleted.
+	 *     # Delete an activity.
+	 *     $ wp bp activity delete 958695 --yes
+	 *     Success: Deleted activity 958695.
 	 *
-	 *     $ wp bp activity delete 500 --yes
-	 *     Success: Activity deleted.
+	 *     # Delete multiple activities.
+	 *     $ wp bp activity delete 500 600 --yes
+	 *     Success: Deleted activity 500.
+	 *     Success: Deleted activity 600.
 	 *
 	 * @alias remove
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
+		$activities = wp_parse_id_list( $args );
+
+		if ( count( $activities ) > 1 ) {
+			WP_CLI::confirm( 'Are you sure you want to delete these activities?', $assoc_args );
+		} else {
+			WP_CLI::confirm( 'Are you sure you want to delete this activity?', $assoc_args );
+		}
 
 		parent::_delete(
-			$args,
+			$activities,
 			$assoc_args,
 			function ( $activity_id ) {
-				$args = [
-					'id' => $this->get_activity_id_from_identifier( $activity_id ),
-				];
+				$id = $this->get_activity_id_from_identifier( $activity_id );
 
-				if ( bp_activity_delete( $args ) ) {
-					return [ 'success', 'Activity deleted.' ];
+				if ( ! $id ) {
+					return [ 'error', sprintf( 'No activity found by ID %d.', $activity_id ) ];
 				}
 
-				return [ 'error', 'Could not delete the activity.' ];
+				if ( bp_activity_delete( [ 'id' => $id ] ) ) {
+					return [ 'success', sprintf( 'Deleted activity %d.', $activity_id ) ];
+				}
+
+				return [ 'error', sprintf( 'Could not delete the activity %d.', $activity_id ) ];
 			}
 		);
 	}

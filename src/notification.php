@@ -189,20 +189,23 @@ class Notification extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Delete a notification.
 	 *     $ wp bp notification delete 520 --yes
 	 *     Success: Deleted notification 520.
 	 *
+	 *     # Delete multiple notifications.
 	 *     $ wp bp notification delete 55654 54564 --yes
 	 *     Success: Deleted notification 55654.
 	 *     Success: Deleted notification 54564.
 	 *
+	 * @alias remove
 	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		$notifications = $args;
+		$notifications = wp_parse_id_list( $args );
 
 		if ( count( $notifications ) > 1 ) {
-			WP_CLI::confirm( 'Are you sure want to delete these notifications?', $assoc_args );
+			WP_CLI::confirm( 'Are you sure you want to delete these notifications?', $assoc_args );
 		} else {
 			WP_CLI::confirm( 'Are you sure you want to delete this notification?', $assoc_args );
 		}
@@ -293,7 +296,7 @@ class Notification extends BuddyPressCommand {
 	 *   - ids
 	 *   - csv
 	 *   - count
-	 *   - haml
+	 *   - yaml
 	 * ---
 
 	 * ## EXAMPLES

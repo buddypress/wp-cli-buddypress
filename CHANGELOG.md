@@ -8,6 +8,7 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 
 * New commands:
   * `wp bp notice` - Used to manage Sitewide notices.
+  * `wp bp tool reinstall` - Alias of the `wp bp email reinstall` command, we will deprecate the latter in the future.
 
 ### Changed
 
@@ -17,6 +18,12 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Github Action: Testing against PHP 8.3
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
 * Activity: make tests more deterministic
+* phpDoc
+  * All `delete` commands' output were standardized
+	* All `delete` commands' alias were standardized
+	* Invalid `format` option `haml` removed
+* Confirmation message updated for `delete` commands that accepts multiple values
+* `wp bp group invite remove` updated to `wp bp group invite uninvite` to avoid conflict with the delete/remove command
 
 ## 2.0.2
 

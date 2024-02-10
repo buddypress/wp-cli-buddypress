@@ -53,7 +53,7 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	 * @since 2.0
 	 *
 	 * @param int  $activity_id     Activity ID.
-	 * @param bool $activity_object Return activity object.
+	 * @param bool $activity_object Return BP_Activity_Activity object.
 	 * @return int|BP_Activity_Activity
 	 */
 	protected function get_activity_id_from_identifier( $activity_id, $activity_object = false ) {
@@ -83,9 +83,7 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 
 		// Get group object.
 		$group_obj = groups_get_group(
-			[
-				'group_id' => $group_id,
-			]
+			[ 'group_id' => $group_id ]
 		);
 
 		if ( empty( $group_obj->id ) ) {

@@ -26,7 +26,7 @@ Feature: Manage BuddyPress XProfile Groups
     When I run `wp bp xprofile group delete {GROUP_ID} --yes`
     Then STDOUT should contain:
       """
-      Field group deleted.
+      Field group deleted {GROUP_ID}.
       """
 
     When I try `wp bp xprofile group get {GROUP_ID}`

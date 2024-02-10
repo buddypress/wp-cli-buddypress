@@ -115,15 +115,13 @@ class Group_Invite extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group invite remove --group-id=3 --user-id=10
+	 *     $ wp bp group invite uninvite --group-id=3 --user-id=10
 	 *     Success: User uninvited from the group.
 	 *
 	 *     $ wp bp group invite uninvite --group-id=foo --user-id=admin
 	 *     Success: User uninvited from the group.
-	 *
-	 * @alias uninvite
 	 */
-	public function remove( $args, $assoc_args ) {
+	public function uninvite( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
@@ -154,7 +152,7 @@ class Group_Invite extends BuddyPressCommand {
 	 *   - ids
 	 *   - csv
 	 *   - count
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -336,24 +334,32 @@ class Group_Invite extends BuddyPressCommand {
 	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message.
+	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group invite delete --group-id=3 --user-id=10
-	 *     Success: Member invitation deleted from the group.
+	 *     # Delete a group invitation.
+	 *     $ wp bp group invite delete --group-id=3 --user-id=10 --yes
+	 *     Success: Group invitation deleted.
 	 *
-	 *     $ wp bp group invite delete --group-id=foo --user-id=admin
-	 *     Success: Member invitation deleted from the group.
+	 *     # Delete a group invitation.
+	 *     $ wp bp group invite delete --group-id=foo --user-id=admin --yes
+	 *     Success: Group invitation deleted.
 	 *
-	 * @alias remove
+	 * @alias delete
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
+		WP_CLI::confirm( 'Are you sure you want to delete this group invitation?', $assoc_args );
+
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		if ( groups_delete_invite( $user->ID, $group_id ) ) {
-			WP_CLI::success( 'Member invitation deleted from the group.' );
+			WP_CLI::success( 'Group invitation deleted.' );
 		} else {
-			WP_CLI::error( 'Could not delete member invitation from the group.' );
+			WP_CLI::error( 'Could not delete group invitation.' );
 		}
 	}
 }

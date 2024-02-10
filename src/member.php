@@ -5,9 +5,8 @@ namespace Buddypress\CLI\Command;
 /**
  * Manage BuddyPress Members
  *
- * ## EXAMPLES
+ * ## EXAMPLE
  *
- *   $ wp bp member generate
  *   $ wp bp member generate --count=50
  *
  * @since 1.0.0
@@ -25,10 +24,27 @@ class Member extends BuddyPressCommand {
 	 * default: 100
 	 * ---
 	 *
+	 * * [--role=<role>]
+	 * : The role of the generated users. Default: default role from WP
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
+	 *
 	 * ## EXAMPLES
 	 *
-	 *   $ wp bp member generate
 	 *   $ wp bp member generate --count=50
+	 *
+	 *   # Add meta to every generated users.
+	 *   $ wp user generate --format=ids --count=3 | xargs -d ' ' -I % wp user meta add % foo bar
+	 *   Success: Added custom field.
+	 *   Success: Added custom field.
+	 *   Success: Added custom field.
 	 */
 	public function generate( $args, $assoc_args ) {
 		add_action( 'user_register', [ __CLASS__, 'update_user_last_activity_random' ] );

@@ -28,7 +28,7 @@ Feature: Manage BuddyPress Group Invites
       Success: Member invited to the group.
       """
 
-    When I run `wp bp group invite remove --group-id={GROUP_ID} --user-id={INVITER_ID}`
+    When I run `wp bp group invite uninvite --group-id={GROUP_ID} --user-id={INVITER_ID}`
     Then STDOUT should contain:
       """
       Success: User uninvited from the group.

@@ -192,7 +192,7 @@ class Messages extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -263,7 +263,7 @@ class Messages extends BuddyPressCommand {
 	 *   - count
 	 *   - csv
 	 *   - json
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES

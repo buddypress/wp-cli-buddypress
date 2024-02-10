@@ -29,9 +29,7 @@ class Group_Fetcher extends Base {
 
 		// Get group object.
 		$group = groups_get_group(
-			[
-				'group_id' => $arg,
-			]
+			[ 'group_id' => $arg ]
 		);
 
 		if ( empty( $group->id ) ) {

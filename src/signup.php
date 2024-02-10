@@ -148,9 +148,7 @@ class Signup extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - csv
-	 *   - ids
 	 *   - json
-	 *   - count
 	 *   - yaml
 	 * ---
 	 *
@@ -172,24 +170,36 @@ class Signup extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * <signup-id>...
-	 * : ID or IDs of signup.
+	 * : ID or IDs of signup to delete.
 	 *
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp signup delete 520
-	 *     Success: Signup deleted.
+	 *     # Delete a signup.
+	 *     $ wp bp signup delete 520 --yes
+	 *     Success: Signup deleted 54565.
 	 *
-	 *     $ wp bp signup delete 55654 54564 --yes
-	 *     Success: Signup deleted.
+	 *     # Delete multiple signups.
+	 *     $ wp bp signup delete 55654 54565 --yes
+	 *     Success: Signup deleted 55654.
+	 *     Success: Signup deleted 54565.
+	 *
+	 * @alias remove
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
+		$signup_ids = wp_parse_id_list( $args );
+
+		if ( count( $signup_ids ) > 1 ) {
+			WP_CLI::confirm( 'Are you sure you want to delete these signups?', $assoc_args );
+		} else {
+			WP_CLI::confirm( 'Are you sure you want to delete this signup?', $assoc_args );
+		}
 
 		parent::_delete(
-			$args,
+			$signup_ids,
 			$assoc_args,
 			function ( $signup_id ) {
 				if ( \BP_Signup::delete( [ $signup_id ] ) ) {

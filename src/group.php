@@ -247,7 +247,7 @@ class Group extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -283,24 +283,40 @@ class Group extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group delete 500
-	 *     Success: Group successfully deleted.
+	 *     # Delete a group.
+	 *     $ wp bp group delete 500 --yes
+	 *     Success: Deleted group 500.
 	 *
+	 *     # Delete a group and its metadata.
 	 *     $ wp bp group delete group-slug --yes
-	 *     Success: Group successfully deleted.
+	 *     Success: Deleted group group-slug.
+	 *
+	 *     # Delete multiple groups.
+	 *     $ wp bp group delete 55654 54564 --yes
+	 *     Success: Deleted group 55654.
+	 *     Success: Deleted group 54564.
+	 *
+	 * @alias remove
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
+		$groups = wp_parse_id_list( $args );
+
+		if ( count( $groups ) > 1 ) {
+			WP_CLI::confirm( 'Are you sure you want to delete these groups and their metadata?', $assoc_args );
+		} else {
+			WP_CLI::confirm( 'Are you sure you want to delete this group and its metadata?', $assoc_args );
+		}
 
 		parent::_delete(
-			$args,
+			$groups,
 			$assoc_args,
 			function ( $group_id ) {
 				if ( groups_delete_group( $group_id ) ) {
-					return [ 'success', 'Group successfully deleted.' ];
+					return [ 'success', sprintf( 'Deleted group %d.', $group_id ) ];
 				}
 
-				return [ 'error', 'Could not delete the group.' ];
+				return [ 'error', sprintf( 'Could not delete group %s.', $group_id ) ];
 			}
 		);
 	}
@@ -377,7 +393,7 @@ class Group extends BuddyPressCommand {
 	 *   - ids
 	 *   - csv
 	 *   - count
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * [--count=<number>]

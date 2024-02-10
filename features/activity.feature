@@ -51,7 +51,7 @@ Feature: Manage BuddyPress Activities
     When I run `wp bp activity delete {ACTIVITY_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Activity deleted.
+      Success: Deleted activity {ACTIVITY_ID}.
       """
 
     When I try `wp bp activity get {ACTIVITY_ID}`

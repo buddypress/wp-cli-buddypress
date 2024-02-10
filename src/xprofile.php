@@ -19,6 +19,11 @@ use WP_CLI;
  *
  *     # List xprofile fields.
  *     $ wp bp xprofile field list
+ *     +----+------+-------------+---------+----------+-------------+
+ *     | id | name | description | type    | group_id | is_required |
+ *     +----+------+-------------+---------+----------+-------------+
+ *     | 1  | Name |             | textbox | 1        | 1           |
+ *     +----+------+-------------+---------+----------+-------------+
  */
 class XProfile extends BuddyPressCommand {
 
@@ -31,29 +36,5 @@ class XProfile extends BuddyPressCommand {
 		if ( ! bp_is_active( 'xprofile' ) ) {
 			WP_CLI::error( 'The XProfile component is not active.' );
 		}
-	}
-
-	/**
-	 * Adds description and subcomands to the DOC.
-	 *
-	 * @param object $command Command.
-	 * @return array
-	 */
-	private function command_to_array( $command ) {
-		$dump = [
-			'name'        => $command->get_name(),
-			'description' => $command->get_shortdesc(),
-			'longdesc'    => $command->get_longdesc(),
-		];
-
-		foreach ( $command->get_subcommands() as $subcommand ) {
-			$dump['subcommands'][] = $this->command_to_array( $subcommand );
-		}
-
-		if ( empty( $dump['subcommands'] ) ) {
-			$dump['synopsis'] = (string) $command->get_synopsis();
-		}
-
-		return $dump;
 	}
 }

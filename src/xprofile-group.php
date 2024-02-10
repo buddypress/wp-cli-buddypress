@@ -27,7 +27,7 @@ class XProfile_Group extends BuddyPressCommand {
 	/**
 	 * Object ID key.
 	 *
-	 * @var int
+	 * @var string
 	 */
 	protected $obj_id_key = 'id';
 
@@ -107,13 +107,27 @@ class XProfile_Group extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
-	 *   - haml
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get a specific field group.
 	 *     $ wp bp xprofile group get 500
+	 *     +-------------+---------------+
+	 *     | Field       | Value         |
+	 *     +-------------+---------------+
+	 *     | id          | 2             |
+	 *     | name        | Group         |
+	 *     | description |               |
+	 *     | can_delete  | 1             |
+	 *     | group_order | 0             |
+	 *     | fields      | null          |
+	 *     +-------------+---------------+
+	 *
+	 *     # Get a specific field group in JSON format.
 	 *     $ wp bp xprofile group see 56 --format=json
+	 *     {"id":2,"name":"Group","description":"","can_delete":1,"group_order":0,"fields":null}
 	 *
 	 * @alias see
 	 */
@@ -143,29 +157,42 @@ class XProfile_Group extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * <field-group-id>...
-	 * : ID or IDs for the field group.
+	 * : ID or IDs of field groups to delete.
 	 *
 	 * [--yes]
 	 * : Answer yes to the confirmation message.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
+	 *     # Delete a specific field group.
 	 *     $ wp bp xprofile group delete 500 --yes
+	 *     Success: Field group deleted 500.
+	 *
+	 *     $ wp bp xprofile group delete 55654 54564 --yes
+	 *     Success: Field group deleted 55654.
+	 *     Success: Field group deleted 54564.
 	 *
 	 * @alias remove
+	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
+		$field_groups_ids = wp_parse_id_list( $args );
+
+		if ( count( $field_groups_ids ) > 1 ) {
+			WP_CLI::confirm( 'Are you sure you want to delete these field groups?', $assoc_args );
+		} else {
+			WP_CLI::confirm( 'Are you sure you want to delete this field group?', $assoc_args );
+		}
 
 		parent::_delete(
-			$args,
+			$field_groups_ids,
 			$assoc_args,
 			function ( $field_group_id ) {
 				if ( xprofile_delete_field_group( $field_group_id ) ) {
-					return [ 'success', 'Field group deleted.' ];
+					return [ 'success', sprintf( 'Field group deleted %d.', $field_group_id ) ];
 				}
 
-				return [ 'error', 'Could not delete the field group.' ];
+				return [ 'error', sprintf( 'Could not delete the field group %d.', $field_group_id ) ];
 			}
 		);
 	}

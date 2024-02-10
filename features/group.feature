@@ -41,7 +41,7 @@ Feature: Manage BuddyPress Groups
     When I run `wp bp group delete {GROUP_ID} --yes`
     Then STDOUT should contain:
       """
-      Success: Group successfully deleted.
+      Success: Deleted group {GROUP_ID}.
       """
 
     When I try `wp bp group get {GROUP_ID}`
