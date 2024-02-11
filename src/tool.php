@@ -93,7 +93,7 @@ class Tool extends BuddyPressCommand {
 	}
 
 	/**
-	 * (De)Activate the Signup feature.
+	 * (De)Activate the signup feature.
 	 *
 	 * <status>
 	 * : Status of the feature.
@@ -109,6 +109,11 @@ class Tool extends BuddyPressCommand {
 	 *     Success: Signup tool updated.
 	 */
 	public function signup( $args ) {
+		// Bail early.
+		if ( bp_get_signup_allowed() ) {
+			WP_CLI::error( 'The BuddyPress signup feature is already allowed.' );
+		}
+
 		$retval = bp_update_option( 'users_can_register', $args[0] );
 
 		if ( false === $retval ) {

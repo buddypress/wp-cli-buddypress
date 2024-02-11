@@ -405,7 +405,7 @@ class Activity extends BuddyPressCommand {
 	 *     | user_id           | 7                                                                                            |
 	 *     | component         | xprofile                                                                                     |
 	 *     | type              | updated_profile                                                                              |
-	 *     | action            | <a href="https://wp.test/members/user_1_4/profile/">User 4</a>&#039;s profile was updated |
+	 *     | action            | <a href="https://wp.test/members/user_1_4/profile/">User 4</a>&#039;s profile was updated    |
 	 *     | content           | Here is some random text                                                                     |
 	 *     | primary_link      |                                                                                              |
 	 *     | item_id           | 0                                                                                            |
@@ -421,7 +421,7 @@ class Activity extends BuddyPressCommand {
 	 *     | display_name      | User 4                                                                                       |
 	 *     | user_fullname     | User 4                                                                                       |
 	 *     | children          | []                                                                                           |
-	 *     | url               | https://wp.test/activity/p/58/                                                            |
+	 *     | url               | https://wp.test/activity/p/58/                                                               |
 	 *     +-------------------+----------------------------------------------------------------------------------------------+
 	 *
 	 * @alias see
@@ -516,16 +516,24 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Spam an activity.
 	 *     $ wp bp activity spam 500
 	 *     Success: Activity marked as spam.
 	 *
+	 *     # Spam an activity.
 	 *     $ wp bp activity unham 165165
 	 *     Success: Activity marked as spam.
 	 *
 	 * @alias unham
 	 */
 	public function spam( $args ) {
-		$activity = $this->get_activity_id_from_identifier( $args[0], true );
+		$activity_id = $args[0];
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'Please provide a numeric activity ID.' );
+		}
+
+		$activity = $this->get_activity_id_from_identifier( $activity_id, true );
 
 		// Mark as spam.
 		bp_activity_mark_as_spam( $activity );
@@ -547,16 +555,24 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Mark an activity as ham.
 	 *     $ wp bp activity ham 500
 	 *     Success: Activity marked as ham.
 	 *
+	 *     # Mark an activity as ham.
 	 *     $ wp bp activity unspam 4679
 	 *     Success: Activity marked as ham.
 	 *
 	 * @alias unspam
 	 */
 	public function ham( $args ) {
-		$activity = $this->get_activity_id_from_identifier( $args[0], true );
+		$activity_id = $args[0];
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'Please provide a numeric activity ID.' );
+		}
+
+		$activity = $this->get_activity_id_from_identifier( $activity_id, true );
 
 		// Mark as ham.
 		bp_activity_mark_as_ham( $activity );
@@ -642,14 +658,19 @@ class Activity extends BuddyPressCommand {
 	 * [--skip-notification]
 	 * : Whether to skip notification.
 	 *
+	 * [--silent]
+	 * : Whether to silent the activity comment.
+	 *
 	 * [--porcelain]
 	 * : Output only the new activity comment id.
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Add an activity comment.
 	 *     $ wp bp activity comment 560 --user-id=50 --content="New activity comment"
 	 *     Success: Successfully added a new activity comment (ID #4645)
 	 *
+	 *     # Add an activity comment, skipping notification.
 	 *     $ wp bp activity comment 459 --user-id=140 --skip-notification=1
 	 *     Success: Successfully added a new activity comment (ID #494)
 	 */
@@ -659,22 +680,27 @@ class Activity extends BuddyPressCommand {
 		$skip_notification = WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-notification' );
 
 		// Add activity comment.
-		$id = bp_activity_new_comment( [
+		$activity_comment_id = bp_activity_new_comment( [
 			'content'           => $assoc_args['content'],
 			'user_id'           => $user->ID,
 			'activity_id'       => $activity_id,
 			'skip_notification' => $skip_notification,
 		] );
 
+		// Silent it before it errors.
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
+
 		// Activity Comment ID returned on success.
-		if ( ! is_numeric( $id ) ) {
+		if ( ! is_numeric( $activity_comment_id ) ) {
 			WP_CLI::error( 'Could not post a new activity comment.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $id );
+			WP_CLI::log( $activity_comment_id );
 		} else {
-			WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully added a new activity comment (ID #%d)', $activity_comment_id ) );
 		}
 	}
 
@@ -694,18 +720,27 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp activity delete_comment 100 --comment-id=500
+	 *     # Delete an activity comment.
+	 *     $ wp bp activity delete-comment 100 --comment-id=500 --yes
 	 *     Success: Activity comment deleted.
 	 *
-	 *     $ wp bp activity delete_comment 165 --comment-id=35435 --yes
+	 *     # Delete an activity comment.
+	 *     $ wp bp activity delete-comment 165 --comment-id=35435 --yes
 	 *     Success: Activity comment deleted.
 	 *
-	 * @alias remove_comment
+	 * @alias remove-comment
+	 * @alias delete-comment
 	 */
 	public function delete_comment( $args, $assoc_args ) {
-		$activity_id = $this->get_activity_id_from_identifier( $args[0] );
+		$activity_id = $args[0];
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'Please provide a numeric activity ID.' );
+		}
 
 		WP_CLI::confirm( 'Are you sure you want to delete this activity comment?', $assoc_args );
+
+		$activity_id = $this->get_activity_id_from_identifier( $activity_id );
 
 		// Delete Comment. True if deleted.
 		if ( bp_activity_delete_comment( $activity_id, $assoc_args['comment-id'] ) ) {
@@ -732,6 +767,9 @@ class Activity extends BuddyPressCommand {
 	 * Generate item details.
 	 *
 	 * @since 1.1
+	 *
+	 * @param array $r Params.
+	 * @return array
 	 */
 	protected function generate_item_details( $r ) {
 		global $wpdb;

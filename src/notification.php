@@ -156,10 +156,27 @@ class Notification extends BuddyPressCommand {
 	 * ## EXAMPLES
 	 *
 	 *     # Get a notification by ID.
-	 *     $ wp bp notification get 500
+	 *     $ wp bp notification get 10071
+	 *     +-------------------+---------------------+
+	 *     | Field             | Value               |
+	 *     +-------------------+---------------------+
+	 *     | id                | 10071               |
+	 *     | item_id           | 0                   |
+	 *     | secondary_item_id | 0                   |
+	 *     | user_id           | 7                   |
+	 *     | component_name    | activity            |
+	 *     | component_action  | comment_reply       |
+	 *     | date_notified     | 2024-02-06 00:28:45 |
+	 *     | is_new            | 1                   |
+	 *     +-------------------+---------------------+
 	 *
 	 *     # Get a notification in JSON format.
-	 *     $ wp bp notification get 56 --format=json
+	 *     $ wp bp notification get 10071 --format=json
+	 *     {"id":10071,"item_id":0,"secondary_item_id":0,"user_id":7,"component_name":"activity","component_action":"comment_reply","date_notified":"2024-02-06 00:28:45","is_new":1}
+	 *
+	 *     # Get a notification using a invalid ID.
+	 *     $ wp bp notification see buddypress
+	 *     Error: Please provide a numeric notification ID.
 	 *
 	 * @alias see
 	 */
@@ -347,8 +364,7 @@ class Notification extends BuddyPressCommand {
 
 		unset( $query_args['count'] );
 
-		$query_args = self::process_csv_arguments_to_arrays( $query_args );
-
+		$query_args    = self::process_csv_arguments_to_arrays( $query_args );
 		$notifications = \BP_Notifications_Notification::get( $query_args );
 
 		if ( empty( $notifications ) ) {

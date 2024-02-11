@@ -222,6 +222,7 @@ class Signup extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Activate a signup.
 	 *     $ wp bp signup activate ee48ec319fef3nn4
 	 *     Success: Signup activated, new user (ID #545).
 	 */
@@ -285,6 +286,7 @@ class Signup extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Resend activation e-mail to a newly registered user.
 	 *     $ wp bp signup resend test@example.com
 	 *     Success: Email sent successfully.
 	 *
