@@ -9,10 +9,12 @@ use WP_CLI;
  *
  *  ## EXAMPLES
  *
+ *     # Create message.
  *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
  *     Success: Message successfully created.
  *
- *     $ wp bp message delete-thread 564 5465465 456456 --user-id=user_logon --yes
+ *     # Delete a thread.
+ *     $ wp bp message delete-thread 564 5465465 456456 --user-id=user_login --yes
  *     Success: Thread successfully deleted.
  *
  * @since 1.6.0
@@ -66,7 +68,7 @@ class Messages extends BuddyPressCommand {
 	 * : Thread ID.
 	 *
 	 * [--date-sent=<date-sent>]
-	 * : MySQL-formatted date.
+	 * : GMT timestamp, in Y-m-d h:i:s format.
 	 *
 	 * [--silent]
 	 * : Whether to silent the message creation.
@@ -76,9 +78,11 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp message create --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
+	 *     # Add a message.
+	 *     $ wp bp message add --from=user1 --to=user2 --subject="Message Title" --content="We are ready"
 	 *     Success: Message successfully created.
 	 *
+	 *     # Create a message.
 	 *     $ wp bp message create --from=545 --to=313 --subject="Another Message Title" --content="Message OK"
 	 *     Success: Message successfully created.
 	 *
@@ -192,18 +196,34 @@ class Messages extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get message by ID.
 	 *     $ wp bp message get 5465
-	 *     $ wp bp message see 5454
+	 *
+	 *     # Get message with a string
+	 *     $ wp bp message get invalid-id
+	 *     Error: Please provide a numeric message ID.
 	 *
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$message     = new \BP_Messages_Message( $args[0] );
+		$message_id = $args[0];
+
+		if ( ! is_numeric( $message_id ) ) {
+			WP_CLI::error( 'Please provide a numeric message ID.' );
+		}
+
+		$message = new \BP_Messages_Message( $message_id );
+
+		if ( empty( $message->id ) ) {
+			WP_CLI::error( 'No message found.' );
+		}
+
 		$message_arr = get_object_vars( $message );
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -281,9 +301,7 @@ class Messages extends BuddyPressCommand {
 
 		$r = wp_parse_args(
 			$assoc_args,
-			[
-				'search' => '',
-			]
+			[ 'search' => '' ]
 		);
 
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
@@ -547,6 +565,7 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Send a notice.
 	 *     $ wp bp message send-notice --subject="Important notice" --content="We need to improve"
 	 *     Success: Notice was successfully sent.
 	 *

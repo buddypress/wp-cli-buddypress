@@ -24,7 +24,7 @@ class Member extends BuddyPressCommand {
 	 * default: 100
 	 * ---
 	 *
-	 * * [--role=<role>]
+	 * [--role=<role>]
 	 * : The role of the generated users. Default: default role from WP
 	 *
 	 * [--format=<format>]
@@ -38,6 +38,7 @@ class Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *   # Generate 50 members.
 	 *   $ wp bp member generate --count=50
 	 *
 	 *   # Add meta to every generated users.

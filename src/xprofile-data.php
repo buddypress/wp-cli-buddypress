@@ -94,6 +94,7 @@ class XProfile_Data extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
@@ -108,7 +109,10 @@ class XProfile_Data extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get profile data for a user.
 	 *     $ wp bp xprofile data get --user-id=45 --field-id=120
+	 *
+	 *     # Get profile data for a user, formatting the data.
 	 *     $ wp bp xprofile data see --user-id=user_test --field-id=Hometown --multi-format=comma
 	 *
 	 * @alias see

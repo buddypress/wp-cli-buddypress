@@ -72,6 +72,7 @@ class Signup extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Add a signup.
 	 *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
 	 *     Success: Successfully added new user signup (ID #345).
 	 *
@@ -103,21 +104,21 @@ class Signup extends BuddyPressCommand {
 		$signup_args['user_email']     = $user_email;
 		$signup_args['activation_key'] = $r['activation-key'];
 
-		$id = \BP_Signup::add( $signup_args );
+		$signup_id = \BP_Signup::add( $signup_args );
 
 		// Silent it.
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
-		if ( ! $id ) {
+		if ( ! $signup_id ) {
 			WP_CLI::error( 'Could not add user signup.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $id );
+			WP_CLI::log( $signup_id );
 		} else {
-			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $id ) );
+			WP_CLI::success( sprintf( 'Successfully added new user signup (ID #%d).', $signup_id ) );
 		}
 	}
 
@@ -147,8 +148,8 @@ class Signup extends BuddyPressCommand {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - csv
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
@@ -387,7 +388,7 @@ class Signup extends BuddyPressCommand {
 					break;
 			}
 		} elseif ( is_numeric( $identifier ) ) {
-				$signup_args['include'] = [ intval( $identifier ) ];
+			$signup_args['include'] = [ intval( $identifier ) ];
 		} elseif ( is_email( $identifier ) ) {
 			$signup_args['usersearch'] = $identifier;
 		} else {

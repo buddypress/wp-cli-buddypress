@@ -98,7 +98,7 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param mixed $identifier User ID, email or login.
+	 * @param mixed $identifier User ID, email, or login.
 	 * @return WP_User
 	 */
 	protected function get_user_id_from_identifier( $identifier ) {

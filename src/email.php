@@ -76,7 +76,7 @@ class Email extends BuddyPressCommand {
 
 		$term = term_exists( $assoc_args['type'], bp_get_email_tax_type() );
 
-		// Term already exists so don't do anything.
+		// Term already exists, so don't do anything.
 		if ( 0 !== $term && null !== $term ) {
 			if ( true === $switched ) {
 				restore_current_blog();
@@ -93,11 +93,7 @@ class Email extends BuddyPressCommand {
 			$input  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'content', '' );
 			$output = $this->_edit( $input, 'WP-CLI: New BP Email Content' );
 
-			if ( $output ) {
-				$assoc_args['content'] = $output;
-			} else {
-				$assoc_args['content'] = $input;
-			}
+			$assoc_args['content'] = ( $output ) ? $output : $input;
 		}
 
 		$defaults = [
