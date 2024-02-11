@@ -9,9 +9,11 @@ use WP_CLI;
  *
  * ## EXAMPLES
  *
+ *     # Invite a member to a group.
  *     $ wp bp group invite add --group-id=40 --user-id=10 --inviter-id=1331
  *     Success: Member invited to the group.
  *
+ *     # Invite a member to a group.
  *     $ wp bp group invite create --group-id=40 --user-id=user_slug --inviter-id=804
  *     Success: Member invited to the group.
  *
@@ -116,9 +118,11 @@ class Group_Invite extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Uninvite a user from a group.
 	 *     $ wp bp group invite uninvite --group-id=3 --user-id=10
 	 *     Success: User uninvited from the group.
 	 *
+	 *     # Uninvite a user from a group.
 	 *     $ wp bp group invite uninvite --group-id=foo --user-id=admin
 	 *     Success: User uninvited from the group.
 	 */
@@ -156,7 +160,7 @@ class Group_Invite extends BuddyPressCommand {
 	 *   - yaml
 	 * ---
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
 	 *     $ wp bp group invite list --user-id=30 --group-id=56
 	 *
@@ -246,15 +250,15 @@ class Group_Invite extends BuddyPressCommand {
 		$notify = WP_CLI\Utils\make_progress_bar( 'Generating random group invitations', $assoc_args['count'] );
 
 		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-
 			$random_group = \BP_Groups_Group::get_random( 1, 1 );
+
 			$this->create(
 				[],
 				[
 					'user-id'    => $this->get_random_user_id(),
 					'group-id'   => $random_group['groups'][0]->slug,
 					'inviter-id' => $this->get_random_user_id(),
-					'silent',
+					'silent'     => true,
 				]
 			);
 
@@ -277,9 +281,11 @@ class Group_Invite extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Accept a group invitation.
 	 *     $ wp bp group invite accept --group-id=3 --user-id=10
 	 *     Success: User is now a "member" of the group.
 	 *
+	 *     # Accept a group invitation.
 	 *     $ wp bp group invite accept --group-id=foo --user-id=admin
 	 *     Success: User is now a "member" of the group.
 	 */
@@ -307,9 +313,11 @@ class Group_Invite extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Reject a group invitation.
 	 *     $ wp bp group invite reject --group-id=3 --user-id=10
 	 *     Success: Member invitation rejected.
 	 *
+	 *     # Reject a group invitation.
 	 *     $ wp bp group invite reject --group-id=foo --user-id=admin
 	 *     Success: Member invitation rejected.
 	 */

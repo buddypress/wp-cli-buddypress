@@ -7,9 +7,11 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 ## Added
 
 * Support for the `--silence` flag introduced to a few `create` commands.
+* Support for the `--silence` flag introduced to the `wp bp activity comment` command.
 * New commands:
   * `wp bp notice` - Used to manage Sitewide notices.
   * `wp bp tool reinstall` - Alias of the `wp bp email reinstall` command, we will deprecate the latter in the future.
+	* `delete-comment` and `remove-comment` alias added for the `wp bp activity` command.
 
 ### Changed
 
@@ -27,6 +29,7 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 	* `post-update` command updated to remove mention of default text creation
 * Confirmation message updated for `delete` commands that accepts multiple values
 * `wp bp group invite remove` updated to `wp bp group invite uninvite` to avoid conflict with the delete/remove command
+* `delete_comment` updated to `delete-comment`
 
 ## 2.0.2
 

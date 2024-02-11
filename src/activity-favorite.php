@@ -177,6 +177,7 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * @subcommand list
 	 * @alias items
 	 * @alias user_items
+	 * @alias user-items
 	 */
 	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$user      = $this->get_user_id_from_identifier( $args[0] );

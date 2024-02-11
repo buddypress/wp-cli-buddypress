@@ -394,6 +394,7 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Star a message.
 	 *     $ wp bp message star 3543 --user-id=user_login
 	 *     Success: Message was successfully starred.
 	 */
@@ -432,13 +433,19 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Unstar a message.
 	 *     $ wp bp message unstar 212 --user-id=another_user_login
 	 *     Success: Message was successfully unstarred.
 	 */
 	public function unstar( $args, $assoc_args ) {
+		$msg_id = $args[0];
+
+		if ( ! is_numeric( $msg_id ) ) {
+			WP_CLI::error( 'Please provide a numeric message ID.' );
+		}
+
 		$user    = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id = $user->ID;
-		$msg_id  = (int) $args[0];
 
 		// Check if the message is starred first.
 		if ( ! bp_messages_is_message_starred( $msg_id, $user_id ) ) {
@@ -471,14 +478,20 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Star a thread.
 	 *     $ wp bp message star-thread 212 --user-id=another_user_login
 	 *     Success: Thread was successfully starred.
 	 *
 	 * @alias star-thread
 	 */
 	public function star_thread( $args, $assoc_args ) {
-		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$thread_id = (int) $args[0];
+		$thread_id = $args[0];
+
+		if ( ! is_numeric( $thread_id ) ) {
+			WP_CLI::error( 'Please provide a numeric thread ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		// Check if it is a valid thread.
 		if ( ! messages_is_valid_thread( $thread_id ) ) {
@@ -487,6 +500,7 @@ class Messages extends BuddyPressCommand {
 
 		// Check if the user has access to this thread.
 		$id = messages_check_thread_access( $thread_id, $user->ID );
+
 		if ( ! is_numeric( $id ) ) {
 			WP_CLI::error( 'User has no access to this thread.' );
 		}
@@ -518,14 +532,20 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
+	 *     # Unstar a thread.
 	 *     $ wp bp message unstar-thread 212 --user-id=another_user_login
 	 *     Success: Thread was successfully unstarred.
 	 *
 	 * @alias unstar-thread
 	 */
 	public function unstar_thread( $args, $assoc_args ) {
-		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$thread_id = (int) $args[0];
+		$thread_id = $args[0];
+
+		if ( ! is_numeric( $thread_id ) ) {
+			WP_CLI::error( 'Please provide a numeric thread ID.' );
+		}
+
+		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		// Check if it is a valid thread.
 		if ( ! messages_is_valid_thread( $thread_id ) ) {
@@ -534,6 +554,7 @@ class Messages extends BuddyPressCommand {
 
 		// Check if the user has access to this thread.
 		$id = messages_check_thread_access( $thread_id, $user->ID );
+
 		if ( ! is_numeric( $id ) ) {
 			WP_CLI::error( 'User has no access to this thread.' );
 		}

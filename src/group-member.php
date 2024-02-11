@@ -237,9 +237,11 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Promote a member to a new role.
 	 *     $ wp bp group member promote --group-id=3 --user-id=10 --role=admin
 	 *     Success: Member promoted to new role successfully.
 	 *
+	 *     # Promote a member to a new role.
 	 *     $ wp bp group member promote --group-id=foo --user-id=admin --role=mod
 	 *     Success: Member promoted to new role successfully.
 	 */
@@ -268,9 +270,11 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Demote a user to the "member" status.
 	 *     $ wp bp group member demote --group-id=3 --user-id=10
 	 *     Success: User demoted to the "member" status.
 	 *
+	 *     # Demote a user to the "member" status.
 	 *     $ wp bp group member demote --group-id=foo --user-id=admin
 	 *     Success: User demoted to the "member" status.
 	 */
@@ -299,9 +303,11 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Ban a member from a group.
 	 *     $ wp bp group member ban --group-id=3 --user-id=10
 	 *     Success: Member banned from the group.
 	 *
+	 *     # Ban a member from a group.
 	 *     $ wp bp group member ban --group-id=foo --user-id=admin
 	 *     Success: Member banned from the group.
 	 */
@@ -330,9 +336,11 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Unban a member from a group.
 	 *     $ wp bp group member unban --group-id=3 --user-id=10
 	 *     Success: Member unbanned from the group.
 	 *
+	 *     # Unban a member from a group.
 	 *     $ wp bp group member unban --group-id=foo --user-id=admin
 	 *     Success: Member unbanned from the group.
 	 */

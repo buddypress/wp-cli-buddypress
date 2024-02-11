@@ -38,12 +38,20 @@ class XProfile_Data extends BuddyPressCommand {
 	 * --value=<value>
 	 * : Value to set.
 	 *
+	 * [--silent]
+	 * : Whether to silent the success message.
+	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp xprofile data set --user-id=45 --field-id=120 --value=teste
-	 *     Success: Updated XProfile field "Field Name" (ID 120) with value  "teste" for user user_login (ID 45).
+	 *     # Set profile data for a user.
+	 *     $ wp bp xprofile data set --user-id=45 --field-id=120 --value=test
+	 *     Success: Updated XProfile field "Field Name" (ID 120) with value  "test" for user user_login (ID 45).
+	 *
+	 * @alias set
+	 * @alias add
+	 * @alias update
 	 */
-	public function set( $args, $assoc_args ) {
+	public function create( $args, $assoc_args ) {
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$field_id = $this->get_field_id( $assoc_args['field-id'] );
 		$field    = new \BP_XProfile_Field( $field_id );
@@ -59,6 +67,11 @@ class XProfile_Data extends BuddyPressCommand {
 		}
 
 		$updated = xprofile_set_field_data( $field->id, $user->ID, $value );
+
+		// Silent it before it errors.
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
 
 		if ( ! $updated ) {
 			WP_CLI::error( 'Could not set profile data.' );
