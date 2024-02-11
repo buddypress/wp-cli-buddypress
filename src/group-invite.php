@@ -50,55 +50,56 @@ class Group_Invite extends BuddyPressCommand {
 	 * [--message=<value>]
 	 * : Message to send with the invitation.
 	 *
+	 * [--porcelain]
+	 * : Return only the invitation id.
+	 *
 	 * [--silent]
 	 * : Whether to silent the invite creation.
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Invite a member to a group.
 	 *     $ wp bp group invite add --group-id=40 --user-id=10 --inviter-id=1331
 	 *     Success: Member invited to the group.
 	 *
+	 *     # Invite a member to a group.
 	 *     $ wp bp group invite create --group-id=40 --user-id=user_slug --inviter-id=804
 	 *     Success: Member invited to the group.
 	 *
 	 * @alias add
 	 */
 	public function create( $args, $assoc_args ) {
-		$r = wp_parse_args(
-			$assoc_args,
-			[
-				'user-id'       => false,
-				'group-id'      => false,
-				'inviter-id'    => false,
-				'message'       => '',
-				'date-modified' => bp_core_current_time(),
-			]
-		);
 
-		if ( $r['user-id'] === $r['inviter-id'] ) {
+		// Bail early.
+		if ( $assoc_args['user-id'] === $assoc_args['inviter-id'] ) {
 			return;
 		}
 
-		$group_id = $this->get_group_id_from_identifier( $r['group-id'] );
-		$user     = $this->get_user_id_from_identifier( $r['user-id'] );
-		$inviter  = $this->get_user_id_from_identifier( $r['inviter-id'] );
-
-		$invite = groups_invite_user( [
-			'user_id'       => $user->ID,
-			'group_id'      => $group_id,
-			'inviter_id'    => $inviter->ID,
-			'date_modified' => $r['date-modified'],
-			'content'       => $r['message'],
-		] );
+		$message   = isset( $assoc_args['message'] ) ? $assoc_args['message'] : '';
+		$group_id  = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$inviter   = $this->get_user_id_from_identifier( $assoc_args['inviter-id'] );
+		$invite_id = groups_invite_user(
+			[
+				'user_id'    => $user->ID,
+				'group_id'   => $group_id,
+				'inviter_id' => $inviter->ID,
+				'content'    => $message,
+			]
+		);
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
 			return;
 		}
 
-		if ( $invite ) {
-			WP_CLI::success( 'Member invited to the group.' );
-		} else {
+		if ( ! $invite_id ) {
 			WP_CLI::error( 'Could not invite the member.' );
+		}
+
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
+			WP_CLI::log( $invite_id );
+		} else {
+			WP_CLI::success( 'Member invited to the group.' );
 		}
 	}
 

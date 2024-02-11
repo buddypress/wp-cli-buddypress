@@ -94,7 +94,7 @@ class Group extends BuddyPressCommand {
 	 * : Whether to enable legacy bbPress forums.
 	 *
 	 * [--date-created=<date-created>]
-	 * : MySQL-formatted date.
+	 * : GMT timestamp, in Y-m-d h:i:s format.
 	 *
 	 * [--silent]
 	 * : Whether to silent the group creation.
@@ -104,9 +104,11 @@ class Group extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Create a public group.
 	 *     $ wp bp group create --name="Totally Cool Group"
 	 *     Success: Group (ID 5465) created: http://example.com/groups/totally-cool-group/
 	 *
+	 *     # Create a private group.
 	 *     $ wp bp group create --name="Another Cool Group" --description="Cool Group" --creator-id=54 --status=private
 	 *     Success: Group (ID 6454)6 created: http://example.com/groups/another-cool-group/
 	 *
@@ -160,9 +162,7 @@ class Group extends BuddyPressCommand {
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::log( $group_id );
 		} else {
-			$group     = groups_get_group( [
-				'group_id' => $group_id,
-			] );
+			$group     = groups_get_group( [ 'group_id' => $group_id ] );
 			$permalink = bp_get_group_url( $group );
 			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $group_id, $permalink ) );
 		}
@@ -247,12 +247,16 @@ class Group extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get group by ID.
 	 *     $ wp bp group get 500
+	 *
+	 *     # Get group by group slug.
 	 *     $ wp bp group get group-slug
 	 *
 	 * @alias see

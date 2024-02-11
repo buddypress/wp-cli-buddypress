@@ -49,7 +49,7 @@ class Notification extends BuddyPressCommand {
 	}
 
 	/**
-	 * Create a notification item.
+	 * Create a notification.
 	 *
 	 * ## OPTIONS
 	 *
@@ -81,9 +81,11 @@ class Notification extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Create a `update_reply` notification.
 	 *     $ wp bp notification create --component=messages --action=update_reply --user-id=523
 	 *     Success: Successfully created new notification. (ID #5464)
 	 *
+	 *     # Create a `comment_reply` notification.
 	 *     $ wp bp notification add --component=groups --action=comment_reply --user-id=10
 	 *     Success: Successfully created new notification (ID #48949)
 	 *
@@ -102,7 +104,7 @@ class Notification extends BuddyPressCommand {
 			]
 		);
 
-		$id = bp_notifications_add_notification(
+		$notification_id = bp_notifications_add_notification(
 			[
 				'user_id'           => $r['user-id'],
 				'item_id'           => $r['item-id'],
@@ -118,14 +120,14 @@ class Notification extends BuddyPressCommand {
 			return;
 		}
 
-		if ( ! is_numeric( $id ) ) {
+		if ( ! is_numeric( $notification_id ) ) {
 			WP_CLI::error( 'Could not create notification.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $id );
+			WP_CLI::log( $notification_id );
 		} else {
-			WP_CLI::success( sprintf( 'Successfully created new notification (ID #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully created new notification (ID #%d)', $notification_id ) );
 		}
 	}
 
@@ -146,25 +148,32 @@ class Notification extends BuddyPressCommand {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - csv
-	 *   - ids
 	 *   - json
-	 *   - count
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get a notification by ID.
 	 *     $ wp bp notification get 500
+	 *
+	 *     # Get a notification in JSON format.
 	 *     $ wp bp notification get 56 --format=json
 	 *
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$notification = bp_notifications_get_notification( $args[0] );
+		$notification_id = $args[0];
+
+		if ( ! is_numeric( $notification_id ) ) {
+			WP_CLI::error( 'Please provide a numeric notification ID.' );
+		}
+
+		$notification = bp_notifications_get_notification( $notification_id );
 
 		if ( empty( $notification->id ) || ! is_object( $notification ) ) {
-			WP_CLI::error( 'No notification found by that ID.' );
+			WP_CLI::error( 'No notification found.' );
 		}
 
 		$notification_arr = get_object_vars( $notification );

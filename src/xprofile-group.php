@@ -48,14 +48,19 @@ class XProfile_Group extends BuddyPressCommand {
 	 * default: 1
 	 * ---
 	 *
+	 * [--silent]
+	 * : Whether to silent the XProfile group creation.
+	 *
 	 * [--porcelain]
 	 * : Output just the new group id.
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Create XProfile field group.
 	 *     $ wp bp xprofile group create --name="Group Name" --description="Xprofile Group Description"
 	 *     Success: Created XProfile field group "Group Name" (ID 123).
 	 *
+	 *     # Create XProfile field group that can't be deleted.
 	 *     $ wp bp xprofile group add --name="Another Group" --can-delete=false
 	 *     Success: Created XProfile field group "Another Group" (ID 21212).
 	 *
@@ -70,22 +75,29 @@ class XProfile_Group extends BuddyPressCommand {
 			]
 		);
 
-		$group_id = xprofile_insert_field_group( $r );
+		$xprofile_group_id = xprofile_insert_field_group( $r );
 
-		if ( ! $group_id ) {
+		// Silent it before it errors.
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
+
+		if ( ! $xprofile_group_id ) {
 			WP_CLI::error( 'Could not create field group.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $group_id );
+			WP_CLI::log( $xprofile_group_id );
 		} else {
-			$group   = new \BP_XProfile_Group( $group_id );
-			$success = sprintf(
-				'Created XProfile field group "%s" (ID %d).',
-				$group->name,
-				$group->id
+			$group = new \BP_XProfile_Group( $xprofile_group_id );
+
+			WP_CLI::success(
+				sprintf(
+					'Created XProfile field group "%s" (ID %d).',
+					$group->name,
+					$group->id
+				)
 			);
-			WP_CLI::success( $success );
 		}
 	}
 
@@ -107,6 +119,7 @@ class XProfile_Group extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
@@ -139,11 +152,13 @@ class XProfile_Group extends BuddyPressCommand {
 		}
 
 		$object = xprofile_get_field_group( $field_group_id );
+
 		if ( empty( $object->id ) && ! is_object( $object ) ) {
 			WP_CLI::error( 'No XProfile field group found.' );
 		}
 
 		$object_arr = get_object_vars( $object );
+
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}

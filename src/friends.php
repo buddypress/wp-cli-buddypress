@@ -65,9 +65,11 @@ class Friends extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Create a new friendship.
 	 *     $ wp bp friend create user1 another_use
 	 *     Success: Friendship successfully created.
 	 *
+	 *     # Create a new friendship, forcing acceptance.
 	 *     $ wp bp friend create user1 another_use --force-accept
 	 *     Success: Friendship successfully created.
 	 *
@@ -87,7 +89,7 @@ class Friends extends BuddyPressCommand {
 			WP_CLI::error( 'These users are already friends.' );
 		}
 
-		$force = WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
+		$force = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force-accept' );
 
 		if ( ! friends_add_friend( $initiator->ID, $friend->ID, $force ) ) {
 			WP_CLI::error( 'There was a problem while creating the friendship.' );
@@ -96,7 +98,7 @@ class Friends extends BuddyPressCommand {
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::log( \BP_Friends_Friendship::get_friendship_id( $initiator->ID, $friend->ID ) );
 		} elseif ( $force ) {
-				WP_CLI::success( 'Friendship successfully created.' );
+			WP_CLI::success( 'Friendship successfully created.' );
 		} else {
 			WP_CLI::success( 'Friendship successfully created but not accepted.' );
 		}
@@ -158,10 +160,10 @@ class Friends extends BuddyPressCommand {
 	 */
 	public function accept( $args, $assoc_args ) {
 		parent::_update(
-			$args,
+			wp_parse_id_list( $args ),
 			$assoc_args,
 			function ( $friendship_id ) {
-				if ( friends_accept_friendship( (int) $friendship_id ) ) {
+				if ( friends_accept_friendship( $friendship_id ) ) {
 					return [ 'success', 'Friendship successfully accepted.' ];
 				}
 
@@ -190,14 +192,14 @@ class Friends extends BuddyPressCommand {
 	 */
 	public function reject( $args, $assoc_args ) {
 		parent::_update(
-			$args,
+			wp_parse_id_list( $args ),
 			$assoc_args,
 			function ( $friendship_id ) {
-				if ( friends_reject_friendship( (int) $friendship_id ) ) {
+				if ( friends_reject_friendship( $friendship_id ) ) {
 					return [ 'success', 'Friendship successfully rejected.' ];
-				} else {
-					return [ 'error', 'There was a problem rejecting the friendship.' ];
 				}
+
+				return [ 'error', 'There was a problem rejecting the friendship.' ];
 			}
 		);
 	}

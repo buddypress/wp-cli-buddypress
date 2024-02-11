@@ -53,9 +53,11 @@ class Activity_Favorite extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Add an activity item as a favorite.
 	 *     $ wp bp activity favorite add 100 500
 	 *     Success: Activity item added as a favorite for the user.
 	 *
+	 *     # Add an activity item as a favorite using a user_login identifier.
 	 *     $ wp bp activity favorite create 100 user_test
 	 *     Success: Activity item added as a favorite for the user.
 	 *
@@ -64,9 +66,8 @@ class Activity_Favorite extends BuddyPressCommand {
 	public function create( $args ) {
 		$activity = bp_activity_get_specific(
 			[
-				'activity_ids'     => $args[0],
-				'spam'             => null,
-				'display_comments' => true,
+				'activity_ids' => $args[0],
+				'spam'         => null,
 			]
 		);
 
@@ -168,8 +169,9 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * default: 50
 	 * ---
 	 *
-	 * ## EXAMPLES
+	 * ## EXAMPLE
 	 *
+	 *     # Get a user's favorite activity items.
 	 *     $ wp bp activity favorite list 315
 	 *
 	 * @subcommand list

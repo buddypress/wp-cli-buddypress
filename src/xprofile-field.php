@@ -64,15 +64,9 @@ class XProfile_Field extends BuddyPressCommand {
 	}
 
 	/**
-	 * Create an XProfile field.
+	 * Create a XProfile field.
 	 *
 	 * ## OPTIONS
-	 *
-	 * [--type=<type>]
-	 * : Field type.
-	 * ---
-	 * default: textbox
-	 * ---
 	 *
 	 * --field-group-id=<field-group-id>
 	 * : ID of the field group where the new field will be created.
@@ -80,14 +74,25 @@ class XProfile_Field extends BuddyPressCommand {
 	 * --name=<name>
 	 * : Name of the new field.
 	 *
+	 * [--type=<type>]
+	 * : Field type.
+	 * ---
+	 * default: textbox
+	 * ---
+	 *
+	 * [--silent]
+	 * : Whether to silent the XProfile field creation.
+	 *
 	 * [--porcelain]
 	 * : Output just the new field id.
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Create a XProfile field.
 	 *     $ wp bp xprofile field create --type=checkbox --field-group-id=508 --name="Field Name"
 	 *     Success: Created XProfile field "Field Name" (ID 24564).
 	 *
+	 *     # Create a XProfile field.
 	 *     $ wp bp xprofile field add --field-group-id=165 --name="Another Field"
 	 *     Success: Created XProfile field "Another Field" (ID 5465).
 	 *
@@ -99,21 +104,27 @@ class XProfile_Field extends BuddyPressCommand {
 			WP_CLI::error( 'Not a valid field type.' );
 		}
 
-		$create_args = [
-			'type'           => $assoc_args['type'],
-			'name'           => $assoc_args['name'],
-			'field_group_id' => $assoc_args['field-group-id'],
-		];
+		$xprofile_field_id = xprofile_insert_field(
+			[
+				'type'           => $assoc_args['type'],
+				'name'           => $assoc_args['name'],
+				'field_group_id' => $assoc_args['field-group-id'],
+			]
+		);
 
-		$field_id = xprofile_insert_field( $create_args );
-		if ( ! $field_id ) {
+		// Silent it before it errors.
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
+
+		if ( ! $xprofile_field_id ) {
 			WP_CLI::error( 'Could not create XProfile field.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $field_id );
+			WP_CLI::log( $xprofile_field_id );
 		} else {
-			$field = new \BP_XProfile_Field( $field_id );
+			$field = new \BP_XProfile_Field( $xprofile_field_id );
 
 			WP_CLI::success(
 				sprintf(
@@ -143,12 +154,16 @@ class XProfile_Field extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get a xprofile field.
 	 *     $ wp bp xprofile field get 500
+	 *
+	 *     # Get a xprofile field in JSON format.
 	 *     $ wp bp xprofile field see 56 --format=json
 	 *
 	 * @alias see
@@ -162,6 +177,7 @@ class XProfile_Field extends BuddyPressCommand {
 		}
 
 		$object_arr = get_object_vars( $object );
+
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $object_arr );
 		}

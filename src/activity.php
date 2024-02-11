@@ -9,9 +9,11 @@ use WP_CLI;
  *
  * ## EXAMPLES
  *
+ *     # Create an activity marked as spam.
  *     $ wp bp activity create --is-spam=1
  *     Success: Successfully created new activity item (ID #5464)
  *
+ *     # Create an activity in a group.
  *     $ wp bp activity add --component=groups --item-id=2 --user-id=10
  *     Success: Successfully created new activity item (ID #48949)
  *
@@ -105,9 +107,11 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Create an activity marked as spam.
 	 *     $ wp bp activity create --is-spam=1
 	 *     Success: Successfully created new activity item (ID #5464)
 	 *
+	 *     # Create an activity.
 	 *     $ wp bp activity add --component=groups --item-id=564 --user-id=10
 	 *     Success: Successfully created new activity item (ID #48949)
 	 *
@@ -149,7 +153,7 @@ class Activity extends BuddyPressCommand {
 			$r = $this->generate_item_details( $r );
 		}
 
-		$id = bp_activity_add(
+		$activity_id = bp_activity_add(
 			[
 				'action'            => $r['action'],
 				'content'           => $r['content'],
@@ -170,14 +174,14 @@ class Activity extends BuddyPressCommand {
 			return;
 		}
 
-		if ( ! is_numeric( $id ) ) {
+		if ( ! is_numeric( $activity_id ) ) {
 			WP_CLI::error( 'Could not create activity item.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $id );
+			WP_CLI::log( $activity_id );
 		} else {
-			WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully created new activity item (ID #%d)', $activity_id ) );
 		}
 	}
 
@@ -419,22 +423,28 @@ class Activity extends BuddyPressCommand {
 	 *     | children          | []                                                                                           |
 	 *     | url               | https://wp.test/activity/p/58/                                                            |
 	 *     +-------------------+----------------------------------------------------------------------------------------------+
+	 *
+	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
+		$activity_id = $args[0];
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'Please provide a numeric activity ID.' );
+		}
+
 		$activity = bp_activity_get_specific( [
-			'activity_ids'     => $args[0],
+			'activity_ids'     => $activity_id,
 			'spam'             => null,
 			'display_comments' => true,
 		] );
 
-		$activity = $activity['activities'][0];
-
-		if ( ! is_object( $activity ) ) {
-			WP_CLI::error( 'Could not find the activity.' );
+		if ( ! isset( $activity['activities'][0] ) || ! is_object( $activity['activities'][0] ) ) {
+			WP_CLI::error( 'No activity found.' );
 		}
 
-		$activity_arr        = get_object_vars( $activity );
-		$activity_arr['url'] = bp_activity_get_permalink( $activity->id );
+		$activity_arr        = get_object_vars( $activity['activities'][0] );
+		$activity_arr['url'] = bp_activity_get_permalink( $activity_id );
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $activity_arr );
@@ -564,19 +574,24 @@ class Activity extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * --user-id=<user>
-	 * : ID of the user. If none is provided, a user will be randomly selected.
+	 * : ID of the user.
 	 *
 	 * --content=<content>
-	 * : Activity content text. If none is provided, default text will be generated.
+	 * : Activity content text.
+	 *
+	 * [--silent]
+	 * : Whether to silent the activity update.
 	 *
 	 * [--porcelain]
 	 * : Output only the new activity id.
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Post an activity update.
 	 *     $ wp bp activity post_update --user-id=50 --content="Content to update"
 	 *     Success: Successfully updated with a new activity item (ID #13165)
 	 *
+	 *     # Post an activity update.
 	 *     $ wp bp activity post_update --user-id=140
 	 *     Success: Successfully updated with a new activity item (ID #4548)
 	 *
@@ -586,20 +601,27 @@ class Activity extends BuddyPressCommand {
 		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 
 		// Post the activity update.
-		$id = bp_activity_post_update( [
-			'content' => $assoc_args['content'],
-			'user_id' => $user->ID,
-		] );
+		$activity_id = bp_activity_post_update(
+			[
+				'content' => $assoc_args['content'],
+				'user_id' => $user->ID,
+			]
+		);
+
+		// Silent it before it errors.
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'silent' ) ) {
+			return;
+		}
 
 		// Activity ID returned on success update.
-		if ( ! is_numeric( $id ) ) {
+		if ( ! is_numeric( $activity_id ) ) {
 			WP_CLI::error( 'Could not post the activity update.' );
 		}
 
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $id );
+			WP_CLI::log( $activity_id );
 		} else {
-			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $id ) );
+			WP_CLI::success( sprintf( 'Successfully updated with a new activity item (ID #%d)', $activity_id ) );
 		}
 	}
 

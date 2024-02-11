@@ -54,14 +54,13 @@ class Group_Member extends BuddyPressCommand {
 	 *   - admin
 	 * ---
 	 *
-	 * [--porcelain]
-	 * : Return only the added group member id.
-	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Add a user to a group as a member.
 	 *     $ wp bp group member add --group-id=3 --user-id=10
 	 *     Success: Added user #3 to group #3 as member.
 	 *
+	 *     # Add a user to a group as a moderator.
 	 *     $ wp bp group member create --group-id=bar --user-id=20 --role=mod
 	 *     Success: Added user #20 to group #45 as mod.
 	 *
@@ -77,22 +76,18 @@ class Group_Member extends BuddyPressCommand {
 			WP_CLI::error( 'Could not add user to the group.' );
 		}
 
-		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::log( $user->ID );
-		} else {
-			if ( 'member' !== $role ) {
-				groups_promote_member( $user->ID, $group_id, $role );
-			}
-
-			WP_CLI::success(
-				sprintf(
-					'Added user #%d to group #%d as %s.',
-					$user->ID,
-					$group_id,
-					$role
-				)
-			);
+		if ( 'member' !== $role ) {
+			groups_promote_member( $user->ID, $group_id, $role );
 		}
+
+		WP_CLI::success(
+			sprintf(
+				'Added user #%d to group #%d as %s.',
+				$user->ID,
+				$group_id,
+				$role
+			)
+		);
 	}
 
 	/**

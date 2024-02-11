@@ -75,9 +75,11 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *    # Create a sitewide notice.
 	 *    $ wp bp notice create --subject=Hello --message=Folks!
 	 *    Success: Successfully created new sitewide notice. (ID #5464)
 	 *
+	 *    # Create a sitewide notice and return its ID.
 	 *    $ wp bp notice create --subject=Hello --message=Folks! --porcelain
 	 *    36565
 	 *
@@ -127,8 +129,8 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - csv
 	 *   - json
+	 *   - csv
 	 *   - yaml
 	 * ---
 	 *
@@ -153,10 +155,16 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 * @alias see
 	 */
 	public function get( $args, $assoc_args ) {
-		$notice = new BP_Messages_Notice( $args[0] );
+		$notice_id = $args[0];
+
+		if ( ! is_numeric( $notice_id ) ) {
+			WP_CLI::error( 'Please provide a numeric notice ID.' );
+		}
+
+		$notice = new BP_Messages_Notice( $notice_id );
 
 		if ( ! $notice->date_sent ) {
-			WP_CLI::error( 'No sitewide notice found by that ID.' );
+			WP_CLI::error( 'No sitewide notice found.' );
 		}
 
 		$notice_arr = get_object_vars( $notice );
