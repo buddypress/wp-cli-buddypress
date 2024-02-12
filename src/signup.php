@@ -248,32 +248,49 @@ class Signup extends BuddyPressCommand {
 	 * default: 100
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
 	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Generate 50 random signups.
 	 *     $ wp bp signup generate --count=50
+	 *     Generating signups  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 random signups and return their IDs.
+	 *     $ wp bp signup generate --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating signups', $assoc_args['count'] );
-
 		// Use the email API to get a valid "from" domain.
 		$email_domain = new \BP_Email( '' );
 		$email_domain = $email_domain->get_from()->get_address();
 		$random_login = wp_generate_password( 12, false ); // Generate random user login.
 
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->create(
-				[],
-				[
+		$this->generate_callback(
+			'Generating signups',
+			$assoc_args,
+			function ( $assoc_args, $format ) use ( $random_login, $email_domain ) {
+				$params = [
 					'user-login' => $random_login,
 					'user-email' => $random_login . substr( $email_domain, strpos( $email_domain, '@' ) ),
-					'silent'     => true,
-				]
-			);
+				];
 
-			$notify->tick();
-		}
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
 
-		$notify->finish();
+				return $this->create( [], $params );
+			}
+		);
 	}
 
 	/**

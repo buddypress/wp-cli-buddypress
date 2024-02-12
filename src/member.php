@@ -45,14 +45,15 @@ class Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   # Generate 50 members.
-	 *   $ wp bp member generate --count=50
+	 *     # Generate 50 members.
+	 *     $ wp bp member generate --count=50
+	 *     Generating users  100% [======================] 0:00 / 0:00
 	 *
-	 *   # Add meta to every generated users.
-	 *   $ wp user generate --format=ids --count=3 | xargs -d ' ' -I % wp user meta add % foo bar
-	 *   Success: Added custom field.
-	 *   Success: Added custom field.
-	 *   Success: Added custom field.
+	 *     # Add meta to every generated users.
+	 *     $ wp user generate --format=ids --count=3 | xargs -d ' ' -I % wp user meta add % foo bar
+	 *     Success: Added custom field.
+	 *     Success: Added custom field.
+	 *     Success: Added custom field.
 	 */
 	public function generate( $args, $assoc_args ) {
 		add_action( 'user_register', [ __CLASS__, 'update_user_last_activity_random' ] );

@@ -299,44 +299,65 @@ class Friends extends BuddyPressCommand {
 	 * [--friend=<user>]
 	 * : ID of the second user. Accepts either a user_login or a numeric ID.
 	 *
-	 * [--force-accept]
-	 * : Whether to force acceptance.
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Generate 50 random friendships.
 	 *     $ wp bp friend generate --count=50
+	 *     Generating friendships  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 50 friendships with a specific user.
 	 *     $ wp bp friend generate --initiator=121 --count=50
+	 *     Generating friendships  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 random friendships and output only the IDs.
+	 *     $ wp bp friend generate --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating friendships', $assoc_args['count'] );
+		$member_id = null;
+		$friend_id = null;
 
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-
-			if ( isset( $assoc_args['initiator'] ) ) {
-				$user   = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
-				$member = $user->ID;
-			} else {
-				$member = $this->get_random_user_id();
-			}
-
-			if ( isset( $assoc_args['friend'] ) ) {
-				$user_2 = $this->get_user_id_from_identifier( $assoc_args['friend'] );
-				$friend = $user_2->ID;
-			} else {
-				$friend = $this->get_random_user_id();
-			}
-
-			$this->create(
-				[ $member, $friend ],
-				[
-					'silent',
-					'force-accept',
-				]
-			);
-
-			$notify->tick();
+		if ( isset( $assoc_args['initiator'] ) ) {
+			$user      = $this->get_user_id_from_identifier( $assoc_args['initiator'] );
+			$member_id = $user->ID;
 		}
 
-		$notify->finish();
+		if ( isset( $assoc_args['friend'] ) ) {
+			$user_2    = $this->get_user_id_from_identifier( $assoc_args['friend'] );
+			$friend_id = $user_2->ID;
+		}
+
+		$this->generate_callback(
+			'Generating friendships',
+			$assoc_args,
+			function ( $assoc_args, $format ) use ( $member_id, $friend_id ) {
+				if ( ! $member_id ) {
+					$member_id = $this->get_random_user_id();
+				}
+
+				if ( ! $friend_id ) {
+					$friend_id = $this->get_random_user_id();
+				}
+
+				$params = [ 'force-accept' => true ];
+
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
+
+				return $this->create( [ $member_id, $friend_id ], $params );
+			}
+		);
 	}
 }
