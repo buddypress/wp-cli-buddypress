@@ -9,9 +9,11 @@ use WP_CLI;
  *
  * ## EXAMPLES
  *
+ *     # Add a user to a group as a member.
  *     $ wp bp group member add --group-id=3 --user-id=10
  *     Success: Added user #3 to group #3 as member.
  *
+ *     # Add a user to a group as a mod.
  *     $ wp bp group member create --group-id=bar --user-id=20 --role=mod
  *     Success: Added user #20 to group #45 as mod.
  *

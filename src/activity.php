@@ -444,11 +444,12 @@ class Activity extends BuddyPressCommand {
 			WP_CLI::error( 'Please provide a numeric activity ID.' );
 		}
 
-		$activity = bp_activity_get_specific( [
-			'activity_ids'     => $activity_id,
-			'spam'             => null,
-			'display_comments' => true,
-		] );
+		$activity = bp_activity_get_specific(
+			[
+				'activity_ids' => $activity_id,
+				'spam'         => null,
+			]
+		);
 
 		if ( ! isset( $activity['activities'][0] ) || ! is_object( $activity['activities'][0] ) ) {
 			WP_CLI::error( 'No activity found.' );
