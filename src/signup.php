@@ -364,7 +364,7 @@ class Signup extends BuddyPressCommand {
 			]
 		);
 
-		if ( 'ids' === $formatter->format ) {
+		if ( in_array( $formatter->format, [ 'ids', 'count' ], true ) ) {
 			$assoc_args['fields'] = 'ids';
 		}
 
@@ -374,13 +374,7 @@ class Signup extends BuddyPressCommand {
 			WP_CLI::error( 'No signups found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $signups['signups'] );
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $signups['total'] );
-		} else {
-			$formatter->display_items( $signups['signups'] );
-		}
+		$formatter->display_items( $signups['signups'] );
 	}
 
 	/**

@@ -254,15 +254,21 @@ class Friends extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - ids
-	 *   - csv
 	 *   - count
+	 *   - csv
+	 *   - json
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp friend list 65465 --format=ids
-	 *     $ wp bp friend list 2422 --format=count
+	 *     # List a user's friends and get the count.
+	 *     $ wp bp friend list 65465 --format=count
+	 *     100
+	 *
+	 *     # List a user's friends and get the IDs.
+	 *     $ wp bp friend list 2422 --format=ids
+	 *     70 71 72 73 74
 	 *
 	 * @subcommand list
 	 */
@@ -275,11 +281,7 @@ class Friends extends BuddyPressCommand {
 			WP_CLI::error( 'This member has no friends.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $friends, 'friend_user_id' ) );
-		} else {
-			$formatter->display_items( $friends );
-		}
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $friends, 'friend_user_id' ) : $friends );
 	}
 
 	/**

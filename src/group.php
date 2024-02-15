@@ -421,8 +421,9 @@ class Group extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - ids
-	 *   - csv
 	 *   - count
+	 *   - csv
+	 *   - json
 	 *   - yaml
 	 * ---
 	 *
@@ -434,10 +435,13 @@ class Group extends BuddyPressCommand {
 
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group list --format=ids
+	 *     # List groups and get the count.
 	 *     $ wp bp group list --format=count
-	 *     $ wp bp group list --user-id=123
-	 *     $ wp bp group list --user-id=user_login --format=ids
+	 *     100
+	 *
+	 *     # List groups and get the IDs.
+	 *     $ wp bp group list --format=ids
+	 *     70 71 72 73 74
 	 *
 	 * @subcommand list
 	 */
@@ -467,17 +471,12 @@ class Group extends BuddyPressCommand {
 		}
 
 		$groups = groups_get_groups( $query_args );
+
 		if ( empty( $groups['groups'] ) ) {
 			WP_CLI::error( 'No groups found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $groups['groups'] );
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $groups['total'] );
-		} else {
-			$formatter->display_items( $groups['groups'] );
-		}
+		$formatter->display_items( $groups['groups'] );
 	}
 
 	/**

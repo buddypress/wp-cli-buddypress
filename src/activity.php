@@ -250,12 +250,13 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp activity list --format=ids
+	 *     # List activities and get the count.
 	 *     $ wp bp activity list --format=count
-	 *     $ wp bp activity list --per_page=5
-	 *     $ wp bp activity list --search_terms="Activity Comment"
-	 *     $ wp bp activity list --user-id=10
-	 *     $ wp bp activity list --user-id=123 --component=groups
+	 *     100
+	 *
+	 *     # List activities and get the IDs.
+	 *     $ wp bp activity list --format=ids
+	 *     70 71 72 73 74
 	 *
 	 * @subcommand list
 	 */
@@ -267,7 +268,6 @@ class Activity extends BuddyPressCommand {
 			[
 				'page'        => 1,
 				'count'       => 50,
-				'count_total' => false,
 				'show_hidden' => true,
 				'filter'      => false,
 			]
@@ -304,17 +304,12 @@ class Activity extends BuddyPressCommand {
 		}
 
 		$activities = bp_activity_get( $r );
+
 		if ( empty( $activities['activities'] ) ) {
 			WP_CLI::error( 'No activities found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $activities['activities'] );
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $activities['total'] );
-		} else {
-			$formatter->display_items( $activities['activities'] );
-		}
+		$formatter->display_items( $activities['activities'] );
 	}
 
 	/**
@@ -446,8 +441,9 @@ class Activity extends BuddyPressCommand {
 
 		$activity = bp_activity_get_specific(
 			[
-				'activity_ids' => $activity_id,
-				'spam'         => null,
+				'activity_ids'     => $activity_id,
+				'spam'             => null,
+				'display_comments' => true,
 			]
 		);
 

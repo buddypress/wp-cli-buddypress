@@ -17,7 +17,7 @@ use WP_CLI;
  *     $ wp bp component deactivate groups
  *     Success: The Groups component has been deactivated.
  *
- *     # List components.
+ *     # List required components.
  *     $ wp bp component list --type=required
  *     +--------+---------+--------+------------------------+--------------------------------------------+
  *     | number | id      | status | title                  | description                                |
@@ -166,18 +166,48 @@ class Components extends BuddyPressCommand {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - count
 	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # List components and get the count.
 	 *     $ wp bp component list --format=count
 	 *     10
 	 *
-	 *     $ wp bp component list --status=inactive --format=count
-	 *     4
+	 *     # List components and get the ids.
+	 *     $ wp bp component list --format=ids
+	 *     core members xprofile settings friends messages activity notifications groups
+	 *
+	 *     # List components.
+	 *     $ wp bp component list
+	 *     +--------+---------------+--------+--------------------+---------------------------------------------------------------------------------+
+	 *     | number | id            | status | title              | description                                                                     |
+	 *     +--------+---------------+--------+--------------------+---------------------------------------------------------------------------------+
+	 *     | 1      | core          | active | BuddyPress Core    | It‘s what makes <del>time travel</del> BuddyPress possible!                     |
+	 *     | 2      | members       | active | Community Members  | Everything in a BuddyPress community revolves around its members.               |
+	 *     | 3      | xprofile      | active | Extended Profiles  | Customize your community with fully editable profile fields that allow your use |
+	 *     |        |               |        |                    | rs to describe themselves.                                                      |
+	 *     | 4      | settings      | active | Account Settings   | Allow your users to modify their account and notification settings directly fro |
+	 *     |        |               |        |                    | m within their profiles.                                                        |
+	 *     | 5      | friends       | active | Friend Connections | Let your users make connections so they can track the activity of others and fo |
+	 *     |        |               |        |                    | cus on the people they care about the most.                                     |
+	 *     | 6      | messages      | active | Private Messaging  | Allow your users to talk to each other directly and in private. Not just limite |
+	 *     |        |               |        |                    | d to one-on-one discussions, messages can be sent between any number of members |
+	 *     |        |               |        |                    | .                                                                               |
+	 *     | 7      | activity      | active | Activity Streams   | Global, personal, and group activity streams with threaded commenting, direct p |
+	 *     |        |               |        |                    | osting, favoriting, and @mentions, all with full RSS feed and email notificatio |
+	 *     |        |               |        |                    | n support.                                                                      |
+	 *     | 8      | notifications | active | Notifications      | Notify members of relevant activity with a toolbar bubble and/or via email, and |
+	 *     |        |               |        |                    |  allow them to customize their notification settings.                           |
+	 *     | 9      | groups        | active | User Groups        | Groups allow your users to organize themselves into specific public, private or |
+	 *     |        |               |        |                    |  hidden sections with separate activity streams and member listings.            |
+	 *     | 10     | blogs         | active | Site Tracking      | Record activity for new sites, posts, and comments across your network.         |
+	 *     +--------+---------------+--------+--------------------+---------------------------------------------------------------------------------+
 	 *
 	 * @subcommand list
 	 */
@@ -208,6 +238,12 @@ class Components extends BuddyPressCommand {
 			case 'all':
 				$index = 0;
 				foreach ( $components as $component_key => $component ) {
+
+					// Skip if the component is not available.
+					if ( ! isset( $components[ $component_key ] ) ) {
+						continue;
+					}
+
 					++$index;
 					$current_components[] = [
 						'number'      => $index,
@@ -265,7 +301,7 @@ class Components extends BuddyPressCommand {
 			WP_CLI::error( 'There is no component available.' );
 		}
 
-		$formatter->display_items( $current_components );
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $current_components, 'id' ) : $current_components );
 	}
 
 	/**

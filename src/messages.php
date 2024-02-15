@@ -288,9 +288,11 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get a list of messages for a specific user.
 	 *     $ wp bp message list --user-id=544 --format=count
 	 *     10
 	 *
+	 *     # Get a list of messages for a specific user and output only the IDs.
 	 *     $ wp bp message list --user-id=user_login --count=3 --format=ids
 	 *     5454 45454 4545 465465
 	 *
@@ -322,11 +324,7 @@ class Messages extends BuddyPressCommand {
 
 		$messages = $inbox->threads[0]->messages;
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $messages, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			$formatter->display_items( $messages );
-		}
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $messages, 'id' ) : $messages );
 	}
 
 	/**

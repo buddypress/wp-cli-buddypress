@@ -350,19 +350,23 @@ class Notification extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - ids
-	 *   - csv
 	 *   - count
+	 *   - csv
+	 *   - json
 	 *   - yaml
 	 * ---
 
 	 * ## EXAMPLES
 	 *
+	 *     # List all notifications and output only the IDs.
 	 *     $ wp bp notification list --format=ids
 	 *     15 25 34 37 198
 	 *
+	 *     # List all notifications and output the count.
 	 *     $ wp bp notification list --format=count
 	 *     10
 	 *
+	 *     # List all notifications and output the IDs and user_id.
 	 *     $ wp bp notification list --fields=id,user_id
 	 *     | id     | user_id  |
 	 *     | 66546  | 656      |
@@ -401,11 +405,7 @@ class Notification extends BuddyPressCommand {
 			WP_CLI::error( 'No notification items found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $notifications, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			$formatter->display_items( $notifications );
-		}
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $notifications, 'id' ) : $notifications );
 	}
 
 	/**
