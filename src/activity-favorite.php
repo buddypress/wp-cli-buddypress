@@ -46,7 +46,7 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * <activity-id>
-	 * : ID of the activity to add an item to.
+	 * : ID of the activity.
 	 *
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
@@ -64,20 +64,25 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * @alias add
 	 */
 	public function create( $args ) {
+		$activity_id = $args[0];
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'Please provide a numeric activity ID.' );
+		}
+
 		$activity = bp_activity_get_specific(
 			[
-				'activity_ids' => $args[0],
+				'activity_ids' => $activity_id,
 				'spam'         => null,
 			]
 		);
 
-		$activity = $activity['activities'][0];
-
-		if ( ! is_object( $activity ) ) {
-			WP_CLI::error( 'Could not find the activity.' );
+		if ( ! isset( $activity['activities'][0] ) || ! is_object( $activity['activities'][0] ) ) {
+			WP_CLI::error( 'No activity found.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$activity = $activity['activities'][0];
+		$user     = $this->get_user_id_from_identifier( $args[1] );
 
 		if ( bp_activity_add_user_favorite( $activity->id, $user->ID ) ) {
 			WP_CLI::success( 'Activity item added as a favorite for the user.' );
@@ -92,7 +97,7 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * <activity-id>
-	 * : ID of the activity to remove a item to.
+	 * : ID of the activity.
 	 *
 	 * <user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
@@ -114,21 +119,25 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
+		$activity_id = $args[0];
+
+		if ( ! is_numeric( $activity_id ) ) {
+			WP_CLI::error( 'Please provide a numeric activity ID.' );
+		}
+
 		$activity = bp_activity_get_specific(
 			[
-				'activity_ids'     => $args[0],
-				'spam'             => null,
-				'display_comments' => true,
+				'activity_ids' => $activity_id,
+				'spam'         => null,
 			]
 		);
 
-		$activity = $activity['activities'][0];
-
-		if ( ! is_object( $activity ) ) {
-			WP_CLI::error( 'Could not find the activity.' );
+		if ( ! isset( $activity['activities'][0] ) || ! is_object( $activity['activities'][0] ) ) {
+			WP_CLI::error( 'No activity found.' );
 		}
 
-		$user = $this->get_user_id_from_identifier( $args[1] );
+		$activity = $activity['activities'][0];
+		$user     = $this->get_user_id_from_identifier( $args[1] );
 
 		WP_CLI::confirm( 'Are you sure you want to remove this activity item?', $assoc_args );
 

@@ -260,31 +260,61 @@ class Notification extends BuddyPressCommand {
 	 * default: 100
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * [--user-id=<user>]
+	 * : ID of the user. Accepts either a user_login or a numeric ID.
 	 *
-	 *     $ wp bp notification generate --count=50
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Generate 5 random notifications.
+	 *     $ wp bp notification generate --count=5
+	 *     Generating notifications  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 random notifications and output only the IDs.
+	 *     $ wp bp notification generate --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating notifications', $assoc_args['count'] );
+		$user_id = null;
 
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-
-			$component = $this->get_random_component();
-
-			$this->create(
-				[],
-				[
-					'user-id'   => $this->get_random_user_id(),
-					'component' => $component,
-					'action'    => $this->get_random_action( $component ),
-					'silent',
-				]
-			);
-
-			$notify->tick();
+		if ( isset( $assoc_args['user-id'] ) ) {
+			$user    = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			$user_id = $user->ID;
 		}
 
-		$notify->finish();
+		$this->generate_callback(
+			'Generating notifications',
+			$assoc_args,
+			function ( $assoc_args, $format ) use ( $user_id ) {
+				$component = $this->get_random_component();
+
+				if ( ! $user_id ) {
+					$user_id = $this->get_random_user_id();
+				}
+
+				$params = [
+					'user-id'   => $user_id,
+					'component' => $component,
+					'action'    => $this->get_random_action( $component ),
+				];
+
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
+
+				return $this->create( [], $params );
+			}
+		);
 	}
 
 	/**
@@ -320,19 +350,23 @@ class Notification extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - ids
-	 *   - csv
 	 *   - count
+	 *   - csv
+	 *   - json
 	 *   - yaml
 	 * ---
 
 	 * ## EXAMPLES
 	 *
+	 *     # List all notifications and output only the IDs.
 	 *     $ wp bp notification list --format=ids
 	 *     15 25 34 37 198
 	 *
+	 *     # List all notifications and output the count.
 	 *     $ wp bp notification list --format=count
 	 *     10
 	 *
+	 *     # List all notifications and output the IDs and user_id.
 	 *     $ wp bp notification list --fields=id,user_id
 	 *     | id     | user_id  |
 	 *     | 66546  | 656      |
@@ -371,11 +405,7 @@ class Notification extends BuddyPressCommand {
 			WP_CLI::error( 'No notification items found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $notifications, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			$formatter->display_items( $notifications );
-		}
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $notifications, 'id' ) : $notifications );
 	}
 
 	/**

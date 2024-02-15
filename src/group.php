@@ -35,17 +35,6 @@ class Group extends BuddyPressCommand {
 	];
 
 	/**
-	 * Dependency check for this CLI command.
-	 */
-	public static function check_dependencies() {
-		parent::check_dependencies();
-
-		if ( ! bp_is_active( 'groups' ) ) {
-			WP_CLI::error( 'The Groups component is not active.' );
-		}
-	}
-
-	/**
 	 * Group ID Object Key
 	 *
 	 * @var string
@@ -58,6 +47,17 @@ class Group extends BuddyPressCommand {
 	 * @var string
 	 */
 	protected $obj_type = 'group';
+
+	/**
+	 * Dependency check for this CLI command.
+	 */
+	public static function check_dependencies() {
+		parent::check_dependencies();
+
+		if ( ! bp_is_active( 'groups' ) ) {
+			WP_CLI::error( 'The Groups component is not active.' );
+		}
+	}
 
 	/**
 	 * Create a group.
@@ -83,7 +83,7 @@ class Group extends BuddyPressCommand {
 	 * : URL-safe slug for the group.
 	 *
 	 * [--status=<status>]
-	 * : Group status (public, private, hidden).
+	 * : Group status.
 	 * ---
 	 * default: public
 	 * options:
@@ -108,11 +108,11 @@ class Group extends BuddyPressCommand {
 	 *
 	 *     # Create a public group.
 	 *     $ wp bp group create --name="Totally Cool Group"
-	 *     Success: Group (ID 5465) created: http://example.com/groups/totally-cool-group/
+	 *     Success: Successfully created new group (ID 5465)
 	 *
 	 *     # Create a private group.
 	 *     $ wp bp group create --name="Another Cool Group" --description="Cool Group" --creator-id=54 --status=private
-	 *     Success: Group (ID 6454)6 created: http://example.com/groups/another-cool-group/
+	 *     Success: Successfully created new group (ID 6454)
 	 *
 	 * @alias add
 	 */
@@ -164,9 +164,7 @@ class Group extends BuddyPressCommand {
 		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 			WP_CLI::log( $group_id );
 		} else {
-			$group     = groups_get_group( [ 'group_id' => $group_id ] );
-			$permalink = bp_get_group_url( $group );
-			WP_CLI::success( sprintf( 'Group (ID %d) created: %s', $group_id, $permalink ) );
+			WP_CLI::success( sprintf( 'Successfully created new group (ID #%d)', $group_id ) );
 		}
 	}
 
@@ -182,7 +180,7 @@ class Group extends BuddyPressCommand {
 	 * ---
 	 *
 	 * [--status=<status>]
-	 * : The status of the generated groups. (public, private, hidden, or mixed).
+	 * : The status of the generated groups.
 	 * ---
 	 * default: mixed
 	 * options:
@@ -195,40 +193,66 @@ class Group extends BuddyPressCommand {
 	 * [--creator-id=<creator-id>]
 	 * : ID of the group creator.
 	 * ---
-	 * default: 1
-	 * ---
 	 *
-	 * [--enable-forum=<enable-forum>]
-	 * : Whether to enable legacy bbPress forums.
+	 * [--format=<format>]
+	 * : Render output in a particular format.
 	 * ---
-	 * default: 0
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Generate 50 random groups.
 	 *     $ wp bp group generate --count=50
+	 *     Generating groups  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 groups with mixed status.
 	 *     $ wp bp group generate --count=5 --status=mixed
+	 *     Generating groups  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 10 hidden groups with a specific creator.
 	 *     $ wp bp group generate --count=10 --status=hidden --creator-id=30
+	 *     Generating groups  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 random groups and output only the IDs.
+	 *     $ wp bp group generate --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating groups', $assoc_args['count'] );
+		$creator_id = null;
 
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->create(
-				[],
-				[
-					'name'         => sprintf( 'Group - #%d', $i ),
-					'creator-id'   => $assoc_args['creator-id'],
-					'status'       => $this->random_group_status( $assoc_args['status'] ),
-					'enable-forum' => $assoc_args['enable-forum'],
-					'silent',
-				]
-			);
-
-			$notify->tick();
+		if ( isset( $assoc_args['creator-id'] ) ) {
+			$user       = $this->get_user_id_from_identifier( $assoc_args['creator-id'] );
+			$creator_id = $user->ID;
 		}
 
-		$notify->finish();
+		$this->generate_callback(
+			'Generating groups',
+			$assoc_args,
+			function ( $assoc_args, $format ) use ( $creator_id ) {
+
+				if ( ! $creator_id ) {
+					$creator_id = $this->get_random_user_id();
+				}
+
+				$params = [
+					'name'       => sprintf( 'Group name - #%d', wp_rand() ),
+					'creator-id' => $creator_id,
+					'status'     => $this->random_group_status( $assoc_args['status'] ),
+				];
+
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
+
+				return $this->create( [], $params );
+			}
+		);
 	}
 
 	/**
@@ -397,8 +421,9 @@ class Group extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - ids
-	 *   - csv
 	 *   - count
+	 *   - csv
+	 *   - json
 	 *   - yaml
 	 * ---
 	 *
@@ -410,10 +435,13 @@ class Group extends BuddyPressCommand {
 
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp group list --format=ids
+	 *     # List groups and get the count.
 	 *     $ wp bp group list --format=count
-	 *     $ wp bp group list --user-id=123
-	 *     $ wp bp group list --user-id=user_login --format=ids
+	 *     100
+	 *
+	 *     # List groups and get the IDs.
+	 *     $ wp bp group list --format=ids
+	 *     70 71 72 73 74
 	 *
 	 * @subcommand list
 	 */
@@ -443,17 +471,12 @@ class Group extends BuddyPressCommand {
 		}
 
 		$groups = groups_get_groups( $query_args );
+
 		if ( empty( $groups['groups'] ) ) {
 			WP_CLI::error( 'No groups found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $groups['groups'] );
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $groups['total'] );
-		} else {
-			$formatter->display_items( $groups['groups'] );
-		}
+		$formatter->display_items( $groups['groups'] );
 	}
 
 	/**

@@ -288,9 +288,11 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get a list of messages for a specific user.
 	 *     $ wp bp message list --user-id=544 --format=count
 	 *     10
 	 *
+	 *     # Get a list of messages for a specific user and output only the IDs.
 	 *     $ wp bp message list --user-id=user_login --count=3 --format=ids
 	 *     5454 45454 4545 465465
 	 *
@@ -322,17 +324,19 @@ class Messages extends BuddyPressCommand {
 
 		$messages = $inbox->threads[0]->messages;
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $messages, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			$formatter->display_items( $messages );
-		}
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $messages, 'id' ) : $messages );
 	}
 
 	/**
 	 * Generate random messages.
 	 *
 	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many messages to generate.
+	 * ---
+	 * default: 100
+	 * ---
 	 *
 	 * [--from=<user>]
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
@@ -344,41 +348,74 @@ class Messages extends BuddyPressCommand {
 	 * [--thread-id=<thread-id>]
 	 * : Thread ID to generate messages against.
 	 * ---
-	 * default: 0
-	 * ---
 	 *
-	 * [--count=<number>]
-	 * : How many messages to generate.
+	 * [--format=<format>]
+	 * : Render output in a particular format.
 	 * ---
-	 * default: 20
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Generate messages against a thread with a specific user.
 	 *     $ wp bp message generate --from=1 --to=2 --thread-id=6465 --count=30
+	 *     Generating messages  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate messages against a thread.
 	 *     $ wp bp message generate --thread-id=6465 --count=10
-	 *     $ wp bp message generate --count=100
+	 *     Generating messages  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 messages against a thread and output only the IDs.
+	 *     $ wp bp message generate --thread-id=5665456 --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating messages', $assoc_args['count'] );
+		$from_user_id = null;
+		$to_user_id   = null;
 
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->create(
-				[],
-				[
-					'from'      => empty( $assoc_args['from'] ) ? $this->get_random_user_id() : $assoc_args['from'],
-					'to'        => empty( $assoc_args['to'] ) ? $this->get_random_user_id() : $assoc_args['to'],
-					'subject'   => sprintf( 'Message Subject - #%d', $i ),
-					'content'   => $this->generate_random_text(),
-					'thread-id' => empty( $assoc_args['thread-id'] ) ? false : $assoc_args['thread-id'],
-					'silent',
-				]
-			);
-
-			$notify->tick();
+		if ( isset( $assoc_args['from'] ) ) {
+			$user         = $this->get_user_id_from_identifier( $assoc_args['from'] );
+			$from_user_id = $user->ID;
 		}
 
-		$notify->finish();
+		if ( isset( $assoc_args['to'] ) ) {
+			$user       = $this->get_user_id_from_identifier( $assoc_args['to'] );
+			$to_user_id = $user->ID;
+		}
+
+		$this->generate_callback(
+			'Generating messages',
+			$assoc_args,
+			function ( $assoc_args, $format ) use ( $from_user_id, $to_user_id ) {
+
+				if ( ! $from_user_id ) {
+					$from_user_id = $this->get_random_user_id();
+				}
+
+				if ( ! $to_user_id ) {
+					$to_user_id = $this->get_random_user_id();
+				}
+
+				$params = [
+					'from'      => $from_user_id,
+					'to'        => $to_user_id,
+					'subject'   => sprintf( 'Message Subject - #%d', wp_rand() ),
+					'content'   => $this->generate_random_text(),
+					'thread-id' => empty( $assoc_args['thread-id'] ) ? false : $assoc_args['thread-id'],
+				];
+
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
+
+				return $this->create( [], $params );
+			}
+		);
 	}
 
 	/**
@@ -399,17 +436,22 @@ class Messages extends BuddyPressCommand {
 	 *     Success: Message was successfully starred.
 	 */
 	public function star( $args, $assoc_args ) {
+		$message_id = $args[0];
+
+		if ( ! is_numeric( $message_id ) ) {
+			WP_CLI::error( 'Please provide a numeric message ID.' );
+		}
+
 		$user    = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id = $user->ID;
-		$msg_id  = (int) $args[0];
 
-		if ( bp_messages_is_message_starred( $msg_id, $user_id ) ) {
+		if ( bp_messages_is_message_starred( $message_id, $user_id ) ) {
 			WP_CLI::error( 'The message is already starred.' );
 		}
 
 		$star_args = [
 			'action'     => 'star',
-			'message_id' => $msg_id,
+			'message_id' => $message_id,
 			'user_id'    => $user_id,
 		];
 
@@ -438,9 +480,9 @@ class Messages extends BuddyPressCommand {
 	 *     Success: Message was successfully unstarred.
 	 */
 	public function unstar( $args, $assoc_args ) {
-		$msg_id = $args[0];
+		$message_id = $args[0];
 
-		if ( ! is_numeric( $msg_id ) ) {
+		if ( ! is_numeric( $message_id ) ) {
 			WP_CLI::error( 'Please provide a numeric message ID.' );
 		}
 
@@ -448,13 +490,13 @@ class Messages extends BuddyPressCommand {
 		$user_id = $user->ID;
 
 		// Check if the message is starred first.
-		if ( ! bp_messages_is_message_starred( $msg_id, $user_id ) ) {
+		if ( ! bp_messages_is_message_starred( $message_id, $user_id ) ) {
 			WP_CLI::error( 'You need to star a message first before unstarring it.' );
 		}
 
 		$star_args = [
 			'action'     => 'unstar',
-			'message_id' => $msg_id,
+			'message_id' => $message_id,
 			'user_id'    => $user_id,
 		];
 

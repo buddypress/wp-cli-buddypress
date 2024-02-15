@@ -304,18 +304,23 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 * options:
 	 *   - table
 	 *   - ids
+	 *   - count
 	 *   - csv
+	 *   - json
 	 *   - yaml
 	 * ---
 
 	 * ## EXAMPLES
 	 *
+	 *     # List all sitewide notices, and output only the IDs.
 	 *     $ wp bp notice list --format=ids
 	 *     15 25 34 37 198
 	 *
+	 *     # List all sitewide notices, and output the count.
 	 *     $ wp bp notice list --format=count
 	 *     10
 	 *
+	 *     # List all sitewide notices, and output the IDs.
 	 *     $ wp bp notice list --fields=id
 	 *     | id     |
 	 *     | 66546  |
@@ -334,10 +339,6 @@ class Sitewide_Notice extends BuddyPressCommand {
 			WP_CLI::error( 'No sitewide notices found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', wp_list_pluck( $notices, 'id' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			$formatter->display_items( $notices );
-		}
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $notices, 'id' ) : $notices );
 	}
 }

@@ -232,40 +232,88 @@ class Group_Invite extends BuddyPressCommand {
 	}
 
 	/**
-	 * Generate random group invitations.
+	 * Generate group invitations.
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--count=<number>]
-	 * : How many groups invitations to generate.
+	 * : How many group invitations to generate.
 	 * ---
 	 * default: 100
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * [--user-id=<user>]
+	 * : ID of the first user. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--inviter-id=<user>]
+	 * : ID for the inviter. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Generate random group invitations.
 	 *     $ wp bp group invite generate --count=50
+	 *     Generating group invitations  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate random group invitations with a specific user.
+	 *     $ wp bp group invite generate --inviter-id=121 --count=5
+	 *     Generating group invitations  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 random group invitations and output only the IDs.
+	 *     $ wp bp group invite generate --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating random group invitations', $assoc_args['count'] );
+		$user_id    = null;
+		$inviter_id = null;
 
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$random_group = \BP_Groups_Group::get_random( 1, 1 );
-
-			$this->create(
-				[],
-				[
-					'user-id'    => $this->get_random_user_id(),
-					'group-id'   => $random_group['groups'][0]->slug,
-					'inviter-id' => $this->get_random_user_id(),
-					'silent'     => true,
-				]
-			);
-
-			$notify->tick();
+		if ( isset( $assoc_args['user-id'] ) ) {
+			$user    = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+			$user_id = $user->ID;
 		}
 
-		$notify->finish();
+		if ( isset( $assoc_args['inviter-id'] ) ) {
+			$user_2     = $this->get_user_id_from_identifier( $assoc_args['inviter-id'] );
+			$inviter_id = $user_2->ID;
+		}
+
+		$this->generate_callback(
+			'Generating group invitations',
+			$assoc_args,
+			function ( $assoc_args, $format ) use ( $user_id, $inviter_id ) {
+				$random_group = \BP_Groups_Group::get_random( 1, 1 );
+
+				if ( ! $user_id ) {
+					$user_id = $this->get_random_user_id();
+				}
+
+				if ( ! $inviter_id ) {
+					$inviter_id = $this->get_random_user_id();
+				}
+
+				$params = [
+					'user-id'    => $user_id,
+					'group-id'   => $random_group['groups'][0]->slug,
+					'inviter-id' => $inviter_id,
+				];
+
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
+
+				return $this->create( [], $params );
+			}
+		);
 	}
 
 	/**

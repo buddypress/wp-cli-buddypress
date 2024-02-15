@@ -250,12 +250,13 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp activity list --format=ids
+	 *     # List activities and get the count.
 	 *     $ wp bp activity list --format=count
-	 *     $ wp bp activity list --per_page=5
-	 *     $ wp bp activity list --search_terms="Activity Comment"
-	 *     $ wp bp activity list --user-id=10
-	 *     $ wp bp activity list --user-id=123 --component=groups
+	 *     100
+	 *
+	 *     # List activities and get the IDs.
+	 *     $ wp bp activity list --format=ids
+	 *     70 71 72 73 74
 	 *
 	 * @subcommand list
 	 */
@@ -267,7 +268,6 @@ class Activity extends BuddyPressCommand {
 			[
 				'page'        => 1,
 				'count'       => 50,
-				'count_total' => false,
 				'show_hidden' => true,
 				'filter'      => false,
 			]
@@ -304,17 +304,12 @@ class Activity extends BuddyPressCommand {
 		}
 
 		$activities = bp_activity_get( $r );
+
 		if ( empty( $activities['activities'] ) ) {
 			WP_CLI::error( 'No activities found.' );
 		}
 
-		if ( 'ids' === $formatter->format ) {
-			echo implode( ' ', $activities['activities'] );
-		} elseif ( 'count' === $formatter->format ) {
-			$formatter->display_items( $activities['total'] );
-		} else {
-			$formatter->display_items( $activities['activities'] );
-		}
+		$formatter->display_items( $activities['activities'] );
 	}
 
 	/**
@@ -323,7 +318,7 @@ class Activity extends BuddyPressCommand {
 	 * ## OPTIONS
 	 *
 	 * [--count=<number>]
-	 * : How many activity items to generate.
+	 * : How many activities to generate.
 	 * ---
 	 * default: 100
 	 * ---
@@ -335,41 +330,52 @@ class Activity extends BuddyPressCommand {
 	 * default: 1
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
+	 *
+	 * ## EXAMPLES
 	 *
 	 *     # Generate 5 activity items.
 	 *     $ wp bp activity generate --count=5
-	 *     Success: Successfully created new activity item (ID #57)
-	 *     Success: Successfully created new activity item (ID #58)
-	 *     Success: Successfully created new activity item (ID #59)
-	 *     Success: Successfully created new activity item (ID #60)
-	 *     Success: Successfully created new activity item (ID #61)
+	 *     Generating activities  100% [======================] 0:00 / 0:00
+	 *
+	 *     # Generate 5 activity items and output only the IDs.
+	 *     $ wp bp activity generate --count=5 --format=ids
+	 *     70 71 72 73 74
 	 */
 	public function generate( $args, $assoc_args ) {
-		$component = $this->get_random_component();
-		$type      = $this->get_random_type_from_component( $component );
+		$this->generate_callback(
+			'Generating activities',
+			$assoc_args,
+			function ( $assoc_args, $format ) {
+				$component = $this->get_random_component();
+				$type      = $this->get_random_type_from_component( $component );
 
-		if ( (bool) $assoc_args['skip-activity-comments'] && 'activity_comment' === $type ) {
-			$type = 'activity_update';
-		}
+				if ( (bool) $assoc_args['skip-activity-comments'] && 'activity_comment' === $type ) {
+					$type = 'activity_update';
+				}
 
-		$notify = WP_CLI\Utils\make_progress_bar( 'Generating activity items', $assoc_args['count'] );
-
-		for ( $i = 0; $i < $assoc_args['count']; $i++ ) {
-			$this->create(
-				[],
-				[
+				$params = [
 					'component' => $component,
 					'type'      => $type,
 					'content'   => $this->generate_random_text(),
-					'silent'    => true,
-				]
-			);
+				];
 
-			$notify->tick();
-		}
+				if ( 'ids' === $format ) {
+					$params['porcelain'] = true;
+				} else {
+					$params['silent'] = true;
+				}
 
-		$notify->finish();
+				return $this->create( [], $params );
+			}
+		);
 	}
 
 	/**
@@ -433,11 +439,13 @@ class Activity extends BuddyPressCommand {
 			WP_CLI::error( 'Please provide a numeric activity ID.' );
 		}
 
-		$activity = bp_activity_get_specific( [
-			'activity_ids'     => $activity_id,
-			'spam'             => null,
-			'display_comments' => true,
-		] );
+		$activity = bp_activity_get_specific(
+			[
+				'activity_ids'     => $activity_id,
+				'spam'             => null,
+				'display_comments' => true,
+			]
+		);
 
 		if ( ! isset( $activity['activities'][0] ) || ! is_object( $activity['activities'][0] ) ) {
 			WP_CLI::error( 'No activity found.' );

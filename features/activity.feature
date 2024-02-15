@@ -72,6 +72,18 @@ Feature: Manage BuddyPress Activities
       | id            | user_id     | component |
       | {ACTIVITY_ID} | {MEMBER_ID} | activity  |
 
+    When I run `wp bp activity list --format=count`
+    Then STDOUT should be:
+      """
+      1
+      """
+
+    When I run `wp bp activity list --format=ids`
+    Then STDOUT should be:
+      """
+      {ACTIVITY_ID}
+      """
+
     When I run `wp bp activity comment {ACTIVITY_ID} --user-id={MEMBER_ID} --content="Activity Comment" --skip-notification --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {COMMENT_ID}
