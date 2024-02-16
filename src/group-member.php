@@ -143,6 +143,26 @@ class Group_Member extends BuddyPressCommand {
 	 * [--fields=<fields>]
 	 * : Limit the output to specific signup fields.
 	 *
+	 * [--<field>=<value>]
+	 * : One or more parameters to pass. See groups_get_group_members()
+	 *
+	 * [--role=<role>]
+	 * : Limit the output to members with a specific role.
+	 * ---
+	 * default: members
+	 * options:
+	 *  - members
+	 *  - mod
+	 *  - admin
+	 *  - banned
+	 * ---
+	 *
+	 * [--count=<number>]
+	 * : How many members to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -156,34 +176,42 @@ class Group_Member extends BuddyPressCommand {
 	 *   - yaml
 	 * ---
 	 *
-	 * [--<field>=<value>]
-	 * : One or more parameters to pass. See groups_get_group_members()
+	 * ## AVAILABLE FIELDS
 	 *
-	 * ## EXAMPLES
+	 * These fields will be displayed by default for each group member:
 	 *
+	 * * id
+	 * * user_login
+	 * * fullname
+	 * * date_modified
+	 * * role
+	 *
+	 * ## EXAMPLE
+	 *
+	 *     # Get a list of group members.
 	 *     $ wp bp group member list 3
-	 *     $ wp bp group member list my-group
+	 *     +---------+------------+----------+---------------------+-------+
+	 *     | id      | user_login | fullname | date_modified       | role  |
+	 *     +---------+------------+----------+---------------------+-------+
+	 *     | 1       | user       | User     | 2022-07-04 02:12:02 | admin |
+	 *     +---------+------------+----------+---------------------+-------+
+	 *
+	 *     # Get a list of group members and get the count.
+	 *     $ wp bp group member list 65465 --format=count
+	 *     100
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $args[0] );
-
-		$roles = [ 'members' ];
-		if ( isset( $assoc_args['role'] ) ) {
-			if ( is_string( $assoc_args['role'] ) ) {
-				$roles = explode( ',', $assoc_args['role'] );
-			} else {
-				$roles = $assoc_args['role'];
-			}
-		}
 
 		// Get our members.
 		$members_query = groups_get_group_members(
 			[
+				'per_page'            => $assoc_args['count'],
 				'group_id'            => $group_id,
 				'exclude_admins_mods' => false,
-				'group_role'          => $roles,
+				'group_role'          => [ $assoc_args['role'] ],
 			]
 		);
 
@@ -207,7 +235,7 @@ class Group_Member extends BuddyPressCommand {
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = [
-				'user_id',
+				'id',
 				'user_login',
 				'fullname',
 				'date_modified',
@@ -215,7 +243,8 @@ class Group_Member extends BuddyPressCommand {
 			];
 		}
 
-		$this->get_formatter( $assoc_args )->display_items( $members );
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $members, 'user_id' ) : $members );
 	}
 
 	/**

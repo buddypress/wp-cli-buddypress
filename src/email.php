@@ -91,7 +91,7 @@ class Email extends BuddyPressCommand {
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'edit' ) ) {
 			$input  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'content', '' );
-			$output = $this->_edit( $input, 'WP-CLI: New BP Email Content' );
+			$output = $this->edit_email( $input, 'WP-CLI: New BP Email Content' );
 
 			$assoc_args['content'] = ( $output ) ? $output : $input;
 		}
@@ -229,7 +229,7 @@ class Email extends BuddyPressCommand {
 	 * @param  string $title   Post title.
 	 * @return mixed
 	 */
-	protected function _edit( $content, $title ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function edit_email( $content, $title ) {
 		$content = apply_filters( 'the_editor_content', $content );
 		$output  = \WP_CLI\Utils\launch_editor_for_input( $content, $title );
 

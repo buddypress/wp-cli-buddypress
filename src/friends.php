@@ -247,6 +247,12 @@ class Friends extends BuddyPressCommand {
 	 * [--fields=<fields>]
 	 * : Fields to display.
 	 *
+	 * [--count=<number>]
+	 * : How many user's friends to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -272,10 +278,16 @@ class Friends extends BuddyPressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
 		$user      = $this->get_user_id_from_identifier( $args[0] );
-		$friends   = \BP_Friends_Friendship::get_friendships( $user->ID );
+		$friends   = \BP_Friends_Friendship::get_friendships(
+			$user->ID,
+			[
+				'page'     => 1,
+				'per_page' => $assoc_args['count'],
+			]
+		);
 
 		if ( empty( $friends ) ) {
 			WP_CLI::error( 'This member has no friends.' );
@@ -289,17 +301,17 @@ class Friends extends BuddyPressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--count=<number>]
-	 * : How many friendships to generate.
-	 * ---
-	 * default: 100
-	 * ---
-	 *
 	 * [--initiator=<user>]
 	 * : ID of the first user. Accepts either a user_login or a numeric ID.
 	 *
 	 * [--friend=<user>]
 	 * : ID of the second user. Accepts either a user_login or a numeric ID.
+	 *
+	 * [--count=<number>]
+	 * : How many friendships to generate.
+	 * ---
+	 * default: 100
+	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.

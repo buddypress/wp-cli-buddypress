@@ -329,10 +329,10 @@ class Signup extends BuddyPressCommand {
 	 * [--fields=<value>]
 	 * : One or more parameters to pass. See \BP_Signup::get()
 	 *
-	 * [--number=<value>]
+	 * [--count=<number>]
 	 * : How many signups to list.
 	 * ---
-	 * default: 20
+	 * default: 50
 	 * ---
 	 *
 	 * [--format=<value>]
@@ -341,28 +341,27 @@ class Signup extends BuddyPressCommand {
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - ids
-	 *   - count
 	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # List signups and get the IDs.
 	 *     $ wp bp signup list --format=ids
+	 *     70 71 72 73 74
+	 *
+	 *     # List 100 signups and return the count.
 	 *     $ wp bp signup list --number=100 --format=count
-	 *     $ wp bp signup list --number=5 --activation_key=ee48ec319fef3nn4
+	 *     100
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
-		$formatter  = $this->get_formatter( $assoc_args );
-		$assoc_args = wp_parse_args(
-			$assoc_args,
-			[
-				'number' => 20,
-				'fields' => 'all',
-			]
-		);
+	public function list_( $args, $assoc_args ) {
+		$formatter = $this->get_formatter( $assoc_args );
 
 		if ( in_array( $formatter->format, [ 'ids', 'count' ], true ) ) {
 			$assoc_args['fields'] = 'ids';

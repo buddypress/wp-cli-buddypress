@@ -78,6 +78,7 @@
       "wp bp tool",
       "wp bp signup",
       "wp bp xprofile",
+      "wp bp notice",
       "wp bp xprofile field",
       "wp bp xprofile group",
       "wp bp xprofile data",
