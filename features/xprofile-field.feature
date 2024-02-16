@@ -26,6 +26,12 @@ Feature: Manage BuddyPress XProfile Fields
       | name     | Field Name |
       | type     | checkbox   |
 
+    When I run `wp bp xprofile field see {FIELD_ID} --fields=id,type`
+    Then STDOUT should be a table containing rows:
+      | Field    | Value      |
+      | id       | {FIELD_ID} |
+      | type     | checkbox   |
+
     When I run `wp bp xprofile field delete {FIELD_ID} --yes`
     Then STDOUT should contain:
       """

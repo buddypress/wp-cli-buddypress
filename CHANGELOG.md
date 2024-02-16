@@ -2,16 +2,16 @@
 
 This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## 3.0.0
 
 ## Added
 
 * Support for the `--silence` flag introduced to a few `create` commands.
 * Support for the `--silence` flag introduced to the `wp bp activity comment` command.
-* Support for the `--format` flag of the `generate` commands. One can render an output in a particular format.
+* Support for the `--format` and `--silent` flags for the `generate` commands.
 * New commands:
 	* `wp bp notice` - Use it to manage Sitewide notices.
-	* `delete-comment` and `remove-comment` aliases added for the `wp bp activity` command.
+	* `delete-comment` and `remove-comment` aliases added for the `wp bp activity delete_comment` command.
 
 ### Changed
 
@@ -20,21 +20,20 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Several linting updates
 * CI tests against PHP 8.3
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
-* Activity command: made tests more deterministic
+* Made tests from the Activity command more deterministic
 * PHPDoc improvements
 	* All `generate` commands' output were standardized
 	* All `create` commands' output were standardized
 	* All `delete` commands' output were standardized
 	* All `delete` commands' alias were standardized
 	* All `list` commands  were standardized
-	* Invalid `format` option `haml` removed
-	* `wp bp activity post-update`: removed mention of default text creation
+	* Invalid `--format` option `haml` removed
+	* Removed mention of default text creation from the `wp bp activity post-update` command
   * Removed `user_items` and `items` aliases from the `wp bp activity favorite list` command
 * Confirmation message updated for `delete` commands that accepts multiple values
 * `wp bp group invite remove` updated to `wp bp group invite uninvite` to avoid conflict with the `delete/remove` command
 * `wp bp activity delete_comment` updated to `wp bp activity delete-comment`
 * `generate` commands: avoid refetching user objects
-* All `generate` command pass the `silent` flag
 * Upgraded the `styfle/cancel-workflow-action` Github Action.
 
 ## 2.0.2

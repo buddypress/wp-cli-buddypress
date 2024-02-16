@@ -7,10 +7,17 @@ Feature: Manage BuddyPress Tools
       https://github.com/buddypress/BuddyPress/archive/master.zip
       """
     And I run `wp bp component activate friends`
+    And I run `wp bp component activate groups`
 
   Scenario: BuddyPress tool
 
     When I run `wp bp tool repair friend-count`
+    Then STDOUT should contain:
+      """
+      Complete!
+      """
+
+    When I run `wp bp tool repair group-count`
     Then STDOUT should contain:
       """
       Complete!

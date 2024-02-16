@@ -34,7 +34,7 @@ Feature: Manage BuddyPress XProfile Data
       foo
       """
 
-    When I run `wp bp xprofile data get --user-id={USER_ID}`
+    When I run `wp bp xprofile data see --user-id={USER_ID}`
     Then STDOUT should be a table containing rows:
       | field_id   | field_name | value |
       | {FIELD_ID} | Field Name | "foo" |

@@ -109,6 +109,7 @@ class Tool extends BuddyPressCommand {
 	 *     Success: Signup tool updated.
 	 */
 	public function signup( $args ) {
+
 		// Bail early.
 		if ( bp_get_signup_allowed() ) {
 			WP_CLI::error( 'The BuddyPress signup feature is already allowed.' );
