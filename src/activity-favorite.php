@@ -159,6 +159,12 @@ class Activity_Favorite extends BuddyPressCommand {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass to \BP_Activity_Activity::get()
 	 *
+	 * [--count=<number>]
+	 * : How many activity favorites to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 *  ---
@@ -172,23 +178,15 @@ class Activity_Favorite extends BuddyPressCommand {
 	 *   - yaml
 	 * ---
 	 *
-	 * [--count=<number>]
-	 * : How many activity favorites to list.
-	 * ---
-	 * default: 50
-	 * ---
-	 *
 	 * ## EXAMPLE
 	 *
 	 *     # Get a user's favorite activity items.
 	 *     $ wp bp activity favorite list 315
 	 *
 	 * @subcommand list
-	 * @alias items
-	 * @alias user_items
 	 * @alias user-items
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$user      = $this->get_user_id_from_identifier( $args[0] );
 		$favorites = bp_activity_get_user_favorites( $user->ID );
 
@@ -208,6 +206,8 @@ class Activity_Favorite extends BuddyPressCommand {
 			WP_CLI::error( 'No favorite found for this user.' );
 		}
 
-		$this->get_formatter( $assoc_args )->display_items( $activities['activities'] );
+		$activities = $activities['activities'];
+		$formatter  = $this->get_formatter( $assoc_args );
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $activities, 'id' ) : $activities );
 	}
 }

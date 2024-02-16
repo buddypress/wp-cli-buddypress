@@ -406,13 +406,11 @@ class Group extends BuddyPressCommand {
 	 *   - last_activity
 	 *   - total_member_count
 	 *
-	 * [--order=<order>]
-	 * : Whether to sort results ascending or descending.
+	 * [--count=<number>]
+	 * : Number of group items to list.
 	 * ---
-	 * default: ASC
-	 * options:
-	 *   - ASC
-	 *   - DESC
+	 * default: 50
+	 * ---
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -427,12 +425,16 @@ class Group extends BuddyPressCommand {
 	 *   - yaml
 	 * ---
 	 *
-	 * [--count=<number>]
-	 * : Number of group items to list.
-	 * ---
-	 * default: 50
-	 * ---
-
+	 * ## AVAILABLE FIELDS
+	 *
+	 * These fields will be displayed by default for each group:
+	 *
+	 * * id
+	 * * name
+	 * * slug
+	 * * status
+	 * * date_created
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     # List groups and get the count.
@@ -443,20 +445,27 @@ class Group extends BuddyPressCommand {
 	 *     $ wp bp group list --format=ids
 	 *     70 71 72 73 74
 	 *
+	 *     # List groups.
+	 *     $ wp bp group list
+	 *     +----+------------+---------+---------+---------------------+
+	 *     | id | name       | slug    | status  | date_created        |
+	 *     +----+------------+---------+---------+---------------------+
+	 *     | 1  | Group - #0 | group-0 | hidden  | 2022-07-04 02:12:02 |
+	 *     | 2  | Group - #1 | group-1 | hidden  | 2022-07-04 02:12:02 |
+	 *     | 4  | Group - #3 | group-3 | private | 2022-07-04 02:12:02 |
+	 *     | 5  | Group - #4 | group-4 | private | 2022-07-04 02:12:02 |
+	 *     | 3  | Group – #2 | group-2 | public  | 2022-07-04 02:12:02 |
+	 *     +----+------------+---------+---------+---------------------+
+	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
-		$query_args = wp_parse_args(
-			$assoc_args,
-			[
-				'count'       => 50,
-				'show_hidden' => true,
-				'orderby'     => $assoc_args['orderby'],
-				'order'       => $assoc_args['order'],
-				'per_page'    => $assoc_args['count'],
-			]
-		);
+		$query_args = [
+			'show_hidden' => true,
+			'orderby'     => $assoc_args['orderby'],
+			'per_page'    => $assoc_args['count'],
+		];
 
 		if ( isset( $assoc_args['user-id'] ) ) {
 			$user                  = $this->get_user_id_from_identifier( $assoc_args['user-id'] );

@@ -38,13 +38,15 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	/**
 	 * Get a random user id.
 	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
 	 * @since 1.1
 	 *
 	 * @return int
 	 */
 	protected function get_random_user_id() {
 		global $wpdb;
-		return $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return (int) $wpdb->get_var( "SELECT ID FROM $wpdb->users ORDER BY RAND() LIMIT 1" );
 	}
 
 	/**

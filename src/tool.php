@@ -122,23 +122,4 @@ class Tool extends BuddyPressCommand {
 
 		WP_CLI::success( 'Signup tool updated.' );
 	}
-
-	/**
-	 * Reinstall BuddyPress default emails.
-	 *
-	 * ## OPTIONS
-	 *
-	 * [--yes]
-	 * : Answer yes to the confirmation message.
-	 *
-	 * ## EXAMPLE
-	 *
-	 *     # Reinstall BuddyPress default emails.
-	 *     $ wp bp tool reinstall --yes
-	 *     Success: Emails have been successfully reinstalled.
-	 */
-	public function reinstall( $args, $assoc_args ) {
-		$command_class = new Email();
-		$command_class->reinstall( $args, $assoc_args );
-	}
 }

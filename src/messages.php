@@ -247,12 +247,6 @@ class Messages extends BuddyPressCommand {
 	 * [--fields=<fields>]
 	 * : Fields to display.
 	 *
-	 * [--count=<number>]
-	 * : How many messages to list.
-	 * ---
-	 * default: 10
-	 * ---
-	 *
 	 * [--box=<box>]
 	 * : Box of the message.
 	 * ---
@@ -271,6 +265,12 @@ class Messages extends BuddyPressCommand {
 	 *   - unread
 	 *   - read
 	 *   - all
+	 * ---
+	 *
+	 * [--count=<number>]
+	 * : How many messages to list.
+	 * ---
+	 * default: 50
 	 * ---
 	 *
 	 * [--format=<format>]
@@ -298,23 +298,16 @@ class Messages extends BuddyPressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
-
-		$r = wp_parse_args(
-			$assoc_args,
-			[ 'search' => '' ]
-		);
-
-		$user = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-
-		$inbox = new \BP_Messages_Box_Template(
+		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$inbox     = new \BP_Messages_Box_Template(
 			[
 				'user_id'      => $user->ID,
-				'box'          => $r['box'],
-				'type'         => $r['type'],
-				'max'          => $r['count'],
-				'search_terms' => $r['search'],
+				'box'          => $assoc_args['box'],
+				'type'         => $assoc_args['type'],
+				'max'          => $assoc_args['count'],
+				'search_terms' => $assoc_args['search'],
 			]
 		);
 

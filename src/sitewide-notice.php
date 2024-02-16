@@ -328,7 +328,7 @@ class Sitewide_Notice extends BuddyPressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$formatter  = $this->get_formatter( $assoc_args );
 		$query_args = [ 'pag_num' => (int) $assoc_args['count'] ];
 

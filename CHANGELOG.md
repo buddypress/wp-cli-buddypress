@@ -11,7 +11,6 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Support for the `--format` flag of the `generate` commands. One can render an output in a particular format.
 * New commands:
 	* `wp bp notice` - Use it to manage Sitewide notices.
-	* `wp bp tool reinstall` - Alias of the `wp bp email reinstall` command, we will deprecate the latter in the future.
 	* `delete-comment` and `remove-comment` aliases added for the `wp bp activity` command.
 
 ### Changed
@@ -19,16 +18,18 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Prefer short array syntax (This is different from WCS supports)
 * Composer packages upgraded to their latest versions
 * Several linting updates
-* CI tests against PHP 8.3 now
+* CI tests against PHP 8.3
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
-* Activity command: make tests more deterministic
+* Activity command: made tests more deterministic
 * PHPDoc improvements
 	* All `generate` commands' output were standardized
 	* All `create` commands' output were standardized
 	* All `delete` commands' output were standardized
 	* All `delete` commands' alias were standardized
+	* All `list` commands  were standardized
 	* Invalid `format` option `haml` removed
-	* `post-update` command updated to remove mention of default text creation
+	* `wp bp activity post-update`: removed mention of default text creation
+  * Removed `user_items` and `items` aliases from the `wp bp activity favorite list` command
 * Confirmation message updated for `delete` commands that accepts multiple values
 * `wp bp group invite remove` updated to `wp bp group invite uninvite` to avoid conflict with the `delete/remove` command
 * `wp bp activity delete_comment` updated to `wp bp activity delete-comment`

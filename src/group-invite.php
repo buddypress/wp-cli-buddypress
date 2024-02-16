@@ -148,25 +148,33 @@ class Group_Invite extends BuddyPressCommand {
 	 * --user-id=<user>
 	 * : Identifier for the user. Accepts either a user_login or a numeric ID.
 	 *
+	 * [--count=<number>]
+	 * : How many invitations to list.
+	 * ---
+	 * default: 50
+	 * ---
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
 	 * default: table
 	 * options:
 	 *   - table
-	 *   - ids
 	 *   - csv
+	 *   - ids
+	 *   - json
 	 *   - count
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     $ wp bp group invite list --user-id=30 --group-id=56
+	 *     # Get a list of invitations from a group.
+	 *     $ wp bp group invite list --group-id=56 --user-id=30
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$user_id  = $user->ID;
@@ -175,6 +183,7 @@ class Group_Invite extends BuddyPressCommand {
 			$invite_query = new \BP_Group_Member_Query( [
 				'is_confirmed' => false,
 				'group_id'     => $group_id,
+				'per_page'     => $assoc_args['count'],
 			] );
 
 			$invites = $invite_query->results;
@@ -209,26 +218,17 @@ class Group_Invite extends BuddyPressCommand {
 
 				$assoc_args['fields'] = $fields;
 			}
-
-			$formatter = $this->get_formatter( $assoc_args );
-			$formatter->display_items( $invites );
 		} else {
-			$invite_query = groups_get_invites_for_user( $user_id );
+			$invite_query = groups_get_invites_for_user( $user_id, $assoc_args['count'], 1 );
 			$invites      = $invite_query['groups'];
 
 			if ( empty( $assoc_args['fields'] ) ) {
-				$fields = [
-					'id',
-					'name',
-					'slug',
-				];
-
-				$assoc_args['fields'] = $fields;
+				$assoc_args['fields'] = [ 'id', 'name', 'slug' ];
 			}
-
-			$formatter = $this->get_formatter( $assoc_args );
-			$formatter->display_items( $invites );
 		}
+
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $invites, 'ids' ) : $invites );
 	}
 
 	/**

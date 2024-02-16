@@ -33,13 +33,43 @@ class XProfile_Field extends BuddyPressCommand {
 	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See bp_xprofile_get_groups()
 	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 *  ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
+	 *
+	 *  * ## AVAILABLE FIELDS
+	 *
+	 * These fields will be displayed by default for each field:
+	 *
+	 * * id
+	 * * name
+	 * * description
+	 * * type
+	 * * group_id
+	 * * is_required
+	 *
 	 * ## EXAMPLE
 	 *
+	 *     # List XProfile fields.
 	 *     $ wp bp xprofile field list
+	 *     +----+------+-------------+---------+----------+-------------+
+	 *     | id | name | description | type    | group_id | is_required |
+	 *     +----+------+-------------+---------+----------+-------------+
+	 *     | 1  | Name |             | textbox | 1        | 1           |
+	 *     +----+------+-------------+---------+----------+-------------+
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$args = array_merge(
 			$assoc_args,
 			[
@@ -58,9 +88,8 @@ class XProfile_Field extends BuddyPressCommand {
 			}
 		}
 
-		ksort( $fields );
-
-		$this->get_formatter( $assoc_args )->display_items( $fields );
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $fields, 'id' ) : $fields );
 	}
 
 	/**

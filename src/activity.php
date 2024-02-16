@@ -260,7 +260,7 @@ class Activity extends BuddyPressCommand {
 	 *
 	 * @subcommand list
 	 */
-	public function list_( $args, $assoc_args ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	public function list_( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		$r = wp_parse_args(
@@ -612,11 +612,11 @@ class Activity extends BuddyPressCommand {
 	 * ## EXAMPLES
 	 *
 	 *     # Post an activity update.
-	 *     $ wp bp activity post_update --user-id=50 --content="Content to update"
+	 *     $ wp bp activity post-update --user-id=50 --content="Content to update"
 	 *     Success: Successfully updated with a new activity item (ID #13165)
 	 *
 	 *     # Post an activity update.
-	 *     $ wp bp activity post_update --user-id=140
+	 *     $ wp bp activity post-update --user-id=140
 	 *     Success: Successfully updated with a new activity item (ID #4548)
 	 *
 	 * @alias post-update
@@ -774,6 +774,8 @@ class Activity extends BuddyPressCommand {
 	/**
 	 * Generate item details.
 	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
 	 * @since 1.1
 	 *
 	 * @param array $r Params.
@@ -852,7 +854,7 @@ class Activity extends BuddyPressCommand {
 				}
 
 				if ( is_multisite() ) {
-					$r['item-id'] = $wpdb->get_var( "SELECT blog_id FROM {$wpdb->blogs} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					$r['item-id'] = $wpdb->get_var( "SELECT blog_id FROM {$wpdb->blogs} ORDER BY RAND() LIMIT 1" );
 				} else {
 					$r['item-id'] = 1;
 				}
@@ -864,7 +866,7 @@ class Activity extends BuddyPressCommand {
 						switch_to_blog( $r['item-id'] );
 					}
 
-					$comment_info = $wpdb->get_results( "SELECT comment_id, comment_post_id FROM {$wpdb->comments} ORDER BY RAND() LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					$comment_info = $wpdb->get_results( "SELECT comment_id, comment_post_id FROM {$wpdb->comments} ORDER BY RAND() LIMIT 1" );
 					$comment_id   = $comment_info[0]->comment_id;
 					$comment      = get_comment( $comment_id );
 
