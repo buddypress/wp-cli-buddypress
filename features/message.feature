@@ -81,6 +81,7 @@ Feature: Manage BuddyPress Messages
       | sender_id  |
       | {BOB_ID}   |
       | {SALLY_ID} |
+      | {BOB_ID}   |
 
     When I run `wp bp message list --user-id={SALLY_ID} --fields=thread_id,sender_id,subject,message`
     Then STDOUT should be a table containing rows:

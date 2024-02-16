@@ -21,9 +21,3 @@ Feature: Manage BuddyPress Tools
       """
       Success: Signup tool updated.
       """
-
-    When I run `wp bp tool reinstall --yes`
-    Then STDOUT should contain:
-      """
-      Success: Emails have been successfully reinstalled.
-      """

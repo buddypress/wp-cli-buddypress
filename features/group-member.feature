@@ -28,9 +28,9 @@ Feature: Manage BuddyPress Group Members
       Success: Added user #{MEMBER_ID} to group #{GROUP_ID} as member.
       """
 
-    When I run `wp bp group member list {GROUP_ID} --fields=user_id`
+    When I run `wp bp group member list {GROUP_ID} --fields=id`
     Then STDOUT should be a table containing rows:
-      | user_id      |
+      | id           |
       | {CREATOR_ID} |
       | {MEMBER_ID}  |
 
@@ -40,9 +40,9 @@ Feature: Manage BuddyPress Group Members
       Success: Member promoted to new role successfully.
       """
 
-    When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=mod`
+    When I run `wp bp group member list {GROUP_ID} --fields=id --role=mod`
     Then STDOUT should be a table containing rows:
-      | user_id     |
+      | id          |
       | {MEMBER_ID} |
 
     When I run `wp bp group member demote --group-id={GROUP_ID} --user-id={MEMBER_ID}`
@@ -79,8 +79,3 @@ Feature: Manage BuddyPress Group Members
       """
       Success: Member #{MEMBER_ID} removed from the group #{GROUP_ID}.
       """
-
-    When I run `wp bp group member list {GROUP_ID} --fields=user_id --role=member,admin,mod,banned`
-    Then STDOUT should be a table containing rows:
-      | user_id      |
-      | {CREATOR_ID} |

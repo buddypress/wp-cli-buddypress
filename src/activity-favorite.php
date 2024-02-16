@@ -72,8 +72,9 @@ class Activity_Favorite extends BuddyPressCommand {
 
 		$activity = bp_activity_get_specific(
 			[
-				'activity_ids' => $activity_id,
-				'spam'         => null,
+				'activity_ids'     => $activity_id,
+				'spam'             => null,
+				'display_comments' => true,
 			]
 		);
 
@@ -127,8 +128,9 @@ class Activity_Favorite extends BuddyPressCommand {
 
 		$activity = bp_activity_get_specific(
 			[
-				'activity_ids' => $activity_id,
-				'spam'         => null,
+				'activity_ids'     => $activity_id,
+				'spam'             => null,
+				'display_comments' => true,
 			]
 		);
 

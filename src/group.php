@@ -407,7 +407,7 @@ class Group extends BuddyPressCommand {
 	 *   - total_member_count
 	 *
 	 * [--count=<number>]
-	 * : Number of group items to list.
+	 * : Number of group to list.
 	 * ---
 	 * default: 50
 	 * ---

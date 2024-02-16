@@ -228,7 +228,7 @@ class Group_Invite extends BuddyPressCommand {
 		}
 
 		$formatter = $this->get_formatter( $assoc_args );
-		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $invites, 'ids' ) : $invites );
+		$formatter->display_items( 'ids' === $formatter->format ? wp_list_pluck( $invites, 'id' ) : $invites );
 	}
 
 	/**

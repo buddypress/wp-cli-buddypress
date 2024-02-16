@@ -154,6 +154,13 @@ class Group_Member extends BuddyPressCommand {
 	 *  - members
 	 *  - mod
 	 *  - admin
+	 *  - banned
+	 * ---
+	 *
+	 * [--count=<number>]
+	 * : How many members to list.
+	 * ---
+	 * default: 50
 	 * ---
 	 *
 	 * [--format=<format>]
@@ -173,7 +180,7 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * These fields will be displayed by default for each group member:
 	 *
-	 * * user_id
+	 * * id
 	 * * user_login
 	 * * fullname
 	 * * date_modified
@@ -184,7 +191,7 @@ class Group_Member extends BuddyPressCommand {
 	 *     # Get a list of group members.
 	 *     $ wp bp group member list 3
 	 *     +---------+------------+----------+---------------------+-------+
-	 *     | user_id | user_login | fullname | date_modified       | role  |
+	 *     | id      | user_login | fullname | date_modified       | role  |
 	 *     +---------+------------+----------+---------------------+-------+
 	 *     | 1       | user       | User     | 2022-07-04 02:12:02 | admin |
 	 *     +---------+------------+----------+---------------------+-------+
@@ -228,7 +235,7 @@ class Group_Member extends BuddyPressCommand {
 
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = [
-				'user_id',
+				'id',
 				'user_login',
 				'fullname',
 				'date_modified',

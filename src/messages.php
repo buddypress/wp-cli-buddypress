@@ -286,6 +286,17 @@ class Messages extends BuddyPressCommand {
 	 *   - yaml
 	 * ---
 	 *
+	 * ## AVAILABLE FIELDS
+	 *
+	 * These fields will be displayed by default for each message:
+	 *
+	 * * id
+	 * * subject
+	 * * message
+	 * * thread_id
+	 * * sender_id
+	 * * date_sent
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Get a list of messages for a specific user.
@@ -296,6 +307,15 @@ class Messages extends BuddyPressCommand {
 	 *     $ wp bp message list --user-id=user_login --count=3 --format=ids
 	 *     5454 45454 4545 465465
 	 *
+	 *     # Get a list of messages.
+	 *     # wp bp message list --user-id=1 --count=2
+	 *     +----+----------------------+--------------------------+-----------+-----------+---------------------+
+	 *     | id | subject              | message                  | thread_id | sender_id | date_sent           |
+	 *     +----+----------------------+--------------------------+-----------+-----------+---------------------+
+	 *     | 35 | Another Thread       | <p>Another thread</p>    | 2         | 1         | 2022-10-27 16:29:29 |
+	 *     | 37 | Message Subject - #0 | Here is some random text | 2         | 7         | 2022-10-27 19:06:54 |
+	 *     +----+----------------------+--------------------------+-----------+-----------+---------------------+
+	 *
 	 * @subcommand list
 	 */
 	public function list_( $args, $assoc_args ) {
@@ -303,11 +323,11 @@ class Messages extends BuddyPressCommand {
 		$user      = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
 		$inbox     = new \BP_Messages_Box_Template(
 			[
-				'user_id'      => $user->ID,
-				'box'          => $assoc_args['box'],
-				'type'         => $assoc_args['type'],
-				'max'          => $assoc_args['count'],
-				'search_terms' => $assoc_args['search'],
+				'user_id'           => $user->ID,
+				'box'               => $assoc_args['box'],
+				'type'              => $assoc_args['type'],
+				'messages_page'     => 1,
+				'messages_per_page' => $assoc_args['count'],
 			]
 		);
 
