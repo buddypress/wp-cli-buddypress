@@ -19,6 +19,7 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Composer packages upgraded to their latest versions
 * Several linting updates
 * CI tests against PHP 8.3
+* CI tests against PHP 5.6
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
 * Activity command: made tests more deterministic
 * PHPDoc improvements
@@ -35,6 +36,7 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * `wp bp activity delete_comment` updated to `wp bp activity delete-comment`
 * `generate` commands: avoid refetching user objects
 * All `generate` command pass the `silent` flag
+* Upgraded the `styfle/cancel-workflow-action` Github Action.
 
 ## 2.0.2
 
