@@ -23,6 +23,11 @@ Feature: Manage BuddyPress XProfile Groups
       | can_delete  | 1                 |
       | group_order | 0                 |
 
+    When I run `wp bp xprofile group see {GROUP_ID} --fields=id`
+    Then STDOUT should be a table containing rows:
+      | Field  | Value      |
+      | id     | {GROUP_ID} |
+
     When I run `wp bp xprofile group delete {GROUP_ID} --yes`
     Then STDOUT should contain:
       """
