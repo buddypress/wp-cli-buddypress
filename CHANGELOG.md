@@ -19,7 +19,6 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 * Composer packages upgraded to their latest versions
 * Several linting updates
 * CI tests against PHP 8.3
-* CI tests against PHP 5.6
 * Updated deprecated function from `bp_get_group_permalink` into `bp_get_group_url`
 * Activity command: made tests more deterministic
 * PHPDoc improvements
