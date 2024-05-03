@@ -35,6 +35,7 @@
   "scripts": {
     "behat": "run-behat-tests",
     "behat-rerun": "rerun-behat-tests",
+    "phpunit": "behat",
     "lint": "run-linter-tests",
     "phpcs": "run-phpcs-tests",
     "phpcbf": "run-phpcbf-cleanup",
