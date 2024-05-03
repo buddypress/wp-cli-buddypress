@@ -4,17 +4,24 @@ on: pull_request
 
 jobs:
   tests:
-    name: "WP: ${{ matrix.wp }} - PHP: ${{ matrix.php }}"
+    name: "WP: ${{ matrix.wp_version }} - PHP: ${{ matrix.php }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: [7.4, 8.0, 8.1, 8.2, 8.3]
-        wp: ['latest']
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        wp_version: ['master']
         mysql: [8.0]
+        include:
+          - php: '8.0'
+            wp_version: 'latest'
+          - php: '7.4'
+            wp_version: 'latest'
+          - php: '7.4'
+            wp_version: '6.1'
 
     env:
-      WP_VERSION: ${{ matrix.wp }}
+      WP_VERSION: ${{ matrix.wp_version }}
 
     steps:
       - name: Cancel previous runs of this workflow (pull requests only)
@@ -41,9 +48,9 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: gd, imagick, mysql, zip
           coverage: none
-          tools: composer
+          tools: composer:v2
 
-      - name: Install Composer dependencies & cache dependencies
+      - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
 
       - name: Setup MySQL Server
@@ -71,14 +78,14 @@ jobs:
 
       - name: Prepare tests
         env:
-          WP_VERSION: '${{ matrix.wp }}'
+          WP_VERSION: '${{ matrix.wp_version }}'
           WP_CLI_TEST_DBTYPE: 'mysql'
           WP_CLI_TEST_DBSOCKET: '${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock'
         run: composer prepare-tests
 
       - name: Run Behat
         env:
-          WP_VERSION: '${{ matrix.wp }}'
+          WP_VERSION: '${{ matrix.wp_version }}'
           WP_CLI_TEST_DBTYPE: 'mysql'
           WP_CLI_TEST_DBSOCKET: '${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock'
         run: composer behat || composer behat-rerun
