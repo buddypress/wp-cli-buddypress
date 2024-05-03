@@ -15,10 +15,6 @@ jobs:
         wp_version: ['latest']
         mysql: [8.0]
         include:
-          - php: '8.0'
-            wp_version: 'latest'
-          - php: '7.4'
-            wp_version: 'latest'
           - php: '7.4'
             wp_version: '6.1'
     env:
