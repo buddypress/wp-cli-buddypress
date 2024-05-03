@@ -9,9 +9,11 @@ use WP_CLI;
  *
  * ## EXAMPLES
  *
+ *     # Add a signup.
  *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
  *     Success: Successfully added new user signup (ID #345).
  *
+ *     # Activate a signup.
  *     $ wp bp signup activate ee48ec319fef3nn4
  *     Success: Signup activated, new user (ID #545).
  *
@@ -25,12 +27,14 @@ class Signup extends BuddyPressCommand {
 	 * @var array
 	 */
 	protected $obj_fields = [
-		'signup_id',
-		'user_login',
+		'id',
 		'user_name',
+		'user_login',
+		'user_email',
+		'registered',
 		'meta',
 		'activation_key',
-		'registered',
+		'count_sent',
 	];
 
 	/**
@@ -70,7 +74,7 @@ class Signup extends BuddyPressCommand {
 	 * [--porcelain]
 	 * : Output only the new signup id.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     # Add a signup.
 	 *     $ wp bp signup create --user-login=test_user --user-email=teste@site.com
@@ -155,9 +159,16 @@ class Signup extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp bp signup get 123
-	 *     $ wp bp signup get foo@example.com
-	 *     $ wp bp signup get 123 --match-field=id
+	 *     # Get a signup.
+	 *     $ wp bp signup get 35 --fields=id,user_login,user_name,count_sent
+	 *     +------------+------------+
+	 *     | Field      | Value      |
+	 *     +------------+------------+
+	 *     | id         | 35         |
+	 *     | user_login | user897616 |
+	 *     | user_name  | Test user  |
+	 *     | count_sent | 4          |
+	 *     +------------+------------+
 	 */
 	public function get( $args, $assoc_args ) {
 		$signup = $this->get_signup_by_identifier( $args[0], $assoc_args );
@@ -220,7 +231,7 @@ class Signup extends BuddyPressCommand {
 	 * <signup-id>
 	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     # Activate a signup.
 	 *     $ wp bp signup activate ee48ec319fef3nn4
@@ -301,7 +312,7 @@ class Signup extends BuddyPressCommand {
 	 * <signup-id>
 	 * : Identifier for the signup. Can be a signup ID, an email address, or a user_login.
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     # Resend activation e-mail to a newly registered user.
 	 *     $ wp bp signup resend test@example.com
@@ -326,8 +337,11 @@ class Signup extends BuddyPressCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * [--fields=<value>]
+	 * [--<field>=<value>]
 	 * : One or more parameters to pass. See \BP_Signup::get()
+	 *
+	 * [--fields=<fields>]
+	 * : Fields to display.
 	 *
 	 * [--count=<number>]
 	 * : How many signups to list.
@@ -355,13 +369,19 @@ class Signup extends BuddyPressCommand {
 	 *     70 71 72 73 74
 	 *
 	 *     # List 100 signups and return the count.
-	 *     $ wp bp signup list --number=100 --format=count
+	 *     $ wp bp signup list --count=100 --format=count
 	 *     100
+	 *
+	 *     # List active signups.
+	 *     $ wp bp signup list --active=1 --count=10
+	 *     50
 	 *
 	 * @subcommand list
 	 */
 	public function list_( $args, $assoc_args ) {
 		$formatter = $this->get_formatter( $assoc_args );
+
+		$assoc_args['number'] = $assoc_args['count'];
 
 		if ( in_array( $formatter->format, [ 'ids', 'count' ], true ) ) {
 			$assoc_args['fields'] = 'ids';

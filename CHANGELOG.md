@@ -2,6 +2,17 @@
 
 This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/).
 
+## 3.0.1 Unpublished
+
+### Changed
+
+* `wp bp tool signup` supports multisite.
+* `wp bp signup`:
+  * `list`: list 50 items by default, instead of 1.
+	* added support for more object fields.
+* Avoid the `generate_callback` method to appear as a valid command by turning it into a protected method.
+* Added `composer phpunit` as an alias for `composer behat`.
+
 ## 3.0.0
 
 ## Added

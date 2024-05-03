@@ -195,7 +195,7 @@ abstract class BuddyPressCommand extends CommandWithDBObject {
 	 * @param array    $assoc_args Command arguments.
 	 * @param callable $callback Callback to execute.
 	 */
-	public function generate_callback( $message, $assoc_args, $callback ) {
+	protected function generate_callback( $message, $assoc_args, $callback ) {
 		$format = WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'progress' );
 		$limit  = $assoc_args['count'];
 		$notify = false;

@@ -17,9 +17,9 @@ use WP_CLI;
  *     $ wp bp tool version
  *     BuddyPress: 6.0.0
  *
- *     # Reinstall BuddyPress default emails.
- *     $ wp bp tool reinstall --yes
- *     Success: Emails have been successfully reinstalled.
+ *     # Activate the signup tool.
+ *     $ wp bp tool signup 1
+ *     Success: Signup tool updated.
  *
  * @since 1.5.0
  */
@@ -47,10 +47,9 @@ class Tool extends BuddyPressCommand {
 	 *   - group-count
 	 *   - blog-records
 	 *   - count-members
-	 *   - last-activity
 	 * ---
 	 *
-	 * ## EXAMPLE
+	 * ## EXAMPLES
 	 *
 	 *     # Repair the friend count.
 	 *     $ wp bp tool repair friend-count
@@ -109,16 +108,23 @@ class Tool extends BuddyPressCommand {
 	 *     Success: Signup tool updated.
 	 */
 	public function signup( $args ) {
+		$status = wp_validate_boolean( $args[0] );
 
-		// Bail early.
-		if ( bp_get_signup_allowed() ) {
-			WP_CLI::error( 'The BuddyPress signup feature is already allowed.' );
-		}
+		if ( is_multisite() ) {
+			$retval = get_site_option( 'registration' );
 
-		$retval = bp_update_option( 'users_can_register', $args[0] );
+			if ( 'all' === $retval && $status ) {
+				WP_CLI::error( 'Both sites and user accounts registration is already allowed.' );
+			}
 
-		if ( false === $retval ) {
-			WP_CLI::error( 'Could not update the signup tool.' );
+			$current = $status ? 'all' : 'none';
+			update_site_option( 'registration', $current );
+		} else {
+			if ( bp_get_signup_allowed() && $status ) {
+				WP_CLI::error( 'The BuddyPress signup feature is already allowed.' );
+			}
+
+			bp_update_option( 'users_can_register', $status );
 		}
 
 		WP_CLI::success( 'Signup tool updated.' );
