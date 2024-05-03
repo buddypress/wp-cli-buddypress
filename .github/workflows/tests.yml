@@ -1,6 +1,8 @@
 name: Testing
 
 on: pull_request
+  push:
+    branches: [ master ]
 
 jobs:
   tests:
@@ -19,7 +21,6 @@ jobs:
             wp_version: 'latest'
           - php: '7.4'
             wp_version: '6.1'
-
     env:
       WP_VERSION: ${{ matrix.wp_version }}
 
