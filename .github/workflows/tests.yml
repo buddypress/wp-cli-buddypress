@@ -21,7 +21,7 @@ jobs:
         image: mysql:${{ matrix.mysql }}
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=wp_cli_test --entrypoint sh mysql:${{ matrix.mysql }} -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=wp_cli_test --entrypoint sh mysql:${{ matrix.mysql }} -c "exec docker-entrypoint.sh mysqld"
 
     steps:
       - name: Cancel previous runs of this workflow (pull requests only)
