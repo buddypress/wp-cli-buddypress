@@ -4,7 +4,7 @@ Feature: Manage BuddyPress Groups
     Given a WP install
     And these installed and active plugins:
       """
-      https://github.com/buddypress/BuddyPress/archive/master.zip
+      https://github.com/buddypress/buddypress/archive/master.zip
       """
     And I run `wp bp component activate groups`
 
@@ -28,6 +28,10 @@ Feature: Manage BuddyPress Groups
 
     When I try `wp bp group get i-do-not-exist`
     Then the return code should be 1
+    Then STDERR should be:
+      """
+      Error: No group found by that slug or ID.
+      """
 
     When I run `wp bp group update {GROUP_ID} --description=foo`
     Then STDOUT should not be empty
@@ -46,6 +50,10 @@ Feature: Manage BuddyPress Groups
 
     When I try `wp bp group get {GROUP_ID}`
     Then the return code should be 1
+    Then STDERR should be:
+      """
+      Error: No group found by that slug or ID.
+      """
 
   Scenario: Group list
 
@@ -53,9 +61,15 @@ Feature: Manage BuddyPress Groups
     Then STDOUT should be a number
     And save STDOUT as {GROUP_ONE_ID}
 
+    When I run `wp bp group meta add {GROUP_ONE_ID} invite_status 'public'`
+    Then STDOUT should not be empty
+
     When I run `wp bp group create --name="AAA Group 2" --slug=group2 --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {GROUP_TWO_ID}
+
+    When I run `wp bp group meta add {GROUP_TWO_ID} invite_status 'public'`
+    Then STDOUT should not be empty
 
     When I run `wp bp group list --fields=id,name,slug`
     Then STDOUT should be a table containing rows:
@@ -82,7 +96,7 @@ Feature: Manage BuddyPress Groups
     When I try `wp bp group list --fields=id --user-id={MEMBER_ID}`
     Then the return code should be 1
 
-    When I run `wp bp group member create --group-id={GROUP_ONE_ID} --user-id={MEMBER_ID}`
+    When I run `wp bp group member add --group-id={GROUP_ONE_ID} --user-id={MEMBER_ID}`
     Then the return code should be 0
 
     When I run `wp bp group list --fields=id --user-id={MEMBER_ID}`

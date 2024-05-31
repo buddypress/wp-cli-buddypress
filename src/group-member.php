@@ -79,7 +79,8 @@ class Group_Member extends BuddyPressCommand {
 		}
 
 		if ( 'member' !== $role ) {
-			groups_promote_member( $user->ID, $group_id, $role );
+			$group_member = new \BP_Groups_Member( $user->ID, $group_id );
+			$group_member->promote( $role );
 		}
 
 		WP_CLI::success(
@@ -117,12 +118,20 @@ class Group_Member extends BuddyPressCommand {
 	 * @alias trash
 	 */
 	public function delete( $args, $assoc_args ) {
-		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
-		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new \BP_Groups_Member( $user->ID, $group_id );
+		$group_id     = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user         = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$group_member = new \BP_Groups_Member( $user->ID, $group_id );
+
+		// Check if the user is the only admin of the group.
+		if ( (bool) $group_member->is_admin ) {
+			$group_admins = groups_get_group_admins( $group_id );
+			if ( 1 === count( $group_admins ) ) {
+				WP_CLI::error( 'Cannot remove the only admin of the group.' );
+			}
+		}
 
 		// True on success.
-		if ( $member->remove() ) {
+		if ( $group_member->remove() ) {
 			WP_CLI::success( sprintf( 'Member #%d removed from the group #%d.', $user->ID, $group_id ) );
 		} else {
 			WP_CLI::error( 'Could not remove member from the group.' );
@@ -217,6 +226,10 @@ class Group_Member extends BuddyPressCommand {
 
 		$members = $members_query['members'];
 
+		if ( empty( $members ) ) {
+			WP_CLI::error( 'No group members found.' );
+		}
+
 		// Make 'role' human-readable.
 		foreach ( $members as &$member ) {
 			$role = 'member';
@@ -227,10 +240,6 @@ class Group_Member extends BuddyPressCommand {
 			}
 
 			$member->role = $role;
-		}
-
-		if ( empty( $members ) ) {
-			WP_CLI::error( 'No group members found.' );
 		}
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -277,11 +286,11 @@ class Group_Member extends BuddyPressCommand {
 	 *     Success: Member promoted to new role successfully.
 	 */
 	public function promote( $args, $assoc_args ) {
-		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
-		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new \BP_Groups_Member( $user->ID, $group_id );
+		$group_id     = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
+		$user         = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
+		$group_member = new \BP_Groups_Member( $user->ID, $group_id );
 
-		if ( $member->promote( $assoc_args['role'] ) ) {
+		if ( $group_member->promote( $assoc_args['role'] ) ) {
 			WP_CLI::success( 'Member promoted to new role successfully.' );
 		} else {
 			WP_CLI::error( 'Could not promote the member.' );
@@ -301,20 +310,38 @@ class Group_Member extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # Demote a user to the "member" status.
+	 *     # Demote a user to the "member" status using numeric IDs.
 	 *     $ wp bp group member demote --group-id=3 --user-id=10
 	 *     Success: User demoted to the "member" status.
 	 *
-	 *     # Demote a user to the "member" status.
+	 *     # Demote a user to the "member" status using slugs.
 	 *     $ wp bp group member demote --group-id=foo --user-id=admin
 	 *     Success: User demoted to the "member" status.
+	 *
+	 *     # Demote a user not part of the group.
+	 *     $ wp bp group member demote --group-id=foo --user-id=admin
+	 *     Error: User is not a member of the group.
 	 */
 	public function demote( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
-		if ( $member->demote() ) {
+		// Check if the user is a member of the group.
+		if ( ! groups_is_user_member( $user->ID, $group_id ) ) {
+			WP_CLI::error( 'User is not a member of the group.' );
+		}
+
+		$group_member = new \BP_Groups_Member( $user->ID, $group_id );
+
+		// Check if the user is the only admin of the group.
+		if ( (bool) $group_member->is_admin ) {
+			$group_admins = groups_get_group_admins( $group_id );
+			if ( 1 === count( $group_admins ) ) {
+				WP_CLI::error( 'Cannot demote the only admin of the group.' );
+			}
+		}
+
+		if ( $group_member->demote() ) {
 			WP_CLI::success( 'User demoted to the "member" status.' );
 		} else {
 			WP_CLI::error( 'Could not demote the member.' );
@@ -345,9 +372,15 @@ class Group_Member extends BuddyPressCommand {
 	public function ban( $args, $assoc_args ) {
 		$group_id = $this->get_group_id_from_identifier( $assoc_args['group-id'] );
 		$user     = $this->get_user_id_from_identifier( $assoc_args['user-id'] );
-		$member   = new \BP_Groups_Member( $user->ID, $group_id );
 
-		if ( $member->ban() ) {
+		// Check if the user is a member of the group.
+		if ( ! groups_is_user_member( $user->ID, $group_id ) ) {
+			WP_CLI::error( 'User is not a member of the group.' );
+		}
+
+		$group_member = new \BP_Groups_Member( $user->ID, $group_id );
+
+		if ( $group_member->ban() ) {
 			WP_CLI::success( 'Member banned from the group.' );
 		} else {
 			WP_CLI::error( 'Could not ban the member.' );
