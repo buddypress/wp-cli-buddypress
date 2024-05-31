@@ -4,7 +4,7 @@ Feature: Manage BuddyPress Signups
     Given a WP install
     And these installed and active plugins:
       """
-      https://github.com/buddypress/buddypress/archive/master.zip
+      https://github.com/buddypress/BuddyPress/archive/master.zip
       """
     And I run `wp bp tool signup 1`
 
