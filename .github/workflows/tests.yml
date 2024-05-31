@@ -58,8 +58,6 @@ jobs:
           root-password: root
           user: wp_cli_test
           password: password1
-          my-cnf: |
-            default_authentication_plugin=mysql_native_password
 
       - name: Configure DB environment
         run: |
