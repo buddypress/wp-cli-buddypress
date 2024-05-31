@@ -44,9 +44,9 @@ jobs:
 
       - name: Setup MySQL Server
         id: setup-mysql
-        uses: shogo82148/actions-setup-mysql@v1.34.0
+        uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql-version: '${{ matrix.mysql }}'
+          mysql-version: ${{ matrix.mysql }}
           auto-start: true
           distribution: 'mysql'
           root-password: root
@@ -67,14 +67,14 @@ jobs:
 
       - name: Prepare tests
         env:
-          WP_VERSION: '${{ matrix.wp_version }}'
+          WP_VERSION: ${{ matrix.wp_version }}
           WP_CLI_TEST_DBTYPE: 'mysql'
           WP_CLI_TEST_DBSOCKET: '${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock'
         run: composer prepare-tests
 
       - name: Run Behat
         env:
-          WP_VERSION: '${{ matrix.wp_version }}'
+          WP_VERSION: ${{ matrix.wp_version }}
           WP_CLI_TEST_DBTYPE: 'mysql'
           WP_CLI_TEST_DBSOCKET: '${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock'
         run: composer behat || composer behat-rerun
