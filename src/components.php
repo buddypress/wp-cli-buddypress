@@ -250,7 +250,7 @@ class Components extends BuddyPressCommand {
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $component['title'] ),
-						'description' => html_entity_decode( $component['description'] ),
+						'description' => html_entity_decode( $component['description'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
 					];
 				}
 				break;
@@ -270,7 +270,7 @@ class Components extends BuddyPressCommand {
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $components[ $component_key ]['title'] ),
-						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
+						'description' => html_entity_decode( $components[ $component_key ]['description'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
 					];
 				}
 				break;
@@ -290,7 +290,7 @@ class Components extends BuddyPressCommand {
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $components[ $component_key ]['title'] ),
-						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
+						'description' => html_entity_decode( $components[ $component_key ]['description'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
 					];
 				}
 				break;

@@ -2,6 +2,13 @@
 
 This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/).
 
+## 3.0.2
+
+### Changed
+
+* CI: test against PHP 8.4
+* CI: WordPress: minimum version tested bumped to 6.4
+
 ## 3.0.1
 
 ### Changed
