@@ -53,7 +53,6 @@ jobs:
         uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: ${{ matrix.mysql }}
-          auto-start: true
           root-password: root
           user: wp_cli_test
           password: password1
