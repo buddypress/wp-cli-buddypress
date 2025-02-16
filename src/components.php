@@ -13,7 +13,7 @@ use WP_CLI;
  *     $ wp bp component activate groups
  *     Success: The Groups component has been activated.
  *
- *     # Deactive a component.
+ *     # Deactivate a component.
  *     $ wp bp component deactivate groups
  *     Success: The Groups component has been deactivated.
  *
@@ -101,7 +101,7 @@ class Components extends BuddyPressCommand {
 	 *
 	 * ## EXAMPLE
 	 *
-	 *     # Deactive a component.
+	 *     # Deactivate a component.
 	 *     $ wp bp component deactivate groups
 	 *     Success: The Groups component has been deactivated.
 	 */
@@ -250,7 +250,7 @@ class Components extends BuddyPressCommand {
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $component['title'] ),
-						'description' => html_entity_decode( $component['description'] ),
+						'description' => html_entity_decode( $component['description'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
 					];
 				}
 				break;
@@ -270,7 +270,7 @@ class Components extends BuddyPressCommand {
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $components[ $component_key ]['title'] ),
-						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
+						'description' => html_entity_decode( $components[ $component_key ]['description'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
 					];
 				}
 				break;
@@ -290,7 +290,7 @@ class Components extends BuddyPressCommand {
 						'id'          => $component_key,
 						'status'      => $this->verify_component_status( $component_key ),
 						'title'       => esc_html( $components[ $component_key ]['title'] ),
-						'description' => html_entity_decode( $components[ $component_key ]['description'] ),
+						'description' => html_entity_decode( $components[ $component_key ]['description'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
 					];
 				}
 				break;

@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap file for BuddyPress
+ * PHPUnit bootstrap file for BuddyPress.
  */
 
 // Get codebase versions.
@@ -15,7 +15,7 @@ putenv( 'BP_TESTS_DIR=' . $bp_tests_dir );
 /**
  * Load BuddyPress.
  */
-function _manually_load_buddypress() {
+function _manually_load_buddypress(): void {
 	require_once getenv( 'BP_TESTS_DIR' ) . '/includes/loader.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_buddypress', 0 );
